@@ -1,0 +1,51 @@
+:root {
+  /* Colors - Text */
+  --sds-color-text-default-default: #1e1e1e;
+  --sds-color-text-default-secondary: #757575;
+
+  /* Colors - Background */
+  --sds-color-background-default-default: #ffffff;
+
+  /* Colors - Border */
+  --sds-color-border-default-default: #d9d9d9;
+
+  /* Colors - Slate */
+  --sds-color-slate-200: #e3e3e3;
+
+  /* Colors - Brand */
+  --sds-color-background-brand-default: #2c2c2c;
+  --sds-color-border-brand-default: #2c2c2c;
+  --sds-color-text-brand-on-brand: #f5f5f5;
+
+  /* Typography - Heading */
+  --sds-typography-heading-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sds-typography-heading-font-weight: 600;
+  --sds-typography-heading-size-base: 24px;
+
+  /* Typography - Subheading */
+  --sds-typography-subheading-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sds-typography-subheading-font-weight: 400;
+  --sds-typography-subheading-size-medium: 20px;
+
+  /* Typography - Body */
+  --sds-typography-body-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sds-typography-body-font-weight-regular: 400;
+  --sds-typography-body-size-medium: 16px;
+
+  /* Spacing */
+  --sds-size-space-200: 8px;
+  --sds-size-space-300: 12px;
+  --sds-size-space-400: 16px;
+  --sds-size-space-600: 24px;
+  --sds-size-space-1200: 48px;
+  --sds-size-space-1600: 64px;
+
+  /* Border Radius */
+  --sds-size-radius-200: 8px;
+
+  /* Stroke */
+  --sds-size-stroke-border: 1px;
+
+  /* Responsive */
+  --sds-responsive-device-width: 1200px;
+}

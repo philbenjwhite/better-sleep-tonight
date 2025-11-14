@@ -1,0 +1,16 @@
+.container {
+  background-color: var(--sds-color-background-default-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-1200);
+  padding: var(--sds-size-space-1600);
+  min-height: 100vh;
+  font-family: var(--sds-typography-body-font-family);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 32px 16px;
+    gap: 32px;
+  }
+}
