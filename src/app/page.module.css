@@ -411,7 +411,7 @@
 .speechText {
   font-family: var(--sds-typography-heading-font-family, 'Open Sans', sans-serif);
   font-size: var(--sds-typography-heading-size-base, 24px);
-  font-weight: var(--sds-typography-heading-font-weight, 600);
+  font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.48px;
   color: var(--sds-color-text-default-default, #363534);
@@ -421,6 +421,27 @@
 
 .speechTextSecondary {
   color: #757575;
+  font-weight: 400;
+}
+
+/* Reading animation - words get bolded as if being read/spoken */
+@keyframes wordHighlight {
+  0% {
+    font-weight: inherit;
+  }
+  20%, 80% {
+    font-weight: 700;
+  }
+  100% {
+    font-weight: inherit;
+  }
+}
+
+/* Apply animation to each word */
+.word1, .word2, .word3, .word4, .word5, .word6, .word7, .word8, .word9 {
+  display: inline;
+  animation: wordHighlight 0.6s ease-in-out;
+  animation-fill-mode: backwards;
 }
 
 /* Question view responsive */
