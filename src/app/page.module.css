@@ -383,7 +383,7 @@
 .speechBubble {
   position: absolute;
   top: 12px;
-  right: -460px;
+  right: -360px;
   width: 437px;
   background-color: var(--sds-color-background-default-default, #ffffff);
   padding: 16px;
