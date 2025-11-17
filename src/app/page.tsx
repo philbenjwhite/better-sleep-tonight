@@ -19,20 +19,24 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      {/* Video Background */}
-      <video
-        className={styles.videoBackground}
-        autoPlay
-        loop
-        muted
-        playsInline
-        controls={false}
-      >
-        <source src="/videos/Mattress_Shopping.mp4" type="video/mp4" />
-      </video>
+      {/* Video Background - only show on intro */}
+      {currentView === 'intro' && (
+        <>
+          <video
+            className={`${styles.videoBackground} ${isTransitioning ? styles.fadeOut : ''}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls={false}
+          >
+            <source src="/videos/Mattress_Shopping.mp4" type="video/mp4" />
+          </video>
 
-      {/* Gradient Overlay */}
-      <div className={styles.gradientOverlay} />
+          {/* Gradient Overlay */}
+          <div className={`${styles.gradientOverlay} ${isTransitioning ? styles.fadeOut : ''}`} />
+        </>
+      )}
 
       {/* Logo - Top Left */}
       <div className={styles.logo}>
