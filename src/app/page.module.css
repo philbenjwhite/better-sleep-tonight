@@ -378,6 +378,7 @@
   width: auto;
   height: auto;
   max-height: 80vh;
+  margin-bottom: -50px;
 }
 
 .avatarGradientOverlay {
