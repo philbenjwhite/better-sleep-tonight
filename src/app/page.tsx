@@ -117,14 +117,14 @@ export default function Home() {
               <div className={styles.speechBubble}>
                 <p className={styles.speechText}>
                   <span className={styles.word1} style={{ animationDelay: '0s' }}>Hey </span>
-                  <span className={styles.word2} style={{ animationDelay: '0.3s' }}>I&apos;m </span>
-                  <span className={styles.word3} style={{ animationDelay: '0.6s' }}>Sarah, </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word4}`} style={{ animationDelay: '0.9s' }}>let&apos;s </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word5}`} style={{ animationDelay: '1.2s' }}>help </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word6}`} style={{ animationDelay: '1.5s' }}>you </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word7}`} style={{ animationDelay: '1.8s' }}>get </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word8}`} style={{ animationDelay: '2.1s' }}>better </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word9}`} style={{ animationDelay: '2.4s' }}>sleep.</span>
+                  <span className={styles.word2} style={{ animationDelay: '0.2s' }}>I&apos;m </span>
+                  <span className={styles.word3} style={{ animationDelay: '0.4s' }}>Sarah, </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word4}`} style={{ animationDelay: '0.6s' }}>let&apos;s </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word5}`} style={{ animationDelay: '0.8s' }}>help </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word6}`} style={{ animationDelay: '1.0s' }}>you </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word7}`} style={{ animationDelay: '1.2s' }}>get </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word8}`} style={{ animationDelay: '1.4s' }}>better </span>
+                  <span className={`${styles.speechTextSecondary} ${styles.word9}`} style={{ animationDelay: '1.6s' }}>sleep.</span>
                 </p>
               </div>
             </div>

@@ -414,34 +414,33 @@
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.48px;
-  color: var(--sds-color-text-default-default, #363534);
+  color: #1A1A1A;
   margin: 0;
   flex: 1;
 }
 
 .speechTextSecondary {
-  color: #757575;
   font-weight: 400;
 }
 
-/* Reading animation - words get bolded as if being read/spoken */
-@keyframes wordHighlight {
+/* Reading animation - words fade up and in as if being read/spoken */
+@keyframes wordDarken {
   0% {
-    font-weight: inherit;
-  }
-  20%, 80% {
-    font-weight: 700;
+    opacity: 0;
+    transform: translateY(3px);
   }
   100% {
-    font-weight: inherit;
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Apply animation to each word */
+/* Apply animation to all words with staggered delays */
 .word1, .word2, .word3, .word4, .word5, .word6, .word7, .word8, .word9 {
-  display: inline;
-  animation: wordHighlight 0.6s ease-in-out;
-  animation-fill-mode: backwards;
+  display: inline-block;
+  opacity: 0;
+  animation: wordDarken 0.4s ease-in-out forwards;
+  white-space: pre;
 }
 
 /* Question view responsive */
