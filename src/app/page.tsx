@@ -104,7 +104,7 @@ export default function Home() {
           {/* HeyGen Avatar Wrapper */}
           <div className={styles.heygenWrapper}>
             <img
-              src="/images/avatar-2x.png"
+              src="/images/hey-gen-placeholder.png"
               alt="Sarah, your BetterSleep AI Coach"
               className={styles.heygenAvatar}
             />
