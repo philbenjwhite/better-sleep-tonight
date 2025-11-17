@@ -108,13 +108,13 @@ export default function Home() {
               alt="Sarah, your BetterSleep AI Coach"
               className={styles.heygenAvatar}
             />
-          </div>
 
-          {/* Speech Bubble */}
-          <div className={styles.speechBubble}>
-            <p className={styles.speechText}>
-              Hey I&apos;m Sarah, <span className={styles.speechTextSecondary}>let&apos;s help you get better sleep.</span>
-            </p>
+            {/* Speech Bubble */}
+            <div className={styles.speechBubble}>
+              <p className={styles.speechText}>
+                Hey I&apos;m Sarah, <span className={styles.speechTextSecondary}>let&apos;s help you get better sleep.</span>
+              </p>
+            </div>
           </div>
         </div>
       )}

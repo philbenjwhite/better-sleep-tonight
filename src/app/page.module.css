@@ -357,21 +357,20 @@
   position: relative;
   z-index: 2;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  padding-left: 48px;
-  padding-right: 160px;
-  padding-top: 96px;
-  padding-bottom: 96px;
+  padding: 48px;
   box-sizing: border-box;
 }
 
 .heygenWrapper {
-  position: absolute;
-  left: 474px;
-  top: 187px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .heygenAvatar {
@@ -383,8 +382,8 @@
 
 .speechBubble {
   position: absolute;
-  left: 815px;
-  top: 199px;
+  top: 12px;
+  right: -460px;
   width: 437px;
   background-color: var(--sds-color-background-default-default, #ffffff);
   padding: 16px;
@@ -414,17 +413,10 @@
 /* Question view responsive */
 @media (max-width: 1200px) {
   .questionWrapper {
-    padding-left: 24px;
-    padding-right: 24px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    padding: 24px;
   }
 
   .heygenWrapper {
-    position: static;
-    width: 300px;
-    height: auto;
     margin-bottom: 32px;
   }
 
@@ -432,6 +424,7 @@
     position: static;
     width: 90%;
     max-width: 500px;
+    margin-top: 16px;
   }
 
   .speechText {
