@@ -99,11 +99,9 @@ export default function Home() {
         <div className={`${styles.questionWrapper} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
           {/* HeyGen Avatar Wrapper */}
           <div className={styles.heygenWrapper}>
-            <Image
+            <img
               src="/images/avatar-2x.png"
               alt="Sarah, your BetterSleep AI Coach"
-              width={454}
-              height={1396}
               className={styles.heygenAvatar}
             />
           </div>
