@@ -62,7 +62,7 @@ export default function Home() {
               Find Your Perfect Mattress
             </h1>
             <p className={styles.heading}>
-              Meet Anna, your BetterSleep™ AI Coach. She'll guide you through 3 quick questions to recommend the ideal mattress for your sleep style.
+              Meet Anna, your BetterSleep™ AI Coach. She&apos;ll guide you through 3 quick questions to recommend the ideal mattress for your sleep style.
             </p>
           </div>
 
@@ -72,7 +72,7 @@ export default function Home() {
               For best experience please have your audio turned on
             </p>
             <Button variant="primary" size="large">
-              Let's Begin
+              Let&apos;s Begin
             </Button>
           </div>
         </div>
