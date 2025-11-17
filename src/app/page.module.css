@@ -324,3 +324,118 @@
     font-size: 16px;
   }
 }
+
+/* Fade transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+/* Question View Styles */
+.questionWrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  padding-left: 48px;
+  padding-right: 160px;
+  padding-top: 96px;
+  padding-bottom: 96px;
+  box-sizing: border-box;
+}
+
+.heygenWrapper {
+  position: absolute;
+  left: 474px;
+  top: 187px;
+  width: 454px;
+  height: 1396px;
+}
+
+.heygenAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.speechBubble {
+  position: absolute;
+  left: 815px;
+  top: 199px;
+  width: 437px;
+  background-color: var(--sds-color-background-default-default, #ffffff);
+  padding: 16px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.speechText {
+  font-family: var(--sds-typography-heading-font-family, 'Open Sans', sans-serif);
+  font-size: var(--sds-typography-heading-size-base, 24px);
+  font-weight: var(--sds-typography-heading-font-weight, 600);
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+  color: var(--sds-color-text-default-default, #363534);
+  margin: 0;
+  flex: 1;
+}
+
+.speechTextSecondary {
+  color: #757575;
+}
+
+/* Question view responsive */
+@media (max-width: 1200px) {
+  .questionWrapper {
+    padding-left: 24px;
+    padding-right: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .heygenWrapper {
+    position: static;
+    width: 300px;
+    height: auto;
+    margin-bottom: 32px;
+  }
+
+  .speechBubble {
+    position: static;
+    width: 90%;
+    max-width: 500px;
+  }
+
+  .speechText {
+    font-size: 20px;
+  }
+}
