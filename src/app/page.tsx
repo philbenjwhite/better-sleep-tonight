@@ -109,6 +109,9 @@ export default function Home() {
               className={styles.heygenAvatar}
             />
 
+            {/* Gradient Overlay at Bottom */}
+            <div className={styles.avatarGradientOverlay} />
+
             {/* Speech Bubble */}
             <div className={styles.speechBubble}>
               <p className={styles.speechText}>
