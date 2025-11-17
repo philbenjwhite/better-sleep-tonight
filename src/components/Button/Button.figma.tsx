@@ -7,7 +7,7 @@ import { Button } from './Button';
  */
 figma.connect(
   Button,
-  'FIGMA_NODE_URL', // Replace with actual Figma node URL
+  '<FIGMA_BUTTONS_BUTTON>',
   {
     props: {
       variant: figma.enum('Variant', {
@@ -21,7 +21,6 @@ figma.connect(
         Large: 'large',
       }),
       children: figma.string('Label'),
-      disabled: figma.boolean('Disabled'),
     },
     example: (props) => <Button {...props} />,
   }

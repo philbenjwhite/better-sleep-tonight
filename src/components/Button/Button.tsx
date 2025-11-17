@@ -1,20 +1,18 @@
 import classNames from 'classnames';
 import styles from './Button.module.css';
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'tertiary';
   size?: 'small' | 'medium' | 'large';
   children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   children,
-  onClick,
   disabled = false,
+  ...props
 }) => {
   return (
     <button
@@ -26,8 +24,8 @@ export const Button: React.FC<ButtonProps> = ({
           [styles.disabled]: disabled,
         }
       )}
-      onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {children}
     </button>

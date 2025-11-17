@@ -1,10 +1,11 @@
 .button {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--sds-size-radius-200, 8px);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: var(--sds-typography-body-font-weight-regular, 600);
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
   transition: all 0.2s ease;
-  font-family: inherit;
+  overflow: clip;
 }
 
 .button:hover:not(.disabled) {
@@ -18,48 +19,50 @@
 
 /* Variants */
 .primary {
-  background-color: #0070f3;
-  color: white;
+  background-color: var(--sds-color-background-brand-default, #770000);
+  color: var(--sds-color-text-brand-on-brand, #ffffff);
 }
 
 .primary:hover:not(.disabled) {
-  background-color: #0051cc;
+  background-color: #5a0000;
 }
 
 .secondary {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--sds-color-background-default-default, #ffffff);
+  color: var(--sds-color-text-default-default, #363534);
+  border: var(--sds-size-stroke-border, 1px) solid var(--sds-color-border-default-default, #d9d9d9);
 }
 
 .secondary:hover:not(.disabled) {
-  background-color: #e5e7eb;
+  background-color: var(--sds-color-slate-200, #e3e3e3);
 }
 
 .tertiary {
   background-color: transparent;
-  color: #0070f3;
-  border: 2px solid #0070f3;
+  color: var(--sds-color-text-default-default, #363534);
+  border: var(--sds-size-stroke-border, 1px) solid var(--sds-color-border-brand-default, #770000);
 }
 
 .tertiary:hover:not(.disabled) {
-  background-color: #0070f3;
-  color: white;
+  background-color: var(--sds-color-background-brand-default, #770000);
+  color: var(--sds-color-text-brand-on-brand, #ffffff);
 }
 
 /* Sizes */
 .small {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: var(--sds-size-space-200, 8px) var(--sds-size-space-400, 16px);
+  font-size: var(--sds-typography-body-size-small, 14px);
 }
 
 .medium {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  font-size: var(--sds-typography-body-size-medium, 16px);
 }
 
 .large {
-  padding: 16px 32px;
-  font-size: 18px;
+  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
 }
 
 /* States */

@@ -1,7 +1,9 @@
 :root {
   /* Colors - Text */
-  --sds-color-text-default-default: #1e1e1e;
+  --sds-color-text-default-default: #363534;
   --sds-color-text-default-secondary: #757575;
+  --text-default-alternative: #ffffff;
+  --background-default-alternative: #363534;
 
   /* Colors - Background */
   --sds-color-background-default-default: #ffffff;
@@ -13,35 +15,44 @@
   --sds-color-slate-200: #e3e3e3;
 
   /* Colors - Brand */
-  --sds-color-background-brand-default: #2c2c2c;
-  --sds-color-border-brand-default: #2c2c2c;
-  --sds-color-text-brand-on-brand: #f5f5f5;
+  --sds-color-background-brand-default: #770000;
+  --sds-color-border-brand-default: #770000;
+  --sds-color-text-brand-on-brand: #ffffff;
 
-  /* Typography - Heading */
-  --sds-typography-heading-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --sds-typography-heading-font-weight: 600;
+  /* Typography - Title Page (from Figma) */
+  --sds-typography-title-page-font-family: 'Open Sans', sans-serif;
+  --sds-typography-title-page-font-weight: 700;
+  --sds-typography-title-page-size-base: 32px;
+
+  /* Typography - Heading (from Figma) */
+  --sds-typography-heading-font-family: 'Open Sans', sans-serif;
+  --sds-typography-heading-font-weight: 400;
   --sds-typography-heading-size-base: 24px;
 
   /* Typography - Subheading */
-  --sds-typography-subheading-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sds-typography-subheading-font-family: 'Open Sans', sans-serif;
   --sds-typography-subheading-font-weight: 400;
   --sds-typography-subheading-size-medium: 20px;
 
-  /* Typography - Body */
-  --sds-typography-body-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --sds-typography-body-font-weight-regular: 400;
+  /* Typography - Body (from Figma) */
+  --sds-typography-body-font-family: 'Open Sans', sans-serif;
+  --sds-typography-body-font-weight-regular: 600;
+  --sds-typography-body-font-weight-strong: 600;
   --sds-typography-body-size-medium: 16px;
+  --sds-typography-body-size-small: 14px;
 
-  /* Spacing */
+  /* Spacing (from Figma) */
   --sds-size-space-200: 8px;
   --sds-size-space-300: 12px;
   --sds-size-space-400: 16px;
   --sds-size-space-600: 24px;
   --sds-size-space-1200: 48px;
   --sds-size-space-1600: 64px;
+  --sds-size-space-2400: 96px;
 
-  /* Border Radius */
+  /* Border Radius (from Figma) */
   --sds-size-radius-200: 8px;
+  --sds-typography-scale-06: 32px;
 
   /* Stroke */
   --sds-size-stroke-border: 1px;
