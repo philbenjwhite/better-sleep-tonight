@@ -47,7 +47,7 @@ export default function Home() {
           {/* Avatar */}
           <div className={styles.avatarContainer}>
             <Image
-              src="/images/avatar@2x.png"
+              src="/images/avatar@2X.png"
               alt="Anna, your BetterSleep AI Coach"
               width={220}
               height={220}
