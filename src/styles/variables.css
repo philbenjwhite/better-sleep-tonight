@@ -20,23 +20,23 @@
   --sds-color-text-brand-on-brand: #ffffff;
 
   /* Typography - Title Page (from Figma) */
-  --sds-typography-title-page-font-family: 'Open Sans', sans-serif;
+  --sds-typography-title-page-font-family: var(--font-open-sans, 'Open Sans', sans-serif);
   --sds-typography-title-page-font-weight: 700;
   --sds-typography-title-page-size-base: 32px;
 
   /* Typography - Heading (from Figma) */
-  --sds-typography-heading-font-family: 'Open Sans', sans-serif;
+  --sds-typography-heading-font-family: var(--font-open-sans, 'Open Sans', sans-serif);
   --sds-typography-heading-font-weight: 400;
   --sds-typography-heading-size-base: 24px;
 
   /* Typography - Subheading */
-  --sds-typography-subheading-font-family: 'Open Sans', sans-serif;
+  --sds-typography-subheading-font-family: var(--font-open-sans, 'Open Sans', sans-serif);
   --sds-typography-subheading-font-weight: 400;
   --sds-typography-subheading-size-medium: 20px;
 
   /* Typography - Body (from Figma) */
-  --sds-typography-body-font-family: 'Open Sans', sans-serif;
-  --sds-typography-body-font-weight-regular: 600;
+  --sds-typography-body-font-family: var(--font-open-sans, 'Open Sans', sans-serif);
+  --sds-typography-body-font-weight-regular: 400;
   --sds-typography-body-font-weight-strong: 600;
   --sds-typography-body-size-medium: 16px;
   --sds-typography-body-size-small: 14px;
