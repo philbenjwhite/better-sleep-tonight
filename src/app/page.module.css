@@ -378,6 +378,7 @@
   display: block;
   width: auto;
   height: auto;
+  max-height: 80vh;
 }
 
 .speechBubble {
