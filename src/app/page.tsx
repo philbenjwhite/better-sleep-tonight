@@ -100,26 +100,28 @@ export default function Home() {
 
       {/* Question View */}
       {currentView === 'question' && (
-        <div className={`${styles.questionWrapper} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
-          {/* HeyGen Avatar Wrapper */}
-          <div className={styles.heygenWrapper}>
-            <img
-              src="/images/hey-gen-placeholder.png"
-              alt="Sarah, your BetterSleep AI Coach"
-              className={styles.heygenAvatar}
-            />
+        <>
+          {/* Full-width Gradient Overlay at Bottom */}
+          <div className={styles.avatarGradientOverlay} />
 
-            {/* Gradient Overlay at Bottom */}
-            <div className={styles.avatarGradientOverlay} />
+          <div className={`${styles.questionWrapper} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
+            {/* HeyGen Avatar Wrapper */}
+            <div className={styles.heygenWrapper}>
+              <img
+                src="/images/hey-gen-placeholder.png"
+                alt="Sarah, your BetterSleep AI Coach"
+                className={styles.heygenAvatar}
+              />
 
-            {/* Speech Bubble */}
-            <div className={styles.speechBubble}>
-              <p className={styles.speechText}>
-                Hey I&apos;m Sarah, <span className={styles.speechTextSecondary}>let&apos;s help you get better sleep.</span>
-              </p>
+              {/* Speech Bubble */}
+              <div className={styles.speechBubble}>
+                <p className={styles.speechText}>
+                  Hey I&apos;m Sarah, <span className={styles.speechTextSecondary}>let&apos;s help you get better sleep.</span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Footer */}
