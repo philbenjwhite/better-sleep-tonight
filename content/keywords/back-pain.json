@@ -1,0 +1,7 @@
+{
+  "slug": "back-pain",
+  "displayName": "Back Pain",
+  "searchTerms": ["back pain", "backache", "lower back", "spine pain", "back ache"],
+  "category": "pain",
+  "isActive": true
+}

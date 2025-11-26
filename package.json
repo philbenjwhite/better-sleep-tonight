@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:tina": "tinacms dev -c \"next dev\"",
     "build": "next build",
+    "build:tina": "tinacms build && next build",
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
@@ -14,11 +16,13 @@
   },
   "dependencies": {
     "@heygen/streaming-avatar": "^1.0.0",
+    "@tinacms/cli": "^1.12.5",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tinacms": "^2.10.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",

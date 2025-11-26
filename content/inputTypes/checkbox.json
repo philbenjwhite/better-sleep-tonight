@@ -1,0 +1,7 @@
+{
+  "slug": "checkbox",
+  "displayName": "Checkboxes",
+  "description": "Multiple selection allowed",
+  "allowsMultiple": true,
+  "hasOptions": true
+}

@@ -1,0 +1,229 @@
+{
+  "flowId": "back-pain-flow",
+  "displayName": "Back Pain Journey",
+  "keyword": "content/keywords/back-pain.json",
+  "description": "Conversation flow for users experiencing back pain, guiding them through understanding their discomfort and finding sleep solutions.",
+  "isActive": true,
+  "globalVariables": {
+    "avatarName": "Ashley",
+    "brandName": "Better Sleep Shop",
+    "supportEmail": "support@bettersleepshop.com"
+  },
+  "steps": [
+    {
+      "stepId": "bp-step-1",
+      "internalName": "Intro Screen",
+      "order": 1,
+      "stepType": "header",
+      "headerContent": {
+        "headline": "It's Time That You Sleep Better",
+        "subheadline": "Hi, I'm {avatarName}. I help people find relief from {keyword} through better sleep solutions.",
+        "avatarIntroScript": "Welcome! I see you're dealing with {keyword}. You're definitely not alone, and I'm here to help you find the right solution. Let me ask you a few quick questions to understand what you're experiencing.",
+        "primaryButtonText": "Let's Find You Better Sleep",
+        "primaryButtonAction": "next"
+      }
+    },
+    {
+      "stepId": "bp-step-2",
+      "internalName": "Discomfort Type",
+      "order": 2,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "What kind of discomfort do you notice most when you wake up?",
+        "inputType": "radio",
+        "helperText": "Select the option that best describes your experience",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp2-opt1",
+            "label": "Tightness",
+            "value": "tightness",
+            "order": 1,
+            "avatarResponse": "Thanks for sharing that. {thisAnswer} is something many people feel when their body hasn't fully relaxed overnight.",
+            "avatarEmotion": "empathetic",
+            "tags": ["common", "physical"]
+          },
+          {
+            "optionId": "bp2-opt2",
+            "label": "Sharp pain",
+            "value": "sharp-pain",
+            "order": 2,
+            "avatarResponse": "Sharp sensations can feel alarming. A lot of people are surprised when certain sleep habits make this worse.",
+            "avatarEmotion": "concerned",
+            "tags": ["acute", "physical"]
+          },
+          {
+            "optionId": "bp2-opt3",
+            "label": "Dull ache",
+            "value": "dull-ache",
+            "order": 3,
+            "avatarResponse": "I hear that often. A dull ache can sometimes be linked to how your body settles during sleep.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic", "physical"]
+          },
+          {
+            "optionId": "bp2-opt4",
+            "label": "Stiffness",
+            "value": "stiffness",
+            "order": 4,
+            "avatarResponse": "Stiffness is one of the most common morning complaints. You're definitely not alone.",
+            "avatarEmotion": "encouraging",
+            "tags": ["common", "physical"]
+          },
+          {
+            "optionId": "bp2-opt5",
+            "label": "It changes day to day",
+            "value": "varies",
+            "order": 5,
+            "avatarResponse": "That variation is interesting. It tells me your body might be reacting to different pressures or positions.",
+            "avatarEmotion": "curious",
+            "tags": ["variable"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-3",
+      "internalName": "Time of Day",
+      "order": 3,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "When do you feel your {previousAnswerLower} the most during a typical day?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp3-opt1",
+            "label": "First thing in the morning",
+            "value": "morning",
+            "order": 1,
+            "avatarResponse": "Morning discomfort is something I pay extra attention to. It often points to nighttime patterns.",
+            "avatarEmotion": "curious",
+            "tags": ["morning"]
+          },
+          {
+            "optionId": "bp3-opt2",
+            "label": "Midday",
+            "value": "midday",
+            "order": 2,
+            "avatarResponse": "Midday discomfort can come from a mix of sleep quality and daily habits. Good to know.",
+            "avatarEmotion": "neutral",
+            "tags": ["midday"]
+          },
+          {
+            "optionId": "bp3-opt3",
+            "label": "Evening",
+            "value": "evening",
+            "order": 3,
+            "avatarResponse": "Evening discomfort often builds up throughout the day. Your body might be asking for better recovery time.",
+            "avatarEmotion": "empathetic",
+            "tags": ["evening"]
+          },
+          {
+            "optionId": "bp3-opt4",
+            "label": "Throughout the day",
+            "value": "all-day",
+            "order": 4,
+            "avatarResponse": "Constant discomfort is tough to deal with. The good news is that better sleep can help your body reset.",
+            "avatarEmotion": "encouraging",
+            "tags": ["chronic"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-4",
+      "internalName": "Duration",
+      "order": 4,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "How long have you been experiencing this?",
+        "inputType": "dropdown",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp4-opt1",
+            "label": "Less than a week",
+            "value": "less-than-week",
+            "order": 1,
+            "avatarResponse": "Since this is recent, there's a great chance we can help prevent it from becoming a bigger issue.",
+            "avatarEmotion": "encouraging",
+            "tags": ["acute"]
+          },
+          {
+            "optionId": "bp4-opt2",
+            "label": "1-4 weeks",
+            "value": "1-4-weeks",
+            "order": 2,
+            "avatarResponse": "A few weeks is enough time for your body to develop a pattern. Let's work on breaking that cycle.",
+            "avatarEmotion": "encouraging",
+            "tags": ["subacute"]
+          },
+          {
+            "optionId": "bp4-opt3",
+            "label": "1-3 months",
+            "value": "1-3-months",
+            "order": 3,
+            "avatarResponse": "When something lasts a few months, it usually means your body needs consistent support to heal.",
+            "avatarEmotion": "empathetic",
+            "tags": ["subacute"]
+          },
+          {
+            "optionId": "bp4-opt4",
+            "label": "More than 3 months",
+            "value": "more-than-3-months",
+            "order": 4,
+            "avatarResponse": "You've been dealing with this for a while. Many of our customers with chronic issues have found real relief with the right sleep setup.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-5",
+      "internalName": "Recovery Insight",
+      "order": 5,
+      "stepType": "avatar-monologue",
+      "avatarContent": {
+        "scriptText": "Your body does most of its recovery at night. Based on what you've shared about experiencing {step[1].answerLower} especially in the {step[2].answerLower}, I have some ideas that might really help you.",
+        "emotion": "empathetic",
+        "autoAdvance": true,
+        "autoAdvanceDelayMs": 5000
+      }
+    },
+    {
+      "stepId": "bp-step-6",
+      "internalName": "Email Capture",
+      "order": 6,
+      "stepType": "email-capture",
+      "emailCaptureContent": {
+        "promptText": "I'd love to send you personalized recommendations based on your responses. What's the best email to reach you?",
+        "placeholderText": "your@email.com",
+        "submitButtonText": "Get My Recommendations",
+        "avatarResponseOnSubmit": "Perfect! I'll send your personalized sleep recommendations to {userEmail}. Now let me show you some products that could help.",
+        "skipOptionText": "Skip for now",
+        "avatarResponseOnSkip": "No problem! Let me show you some products that could help with your {keyword}."
+      }
+    },
+    {
+      "stepId": "bp-step-7",
+      "internalName": "Final CTA",
+      "order": 7,
+      "stepType": "cta",
+      "ctaContent": {
+        "headline": "Your Personalized Sleep Solution",
+        "bodyText": "Based on your responses about {keyword}, we've identified products that could help you wake up feeling better.",
+        "primaryButtonText": "View My Recommendations",
+        "primaryButtonUrl": "/recommendations?flow=back-pain",
+        "secondaryButtonText": "Browse All Products",
+        "secondaryButtonUrl": "/products"
+      }
+    }
+  ],
+  "metadata": {
+    "createdAt": "2025-01-25T00:00:00Z",
+    "author": "System",
+    "version": "1.0"
+  }
+}

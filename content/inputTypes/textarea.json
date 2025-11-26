@@ -1,0 +1,7 @@
+{
+  "slug": "textarea",
+  "displayName": "Long Text",
+  "description": "Multi-line text input",
+  "allowsMultiple": false,
+  "hasOptions": false
+}

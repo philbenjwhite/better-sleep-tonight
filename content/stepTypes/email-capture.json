@@ -1,0 +1,8 @@
+{
+  "slug": "email-capture",
+  "displayName": "Email Capture",
+  "description": "Email collection field with optional skip",
+  "icon": "mail",
+  "requiresUserInput": true,
+  "hasAvatarResponse": true
+}

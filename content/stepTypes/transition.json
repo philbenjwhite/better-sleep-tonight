@@ -1,0 +1,8 @@
+{
+  "slug": "transition",
+  "displayName": "Transition",
+  "description": "Brief pause/transition moment between sections",
+  "icon": "arrow-right",
+  "requiresUserInput": false,
+  "hasAvatarResponse": true
+}

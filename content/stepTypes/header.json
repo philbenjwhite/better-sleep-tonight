@@ -1,0 +1,8 @@
+{
+  "slug": "header",
+  "displayName": "Header/Intro",
+  "description": "Opening screen with headline and avatar intro",
+  "icon": "home",
+  "requiresUserInput": false,
+  "hasAvatarResponse": true
+}

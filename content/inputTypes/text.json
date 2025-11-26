@@ -1,0 +1,7 @@
+{
+  "slug": "text",
+  "displayName": "Text Input",
+  "description": "Short free-form text input",
+  "allowsMultiple": false,
+  "hasOptions": false
+}

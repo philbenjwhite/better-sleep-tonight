@@ -1,0 +1,7 @@
+{
+  "slug": "button-group",
+  "displayName": "Button Group",
+  "description": "Horizontal button layout for selection",
+  "allowsMultiple": false,
+  "hasOptions": true
+}

@@ -1,0 +1,8 @@
+{
+  "slug": "question",
+  "displayName": "Question",
+  "description": "Question with multiple answer options",
+  "icon": "help-circle",
+  "requiresUserInput": true,
+  "hasAvatarResponse": true
+}

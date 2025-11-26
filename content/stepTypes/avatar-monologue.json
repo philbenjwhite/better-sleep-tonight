@@ -1,0 +1,8 @@
+{
+  "slug": "avatar-monologue",
+  "displayName": "Avatar Monologue",
+  "description": "Avatar speaks without user input",
+  "icon": "message-circle",
+  "requiresUserInput": false,
+  "hasAvatarResponse": true
+}

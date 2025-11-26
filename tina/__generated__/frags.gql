@@ -1,0 +1,143 @@
+fragment KeywordsParts on Keywords {
+  __typename
+  slug
+  displayName
+  searchTerms
+  category
+  isActive
+}
+
+fragment StepTypesParts on StepTypes {
+  __typename
+  slug
+  displayName
+  description
+  icon
+  requiresUserInput
+  hasAvatarResponse
+}
+
+fragment InputTypesParts on InputTypes {
+  __typename
+  slug
+  displayName
+  description
+  allowsMultiple
+  hasOptions
+  validationPattern
+}
+
+fragment FlowsParts on Flows {
+  __typename
+  flowId
+  displayName
+  keyword {
+    ... on Keywords {
+      __typename
+      slug
+      displayName
+      searchTerms
+      category
+      isActive
+    }
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+  }
+  description
+  isActive
+  globalVariables {
+    __typename
+    avatarName
+    brandName
+    supportEmail
+    customVar1
+    customVar2
+  }
+  steps {
+    __typename
+    stepId
+    internalName
+    order
+    stepType
+    headerContent {
+      __typename
+      headline
+      subheadline
+      avatarIntroScript
+      primaryButtonText
+      primaryButtonAction
+    }
+    questionContent {
+      __typename
+      questionText
+      inputType
+      helperText
+      isRequired
+      answerOptions {
+        __typename
+        optionId
+        label
+        value
+        order
+        avatarResponse
+        avatarEmotion
+        nextStepOverride
+        tags
+      }
+    }
+    avatarContent {
+      __typename
+      scriptText
+      emotion
+      gestureHint
+      pauseAfterMs
+      autoAdvance
+      autoAdvanceDelayMs
+    }
+    emailCaptureContent {
+      __typename
+      promptText
+      placeholderText
+      submitButtonText
+      avatarResponseOnSubmit
+      skipOptionText
+      avatarResponseOnSkip
+    }
+    ctaContent {
+      __typename
+      headline
+      bodyText
+      primaryButtonText
+      primaryButtonUrl
+      secondaryButtonText
+      secondaryButtonUrl
+    }
+    styling {
+      __typename
+      backgroundColor
+      customCssClass
+    }
+    analytics {
+      __typename
+      trackingEventName
+      customProperties
+    }
+  }
+  metadata {
+    __typename
+    createdAt
+    updatedAt
+    author
+    version
+  }
+}

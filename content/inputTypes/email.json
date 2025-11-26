@@ -1,0 +1,8 @@
+{
+  "slug": "email",
+  "displayName": "Email Field",
+  "description": "Validated email input",
+  "allowsMultiple": false,
+  "hasOptions": false,
+  "validationPattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+}

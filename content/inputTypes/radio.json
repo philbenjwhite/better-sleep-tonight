@@ -1,0 +1,7 @@
+{
+  "slug": "radio",
+  "displayName": "Radio Buttons",
+  "description": "Single selection, vertical list of options",
+  "allowsMultiple": false,
+  "hasOptions": true
+}

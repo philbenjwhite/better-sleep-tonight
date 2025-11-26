@@ -1,0 +1,8 @@
+{
+  "slug": "results",
+  "displayName": "Results Summary",
+  "description": "Summary of user responses and recommendations",
+  "icon": "clipboard",
+  "requiresUserInput": false,
+  "hasAvatarResponse": true
+}

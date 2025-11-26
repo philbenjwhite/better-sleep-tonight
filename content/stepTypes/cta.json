@@ -1,0 +1,8 @@
+{
+  "slug": "cta",
+  "displayName": "Call to Action",
+  "description": "Final action buttons and conversion point",
+  "icon": "external-link",
+  "requiresUserInput": true,
+  "hasAvatarResponse": false
+}
