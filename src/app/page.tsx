@@ -236,7 +236,7 @@ export default function Home() {
       {/* Footer */}
       <footer className={styles.footer}>
         <p className={styles.copyright}>
-          © 2025 BetterSleep Shop. All rights reserved.
+          © 2025 BetterSleep Tonight. All rights reserved.
         </p>
         <p className={styles.privacyPolicy}>
           Privacy Policy
