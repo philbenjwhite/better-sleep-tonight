@@ -1,0 +1,43 @@
+.questionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-800, 32px);
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--sds-size-space-600, 24px);
+  width: 100%;
+  border-radius: 4px;
+}
+
+.questionText {
+  font-family: var(--sds-typography-title-page-font-family, 'Open Sans', sans-serif);
+  font-weight: var(--sds-typography-title-page-font-weight, 700);
+  font-size: var(--sds-typography-title-page-size-base, 32px);
+  line-height: 1.2;
+  color: var(--sds-color-text-default-default, #363534);
+  letter-spacing: -0.64px;
+  margin: 0;
+  width: 100%;
+}
+
+.helperText {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-weight: var(--sds-typography-body-font-weight-regular, 400);
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  color: var(--sds-color-text-default-secondary, #757575);
+  margin: -16px 0 0 0;
+}
+
+.answersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-600, 24px);
+  width: 100%;
+}
+
+.answersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-400, 16px);
+  width: 100%;
+}

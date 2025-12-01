@@ -1,13 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/Button';
+import { QuestionBlock, CMSAnswerOption, CMSQuestionContent } from '@/components/QuestionBlock';
 import styles from './page.module.css';
+
+// Import flow data from CMS
+import backPainFlow from '../../content/flows/back-pain-flow.json';
+
+// Type for flow steps
+interface FlowStep {
+  stepId: string;
+  stepType: string;
+  questionContent?: CMSQuestionContent;
+}
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<'intro' | 'question'>('intro');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showQuestionBlock, setShowQuestionBlock] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(null);
+  const [avatarResponse, setAvatarResponse] = useState<string | null>(null);
+  const [isShowingResponse, setIsShowingResponse] = useState(false);
+
+  // Get the current question step from CMS (skip header, find first question)
+  const questionSteps = (backPainFlow.steps as FlowStep[]).filter(step => step.stepType === 'question');
+  const currentStep = questionSteps[currentStepIndex];
 
   const handleBegin = () => {
     setIsTransitioning(true);
@@ -15,6 +35,54 @@ export default function Home() {
       setCurrentView('question');
       setIsTransitioning(false);
     }, 500); // Match CSS transition duration
+  };
+
+  // Show question block after Sarah's speech animation completes
+  useEffect(() => {
+    if (currentView === 'question') {
+      // Wait for speech animation to complete (about 2 seconds for all words)
+      const timer = setTimeout(() => {
+        setShowQuestionBlock(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentView]);
+
+  const handleAnswerSelect = (option: CMSAnswerOption) => {
+    setSelectedAnswer(option);
+    console.log('Selected:', option);
+    console.log('Sarah says:', option.avatarResponse);
+
+    // Step 1: Show selection animation briefly
+    setTimeout(() => {
+      // Step 2: Hide question block and show avatar response
+      const response = option.avatarResponse || 'Great choice! Let me ask you another question.';
+      setShowQuestionBlock(false);
+      setAvatarResponse(response);
+      setIsShowingResponse(true);
+
+      // Calculate response duration based on word count (200ms per word + base time)
+      const wordCount = response.split(' ').length;
+      const responseDuration = Math.max(2500, wordCount * 200 + 1500);
+
+      // Step 3: After response finishes, show next question
+      setTimeout(() => {
+        setIsShowingResponse(false);
+        setAvatarResponse(null);
+        setSelectedAnswer(null);
+
+        if (currentStepIndex < questionSteps.length - 1) {
+          setCurrentStepIndex(prev => prev + 1);
+          // Small delay before showing next question
+          setTimeout(() => {
+            setShowQuestionBlock(true);
+          }, 300);
+        } else {
+          // End of flow - could navigate to results
+          console.log('Flow complete!');
+        }
+      }, responseDuration);
+    }, 800); // Brief pause after selection
   };
 
   return (
@@ -113,22 +181,55 @@ export default function Home() {
                 className={styles.heygenAvatar}
               />
 
-              {/* Speech Bubble */}
-              <div className={styles.speechBubble}>
-                <p className={styles.speechText}>
-                  <span className={styles.word1} style={{ animationDelay: '0s' }}>Hey </span>
-                  <span className={styles.word2} style={{ animationDelay: '0.2s' }}>I&apos;m </span>
-                  <span className={styles.word3} style={{ animationDelay: '0.4s' }}>Sarah, </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word4}`} style={{ animationDelay: '0.6s' }}>let&apos;s </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word5}`} style={{ animationDelay: '0.8s' }}>help </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word6}`} style={{ animationDelay: '1.0s' }}>you </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word7}`} style={{ animationDelay: '1.2s' }}>get </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word8}`} style={{ animationDelay: '1.4s' }}>better </span>
-                  <span className={`${styles.speechTextSecondary} ${styles.word9}`} style={{ animationDelay: '1.6s' }}>sleep.</span>
-                </p>
-              </div>
+              {/* Speech Bubble - intro message */}
+              {!showQuestionBlock && !isShowingResponse && !avatarResponse && (
+                <div className={styles.speechBubble}>
+                  <p className={styles.speechText}>
+                    <span className={styles.word1} style={{ animationDelay: '0s' }}>Hey </span>
+                    <span className={styles.word2} style={{ animationDelay: '0.2s' }}>I&apos;m </span>
+                    <span className={styles.word3} style={{ animationDelay: '0.4s' }}>Sarah, </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word4}`} style={{ animationDelay: '0.6s' }}>let&apos;s </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word5}`} style={{ animationDelay: '0.8s' }}>help </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word6}`} style={{ animationDelay: '1.0s' }}>you </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word7}`} style={{ animationDelay: '1.2s' }}>get </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word8}`} style={{ animationDelay: '1.4s' }}>better </span>
+                    <span className={`${styles.speechTextSecondary} ${styles.word9}`} style={{ animationDelay: '1.6s' }}>sleep.</span>
+                  </p>
+                </div>
+              )}
+
+              {/* Avatar Response Bubble - shows after answer selection */}
+              {isShowingResponse && avatarResponse && (
+                <div className={styles.responseBubble}>
+                  <p className={styles.responseText}>
+                    {avatarResponse.split(' ').map((word, index) => (
+                      <span
+                        key={index}
+                        className={styles.responseWord}
+                        style={{ animationDelay: `${index * 0.12}s` }}
+                      >
+                        {word}{' '}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Question Block - OUTSIDE heygenWrapper so blur works */}
+          {showQuestionBlock && currentStep?.questionContent && (
+            <div className={styles.questionBlockWrapper}>
+              <div className={styles.questionBlockBackdrop} />
+              <div className={styles.questionBlockInner}>
+                <QuestionBlock
+                  questionContent={currentStep.questionContent}
+                  onAnswerSelect={handleAnswerSelect}
+                  selectedValue={selectedAnswer?.value}
+                />
+              </div>
+            </div>
+          )}
         </>
       )}
 

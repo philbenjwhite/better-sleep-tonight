@@ -2,7 +2,7 @@
   "flowId": "back-pain-flow",
   "displayName": "Back Pain Journey",
   "keyword": "content/keywords/back-pain.json",
-  "description": "Conversation flow for users experiencing back pain, guiding them through understanding their discomfort and finding sleep solutions.",
+  "description": "A comprehensive, empathetic conversation flow for users experiencing back pain. Guides them through understanding their discomfort patterns, sleep habits, and lifestyle factors to recommend personalized sleep solutions.",
   "isActive": true,
   "globalVariables": {
     "avatarName": "Ashley",
@@ -12,218 +12,677 @@
   "steps": [
     {
       "stepId": "bp-step-1",
-      "internalName": "Intro Screen",
+      "internalName": "Welcome & Introduction",
       "order": 1,
       "stepType": "header",
       "headerContent": {
         "headline": "It's Time That You Sleep Better",
-        "subheadline": "Hi, I'm {avatarName}. I help people find relief from {keyword} through better sleep solutions.",
-        "avatarIntroScript": "Welcome! I see you're dealing with {keyword}. You're definitely not alone, and I'm here to help you find the right solution. Let me ask you a few quick questions to understand what you're experiencing.",
-        "primaryButtonText": "Let's Find You Better Sleep",
+        "subheadline": "Answer a few quick questions and I'll help you find the right solution for your back pain.",
+        "avatarIntroScript": "Hey there! I'm Ashley, and I'm so glad you're here. Back pain is something I hear about every single day, and I want you to know - you're not alone in this. Millions of people wake up feeling exactly what you're feeling. The good news? The right sleep setup can make a world of difference. I'm going to ask you a few questions to really understand what's going on, and then I'll point you toward some solutions that have helped people just like you. Sound good? Let's dive in!",
+        "primaryButtonText": "Let's Find Your Solution",
         "primaryButtonAction": "next"
       }
     },
     {
       "stepId": "bp-step-2",
-      "internalName": "Discomfort Type",
+      "internalName": "Pain Location",
       "order": 2,
       "stepType": "question",
       "questionContent": {
-        "questionText": "What kind of discomfort do you notice most when you wake up?",
+        "questionText": "First things first - where exactly do you feel your back pain the most?",
         "inputType": "radio",
-        "helperText": "Select the option that best describes your experience",
+        "helperText": "Select the area that bothers you most",
         "isRequired": true,
         "answerOptions": [
           {
             "optionId": "bp2-opt1",
-            "label": "Tightness",
-            "value": "tightness",
+            "label": "Lower back (lumbar area)",
+            "value": "lower-back",
             "order": 1,
-            "avatarResponse": "Thanks for sharing that. {thisAnswer} is something many people feel when their body hasn't fully relaxed overnight.",
+            "avatarResponse": "Ah, the lower back - that's the most common spot, and for good reason. Your lumbar spine carries so much of your body's weight, especially when you're lying down. The way your mattress supports this area is absolutely critical. Let me learn a bit more about what you're experiencing.",
             "avatarEmotion": "empathetic",
-            "tags": ["common", "physical"]
+            "tags": ["lumbar", "common", "weight-bearing"]
           },
           {
             "optionId": "bp2-opt2",
-            "label": "Sharp pain",
-            "value": "sharp-pain",
+            "label": "Middle back (thoracic area)",
+            "value": "middle-back",
             "order": 2,
-            "avatarResponse": "Sharp sensations can feel alarming. A lot of people are surprised when certain sleep habits make this worse.",
-            "avatarEmotion": "concerned",
-            "tags": ["acute", "physical"]
+            "avatarResponse": "Middle back pain is tricky because it's often connected to posture - both during the day AND while you sleep. A lot of people don't realize their sleep position is putting pressure on this area for 7 or 8 hours straight. Good news is, we can address that!",
+            "avatarEmotion": "curious",
+            "tags": ["thoracic", "posture-related"]
           },
           {
             "optionId": "bp2-opt3",
-            "label": "Dull ache",
-            "value": "dull-ache",
+            "label": "Upper back (between shoulder blades)",
+            "value": "upper-back",
             "order": 3,
-            "avatarResponse": "I hear that often. A dull ache can sometimes be linked to how your body settles during sleep.",
+            "avatarResponse": "That area between your shoulder blades can be so uncomfortable! It's often related to how your shoulders and neck are positioned while you sleep. Pillow choice and mattress firmness both play a huge role here. Let's figure out what's going on.",
             "avatarEmotion": "empathetic",
-            "tags": ["chronic", "physical"]
+            "tags": ["upper-back", "shoulder-related"]
           },
           {
             "optionId": "bp2-opt4",
-            "label": "Stiffness",
-            "value": "stiffness",
+            "label": "Multiple areas",
+            "value": "multiple-areas",
             "order": 4,
-            "avatarResponse": "Stiffness is one of the most common morning complaints. You're definitely not alone.",
-            "avatarEmotion": "encouraging",
-            "tags": ["common", "physical"]
+            "avatarResponse": "When the pain shows up in multiple places, that usually tells me your body isn't getting proper alignment while you sleep. It's like your spine is fighting against your sleep surface all night long. The right setup can change everything - trust me, I've seen it happen so many times.",
+            "avatarEmotion": "concerned",
+            "tags": ["widespread", "alignment-issue"]
           },
           {
             "optionId": "bp2-opt5",
-            "label": "It changes day to day",
-            "value": "varies",
+            "label": "It moves around",
+            "value": "moves-around",
             "order": 5,
-            "avatarResponse": "That variation is interesting. It tells me your body might be reacting to different pressures or positions.",
-            "avatarEmotion": "curious",
-            "tags": ["variable"]
+            "avatarResponse": "Pain that moves around is actually really common, and it's your body's way of compensating. When one area hurts, you shift position, and then somewhere else starts to hurt. It's like a chain reaction. We need to break that cycle by giving your whole spine the support it needs.",
+            "avatarEmotion": "understanding",
+            "tags": ["variable", "compensation"]
           }
         ]
       }
     },
     {
       "stepId": "bp-step-3",
-      "internalName": "Time of Day",
+      "internalName": "Discomfort Type",
       "order": 3,
       "stepType": "question",
       "questionContent": {
-        "questionText": "When do you feel your {previousAnswerLower} the most during a typical day?",
+        "questionText": "How would you describe the sensation? What does your {previousAnswerLower} pain actually feel like?",
         "inputType": "radio",
+        "helperText": "Choose the description that fits best",
         "isRequired": true,
         "answerOptions": [
           {
             "optionId": "bp3-opt1",
-            "label": "First thing in the morning",
-            "value": "morning",
+            "label": "Tight and tense",
+            "value": "tightness",
             "order": 1,
-            "avatarResponse": "Morning discomfort is something I pay extra attention to. It often points to nighttime patterns.",
-            "avatarEmotion": "curious",
-            "tags": ["morning"]
+            "avatarResponse": "That tight, tense feeling is usually your muscles not fully releasing overnight. When you sleep on a surface that doesn't contour to your body properly, your muscles stay engaged trying to hold you in position. No wonder you wake up feeling like you didn't rest at all!",
+            "avatarEmotion": "empathetic",
+            "tags": ["muscular", "tension"]
           },
           {
             "optionId": "bp3-opt2",
-            "label": "Midday",
-            "value": "midday",
+            "label": "Sharp or stabbing",
+            "value": "sharp-pain",
             "order": 2,
-            "avatarResponse": "Midday discomfort can come from a mix of sleep quality and daily habits. Good to know.",
-            "avatarEmotion": "neutral",
-            "tags": ["midday"]
+            "avatarResponse": "Sharp pain can definitely be alarming - I hear you. While I always recommend checking with a doctor for severe pain, I can tell you that many people with sharp back pain find relief when they switch to a sleep setup that keeps their spine in neutral alignment. It's amazing what proper support can do.",
+            "avatarEmotion": "concerned",
+            "tags": ["acute", "medical-consideration"]
           },
           {
             "optionId": "bp3-opt3",
-            "label": "Evening",
-            "value": "evening",
+            "label": "Dull and achy",
+            "value": "dull-ache",
             "order": 3,
-            "avatarResponse": "Evening discomfort often builds up throughout the day. Your body might be asking for better recovery time.",
+            "avatarResponse": "That deep, dull ache - I know exactly what you mean. It's the kind of pain that just sits there, right? This is often a sign that your body isn't getting pressure relief where it needs it most. When you lie on a too-firm or too-soft surface, certain areas bear too much weight, and that ache sets in.",
             "avatarEmotion": "empathetic",
-            "tags": ["evening"]
+            "tags": ["chronic", "pressure-related"]
           },
           {
             "optionId": "bp3-opt4",
-            "label": "Throughout the day",
-            "value": "all-day",
+            "label": "Stiff and hard to move",
+            "value": "stiffness",
             "order": 4,
-            "avatarResponse": "Constant discomfort is tough to deal with. The good news is that better sleep can help your body reset.",
+            "avatarResponse": "Morning stiffness is SO common - you're definitely not alone! It's like your back needs a few hours to warm up, right? This usually happens when your spine stays in a slightly unnatural position all night. The right mattress and pillow combo can help you wake up feeling limber instead of locked up.",
             "avatarEmotion": "encouraging",
-            "tags": ["chronic"]
+            "tags": ["stiffness", "mobility"]
+          },
+          {
+            "optionId": "bp3-opt5",
+            "label": "Burning or radiating",
+            "value": "burning",
+            "order": 5,
+            "avatarResponse": "Burning or radiating sensations can be concerning, and I appreciate you sharing that with me. This type of discomfort sometimes involves nerve compression. While our sleep solutions have helped many people with these symptoms, I'd also gently suggest chatting with a healthcare provider to rule out anything that needs medical attention.",
+            "avatarEmotion": "concerned",
+            "tags": ["nerve-related", "medical-consideration"]
+          },
+          {
+            "optionId": "bp3-opt6",
+            "label": "It varies day to day",
+            "value": "varies",
+            "order": 6,
+            "avatarResponse": "The fact that it changes tells me something interesting - your pain might be reactive to how you slept the night before, your stress levels, or even your activity during the day. The constant factor we CAN control is your sleep environment. Let's make sure that's working for you, not against you.",
+            "avatarEmotion": "curious",
+            "tags": ["variable", "reactive"]
           }
         ]
       }
     },
     {
       "stepId": "bp-step-4",
-      "internalName": "Duration",
+      "internalName": "Time of Day",
       "order": 4,
       "stepType": "question",
       "questionContent": {
-        "questionText": "How long have you been experiencing this?",
-        "inputType": "dropdown",
+        "questionText": "When is your back pain at its worst?",
+        "inputType": "radio",
         "isRequired": true,
         "answerOptions": [
           {
             "optionId": "bp4-opt1",
-            "label": "Less than a week",
-            "value": "less-than-week",
+            "label": "Immediately when I wake up",
+            "value": "immediately-morning",
             "order": 1,
-            "avatarResponse": "Since this is recent, there's a great chance we can help prevent it from becoming a bigger issue.",
-            "avatarEmotion": "encouraging",
-            "tags": ["acute"]
+            "avatarResponse": "This is a BIG clue! When pain is worst right when you wake up, that's your sleep setup talking. Your body just spent 7-8 hours in the same environment, and it's telling you something isn't right. This is actually good news because it means we can target the problem directly.",
+            "avatarEmotion": "excited",
+            "tags": ["morning", "sleep-related"]
           },
           {
             "optionId": "bp4-opt2",
-            "label": "1-4 weeks",
-            "value": "1-4-weeks",
+            "label": "Within the first hour of waking",
+            "value": "first-hour",
             "order": 2,
-            "avatarResponse": "A few weeks is enough time for your body to develop a pattern. Let's work on breaking that cycle.",
-            "avatarEmotion": "encouraging",
-            "tags": ["subacute"]
+            "avatarResponse": "So it kicks in pretty quickly after you get moving. This often happens when your spine is slightly compressed or misaligned overnight - you don't feel it right away, but as blood starts flowing and you start moving, it makes itself known. Classic sign of a sleep surface issue.",
+            "avatarEmotion": "curious",
+            "tags": ["morning", "delayed-onset"]
           },
           {
             "optionId": "bp4-opt3",
-            "label": "1-3 months",
-            "value": "1-3-months",
+            "label": "By midday",
+            "value": "midday",
             "order": 3,
-            "avatarResponse": "When something lasts a few months, it usually means your body needs consistent support to heal.",
-            "avatarEmotion": "empathetic",
-            "tags": ["subacute"]
+            "avatarResponse": "Midday pain can be a combination of factors - maybe your sleep wasn't restorative enough, or your body didn't fully recover from the previous day. Quality sleep is supposed to reset your body, and if that's not happening, the effects compound through the day.",
+            "avatarEmotion": "thoughtful",
+            "tags": ["midday", "cumulative"]
           },
           {
             "optionId": "bp4-opt4",
-            "label": "More than 3 months",
-            "value": "more-than-3-months",
+            "label": "In the evening",
+            "value": "evening",
             "order": 4,
-            "avatarResponse": "You've been dealing with this for a while. Many of our customers with chronic issues have found real relief with the right sleep setup.",
+            "avatarResponse": "Evening pain often means your body is carrying tension from the day and then... not releasing it at night. It's a cycle - you go to bed already hurting, sleep on a surface that doesn't help, wake up not fully recovered, and the whole thing starts again. Let's break that pattern.",
             "avatarEmotion": "empathetic",
-            "tags": ["chronic"]
+            "tags": ["evening", "accumulated"]
+          },
+          {
+            "optionId": "bp4-opt5",
+            "label": "It's pretty constant throughout the day",
+            "value": "constant",
+            "order": 5,
+            "avatarResponse": "Constant pain is exhausting - I really feel for you. When there's no relief throughout the day, it often means your body never gets that full reset it needs. Sleep should be your recovery time, and if you're waking up already in pain, you're starting each day in the hole. We need to fix that.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic", "persistent"]
+          },
+          {
+            "optionId": "bp4-opt6",
+            "label": "During the night (it wakes me up)",
+            "value": "during-night",
+            "order": 6,
+            "avatarResponse": "Oh, waking up from the pain is rough. That tells me there's likely a pressure point issue - somewhere your body is pressing against your mattress in a way that becomes unbearable after a few hours. This is something the right mattress can absolutely address. Nobody should have their sleep interrupted by pain.",
+            "avatarEmotion": "concerned",
+            "tags": ["night-waking", "pressure-points"]
           }
         ]
       }
     },
     {
       "stepId": "bp-step-5",
-      "internalName": "Recovery Insight",
+      "internalName": "Duration",
       "order": 5,
-      "stepType": "avatar-monologue",
-      "avatarContent": {
-        "scriptText": "Your body does most of its recovery at night. Based on what you've shared about experiencing {step[1].answerLower} especially in the {step[2].answerLower}, I have some ideas that might really help you.",
-        "emotion": "empathetic",
-        "autoAdvance": true,
-        "autoAdvanceDelayMs": 5000
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "How long have you been dealing with this back pain?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp5-opt1",
+            "label": "Just started (less than 2 weeks)",
+            "value": "just-started",
+            "order": 1,
+            "avatarResponse": "Since this is new, now is actually the PERFECT time to address it! Your body hasn't developed compensating habits yet, and making changes now can prevent this from becoming a long-term issue. Early intervention is so important with back pain.",
+            "avatarEmotion": "encouraging",
+            "tags": ["acute", "early-intervention"]
+          },
+          {
+            "optionId": "bp5-opt2",
+            "label": "A few weeks to a month",
+            "value": "few-weeks",
+            "order": 2,
+            "avatarResponse": "A few weeks is long enough for your body to start adapting to the pain - and not in a good way. You might already be changing how you sleep or move without even realizing it. The good news is, we can still course-correct pretty quickly at this stage.",
+            "avatarEmotion": "encouraging",
+            "tags": ["subacute", "adaptation-starting"]
+          },
+          {
+            "optionId": "bp5-opt3",
+            "label": "1-3 months",
+            "value": "one-to-three-months",
+            "order": 3,
+            "avatarResponse": "A few months of back pain means you've probably tried a few things that didn't work. It's frustrating, I know. But here's what I've learned talking to thousands of people - most never considered that their sleep environment might be the root cause. Let's explore that possibility.",
+            "avatarEmotion": "empathetic",
+            "tags": ["transitioning-chronic", "tried-other-things"]
+          },
+          {
+            "optionId": "bp5-opt4",
+            "label": "3-6 months",
+            "value": "three-to-six-months",
+            "order": 4,
+            "avatarResponse": "Half a year of dealing with this... that takes a toll, not just physically but mentally too. At this point, your body has definitely adapted, and breaking those patterns takes a bit more intention. But I've seen people with much longer histories find relief. It's absolutely possible.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic", "significant-duration"]
+          },
+          {
+            "optionId": "bp5-opt5",
+            "label": "6 months to a year",
+            "value": "six-months-to-year",
+            "order": 5,
+            "avatarResponse": "Living with back pain for this long becomes part of your daily reality, doesn't it? You probably can't even remember what it felt like to wake up without it. I want you to know that even after this long, changing your sleep environment can make a real, noticeable difference. I've heard from so many people who wish they'd done it sooner.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic", "long-term"]
+          },
+          {
+            "optionId": "bp5-opt6",
+            "label": "More than a year",
+            "value": "more-than-year",
+            "order": 6,
+            "avatarResponse": "You've been living with this for a long time, and I'm genuinely sorry. Chronic pain changes how you experience life. I won't promise miracles, but I will tell you this - I regularly hear from people who'd had pain for YEARS and finally found relief when they addressed their sleep setup. It's never too late to try.",
+            "avatarEmotion": "empathetic",
+            "tags": ["chronic", "long-standing"]
+          }
+        ]
       }
     },
     {
       "stepId": "bp-step-6",
-      "internalName": "Email Capture",
+      "internalName": "Transition - Understanding Your Sleep",
       "order": 6,
-      "stepType": "email-capture",
-      "emailCaptureContent": {
-        "promptText": "I'd love to send you personalized recommendations based on your responses. What's the best email to reach you?",
-        "placeholderText": "your@email.com",
-        "submitButtonText": "Get My Recommendations",
-        "avatarResponseOnSubmit": "Perfect! I'll send your personalized sleep recommendations to {userEmail}. Now let me show you some products that could help.",
-        "skipOptionText": "Skip for now",
-        "avatarResponseOnSkip": "No problem! Let me show you some products that could help with your {keyword}."
+      "stepType": "avatar-monologue",
+      "avatarContent": {
+        "scriptText": "Okay, I'm getting a really clear picture now. You've been dealing with {step[2].answerLower} in your {step[1].answerLower} area, and it hits you hardest {step[3].answerLower}. That's been going on for {step[4].answerLower}. Now let's talk about how you actually sleep - because that's where we can make real changes.",
+        "emotion": "encouraging",
+        "autoAdvance": true,
+        "autoAdvanceDelayMs": 8000
       }
     },
     {
       "stepId": "bp-step-7",
-      "internalName": "Final CTA",
+      "internalName": "Sleep Position",
       "order": 7,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "What position do you usually fall asleep in?",
+        "inputType": "radio",
+        "helperText": "Choose your primary sleep position",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp7-opt1",
+            "label": "On my back",
+            "value": "back-sleeper",
+            "order": 1,
+            "avatarResponse": "Back sleeping is actually great for spinal alignment - IF you have the right support! The key is making sure your lower back doesn't arch too much or flatten completely. A lot of back sleepers need a mattress that cradles their natural curve, plus the right pillow height to keep everything in line.",
+            "avatarEmotion": "encouraging",
+            "tags": ["back-sleeper", "alignment-focused"]
+          },
+          {
+            "optionId": "bp7-opt2",
+            "label": "On my side",
+            "value": "side-sleeper",
+            "order": 2,
+            "avatarResponse": "Side sleepers are the most common! But here's the thing - side sleeping puts different demands on your mattress. You need enough give at the shoulders and hips to keep your spine straight, but enough support in the middle so you don't sag. It's a balancing act, and most mattresses don't get it right.",
+            "avatarEmotion": "encouraging",
+            "tags": ["side-sleeper", "pressure-relief-needed"]
+          },
+          {
+            "optionId": "bp7-opt3",
+            "label": "On my stomach",
+            "value": "stomach-sleeper",
+            "order": 3,
+            "avatarResponse": "Ah, stomach sleeping! I'll be honest - this is the toughest position for back health because it tends to hyperextend your lower back. But I'm not here to lecture you - I know you probably can't help it! What we CAN do is find you a setup that minimizes the strain. A firmer mattress and a very thin pillow can help a lot.",
+            "avatarEmotion": "honest",
+            "tags": ["stomach-sleeper", "needs-firm-surface"]
+          },
+          {
+            "optionId": "bp7-opt4",
+            "label": "I switch positions throughout the night",
+            "value": "combination-sleeper",
+            "order": 4,
+            "avatarResponse": "A combination sleeper! That actually tells me your body is searching for comfort and not finding it. When you move around a lot, you're essentially trying to escape pressure points. The good news is, the right mattress lets you change positions freely without sacrificing support in any of them.",
+            "avatarEmotion": "understanding",
+            "tags": ["combination-sleeper", "versatile-needs"]
+          },
+          {
+            "optionId": "bp7-opt5",
+            "label": "I don't really know",
+            "value": "unknown",
+            "order": 5,
+            "avatarResponse": "That's totally fair - most of us aren't conscious of how we sleep! Here's a tip: notice what position you're in when you first wake up. That's usually a good indicator. Either way, we'll make sure whatever I recommend works for multiple positions.",
+            "avatarEmotion": "friendly",
+            "tags": ["unknown", "needs-versatile"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-8",
+      "internalName": "Current Mattress Age",
+      "order": 8,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "How old is your current mattress?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp8-opt1",
+            "label": "Less than 2 years",
+            "value": "less-than-2-years",
+            "order": 1,
+            "avatarResponse": "A newer mattress that's still causing pain tells me it might not be the right fit for YOUR body specifically. Mattresses aren't one-size-fits-all, and what works for someone else might not work for you. The good news is you know what doesn't work - that helps us narrow down what will.",
+            "avatarEmotion": "thoughtful",
+            "tags": ["new-mattress", "wrong-fit"]
+          },
+          {
+            "optionId": "bp8-opt2",
+            "label": "2-5 years",
+            "value": "2-5-years",
+            "order": 2,
+            "avatarResponse": "Your mattress is in that middle zone where it might still look fine but could be starting to lose its support structure. Sometimes the materials break down internally before you can see or feel it on the surface. This is a common sweet spot for back pain to develop or worsen.",
+            "avatarEmotion": "knowing",
+            "tags": ["mid-life-mattress", "potential-wear"]
+          },
+          {
+            "optionId": "bp8-opt3",
+            "label": "5-8 years",
+            "value": "5-8-years",
+            "order": 3,
+            "avatarResponse": "Five to eight years is typically when mattresses really start to decline - even the good ones. The foams compress, the springs weaken, and those body impressions start forming. Your mattress has likely developed 'memory' of your sleeping position, and not the good kind.",
+            "avatarEmotion": "knowing",
+            "tags": ["aging-mattress", "likely-worn"]
+          },
+          {
+            "optionId": "bp8-opt4",
+            "label": "8-10 years",
+            "value": "8-10-years",
+            "order": 4,
+            "avatarResponse": "Eight plus years... honestly, your mattress has done its job and then some! Most sleep experts recommend replacement by 7-8 years. At this point, even if it doesn't look worn out, the internal support structure is almost certainly compromised. No wonder your back isn't happy!",
+            "avatarEmotion": "empathetic",
+            "tags": ["old-mattress", "needs-replacement"]
+          },
+          {
+            "optionId": "bp8-opt5",
+            "label": "More than 10 years",
+            "value": "more-than-10-years",
+            "order": 5,
+            "avatarResponse": "Over a decade! I appreciate that you got your money's worth, but... your back is definitely paying the price now. A mattress that old has lost a significant amount of its support - we're talking potentially 50% or more. Getting a new sleep surface could be genuinely life-changing for you.",
+            "avatarEmotion": "encouraging",
+            "tags": ["very-old-mattress", "urgent-replacement"]
+          },
+          {
+            "optionId": "bp8-opt6",
+            "label": "I'm not sure",
+            "value": "not-sure",
+            "order": 6,
+            "avatarResponse": "If you can't remember when you got it, that's often a sign it's been a while! Here's a simple test: if you see visible body impressions, feel any springs, or notice it sagging in the middle, it's probably past its prime. Based on your back pain, I'd bet your mattress could use an upgrade.",
+            "avatarEmotion": "friendly",
+            "tags": ["unknown-age", "likely-old"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-9",
+      "internalName": "Mattress Feel Preference",
+      "order": 9,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "Do you generally prefer a firmer or softer sleep surface?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp9-opt1",
+            "label": "Firm - I like solid support",
+            "value": "firm",
+            "order": 1,
+            "avatarResponse": "Firm sleeper, got it! A lot of people think firm equals better for backs, but it's really about the right KIND of firmness. You want support that's firm enough to keep you aligned but still contours to your curves. Think supportive, not rigid. I'll keep that preference in mind.",
+            "avatarEmotion": "understanding",
+            "tags": ["firm-preference", "support-focused"]
+          },
+          {
+            "optionId": "bp9-opt2",
+            "label": "Medium - somewhere in the middle",
+            "value": "medium",
+            "order": 2,
+            "avatarResponse": "Medium is the most popular choice, and honestly? It works for most people. You get the best of both worlds - enough cushioning to relieve pressure points, enough support to maintain alignment. This gives us lots of great options to consider for you.",
+            "avatarEmotion": "encouraging",
+            "tags": ["medium-preference", "versatile"]
+          },
+          {
+            "optionId": "bp9-opt3",
+            "label": "Soft - I like to sink in",
+            "value": "soft",
+            "order": 3,
+            "avatarResponse": "You like that plush, sink-in feeling! Here's the thing with back pain though - too soft can sometimes make it worse by letting your spine sag. But! Modern mattresses can feel soft on top while still providing deep support. We can absolutely find you something that feels plush without sacrificing your back health.",
+            "avatarEmotion": "thoughtful",
+            "tags": ["soft-preference", "needs-supportive-soft"]
+          },
+          {
+            "optionId": "bp9-opt4",
+            "label": "I've never found the right firmness",
+            "value": "unsure",
+            "order": 4,
+            "avatarResponse": "You know what? A lot of people feel that way - like Goldilocks, nothing is ever 'just right.' This often means you need something that adapts to you rather than the other way around. There are some really clever mattress designs now that adjust to different pressure zones. Game changer!",
+            "avatarEmotion": "excited",
+            "tags": ["unsure", "needs-adaptive"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-10",
+      "internalName": "Body Type",
+      "order": 10,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "What's your general body type? This helps me recommend the right support level.",
+        "inputType": "radio",
+        "helperText": "No judgment - this is purely about physics and support!",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp10-opt1",
+            "label": "Petite/Lighter build (under 150 lbs)",
+            "value": "petite",
+            "order": 1,
+            "avatarResponse": "With a lighter frame, you don't need as much pushback from your mattress, but you still need something that contours to your body. Some firmer mattresses won't compress enough under lighter weight, which means you're essentially sleeping ON it rather than IN it. We'll find something that responds to you properly.",
+            "avatarEmotion": "helpful",
+            "tags": ["petite", "needs-responsive"]
+          },
+          {
+            "optionId": "bp10-opt2",
+            "label": "Average build (150-200 lbs)",
+            "value": "average",
+            "order": 2,
+            "avatarResponse": "Average build means most mattresses are actually designed with your weight range in mind - that's the good news! The key is finding one that addresses your specific pain points and sleep style. You've got plenty of options, which is great.",
+            "avatarEmotion": "encouraging",
+            "tags": ["average", "standard-support"]
+          },
+          {
+            "optionId": "bp10-opt3",
+            "label": "Larger build (200-250 lbs)",
+            "value": "larger",
+            "order": 3,
+            "avatarResponse": "With more weight to support, you'll want something with a robust support system - thicker comfort layers and a sturdier base. A lot of mattresses that feel great in the showroom start to bottom out when heavier folks sleep on them night after night. We'll find you something that maintains support over time.",
+            "avatarEmotion": "helpful",
+            "tags": ["larger", "needs-durable-support"]
+          },
+          {
+            "optionId": "bp10-opt4",
+            "label": "Plus size (250+ lbs)",
+            "value": "plus-size",
+            "order": 4,
+            "avatarResponse": "For plus size sleepers, support and durability are absolutely critical. You need a mattress that won't compress too much and will maintain its structure year after year. There are some excellent options designed specifically for heavier weights - we'll make sure you get the support you deserve.",
+            "avatarEmotion": "supportive",
+            "tags": ["plus-size", "needs-heavy-duty"]
+          },
+          {
+            "optionId": "bp10-opt5",
+            "label": "I'd rather not say",
+            "value": "prefer-not-to-say",
+            "order": 5,
+            "avatarResponse": "Totally understand! No worries at all. I'll recommend options that work across different body types. If you want more personalized guidance later, our sleep experts can help you dial it in.",
+            "avatarEmotion": "understanding",
+            "tags": ["undisclosed", "general-recommendation"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-11",
+      "internalName": "Sleep Partner",
+      "order": 11,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "Do you share your bed with a partner?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp11-opt1",
+            "label": "Yes, every night",
+            "value": "yes-partner",
+            "order": 1,
+            "avatarResponse": "Sleeping with a partner adds another dimension! Their movement can affect your sleep quality, and you might have different firmness preferences. Motion isolation becomes important, and we may want to think about mattresses that work well for two different body types. Couples actually have some really good options these days!",
+            "avatarEmotion": "thoughtful",
+            "tags": ["couples", "motion-isolation-needed"]
+          },
+          {
+            "optionId": "bp11-opt2",
+            "label": "Sometimes",
+            "value": "sometimes-partner",
+            "order": 2,
+            "avatarResponse": "Part-time partner situation - got it! We'll want something that works well for solo sleeping but can also accommodate another person comfortably. Versatility is the name of the game here.",
+            "avatarEmotion": "understanding",
+            "tags": ["occasional-partner", "versatile-needs"]
+          },
+          {
+            "optionId": "bp11-opt3",
+            "label": "No, I sleep alone",
+            "value": "no-partner",
+            "order": 3,
+            "avatarResponse": "Solo sleeper! That actually makes things simpler - we can focus entirely on what's best for YOUR body and YOUR sleep style without having to compromise for anyone else. Let's find YOUR perfect match.",
+            "avatarEmotion": "encouraging",
+            "tags": ["solo-sleeper", "personal-optimization"]
+          },
+          {
+            "optionId": "bp11-opt4",
+            "label": "I share with pets",
+            "value": "pets",
+            "order": 4,
+            "avatarResponse": "Ah, the fur babies! Pets can be surprisingly disruptive sleepers - all that repositioning and sometimes taking up more space than they should! Good motion isolation can help minimize their midnight shuffles. Plus, we should consider durability and ease of cleaning.",
+            "avatarEmotion": "amused",
+            "tags": ["pet-owner", "durability-needed"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-12",
+      "internalName": "Budget Range",
+      "order": 12,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "What's your budget range for improving your sleep setup?",
+        "inputType": "radio",
+        "helperText": "This helps me recommend realistic options",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "bp12-opt1",
+            "label": "Under $500 - I need an affordable solution",
+            "value": "budget",
+            "order": 1,
+            "avatarResponse": "Working with a tighter budget - absolutely understood. The good news is there are some really solid options in this range that can make a meaningful difference. Sometimes a quality mattress topper or the right pillow can transform your sleep without replacing everything. Let's be strategic!",
+            "avatarEmotion": "encouraging",
+            "tags": ["budget", "value-focused"]
+          },
+          {
+            "optionId": "bp12-opt2",
+            "label": "$500-$1,000 - Moderate investment",
+            "value": "moderate",
+            "order": 2,
+            "avatarResponse": "This is actually a sweet spot! You can get a really quality mattress in this range, especially with the direct-to-consumer brands that have disrupted the industry. You're not paying for showroom overhead - just good materials and design.",
+            "avatarEmotion": "encouraging",
+            "tags": ["moderate", "good-options"]
+          },
+          {
+            "optionId": "bp12-opt3",
+            "label": "$1,000-$2,000 - Willing to invest for quality",
+            "value": "mid-range",
+            "order": 3,
+            "avatarResponse": "Now we're talking! This range opens up some excellent options with premium materials, better durability, and more sophisticated support systems. When you think about it as a cost-per-night-of-good-sleep, this investment really pays off over the years.",
+            "avatarEmotion": "excited",
+            "tags": ["mid-range", "quality-investment"]
+          },
+          {
+            "optionId": "bp12-opt4",
+            "label": "$2,000+ - I want the best for my back",
+            "value": "premium",
+            "order": 4,
+            "avatarResponse": "You're ready to invest in serious quality - I respect that! At this level, you're looking at the best materials, the most advanced support technologies, and products built to last. For someone dealing with chronic back pain, this kind of investment can be truly transformative.",
+            "avatarEmotion": "excited",
+            "tags": ["premium", "top-tier"]
+          },
+          {
+            "optionId": "bp12-opt5",
+            "label": "I'm not sure yet - show me options",
+            "value": "flexible",
+            "order": 5,
+            "avatarResponse": "No problem! I'll show you a range of options at different price points. Sometimes seeing what's available helps clarify what level of investment feels right for you. Quality sleep is honestly one of the best things you can spend money on.",
+            "avatarEmotion": "friendly",
+            "tags": ["flexible", "needs-options"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "bp-step-13",
+      "internalName": "Summary Transition",
+      "order": 13,
+      "stepType": "avatar-monologue",
+      "avatarContent": {
+        "scriptText": "Alright, I have a really complete picture now! You're a {step[6].answerLower} with {step[2].answerLower} in your {step[1].answerLower} that's been bothering you for {step[4].answerLower}. Your mattress is {step[7].answerLower} old, and you prefer a {step[8].answerLower} feel. Based on all of this, I know exactly what kind of solutions to recommend for you. Let me put together something personalized!",
+        "emotion": "excited",
+        "autoAdvance": true,
+        "autoAdvanceDelayMs": 10000
+      }
+    },
+    {
+      "stepId": "bp-step-14",
+      "internalName": "Email Capture",
+      "order": 14,
+      "stepType": "email-capture",
+      "emailCaptureContent": {
+        "promptText": "I'd love to send you my personalized recommendations along with a special discount code for your first purchase. What's the best email to reach you?",
+        "placeholderText": "your@email.com",
+        "submitButtonText": "Get My Personalized Recommendations",
+        "avatarResponseOnSubmit": "Awesome! I'm sending your personalized sleep profile and recommendations to {userEmail} right now. I'm also including a special discount just for you. Now, let me show you the products I think will help your back the most!",
+        "skipOptionText": "Just show me the products",
+        "avatarResponseOnSkip": "No problem at all! Let's get right to the good stuff. Based on everything you've told me, here are the products I think will make the biggest difference for your {keyword}."
+      }
+    },
+    {
+      "stepId": "bp-step-15",
+      "internalName": "Final CTA & Recommendations",
+      "order": 15,
       "stepType": "cta",
       "ctaContent": {
-        "headline": "Your Personalized Sleep Solution",
-        "bodyText": "Based on your responses about {keyword}, we've identified products that could help you wake up feeling better.",
+        "headline": "Your Personalized Back Pain Solutions",
+        "bodyText": "Based on your sleep profile - {step[6].answerLower} dealing with {step[2].answerLower} in your {step[1].answerLower} - I've selected products specifically designed to address YOUR needs. These recommendations have helped thousands of people wake up without pain.",
         "primaryButtonText": "View My Recommendations",
-        "primaryButtonUrl": "/recommendations?flow=back-pain",
-        "secondaryButtonText": "Browse All Products",
-        "secondaryButtonUrl": "/products"
+        "primaryButtonUrl": "/recommendations?flow=back-pain&position={step[6].value}&pain={step[1].value}&budget={step[11].value}",
+        "secondaryButtonText": "Talk to a Sleep Expert",
+        "secondaryButtonUrl": "/contact?source=back-pain-flow"
       }
     }
   ],
   "metadata": {
     "createdAt": "2025-01-25T00:00:00Z",
-    "author": "System",
-    "version": "1.0"
+    "updatedAt": "2025-01-25T12:00:00Z",
+    "author": "Ashley (AI Sleep Consultant)",
+    "version": "2.0"
   }
 }
