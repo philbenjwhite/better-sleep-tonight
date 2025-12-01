@@ -356,9 +356,30 @@
       }
     },
     {
+      "stepId": "bp-step-7b",
+      "internalName": "Age Question",
+      "order": 8,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "What's your age?",
+        "inputType": "text",
+        "inputSubtype": "number",
+        "placeholder": "Enter your age",
+        "helperText": "This helps us recommend age-appropriate sleep solutions",
+        "isRequired": true,
+        "validation": {
+          "min": 18,
+          "max": 120,
+          "errorMessage": "Please enter a valid age between 18 and 120"
+        },
+        "avatarResponse": "Thanks for sharing! Your age actually matters quite a bit when it comes to sleep needs. Our bodies change over time - the mattress that worked great in your 20s might not be right for you now. As we age, we often need different levels of support and pressure relief.",
+        "avatarEmotion": "thoughtful"
+      }
+    },
+    {
       "stepId": "bp-step-8",
       "internalName": "Current Mattress Age",
-      "order": 8,
+      "order": 9,
       "stepType": "question",
       "questionContent": {
         "questionText": "How old is your current mattress?",
@@ -474,7 +495,7 @@
     {
       "stepId": "bp-step-10",
       "internalName": "Body Type",
-      "order": 10,
+      "order": 11,
       "stepType": "question",
       "questionContent": {
         "questionText": "What's your general body type? This helps me recommend the right support level.",
@@ -533,7 +554,7 @@
     {
       "stepId": "bp-step-11",
       "internalName": "Sleep Partner",
-      "order": 11,
+      "order": 12,
       "stepType": "question",
       "questionContent": {
         "questionText": "Do you share your bed with a partner?",
@@ -582,7 +603,7 @@
     {
       "stepId": "bp-step-12",
       "internalName": "Budget Range",
-      "order": 12,
+      "order": 13,
       "stepType": "question",
       "questionContent": {
         "questionText": "What's your budget range for improving your sleep setup?",
@@ -641,7 +662,7 @@
     {
       "stepId": "bp-step-13",
       "internalName": "Summary Transition",
-      "order": 13,
+      "order": 14,
       "stepType": "avatar-monologue",
       "avatarContent": {
         "scriptText": "Alright, I have a really complete picture now! You're a {step[6].answerLower} with {step[2].answerLower} in your {step[1].answerLower} that's been bothering you for {step[4].answerLower}. Your mattress is {step[7].answerLower} old, and you prefer a {step[8].answerLower} feel. Based on all of this, I know exactly what kind of solutions to recommend for you. Let me put together something personalized!",
@@ -653,7 +674,7 @@
     {
       "stepId": "bp-step-14",
       "internalName": "Email Capture",
-      "order": 14,
+      "order": 15,
       "stepType": "email-capture",
       "emailCaptureContent": {
         "promptText": "I'd love to send you my personalized recommendations along with a special discount code for your first purchase. What's the best email to reach you?",
@@ -667,7 +688,7 @@
     {
       "stepId": "bp-step-15",
       "internalName": "Final CTA & Recommendations",
-      "order": 15,
+      "order": 16,
       "stepType": "cta",
       "ctaContent": {
         "headline": "Your Personalized Back Pain Solutions",
