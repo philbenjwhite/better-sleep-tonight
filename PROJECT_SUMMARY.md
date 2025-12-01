@@ -1,4 +1,4 @@
-# Better Sleep Shop - Video Landing Page Campaign
+# Better Sleep Tonight - Video Landing Page Campaign
 ## Project Implementation Summary
 
 **Status:** ✅ Complete and Production-Ready

@@ -1,4 +1,4 @@
-# Better Sleep Shop
+# Better Sleep Tonight
 
 A Next.js application built with TypeScript, CSS Modules, and Storybook.
 
@@ -47,7 +47,7 @@ Open [http://localhost:6006](http://localhost:6006) to view Storybook.
 ## Project Structure
 
 ```
-better-sleep-shop/
+better-sleep-tonight/
 ├── .storybook/          # Storybook configuration
 ├── src/
 │   ├── app/            # Next.js App Router pages

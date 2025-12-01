@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Better Sleep Shop is a Next.js 15 application using TypeScript, CSS Modules, and Storybook for component development. The project integrates with Figma Code Connect for design-to-code workflows and includes HeyGen streaming avatar functionality.
+Better Sleep Tonight is a Next.js 15 application using TypeScript, CSS Modules, and Storybook for component development. The project integrates with Figma Code Connect for design-to-code workflows and includes HeyGen streaming avatar functionality.
 
 ## Key Commands
 

@@ -10,8 +10,8 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Better Sleep Shop",
-  description: "Better Sleep Shop Application",
+  title: "Better Sleep Tonight",
+  description: "Better Sleep Tonight Application",
 };
 
 export default function RootLayout({

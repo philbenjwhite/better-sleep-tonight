@@ -1,4 +1,4 @@
-# Better Sleep Shop - Video Landing Page Campaign
+# Better Sleep Tonight - Video Landing Page Campaign
 ## Implementation Guide
 
 This guide provides complete instructions for deploying your video background landing page campaign.
@@ -111,7 +111,7 @@ font-size: 14px;
 ### Image Assets
 
 All images were downloaded from Figma's localhost asset server and saved to `public/images/`:
-- `logo.png` - Ashley BetterSleep Shop logo
+- `logo.png` - Ashley BetterSleep Tonight logo
 - `avatar.png` - Anna AI Coach avatar photo
 - `volume-icon.svg` - Volume control icon
 - `avatar-mask.svg` - Circular mask for avatar (optional)
