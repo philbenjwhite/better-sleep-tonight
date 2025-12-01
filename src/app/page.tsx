@@ -24,6 +24,7 @@ export default function Home() {
   const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(null);
   const [avatarResponse, setAvatarResponse] = useState<string | null>(null);
   const [isShowingResponse, setIsShowingResponse] = useState(false);
+  const [hasShownIntro, setHasShownIntro] = useState(false);
 
   // Get the current question step from CMS (skip header, find first question)
   const questionSteps = (backPainFlow.steps as FlowStep[]).filter(step => step.stepType === 'question');
@@ -39,14 +40,15 @@ export default function Home() {
 
   // Show question block after Sarah's speech animation completes
   useEffect(() => {
-    if (currentView === 'question') {
+    if (currentView === 'question' && !hasShownIntro) {
       // Wait for speech animation to complete (about 2 seconds for all words)
       const timer = setTimeout(() => {
         setShowQuestionBlock(true);
+        setHasShownIntro(true);
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [currentView]);
+  }, [currentView, hasShownIntro]);
 
   const handleAnswerSelect = (option: CMSAnswerOption) => {
     setSelectedAnswer(option);
@@ -181,8 +183,8 @@ export default function Home() {
                 className={styles.heygenAvatar}
               />
 
-              {/* Speech Bubble - intro message */}
-              {!showQuestionBlock && !isShowingResponse && !avatarResponse && (
+              {/* Speech Bubble - intro message (only show once, before first question) */}
+              {!hasShownIntro && !showQuestionBlock && !isShowingResponse && !avatarResponse && (
                 <div className={styles.speechBubble}>
                   <p className={styles.speechText}>
                     <span className={styles.word1} style={{ animationDelay: '0s' }}>Hey </span>
