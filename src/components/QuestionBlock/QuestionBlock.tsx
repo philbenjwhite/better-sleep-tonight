@@ -168,6 +168,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
               label={option.label}
               value={option.value}
               isSelected={currentValue === option.value}
+              hasSelection={currentValue !== undefined}
               onSelect={handleSelect}
               disabled={disabled}
             />

@@ -10,6 +10,8 @@ export interface AnswerOptionProps {
   value: string;
   /** Whether this option is currently selected */
   isSelected?: boolean;
+  /** Whether any option in the group has been selected (dims unselected options) */
+  hasSelection?: boolean;
   /** Callback when the option is clicked */
   onSelect?: (value: string) => void;
   /** Whether the option is disabled */
@@ -21,6 +23,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
   label,
   value,
   isSelected = false,
+  hasSelection = false,
   onSelect,
   disabled = false,
 }) => {
@@ -41,6 +44,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
     <div
       className={classNames(styles.answerOption, {
         [styles.selected]: isSelected,
+        [styles.dimmed]: hasSelection && !isSelected,
         [styles.disabled]: disabled,
       })}
       onClick={handleClick}

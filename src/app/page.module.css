@@ -443,6 +443,13 @@
   white-space: pre;
 }
 
+/* Intro words animation */
+.introWord {
+  display: inline;
+  opacity: 0;
+  animation: wordDarken 0.3s ease-in-out forwards;
+}
+
 /* Avatar Response Bubble */
 .responseBubble {
   position: absolute;

@@ -38,14 +38,14 @@ export default function Home() {
     }, 500); // Match CSS transition duration
   };
 
-  // Show question block after Sarah's speech animation completes
+  // Show question block after Ashley's speech animation completes
   useEffect(() => {
     if (currentView === 'question' && !hasShownIntro) {
-      // Wait for speech animation to complete (about 2 seconds for all words)
+      // Wait for speech animation to complete (43 words at 0.1s each + buffer)
       const timer = setTimeout(() => {
         setShowQuestionBlock(true);
         setHasShownIntro(true);
-      }, 2500);
+      }, 5500);
       return () => clearTimeout(timer);
     }
   }, [currentView, hasShownIntro]);
@@ -84,7 +84,7 @@ export default function Home() {
           console.log('Flow complete!');
         }
       }, responseDuration);
-    }, 800); // Brief pause after selection
+    }, 1800); // Pause after selection to show dimmed options
   };
 
   return (
@@ -179,7 +179,7 @@ export default function Home() {
             <div className={styles.heygenWrapper}>
               <img
                 src="/images/hey-gen-placeholder.png"
-                alt="Sarah, your BetterSleep AI Coach"
+                alt="Ashley, your BetterSleep AI Coach"
                 className={styles.heygenAvatar}
               />
 
@@ -187,15 +187,15 @@ export default function Home() {
               {!hasShownIntro && !showQuestionBlock && !isShowingResponse && !avatarResponse && (
                 <div className={styles.speechBubble}>
                   <p className={styles.speechText}>
-                    <span className={styles.word1} style={{ animationDelay: '0s' }}>Hey </span>
-                    <span className={styles.word2} style={{ animationDelay: '0.2s' }}>I&apos;m </span>
-                    <span className={styles.word3} style={{ animationDelay: '0.4s' }}>Sarah, </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word4}`} style={{ animationDelay: '0.6s' }}>let&apos;s </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word5}`} style={{ animationDelay: '0.8s' }}>help </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word6}`} style={{ animationDelay: '1.0s' }}>you </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word7}`} style={{ animationDelay: '1.2s' }}>get </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word8}`} style={{ animationDelay: '1.4s' }}>better </span>
-                    <span className={`${styles.speechTextSecondary} ${styles.word9}`} style={{ animationDelay: '1.6s' }}>sleep.</span>
+                    {`Hey, I'm Ashley — your virtual sleep guide. My job is simple: helping you wake up clear, refreshed, and pain‑free. If sleep hasn't been treating you right, you're not alone. The good news? You're in the right place to fix it.`.split(' ').map((word, index) => (
+                      <span
+                        key={index}
+                        className={index < 4 ? styles.introWord : `${styles.introWord} ${styles.speechTextSecondary}`}
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        {word}{' '}
+                      </span>
+                    ))}
                   </p>
                 </div>
               )}
