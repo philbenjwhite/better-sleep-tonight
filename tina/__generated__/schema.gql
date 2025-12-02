@@ -303,6 +303,7 @@ type Flows implements Node & Document {
   keyword: FlowsKeyword!
   description: String
   isActive: Boolean
+  introVideo: String
   globalVariables: FlowsGlobalVariables
   steps: [FlowsSteps]
   metadata: FlowsMetadata
@@ -432,6 +433,7 @@ input FlowsFilter {
   keyword: FlowsKeywordFilter
   description: StringFilter
   isActive: BooleanFilter
+  introVideo: StringFilter
   globalVariables: FlowsGlobalVariablesFilter
   steps: FlowsStepsFilter
   metadata: FlowsMetadataFilter
@@ -604,6 +606,7 @@ input FlowsMutation {
   keyword: String
   description: String
   isActive: Boolean
+  introVideo: String
   globalVariables: FlowsGlobalVariablesMutation
   steps: [FlowsStepsMutation]
   metadata: FlowsMetadataMutation

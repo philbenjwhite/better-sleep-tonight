@@ -1,0 +1,197 @@
+{
+  "flowId": "back-pain-flow",
+  "displayName": "Back Pain Relief Journey",
+  "keyword": "content/keywords/back-pain.json",
+  "description": "A targeted flow for users experiencing back pain, focusing on mattress support and spinal alignment.",
+  "isActive": true,
+  "introVideo": "/videos/Mattress_Shopping.mp4",
+  "globalVariables": {
+    "avatarName": "Ashley",
+    "brandName": "Better Sleep Tonight",
+    "supportEmail": "support@bettersleeptonight.com"
+  },
+  "steps": [
+    {
+      "stepId": "intro-step",
+      "internalName": "Welcome & Introduction",
+      "order": 1,
+      "stepType": "header",
+      "headerContent": {
+        "headline": "End Back Pain for Good",
+        "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without that nagging back pain. If you've been waking up stiff, sore, or feeling like you barely slept — you're in the right place.",
+        "avatarIntroScript": "Back pain is one of the most common reasons people don't sleep well. And here's the thing most people don't realize: your mattress could be making it worse. Let me ask you a few quick questions to understand what's going on.",
+        "primaryButtonText": "Let's Fix This",
+        "primaryButtonAction": "next"
+      }
+    },
+    {
+      "stepId": "q1-pain-location",
+      "internalName": "Pain Location",
+      "order": 2,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "Where do you feel pain when you wake up?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "q1-opt1",
+            "label": "Lower back",
+            "value": "lower-back",
+            "order": 1,
+            "avatarResponse": "Lower back pain is incredibly common — and often caused by a mattress that doesn't support your spine's natural curve.",
+            "avatarEmotion": "empathetic",
+            "tags": ["lower-back", "lumbar"]
+          },
+          {
+            "optionId": "q1-opt2",
+            "label": "Upper back / shoulders",
+            "value": "upper-back",
+            "order": 2,
+            "avatarResponse": "Upper back and shoulder pain often comes from pressure points. Your mattress might be too firm — or too soft.",
+            "avatarEmotion": "empathetic",
+            "tags": ["upper-back", "shoulders"]
+          },
+          {
+            "optionId": "q1-opt3",
+            "label": "Neck",
+            "value": "neck",
+            "order": 3,
+            "avatarResponse": "Neck pain can really disrupt your day. This is usually about pillow height AND mattress support working together.",
+            "avatarEmotion": "empathetic",
+            "tags": ["neck", "cervical"]
+          },
+          {
+            "optionId": "q1-opt4",
+            "label": "Multiple areas",
+            "value": "multiple",
+            "order": 4,
+            "avatarResponse": "Pain in multiple areas suggests your body isn't getting the support it needs overall. Good news — that's exactly what we can fix.",
+            "avatarEmotion": "encouraging",
+            "tags": ["full-body", "multiple"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "q2-pain-severity",
+      "internalName": "Pain Severity",
+      "order": 3,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "How would you rate your morning pain?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "q2-opt1",
+            "label": "Mild — goes away quickly",
+            "value": "mild",
+            "order": 1,
+            "avatarResponse": "Even mild pain that goes away is a sign something's off. The goal is waking up feeling great — not just 'okay after coffee.'",
+            "avatarEmotion": "encouraging",
+            "tags": ["mild"]
+          },
+          {
+            "optionId": "q2-opt2",
+            "label": "Moderate — lingers for hours",
+            "value": "moderate",
+            "order": 2,
+            "avatarResponse": "Pain that lingers for hours? That's your body telling you something needs to change. You shouldn't have to 'warm up' just to feel normal.",
+            "avatarEmotion": "empathetic",
+            "tags": ["moderate"]
+          },
+          {
+            "optionId": "q2-opt3",
+            "label": "Severe — affects my whole day",
+            "value": "severe",
+            "order": 3,
+            "avatarResponse": "I'm sorry you're dealing with that. When pain affects your whole day, getting the right support at night becomes even more critical.",
+            "avatarEmotion": "concerned",
+            "tags": ["severe", "chronic"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "q3-current-mattress",
+      "internalName": "Current Mattress Age",
+      "order": 4,
+      "stepType": "question",
+      "questionContent": {
+        "questionText": "How old is your current mattress?",
+        "inputType": "radio",
+        "isRequired": true,
+        "answerOptions": [
+          {
+            "optionId": "q3-opt1",
+            "label": "Less than 3 years",
+            "value": "under-3",
+            "order": 1,
+            "avatarResponse": "A newer mattress that's causing pain? That usually means it's not the right fit for your body type or sleep style.",
+            "avatarEmotion": "curious",
+            "tags": ["new-mattress"]
+          },
+          {
+            "optionId": "q3-opt2",
+            "label": "3-7 years",
+            "value": "3-7-years",
+            "order": 2,
+            "avatarResponse": "At 3-7 years, a mattress might look fine but could be losing the support your back needs. The materials break down before you see it.",
+            "avatarEmotion": "neutral",
+            "tags": ["mid-age"]
+          },
+          {
+            "optionId": "q3-opt3",
+            "label": "7-10 years",
+            "value": "7-10-years",
+            "order": 3,
+            "avatarResponse": "7-10 years is right when most mattresses start failing. Your body has probably changed in that time too — but your mattress hasn't adapted.",
+            "avatarEmotion": "encouraging",
+            "tags": ["aging"]
+          },
+          {
+            "optionId": "q3-opt4",
+            "label": "Over 10 years",
+            "value": "over-10",
+            "order": 4,
+            "avatarResponse": "Over 10 years? Your mattress has done its job — but it's time for an upgrade. You deserve to wake up without pain.",
+            "avatarEmotion": "excited",
+            "tags": ["old", "replace"]
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "reframe-step",
+      "internalName": "Back Pain Solution",
+      "order": 5,
+      "stepType": "avatar-monologue",
+      "avatarContent": {
+        "scriptText": "Here's what I'm seeing: you're dealing with real pain, and your current sleep setup isn't helping. The good news? This is fixable. Tempur-Pedic mattresses are specifically designed to support your spine's natural alignment while relieving pressure points. That means less tossing and turning, and waking up actually feeling rested — not broken. Based on your answers, I've picked out mattresses that are proven to help with back pain. Ready to see them?",
+        "emotion": "encouraging",
+        "autoAdvance": false
+      }
+    },
+    {
+      "stepId": "recommendation-step",
+      "internalName": "Back Pain Mattress Recommendations",
+      "order": 6,
+      "stepType": "cta",
+      "ctaContent": {
+        "headline": "Your Back Pain Solutions",
+        "bodyText": "These Tempur-Pedic mattresses are specifically designed for spinal support and pressure relief. Thousands of customers with back pain have found relief with these options.",
+        "primaryButtonText": "View Recommendations",
+        "primaryButtonUrl": "/recommendations?concern=back-pain",
+        "secondaryButtonText": "Talk to a Sleep Expert",
+        "secondaryButtonUrl": "/contact"
+      }
+    }
+  ],
+  "metadata": {
+    "createdAt": "2025-12-02T00:00:00.000Z",
+    "updatedAt": "2025-12-02T12:00:00.000Z",
+    "author": "Ashley (AI Sleep Consultant)",
+    "version": "1.0"
+  }
+}

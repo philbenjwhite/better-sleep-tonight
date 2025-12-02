@@ -4,6 +4,7 @@
   "keyword": "content/keywords/sleep-diagnosis.json",
   "description": "A quick sleep diagnosis to help users understand what's happening to their body at night and recommend personalized sleep solutions.",
   "isActive": true,
+  "introVideo": "/videos/Mattress_Shopping.mp4",
   "globalVariables": {
     "avatarName": "Ashley",
     "brandName": "Better Sleep Tonight",
@@ -18,11 +19,9 @@
       "headerContent": {
         "headline": "Find Your Perfect Mattress",
         "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: helping you wake up clear, refreshed, and pain‑free. If sleep hasn't been treating you right, you're not alone.",
-        "subheadlineSecondary": "The good news? You're in the right place to fix it.",
         "avatarIntroScript": "A lot of people struggle with restless nights, sore mornings, and that 'why do I feel 20 years older?' stiffness. And while it feels mysterious, it usually isn't. There's always a reason — and there's almost always a solution. Let's run a quick sleep diagnosis — to figure out what's happening to your body at night.",
-        "primaryButtonText": "Let's Begin",
-        "primaryButtonAction": "next",
-        "audioNotice": "For best experience please have your audio turned on"
+        "primaryButtonText": "Let's Begin!!!!",
+        "primaryButtonAction": "next"
       }
     },
     {
@@ -42,8 +41,9 @@
             "order": 1,
             "avatarResponse": "What is your age?",
             "avatarEmotion": "curious",
-            "nextStepType": "age-single",
-            "tags": ["single-user"]
+            "tags": [
+              "single-user"
+            ]
           },
           {
             "optionId": "q1-opt2",
@@ -52,8 +52,9 @@
             "order": 2,
             "avatarResponse": "What is your partner's age?",
             "avatarEmotion": "curious",
-            "nextStepType": "age-partner",
-            "tags": ["partner-only"]
+            "tags": [
+              "partner-only"
+            ]
           },
           {
             "optionId": "q1-opt3",
@@ -62,8 +63,9 @@
             "order": 3,
             "avatarResponse": "What is your age? What is your partner's age?",
             "avatarEmotion": "curious",
-            "nextStepType": "age-both",
-            "tags": ["couple"]
+            "tags": [
+              "couple"
+            ]
           },
           {
             "optionId": "q1-opt4",
@@ -72,8 +74,10 @@
             "order": 4,
             "avatarResponse": "What is their age?",
             "avatarEmotion": "curious",
-            "nextStepType": "age-other",
-            "tags": ["gift", "other"]
+            "tags": [
+              "gift",
+              "other"
+            ]
           }
         ]
       }
@@ -86,17 +90,8 @@
       "questionContent": {
         "questionText": "What is your age?",
         "inputType": "text",
-        "inputSubtype": "number",
-        "placeholder": "Enter your age",
         "helperText": "This helps me give you the best recommendation.",
-        "isRequired": true,
-        "validation": {
-          "min": 18,
-          "max": 120,
-          "errorMessage": "Please enter a valid age between 18 and 120"
-        },
-        "avatarResponse": "This helps me give you the best recommendation.",
-        "avatarEmotion": "thoughtful"
+        "isRequired": true
       }
     },
     {
@@ -116,7 +111,10 @@
             "order": 1,
             "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night leaves you with less overall sleep.",
             "avatarEmotion": "empathetic",
-            "tags": ["severe", "chronic"]
+            "tags": [
+              "severe",
+              "chronic"
+            ]
           },
           {
             "optionId": "q3-opt2",
@@ -125,7 +123,10 @@
             "order": 2,
             "avatarResponse": "You aren't alone, many people are in the same situation and struggle with falling asleep fast.",
             "avatarEmotion": "understanding",
-            "tags": ["moderate", "common"]
+            "tags": [
+              "moderate",
+              "common"
+            ]
           },
           {
             "optionId": "q3-opt3",
@@ -134,7 +135,10 @@
             "order": 3,
             "avatarResponse": "That's completely normal and the group most people are in. Why not consider shooting for that perfect sleep where you feel rested each and every day.",
             "avatarEmotion": "encouraging",
-            "tags": ["occasional", "normal"]
+            "tags": [
+              "occasional",
+              "normal"
+            ]
           },
           {
             "optionId": "q3-opt4",
@@ -143,7 +147,10 @@
             "order": 4,
             "avatarResponse": "That's great to hear. You've got a great start on optimizing your sleep. It's more than just how fast you fall asleep but how supported you are throughout the night.",
             "avatarEmotion": "positive",
-            "tags": ["no-issues", "optimize"]
+            "tags": [
+              "no-issues",
+              "optimize"
+            ]
           }
         ]
       }
@@ -175,8 +182,8 @@
     }
   ],
   "metadata": {
-    "createdAt": "2025-01-25T00:00:00Z",
-    "updatedAt": "2025-12-02T12:00:00Z",
+    "createdAt": "2025-01-25T00:00:00.000Z",
+    "updatedAt": "2025-12-02T12:00:00.000Z",
     "author": "Anna (AI Sleep Consultant)",
     "version": "3.0"
   }

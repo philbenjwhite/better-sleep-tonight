@@ -55,6 +55,7 @@ fragment FlowsParts on Flows {
   }
   description
   isActive
+  introVideo
   globalVariables {
     __typename
     avatarName

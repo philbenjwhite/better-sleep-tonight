@@ -390,6 +390,12 @@ export const flowsCollection: Collection = {
       type: "boolean",
     },
     {
+      name: "introVideo",
+      label: "Intro Video",
+      type: "string",
+      description: "Path to the background video shown on the intro screen (e.g., /videos/Mattress_Shopping.mp4)",
+    },
+    {
       name: "globalVariables",
       label: "Global Variables",
       type: "object",

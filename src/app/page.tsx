@@ -12,6 +12,14 @@ import styles from './page.module.css';
 
 // Import flow data from CMS
 import wakeUpRestedFlow from '../../content/flows/wake-up-rested-flow.json';
+import backPainFlow from '../../content/flows/back-pain-flow.json';
+
+// Flow registry - maps URL param to flow data
+const FLOWS: Record<string, typeof wakeUpRestedFlow> = {
+  'default': wakeUpRestedFlow,
+  'sleep': wakeUpRestedFlow,
+  'back-pain': backPainFlow,
+};
 
 // Type for flow steps
 interface FlowStep {
@@ -31,6 +39,10 @@ interface FlowStep {
 
 function HomeContent() {
   const searchParams = useSearchParams();
+
+  // Flow selection: ?flow=back-pain, ?flow=sleep, etc.
+  const flowParam = searchParams.get('flow') || 'default';
+  const activeFlow = FLOWS[flowParam] || FLOWS['default'];
 
   // Dev: ?step=N to skip directly to question N (1-indexed)
   const stepParam = searchParams.get('step');
@@ -67,11 +79,12 @@ function HomeContent() {
     }
   }, [isAvatarTalking]);
 
-  // Get flow data from CMS
-  const flowSteps = wakeUpRestedFlow.steps as FlowStep[];
+  // Get flow data from CMS (uses activeFlow based on ?flow= param)
+  const flowSteps = activeFlow.steps as FlowStep[];
   const headerStep = flowSteps.find(step => step.stepType === 'header');
   const questionSteps = flowSteps.filter(step => step.stepType === 'question');
   const currentStep = questionSteps[currentStepIndex];
+  const introVideo = (activeFlow as typeof wakeUpRestedFlow & { introVideo?: string }).introVideo || '/videos/Mattress_Shopping.mp4';
 
   // Get intro message from CMS
   const introMessage = headerStep?.headerContent?.avatarIntroScript || '';
@@ -212,7 +225,7 @@ function HomeContent() {
             playsInline
             controls={false}
           >
-            <source src="/videos/Mattress_Shopping.mp4" type="video/mp4" />
+            <source src={introVideo} type="video/mp4" />
           </video>
 
           {/* Gradient Overlay */}
@@ -243,7 +256,7 @@ function HomeContent() {
             <div className={styles.avatarContainer}>
               <Image
                 src="/images/avatar-2x.png"
-                alt={`${wakeUpRestedFlow.globalVariables.avatarName}, your BetterSleep AI Coach`}
+                alt={`${activeFlow.globalVariables.avatarName}, your BetterSleep AI Coach`}
                 width={220}
                 height={220}
                 className={styles.avatar}
@@ -289,7 +302,7 @@ function HomeContent() {
           {isLoadingAvatar && (
             <div className={styles.loadingContainer}>
               <div className={styles.loadingSpinner} />
-              <p className={styles.loadingText}>Connecting to Ashley...</p>
+              <p className={styles.loadingText}>Connecting to {activeFlow.globalVariables.avatarName}...</p>
             </div>
           )}
 
@@ -312,7 +325,7 @@ function HomeContent() {
                           <span
                             key={index}
                             className={index < 4 ? styles.introWord : `${styles.introWord} ${styles.speechTextSecondary}`}
-                            style={{ animationDelay: `${index * 0.13}s` }}
+                            style={{ animationDelay: `${index * 0.26}s` }}
                           >
                             {word}{' '}
                           </span>
@@ -329,7 +342,7 @@ function HomeContent() {
                           <span
                             key={index}
                             className={styles.responseWord}
-                            style={{ animationDelay: `${index * 0.16}s` }}
+                            style={{ animationDelay: `${index * 0.32}s` }}
                           >
                             {word}{' '}
                           </span>
@@ -388,7 +401,7 @@ function HomeContent() {
 }
 
 // Set to true to skip HeyGen API calls and simulate avatar behavior
-const HEYGEN_DEV_MODE = true;
+const HEYGEN_DEV_MODE = false;
 
 // Wrap with HeyGen Provider and Suspense (required for useSearchParams)
 export default function Home() {

@@ -1,23 +1,40 @@
 .avatarContainer {
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  /* Narrow container that crops left/right of video */
+  width: 400px;
+  height: 800px;
+  max-height: 90vh;
+  overflow: hidden;
 }
 
 .avatarVideo {
   display: block;
-  width: auto;
+  position: absolute;
+  bottom: 0;
+  /* Center horizontally */
+  left: 50%;
+  transform: translateX(-50%);
+  /* Make video 200% width of container so only 50% is visible */
+  width: 200%;
   height: auto;
-  max-height: 90vh;
-  object-fit: contain;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
 }
 
 .avatarImage {
   display: block;
-  width: auto;
+  position: absolute;
+  bottom: 0;
+  /* Center horizontally */
+  left: 50%;
+  transform: translateX(-50%);
+  /* Same treatment for fallback image */
+  width: 200%;
   height: auto;
-  max-height: 90vh;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
   transition: opacity 0.3s ease;
 }
 
