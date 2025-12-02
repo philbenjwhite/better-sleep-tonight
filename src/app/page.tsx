@@ -11,7 +11,7 @@ import { DevPanel, StoredAnswer } from '@/components/DevPanel';
 import styles from './page.module.css';
 
 // Import flow data from CMS
-import backPainFlow from '../../content/flows/back-pain-flow.json';
+import wakeUpRestedFlow from '../../content/flows/wake-up-rested-flow.json';
 
 // Type for flow steps
 interface FlowStep {
@@ -68,7 +68,7 @@ function HomeContent() {
   }, [isAvatarTalking]);
 
   // Get flow data from CMS
-  const flowSteps = backPainFlow.steps as FlowStep[];
+  const flowSteps = wakeUpRestedFlow.steps as FlowStep[];
   const headerStep = flowSteps.find(step => step.stepType === 'header');
   const questionSteps = flowSteps.filter(step => step.stepType === 'question');
   const currentStep = questionSteps[currentStepIndex];
@@ -243,7 +243,7 @@ function HomeContent() {
             <div className={styles.avatarContainer}>
               <Image
                 src="/images/avatar-2x.png"
-                alt={`${backPainFlow.globalVariables.avatarName}, your BetterSleep AI Coach`}
+                alt={`${wakeUpRestedFlow.globalVariables.avatarName}, your BetterSleep AI Coach`}
                 width={220}
                 height={220}
                 className={styles.avatar}
