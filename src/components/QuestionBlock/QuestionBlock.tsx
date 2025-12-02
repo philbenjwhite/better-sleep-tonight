@@ -74,7 +74,8 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
 
   // Use controlled value if provided, otherwise use internal state
   const currentValue = selectedValue !== undefined ? selectedValue : internalSelected;
-  const currentTextValue = textValue !== undefined ? textValue : internalTextValue;
+  // For text input, only use prop value if explicitly passed (not just default empty string)
+  const currentTextValue = internalTextValue;
 
   // Sort options by order if available (only if we have answerOptions)
   const sortedOptions = questionContent.answerOptions

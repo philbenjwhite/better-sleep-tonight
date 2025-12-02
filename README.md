@@ -96,6 +96,56 @@ Components use CSS Modules for scoped styling. Import styles like:
 import styles from './Component.module.css';
 ```
 
+## HeyGen Avatar Dev Mode
+
+The HeyGen avatar integration includes a **dev mode** to avoid API calls during development:
+
+### Enable Dev Mode
+
+In [src/app/page.tsx](src/app/page.tsx), set the constant:
+
+```tsx
+const HEYGEN_DEV_MODE = true;  // Skip API calls, show placeholder
+const HEYGEN_DEV_MODE = false; // Use real HeyGen API
+```
+
+### What Dev Mode Does
+
+1. **Provider (`devMode` prop)** - Simulates avatar behavior without API calls:
+   - Connection delay (1 second simulated)
+   - Speaking duration based on word count (~100ms per word)
+   - Logs actions to console with `[DEV MODE]` prefix
+
+2. **Avatar Component (`placeholder` prop)** - Shows a styled placeholder:
+   - Displays the fallback image
+   - Overlays "Avatar Placeholder" label with dashed border
+   - Matches exact dimensions of the real avatar
+
+### Usage
+
+```tsx
+// In the provider
+<HeyGenProvider avatarId="Ann_Therapist_public" devMode={HEYGEN_DEV_MODE}>
+
+// In the avatar component
+<HeyGenAvatar placeholder={HEYGEN_DEV_MODE} />
+```
+
+This saves HeyGen credits during UI development while maintaining the full flow logic.
+
+### Skip to Question (URL Parameter)
+
+Use the `step` query parameter to skip directly to a specific question:
+
+```
+http://localhost:3000/?step=1  # Question 1 (skips intro)
+http://localhost:3000/?step=2  # Question 2
+http://localhost:3000/?step=3  # Question 3
+http://localhost:3000/         # Normal flow with intro
+```
+
+This is useful for testing specific questions without clicking through the entire flow.
+
 ## Example Component
 
 The Button component demonstrates best practices:

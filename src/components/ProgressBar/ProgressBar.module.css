@@ -1,0 +1,18 @@
+.progressBar {
+  position: fixed;
+  /* Sits directly on top of footer (footer height = 24px padding + ~18px content + 24px padding = ~66px) */
+  /* Use 65px to overlap slightly and eliminate gap */
+  bottom: 65px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #f6f3ed;
+  /* Above question overlay (z-index 20), same layer as footer (z-index 30) */
+  z-index: 30;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #8b1538;
+  transition: width 0.4s ease-out;
+}
