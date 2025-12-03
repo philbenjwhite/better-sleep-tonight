@@ -1,7 +1,6 @@
 {
   "flowId": "back-pain-flow",
   "displayName": "Back Pain Relief Journey",
-  "keyword": "content/keywords/back-pain.json",
   "description": "A targeted flow for users experiencing back pain, focusing on mattress support and spinal alignment.",
   "isActive": true,
   "introVideo": "/videos/Mattress_Shopping.mp4",

@@ -1,10 +1,9 @@
 {
   "flowId": "sleep-diagnosis-flow",
   "displayName": "Sleep Diagnosis Journey",
-  "keyword": "content/keywords/sleep-diagnosis.json",
   "description": "A quick sleep diagnosis to help users understand what's happening to their body at night and recommend personalized sleep solutions.",
   "isActive": true,
-  "introVideo": "/videos/Mattress_Shopping.mp4",
+  "introVideo": "/uploads/Mattress_Shopping.mp4",
   "globalVariables": {
     "avatarName": "Ashley",
     "brandName": "Better Sleep Tonight",
@@ -19,8 +18,6 @@
       "headerContent": {
         "headline": "It's Time That You Sleep Better",
         "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: to help you wake up without the aches and pain, without the sleep fog, and without wondering why you're tired before the day even starts! If you're here, I'm guessing sleep hasn't been treating you right — and trust me, you're not alone.",
-        "subheadlineSecondary": "The good news that you're in exactly the right place to fix it.",
-        "audioNotice": "For best experience please have your audio turned on",
         "avatarIntroScript": "A lot of people struggle with restless nights, sore mornings, and that 'why do I feel 20 years older?' stiffness. And while it feels mysterious, it usually isn't. There's always a reason — and there's almost always a solution. Let's run a quick sleep diagnosis — to figure out what's happening to your body at night.",
         "primaryButtonText": "Let's Begin",
         "primaryButtonAction": "next"
@@ -181,6 +178,12 @@
         "secondaryButtonText": "Talk to a Sleep Expert",
         "secondaryButtonUrl": "/contact"
       }
+    },
+    {
+      "stepId": "email-capture",
+      "internalName": "Email Capgure",
+      "order": 5,
+      "stepType": "email-capture"
     }
   ],
   "metadata": {

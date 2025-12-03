@@ -82,8 +82,6 @@ export type Query = {
   collections: Array<Collection>;
   node: Node;
   document: DocumentNode;
-  keywords: Keywords;
-  keywordsConnection: KeywordsConnection;
   stepTypes: StepTypes;
   stepTypesConnection: StepTypesConnection;
   inputTypes: InputTypes;
@@ -111,21 +109,6 @@ export type QueryNodeArgs = {
 export type QueryDocumentArgs = {
   collection?: InputMaybe<Scalars['String']['input']>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryKeywordsArgs = {
-  relativePath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryKeywordsConnectionArgs = {
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<KeywordsFilter>;
 };
 
 
@@ -174,7 +157,6 @@ export type QueryFlowsConnectionArgs = {
 };
 
 export type DocumentFilter = {
-  keywords?: InputMaybe<KeywordsFilter>;
   stepTypes?: InputMaybe<StepTypesFilter>;
   inputTypes?: InputMaybe<InputTypesFilter>;
   flows?: InputMaybe<FlowsFilter>;
@@ -217,15 +199,16 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Keywords | StepTypes | InputTypes | Flows | Folder;
+export type DocumentNode = StepTypes | InputTypes | Flows | Folder;
 
-export type Keywords = Node & Document & {
-  __typename?: 'Keywords';
+export type StepTypes = Node & Document & {
+  __typename?: 'StepTypes';
   slug: Scalars['String']['output'];
   displayName: Scalars['String']['output'];
-  searchTerms?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  category?: Maybe<Scalars['String']['output']>;
-  isActive?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  requiresUserInput?: Maybe<Scalars['Boolean']['output']>;
+  hasAvatarResponse?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -241,40 +224,6 @@ export type StringFilter = {
 export type BooleanFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
   exists?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type KeywordsFilter = {
-  slug?: InputMaybe<StringFilter>;
-  displayName?: InputMaybe<StringFilter>;
-  searchTerms?: InputMaybe<StringFilter>;
-  category?: InputMaybe<StringFilter>;
-  isActive?: InputMaybe<BooleanFilter>;
-};
-
-export type KeywordsConnectionEdges = {
-  __typename?: 'KeywordsConnectionEdges';
-  cursor: Scalars['String']['output'];
-  node?: Maybe<Keywords>;
-};
-
-export type KeywordsConnection = Connection & {
-  __typename?: 'KeywordsConnection';
-  pageInfo: PageInfo;
-  totalCount: Scalars['Float']['output'];
-  edges?: Maybe<Array<Maybe<KeywordsConnectionEdges>>>;
-};
-
-export type StepTypes = Node & Document & {
-  __typename?: 'StepTypes';
-  slug: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  requiresUserInput?: Maybe<Scalars['Boolean']['output']>;
-  hasAvatarResponse?: Maybe<Scalars['Boolean']['output']>;
-  id: Scalars['ID']['output'];
-  _sys: SystemInfo;
-  _values: Scalars['JSON']['output'];
 };
 
 export type StepTypesFilter = {
@@ -333,8 +282,6 @@ export type InputTypesConnection = Connection & {
   totalCount: Scalars['Float']['output'];
   edges?: Maybe<Array<Maybe<InputTypesConnectionEdges>>>;
 };
-
-export type FlowsKeyword = Keywords;
 
 export type FlowsGlobalVariables = {
   __typename?: 'FlowsGlobalVariables';
@@ -444,7 +391,6 @@ export type Flows = Node & Document & {
   __typename?: 'Flows';
   flowId: Scalars['String']['output'];
   displayName: Scalars['String']['output'];
-  keyword: FlowsKeyword;
   description?: Maybe<Scalars['String']['output']>;
   isActive?: Maybe<Scalars['Boolean']['output']>;
   introVideo?: Maybe<Scalars['String']['output']>;
@@ -456,8 +402,11 @@ export type Flows = Node & Document & {
   _values: Scalars['JSON']['output'];
 };
 
-export type FlowsKeywordFilter = {
-  keywords?: InputMaybe<KeywordsFilter>;
+export type ImageFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
+  eq?: InputMaybe<Scalars['String']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type FlowsGlobalVariablesFilter = {
@@ -574,10 +523,9 @@ export type FlowsMetadataFilter = {
 export type FlowsFilter = {
   flowId?: InputMaybe<StringFilter>;
   displayName?: InputMaybe<StringFilter>;
-  keyword?: InputMaybe<FlowsKeywordFilter>;
   description?: InputMaybe<StringFilter>;
   isActive?: InputMaybe<BooleanFilter>;
-  introVideo?: InputMaybe<StringFilter>;
+  introVideo?: InputMaybe<ImageFilter>;
   globalVariables?: InputMaybe<FlowsGlobalVariablesFilter>;
   steps?: InputMaybe<FlowsStepsFilter>;
   metadata?: InputMaybe<FlowsMetadataFilter>;
@@ -603,8 +551,6 @@ export type Mutation = {
   deleteDocument: DocumentNode;
   createDocument: DocumentNode;
   createFolder: DocumentNode;
-  updateKeywords: Keywords;
-  createKeywords: Keywords;
   updateStepTypes: StepTypes;
   createStepTypes: StepTypes;
   updateInputTypes: InputTypes;
@@ -647,18 +593,6 @@ export type MutationCreateFolderArgs = {
 };
 
 
-export type MutationUpdateKeywordsArgs = {
-  relativePath: Scalars['String']['input'];
-  params: KeywordsMutation;
-};
-
-
-export type MutationCreateKeywordsArgs = {
-  relativePath: Scalars['String']['input'];
-  params: KeywordsMutation;
-};
-
-
 export type MutationUpdateStepTypesArgs = {
   relativePath: Scalars['String']['input'];
   params: StepTypesMutation;
@@ -695,7 +629,6 @@ export type MutationCreateFlowsArgs = {
 };
 
 export type DocumentUpdateMutation = {
-  keywords?: InputMaybe<KeywordsMutation>;
   stepTypes?: InputMaybe<StepTypesMutation>;
   inputTypes?: InputMaybe<InputTypesMutation>;
   flows?: InputMaybe<FlowsMutation>;
@@ -703,18 +636,9 @@ export type DocumentUpdateMutation = {
 };
 
 export type DocumentMutation = {
-  keywords?: InputMaybe<KeywordsMutation>;
   stepTypes?: InputMaybe<StepTypesMutation>;
   inputTypes?: InputMaybe<InputTypesMutation>;
   flows?: InputMaybe<FlowsMutation>;
-};
-
-export type KeywordsMutation = {
-  slug?: InputMaybe<Scalars['String']['input']>;
-  displayName?: InputMaybe<Scalars['String']['input']>;
-  searchTerms?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  category?: InputMaybe<Scalars['String']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type StepTypesMutation = {
@@ -831,7 +755,6 @@ export type FlowsMetadataMutation = {
 export type FlowsMutation = {
   flowId?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   introVideo?: InputMaybe<Scalars['String']['input']>;
@@ -840,32 +763,11 @@ export type FlowsMutation = {
   metadata?: InputMaybe<FlowsMetadataMutation>;
 };
 
-export type KeywordsPartsFragment = { __typename: 'Keywords', slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null };
-
 export type StepTypesPartsFragment = { __typename: 'StepTypes', slug: string, displayName: string, description?: string | null, icon?: string | null, requiresUserInput?: boolean | null, hasAvatarResponse?: boolean | null };
 
 export type InputTypesPartsFragment = { __typename: 'InputTypes', slug: string, displayName: string, description?: string | null, allowsMultiple?: boolean | null, hasOptions?: boolean | null, validationPattern?: string | null };
 
-export type FlowsPartsFragment = { __typename: 'Flows', flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, keyword: { __typename: 'Keywords', slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null, id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } }, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null };
-
-export type KeywordsQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
-}>;
-
-
-export type KeywordsQuery = { __typename?: 'Query', keywords: { __typename: 'Keywords', id: string, slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
-
-export type KeywordsConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<KeywordsFilter>;
-}>;
-
-
-export type KeywordsConnectionQuery = { __typename?: 'Query', keywordsConnection: { __typename?: 'KeywordsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'KeywordsConnectionEdges', cursor: string, node?: { __typename: 'Keywords', id: string, slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type FlowsPartsFragment = { __typename: 'Flows', flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null };
 
 export type StepTypesQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
@@ -910,7 +812,7 @@ export type FlowsQueryVariables = Exact<{
 }>;
 
 
-export type FlowsQuery = { __typename?: 'Query', flows: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, keyword: { __typename: 'Keywords', slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null, id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } }, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } };
+export type FlowsQuery = { __typename?: 'Query', flows: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } };
 
 export type FlowsConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -922,18 +824,8 @@ export type FlowsConnectionQueryVariables = Exact<{
 }>;
 
 
-export type FlowsConnectionQuery = { __typename?: 'Query', flowsConnection: { __typename?: 'FlowsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'FlowsConnectionEdges', cursor: string, node?: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, keyword: { __typename: 'Keywords', slug: string, displayName: string, searchTerms?: Array<string | null> | null, category?: string | null, isActive?: boolean | null, id: string, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } }, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } | null } | null> | null } };
+export type FlowsConnectionQuery = { __typename?: 'Query', flowsConnection: { __typename?: 'FlowsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'FlowsConnectionEdges', cursor: string, node?: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introVideo?: string | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, globalVariables?: { __typename: 'FlowsGlobalVariables', avatarName?: string | null, brandName?: string | null, supportEmail?: string | null, customVar1?: string | null, customVar2?: string | null } | null, steps?: Array<{ __typename: 'FlowsSteps', stepId: string, internalName?: string | null, order: number, stepType: string, headerContent?: { __typename: 'FlowsStepsHeaderContent', headline?: string | null, subheadline?: string | null, avatarIntroScript?: string | null, primaryButtonText?: string | null, primaryButtonAction?: string | null } | null, questionContent?: { __typename: 'FlowsStepsQuestionContent', questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionContentAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, tags?: Array<string | null> | null } | null> | null } | null, avatarContent?: { __typename: 'FlowsStepsAvatarContent', scriptText?: string | null, emotion?: string | null, gestureHint?: string | null, pauseAfterMs?: number | null, autoAdvance?: boolean | null, autoAdvanceDelayMs?: number | null } | null, emailCaptureContent?: { __typename: 'FlowsStepsEmailCaptureContent', promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null, skipOptionText?: string | null, avatarResponseOnSkip?: string | null } | null, ctaContent?: { __typename: 'FlowsStepsCtaContent', headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | null, styling?: { __typename: 'FlowsStepsStyling', backgroundColor?: string | null, customCssClass?: string | null } | null, analytics?: { __typename: 'FlowsStepsAnalytics', trackingEventName?: string | null, customProperties?: string | null } | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } | null } | null> | null } };
 
-export const KeywordsPartsFragmentDoc = gql`
-    fragment KeywordsParts on Keywords {
-  __typename
-  slug
-  displayName
-  searchTerms
-  category
-  isActive
-}
-    `;
 export const StepTypesPartsFragmentDoc = gql`
     fragment StepTypesParts on StepTypes {
   __typename
@@ -961,28 +853,6 @@ export const FlowsPartsFragmentDoc = gql`
   __typename
   flowId
   displayName
-  keyword {
-    ... on Keywords {
-      __typename
-      slug
-      displayName
-      searchTerms
-      category
-      isActive
-    }
-    ... on Document {
-      _sys {
-        filename
-        basename
-        hasReferences
-        breadcrumbs
-        path
-        relativePath
-        extension
-      }
-      id
-    }
-  }
   description
   isActive
   introVideo
@@ -1073,63 +943,6 @@ export const FlowsPartsFragmentDoc = gql`
   }
 }
     `;
-export const KeywordsDocument = gql`
-    query keywords($relativePath: String!) {
-  keywords(relativePath: $relativePath) {
-    ... on Document {
-      _sys {
-        filename
-        basename
-        hasReferences
-        breadcrumbs
-        path
-        relativePath
-        extension
-      }
-      id
-    }
-    ...KeywordsParts
-  }
-}
-    ${KeywordsPartsFragmentDoc}`;
-export const KeywordsConnectionDocument = gql`
-    query keywordsConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: KeywordsFilter) {
-  keywordsConnection(
-    before: $before
-    after: $after
-    first: $first
-    last: $last
-    sort: $sort
-    filter: $filter
-  ) {
-    pageInfo {
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor
-    }
-    totalCount
-    edges {
-      cursor
-      node {
-        ... on Document {
-          _sys {
-            filename
-            basename
-            hasReferences
-            breadcrumbs
-            path
-            relativePath
-            extension
-          }
-          id
-        }
-        ...KeywordsParts
-      }
-    }
-  }
-}
-    ${KeywordsPartsFragmentDoc}`;
 export const StepTypesDocument = gql`
     query stepTypes($relativePath: String!) {
   stepTypes(relativePath: $relativePath) {
@@ -1304,13 +1117,7 @@ export const FlowsConnectionDocument = gql`
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
-      keywords(variables: KeywordsQueryVariables, options?: C): Promise<{data: KeywordsQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: KeywordsQueryVariables, query: string}> {
-        return requester<{data: KeywordsQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: KeywordsQueryVariables, query: string}, KeywordsQueryVariables>(KeywordsDocument, variables, options);
-      },
-    keywordsConnection(variables?: KeywordsConnectionQueryVariables, options?: C): Promise<{data: KeywordsConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: KeywordsConnectionQueryVariables, query: string}> {
-        return requester<{data: KeywordsConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: KeywordsConnectionQueryVariables, query: string}, KeywordsConnectionQueryVariables>(KeywordsConnectionDocument, variables, options);
-      },
-    stepTypes(variables: StepTypesQueryVariables, options?: C): Promise<{data: StepTypesQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: StepTypesQueryVariables, query: string}> {
+      stepTypes(variables: StepTypesQueryVariables, options?: C): Promise<{data: StepTypesQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: StepTypesQueryVariables, query: string}> {
         return requester<{data: StepTypesQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: StepTypesQueryVariables, query: string}, StepTypesQueryVariables>(StepTypesDocument, variables, options);
       },
     stepTypesConnection(variables?: StepTypesConnectionQueryVariables, options?: C): Promise<{data: StepTypesConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: StepTypesConnectionQueryVariables, query: string}> {

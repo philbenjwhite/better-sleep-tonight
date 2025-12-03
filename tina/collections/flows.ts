@@ -371,14 +371,7 @@ export const flowsCollection: Collection = {
       type: "string",
       required: true,
     },
-    {
-      name: "keyword",
-      label: "Trigger Keyword",
-      type: "reference",
-      collections: ["keywords"],
-      required: true,
-    },
-    {
+        {
       name: "description",
       label: "Description",
       type: "string",
@@ -392,8 +385,8 @@ export const flowsCollection: Collection = {
     {
       name: "introVideo",
       label: "Intro Video",
-      type: "string",
-      description: "Path to the background video shown on the intro screen (e.g., /videos/Mattress_Shopping.mp4)",
+      type: "image",
+      description: "Background video shown on the intro screen",
     },
     {
       name: "globalVariables",

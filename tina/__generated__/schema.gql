@@ -54,8 +54,6 @@ type Query {
   collections: [Collection!]!
   node(id: String): Node!
   document(collection: String, relativePath: String): DocumentNode!
-  keywords(relativePath: String): Keywords!
-  keywordsConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: KeywordsFilter): KeywordsConnection!
   stepTypes(relativePath: String): StepTypes!
   stepTypesConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: StepTypesFilter): StepTypesConnection!
   inputTypes(relativePath: String): InputTypes!
@@ -65,7 +63,6 @@ type Query {
 }
 
 input DocumentFilter {
-  keywords: KeywordsFilter
   stepTypes: StepTypesFilter
   inputTypes: InputTypesFilter
   flows: FlowsFilter
@@ -94,14 +91,15 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Keywords | StepTypes | InputTypes | Flows | Folder
+union DocumentNode = StepTypes | InputTypes | Flows | Folder
 
-type Keywords implements Node & Document {
+type StepTypes implements Node & Document {
   slug: String!
   displayName: String!
-  searchTerms: [String]
-  category: String
-  isActive: Boolean
+  description: String
+  icon: String
+  requiresUserInput: Boolean
+  hasAvatarResponse: Boolean
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -117,37 +115,6 @@ input StringFilter {
 input BooleanFilter {
   eq: Boolean
   exists: Boolean
-}
-
-input KeywordsFilter {
-  slug: StringFilter
-  displayName: StringFilter
-  searchTerms: StringFilter
-  category: StringFilter
-  isActive: BooleanFilter
-}
-
-type KeywordsConnectionEdges {
-  cursor: String!
-  node: Keywords
-}
-
-type KeywordsConnection implements Connection {
-  pageInfo: PageInfo!
-  totalCount: Float!
-  edges: [KeywordsConnectionEdges]
-}
-
-type StepTypes implements Node & Document {
-  slug: String!
-  displayName: String!
-  description: String
-  icon: String
-  requiresUserInput: Boolean
-  hasAvatarResponse: Boolean
-  id: ID!
-  _sys: SystemInfo!
-  _values: JSON!
 }
 
 input StepTypesFilter {
@@ -201,8 +168,6 @@ type InputTypesConnection implements Connection {
   totalCount: Float!
   edges: [InputTypesConnectionEdges]
 }
-
-union FlowsKeyword = Keywords
 
 type FlowsGlobalVariables {
   avatarName: String
@@ -300,7 +265,6 @@ type FlowsMetadata {
 type Flows implements Node & Document {
   flowId: String!
   displayName: String!
-  keyword: FlowsKeyword!
   description: String
   isActive: Boolean
   introVideo: String
@@ -312,8 +276,11 @@ type Flows implements Node & Document {
   _values: JSON!
 }
 
-input FlowsKeywordFilter {
-  keywords: KeywordsFilter
+input ImageFilter {
+  startsWith: String
+  eq: String
+  exists: Boolean
+  in: [String]
 }
 
 input FlowsGlobalVariablesFilter {
@@ -430,10 +397,9 @@ input FlowsMetadataFilter {
 input FlowsFilter {
   flowId: StringFilter
   displayName: StringFilter
-  keyword: FlowsKeywordFilter
   description: StringFilter
   isActive: BooleanFilter
-  introVideo: StringFilter
+  introVideo: ImageFilter
   globalVariables: FlowsGlobalVariablesFilter
   steps: FlowsStepsFilter
   metadata: FlowsMetadataFilter
@@ -456,8 +422,6 @@ type Mutation {
   deleteDocument(collection: String, relativePath: String!): DocumentNode!
   createDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   createFolder(collection: String, relativePath: String!): DocumentNode!
-  updateKeywords(relativePath: String!, params: KeywordsMutation!): Keywords!
-  createKeywords(relativePath: String!, params: KeywordsMutation!): Keywords!
   updateStepTypes(relativePath: String!, params: StepTypesMutation!): StepTypes!
   createStepTypes(relativePath: String!, params: StepTypesMutation!): StepTypes!
   updateInputTypes(relativePath: String!, params: InputTypesMutation!): InputTypes!
@@ -467,7 +431,6 @@ type Mutation {
 }
 
 input DocumentUpdateMutation {
-  keywords: KeywordsMutation
   stepTypes: StepTypesMutation
   inputTypes: InputTypesMutation
   flows: FlowsMutation
@@ -475,18 +438,9 @@ input DocumentUpdateMutation {
 }
 
 input DocumentMutation {
-  keywords: KeywordsMutation
   stepTypes: StepTypesMutation
   inputTypes: InputTypesMutation
   flows: FlowsMutation
-}
-
-input KeywordsMutation {
-  slug: String
-  displayName: String
-  searchTerms: [String]
-  category: String
-  isActive: Boolean
 }
 
 input StepTypesMutation {
@@ -603,7 +557,6 @@ input FlowsMetadataMutation {
 input FlowsMutation {
   flowId: String
   displayName: String
-  keyword: String
   description: String
   isActive: Boolean
   introVideo: String

@@ -8,6 +8,7 @@ import { QuestionBlock, CMSAnswerOption, CMSQuestionContent } from '@/components
 import { HeyGenProvider, HeyGenAvatar, useHeyGen, AvatarSessionState } from '@/components/HeyGenAvatar';
 import { ProgressBar } from '@/components/ProgressBar';
 import { DevPanel, StoredAnswer } from '@/components/DevPanel';
+import { Header } from '@/components/Header';
 import styles from './page.module.css';
 
 // Import flow data from CMS
@@ -233,20 +234,8 @@ function HomeContent() {
         </>
       )}
 
-      {/* Logo - Top Left */}
-      <div className={styles.logo}>
-        <div className={styles.logoPlaceholder}>Logo</div>
-      </div>
-
-      {/* Volume Icon - Top Right */}
-      <button className={styles.volumeButton} aria-label="Toggle audio">
-        <Image
-          src="/images/volume-icon.svg"
-          alt=""
-          width={20}
-          height={20}
-        />
-      </button>
+      {/* Header with Logo and Volume Button */}
+      <Header brandName={activeFlow.globalVariables.brandName} />
 
       {/* Intro View */}
       {currentView === 'intro' && headerStep?.headerContent && (

@@ -1,6 +1,5 @@
 import { defineConfig } from "tinacms";
 
-import { keywordsCollection } from "./collections/keywords";
 import { stepTypesCollection } from "./collections/stepTypes";
 import { inputTypesCollection } from "./collections/inputTypes";
 import { flowsCollection } from "./collections/flows";
@@ -37,7 +36,6 @@ export default defineConfig({
 
   schema: {
     collections: [
-      keywordsCollection,
       stepTypesCollection,
       inputTypesCollection,
       flowsCollection,

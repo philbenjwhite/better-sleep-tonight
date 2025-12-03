@@ -1,12 +1,3 @@
-fragment KeywordsParts on Keywords {
-  __typename
-  slug
-  displayName
-  searchTerms
-  category
-  isActive
-}
-
 fragment StepTypesParts on StepTypes {
   __typename
   slug
@@ -31,28 +22,6 @@ fragment FlowsParts on Flows {
   __typename
   flowId
   displayName
-  keyword {
-    ... on Keywords {
-      __typename
-      slug
-      displayName
-      searchTerms
-      category
-      isActive
-    }
-    ... on Document {
-      _sys {
-        filename
-        basename
-        hasReferences
-        breadcrumbs
-        path
-        relativePath
-        extension
-      }
-      id
-    }
-  }
   description
   isActive
   introVideo
