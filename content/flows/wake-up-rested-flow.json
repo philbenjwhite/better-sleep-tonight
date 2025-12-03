@@ -17,10 +17,12 @@
       "order": 1,
       "stepType": "header",
       "headerContent": {
-        "headline": "Find Your Perfect Mattress",
-        "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: helping you wake up clear, refreshed, and pain‑free. If sleep hasn't been treating you right, you're not alone.",
+        "headline": "It's Time That You Sleep Better",
+        "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: to help you wake up without the aches and pain, without the sleep fog, and without wondering why you're tired before the day even starts! If you're here, I'm guessing sleep hasn't been treating you right — and trust me, you're not alone.",
+        "subheadlineSecondary": "The good news that you're in exactly the right place to fix it.",
+        "audioNotice": "For best experience please have your audio turned on",
         "avatarIntroScript": "A lot of people struggle with restless nights, sore mornings, and that 'why do I feel 20 years older?' stiffness. And while it feels mysterious, it usually isn't. There's always a reason — and there's almost always a solution. Let's run a quick sleep diagnosis — to figure out what's happening to your body at night.",
-        "primaryButtonText": "Let's Begin!!!!",
+        "primaryButtonText": "Let's Begin",
         "primaryButtonAction": "next"
       }
     },
