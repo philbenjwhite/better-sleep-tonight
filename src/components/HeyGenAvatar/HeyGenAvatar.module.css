@@ -7,6 +7,15 @@
   overflow: hidden;
 }
 
+/* Mobile: center avatar and make it full width */
+@media (max-width: 768px) {
+  .avatarContainer {
+    width: 100%;
+    max-width: 100vw;
+    height: 60vh;
+  }
+}
+
 .avatarVideo {
   display: block;
   position: absolute;

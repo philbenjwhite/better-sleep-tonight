@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useRef, useState, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import StreamingAvatar, {
   AvatarQuality,
   StreamingEvents,
   TaskMode,
   TaskType,
   StartAvatarRequest,
-} from '@heygen/streaming-avatar';
+} from "@heygen/streaming-avatar";
 
 export enum AvatarSessionState {
-  INACTIVE = 'inactive',
-  CONNECTING = 'connecting',
-  CONNECTED = 'connected',
+  INACTIVE = "inactive",
+  CONNECTING = "connecting",
+  CONNECTED = "connected",
 }
 
 interface HeyGenContextProps {
@@ -38,13 +44,12 @@ const HeyGenContext = createContext<HeyGenContextProps>({
 // Default avatar configuration
 const DEFAULT_AVATAR_CONFIG: StartAvatarRequest = {
   quality: AvatarQuality.Medium,
-  avatarName: 'Ann_Therapist_public', // Female therapist avatar
-  language: 'en',
+  language: "en",
 };
 
 interface HeyGenProviderProps {
   children: React.ReactNode;
-  avatarId?: string;
+  avatarName?: string;
   /**
    * Dev mode skips API calls and simulates avatar behavior.
    * Useful for UI development without using HeyGen credits.
@@ -54,11 +59,13 @@ interface HeyGenProviderProps {
 
 export const HeyGenProvider: React.FC<HeyGenProviderProps> = ({
   children,
-  avatarId = 'Ann_Therapist_public',
+  avatarName,
   devMode = false,
 }) => {
   const avatarRef = useRef<StreamingAvatar | null>(null);
-  const [sessionState, setSessionState] = useState<AvatarSessionState>(AvatarSessionState.INACTIVE);
+  const [sessionState, setSessionState] = useState<AvatarSessionState>(
+    AvatarSessionState.INACTIVE
+  );
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isAvatarTalking, setIsAvatarTalking] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,36 +76,39 @@ export const HeyGenProvider: React.FC<HeyGenProviderProps> = ({
 
     setSessionState(AvatarSessionState.CONNECTING);
     // Simulate connection delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setSessionState(AvatarSessionState.CONNECTED);
-    console.log('[DEV MODE] Avatar connected (simulated)');
+    console.log("[DEV MODE] Avatar connected (simulated)");
   }, [sessionState]);
 
-  const speakDev = useCallback(async (text: string) => {
-    if (sessionState !== AvatarSessionState.CONNECTED) return;
+  const speakDev = useCallback(
+    async (text: string) => {
+      if (sessionState !== AvatarSessionState.CONNECTED) return;
 
-    console.log('[DEV MODE] Avatar speaking:', text);
-    setIsAvatarTalking(true);
-    // Simulate speaking duration based on text length (~100ms per word)
-    const duration = Math.max(2000, text.split(' ').length * 100);
-    await new Promise(resolve => setTimeout(resolve, duration));
-    setIsAvatarTalking(false);
-    console.log('[DEV MODE] Avatar finished speaking');
-  }, [sessionState]);
+      console.log("[DEV MODE] Avatar speaking:", text);
+      setIsAvatarTalking(true);
+      // Simulate speaking duration based on text length (~100ms per word)
+      const duration = Math.max(2000, text.split(" ").length * 100);
+      await new Promise((resolve) => setTimeout(resolve, duration));
+      setIsAvatarTalking(false);
+      console.log("[DEV MODE] Avatar finished speaking");
+    },
+    [sessionState]
+  );
 
   const stopSessionDev = useCallback(async () => {
     setSessionState(AvatarSessionState.INACTIVE);
     setIsAvatarTalking(false);
-    console.log('[DEV MODE] Avatar session stopped');
+    console.log("[DEV MODE] Avatar session stopped");
   }, []);
 
   const fetchAccessToken = async (): Promise<string> => {
-    const response = await fetch('/api/heygen-token', {
-      method: 'POST',
+    const response = await fetch("/api/heygen-token", {
+      method: "POST",
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch access token');
+      throw new Error("Failed to fetch access token");
     }
 
     return response.text();
@@ -106,7 +116,7 @@ export const HeyGenProvider: React.FC<HeyGenProviderProps> = ({
 
   const initializeAvatar = useCallback(async () => {
     if (sessionState !== AvatarSessionState.INACTIVE) {
-      console.log('Avatar session already active or connecting');
+      console.log("Avatar session already active or connecting");
       return;
     }
 
@@ -115,7 +125,8 @@ export const HeyGenProvider: React.FC<HeyGenProviderProps> = ({
       setSessionState(AvatarSessionState.CONNECTING);
 
       const token = await fetchAccessToken();
-      const basePath = process.env.NEXT_PUBLIC_HEYGEN_BASE_URL || 'https://api.heygen.com';
+      const basePath =
+        process.env.NEXT_PUBLIC_HEYGEN_BASE_URL || "https://api.heygen.com";
 
       avatarRef.current = new StreamingAvatar({
         token,
@@ -123,65 +134,72 @@ export const HeyGenProvider: React.FC<HeyGenProviderProps> = ({
       });
 
       // Set up event listeners
-      avatarRef.current.on(StreamingEvents.STREAM_READY, ({ detail }: { detail: MediaStream }) => {
-        console.log('HeyGen stream ready');
-        setStream(detail);
-        setSessionState(AvatarSessionState.CONNECTED);
-      });
+      avatarRef.current.on(
+        StreamingEvents.STREAM_READY,
+        ({ detail }: { detail: MediaStream }) => {
+          console.log("HeyGen stream ready");
+          setStream(detail);
+          setSessionState(AvatarSessionState.CONNECTED);
+        }
+      );
 
       avatarRef.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
-        console.log('HeyGen stream disconnected');
+        console.log("HeyGen stream disconnected");
         setStream(null);
         setSessionState(AvatarSessionState.INACTIVE);
       });
 
       avatarRef.current.on(StreamingEvents.AVATAR_START_TALKING, () => {
-        console.log('Avatar started talking');
+        console.log("Avatar started talking");
         setIsAvatarTalking(true);
       });
 
       avatarRef.current.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
-        console.log('Avatar stopped talking');
+        console.log("Avatar stopped talking");
         setIsAvatarTalking(false);
       });
 
       // Start the avatar session
       await avatarRef.current.createStartAvatar({
         ...DEFAULT_AVATAR_CONFIG,
-        avatarName: avatarId,
+        avatarName: avatarName,
       });
-
     } catch (err) {
-      console.error('Error initializing avatar:', err);
-      setError(err instanceof Error ? err.message : 'Failed to initialize avatar');
+      console.error("Error initializing avatar:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to initialize avatar"
+      );
       setSessionState(AvatarSessionState.INACTIVE);
     }
-  }, [sessionState, avatarId]);
+  }, [sessionState, avatarName]);
 
-  const speak = useCallback(async (text: string) => {
-    if (!avatarRef.current || sessionState !== AvatarSessionState.CONNECTED) {
-      console.warn('Avatar not connected, cannot speak');
-      return;
-    }
+  const speak = useCallback(
+    async (text: string) => {
+      if (!avatarRef.current || sessionState !== AvatarSessionState.CONNECTED) {
+        console.warn("Avatar not connected, cannot speak");
+        return;
+      }
 
-    try {
-      // Use REPEAT to speak the exact text provided (not conversational response)
-      await avatarRef.current.speak({
-        text,
-        taskType: TaskType.REPEAT,
-        taskMode: TaskMode.SYNC,
-      });
-    } catch (err) {
-      console.error('Error making avatar speak:', err);
-    }
-  }, [sessionState]);
+      try {
+        // Use REPEAT to speak the exact text provided (not conversational response)
+        await avatarRef.current.speak({
+          text,
+          taskType: TaskType.REPEAT,
+          taskMode: TaskMode.SYNC,
+        });
+      } catch (err) {
+        console.error("Error making avatar speak:", err);
+      }
+    },
+    [sessionState]
+  );
 
   const stopSession = useCallback(async () => {
     if (avatarRef.current) {
       try {
         await avatarRef.current.stopAvatar();
       } catch (err) {
-        console.error('Error stopping avatar:', err);
+        console.error("Error stopping avatar:", err);
       }
       avatarRef.current = null;
     }

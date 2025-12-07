@@ -138,41 +138,6 @@
   white-space: nowrap;
 }
 
-/* Footer */
-.footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 30;
-  background-color: #f6f3ed;
-  padding: 24px;
-}
-
-.copyright {
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1;
-  color: var(--background-default-alternative, #363534);
-  margin: 0;
-  max-width: 487px;
-}
-
-.privacyPolicy {
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1;
-  color: var(--background-default-alternative, #363534);
-  text-align: right;
-  margin: 0;
-  white-space: nowrap;
-}
-
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .main {
@@ -205,17 +170,6 @@
     font-size: 12px;
     text-align: center;
   }
-
-  .footer {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 16px 24px;
-  }
-
-  .privacyPolicy {
-    text-align: left;
-  }
 }
 
 /* Small mobile adjustments */
@@ -230,16 +184,6 @@
 
   .heading {
     font-size: 16px;
-  }
-
-  .footer {
-    font-size: 12px;
-    padding: 12px 16px;
-  }
-
-  .copyright,
-  .privacyPolicy {
-    font-size: 12px;
   }
 }
 
@@ -350,6 +294,20 @@
   justify-content: center;
 }
 
+/* Mobile: center avatar at bottom */
+@media (max-width: 768px) {
+  .questionWrapper {
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .heygenWrapper {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+}
+
 /* .heygenAvatar {
   display: block;
   width: auto;
@@ -367,6 +325,14 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 100%);
   pointer-events: none;
   z-index: 5;
+}
+
+/* Speech Bubble Container - positions the SpeechBubbleSequence component */
+.speechBubbleContainer {
+  position: absolute;
+  top: 12px;
+  right: -360px;
+  width: 437px;
 }
 
 .speechBubble {
@@ -500,7 +466,15 @@
 
 @media (max-width: 768px) {
   .responseBubble {
-    width: 100%;
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    top: auto;
+    width: calc(100vw - 3rem);
+    max-width: 400px;
+    margin: 0;
     padding: 16px;
   }
 
@@ -509,25 +483,48 @@
   }
 }
 
-/* Question view responsive */
+/* Question view responsive - tablet */
 @media (max-width: 1200px) {
   .questionWrapper {
     padding: 24px;
   }
 
+  .speechText {
+    font-size: 20px;
+  }
+}
+
+/* Mobile: speech bubble positioned over avatar */
+@media (max-width: 768px) {
   .heygenWrapper {
-    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .speechBubbleContainer {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    top: auto;
+    width: calc(100vw - 3rem);
+    max-width: 400px;
   }
 
   .speechBubble {
-    position: static;
-    width: 90%;
-    max-width: 500px;
-    margin-top: 16px;
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    top: auto;
+    width: calc(100vw - 3rem);
+    max-width: 400px;
+    margin: 0;
   }
 
   .speechText {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 
@@ -587,17 +584,35 @@
   }
 }
 
-/* Responsive adjustments for question block */
+/* Mobile: position question block over centered avatar */
 @media (max-width: 768px) {
+  .questionBlockWrapper {
+    /* Remove blur backdrop on mobile - avatar shows behind */
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 100px; /* Space from bottom for footer */
+  }
+
+  .questionBlockBackdrop {
+    /* Lighter blur on mobile so avatar is more visible */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(253, 250, 245, 0.5);
+  }
+
   .questionBlockInner {
-    width: 100%;
-    max-width: 100%;
-    padding: 16px;
+    width: calc(100vw - 3rem);
+    max-width: calc(100vw - 3rem);
+    padding: 0;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
-  .questionBlockInner {
-    padding: 8px;
+  .questionBlockWrapper {
+    padding-bottom: 80px;
   }
 }

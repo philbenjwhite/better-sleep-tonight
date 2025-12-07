@@ -1,0 +1,90 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.bubble {
+  background-color: var(--sds-color-background-default-default, #ffffff);
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.text {
+  font-family: var(--sds-typography-heading-font-family, 'Open Sans', sans-serif);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+  color: var(--sds-color-text-default-default, #363534);
+  margin: 0;
+}
+
+.word {
+  display: inline;
+  opacity: 0;
+  animation: wordFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes wordFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade in animation for new bubbles */
+.fadeIn {
+  animation: bubbleFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes bubbleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide up and fade out animation for completed bubbles */
+.slideUp {
+  animation: bubbleSlideUp 0.4s ease-in forwards;
+}
+
+@keyframes bubbleSlideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .bubble {
+    padding: 14px 16px;
+  }
+
+  .text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .text {
+    font-size: 16px;
+  }
+}

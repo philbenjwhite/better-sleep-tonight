@@ -1,25 +1,35 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Image from 'next/image';
-import { Button } from '@/components/Button';
-import { QuestionBlock, CMSAnswerOption, CMSQuestionContent } from '@/components/QuestionBlock';
-import { HeyGenProvider, HeyGenAvatar, useHeyGen, AvatarSessionState } from '@/components/HeyGenAvatar';
-import { ProgressBar } from '@/components/ProgressBar';
-import { DevPanel, StoredAnswer } from '@/components/DevPanel';
-import { Header } from '@/components/Header';
-import styles from './page.module.css';
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/Button";
+import {
+  QuestionBlock,
+  CMSAnswerOption,
+  CMSQuestionContent,
+} from "@/components/QuestionBlock";
+import {
+  HeyGenProvider,
+  HeyGenAvatar,
+  useHeyGen,
+  AvatarSessionState,
+} from "@/components/HeyGenAvatar";
+import { DevPanel, StoredAnswer } from "@/components/DevPanel";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
+import styles from "./page.module.css";
 
 // Import flow data from CMS
-import wakeUpRestedFlow from '../../content/flows/wake-up-rested-flow.json';
-import backPainFlow from '../../content/flows/back-pain-flow.json';
+import wakeUpRestedFlow from "../../content/flows/wake-up-rested-flow.json";
+import backPainFlow from "../../content/flows/back-pain-flow.json";
 
 // Flow registry - maps URL param to flow data
 const FLOWS: Record<string, typeof wakeUpRestedFlow> = {
-  'default': wakeUpRestedFlow,
-  'sleep': wakeUpRestedFlow,
-  'back-pain': backPainFlow,
+  default: wakeUpRestedFlow,
+  sleep: wakeUpRestedFlow,
+  "back-pain": backPainFlow,
 };
 
 // Type for flow steps
@@ -42,20 +52,24 @@ function HomeContent() {
   const searchParams = useSearchParams();
 
   // Flow selection: ?flow=back-pain, ?flow=sleep, etc.
-  const flowParam = searchParams.get('flow') || 'default';
-  const activeFlow = FLOWS[flowParam] || FLOWS['default'];
+  const flowParam = searchParams.get("flow") || "default";
+  const activeFlow = FLOWS[flowParam] || FLOWS["default"];
 
   // Dev: ?step=N to skip directly to question N (1-indexed)
-  const stepParam = searchParams.get('step');
+  const stepParam = searchParams.get("step");
   const initialStep = stepParam ? Math.max(0, parseInt(stepParam, 10) - 1) : 0;
   const skipIntro = stepParam !== null;
 
-  const [currentView, setCurrentView] = useState<'intro' | 'question'>(skipIntro ? 'question' : 'intro');
+  const [currentView, setCurrentView] = useState<"intro" | "question">(
+    skipIntro ? "question" : "intro"
+  );
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const [showQuestionBlock, setShowQuestionBlock] = useState(skipIntro);
   const [currentStepIndex, setCurrentStepIndex] = useState(initialStep);
-  const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(
+    null
+  );
   const [avatarResponse, setAvatarResponse] = useState<string | null>(null);
   const [isShowingResponse, setIsShowingResponse] = useState(false);
   const [hasShownIntro, setHasShownIntro] = useState(skipIntro);
@@ -64,7 +78,8 @@ function HomeContent() {
   const [storedAnswers, setStoredAnswers] = useState<StoredAnswer[]>([]);
 
   // HeyGen avatar hook
-  const { sessionState, isAvatarTalking, initializeAvatar, speak } = useHeyGen();
+  const { sessionState, isAvatarTalking, initializeAvatar, speak } =
+    useHeyGen();
 
   // Dev mode: auto-initialize avatar when skipping intro
   useEffect(() => {
@@ -82,13 +97,17 @@ function HomeContent() {
 
   // Get flow data from CMS (uses activeFlow based on ?flow= param)
   const flowSteps = activeFlow.steps as FlowStep[];
-  const headerStep = flowSteps.find(step => step.stepType === 'header');
-  const questionSteps = flowSteps.filter(step => step.stepType === 'question');
+  const headerStep = flowSteps.find((step) => step.stepType === "header");
+  const questionSteps = flowSteps.filter(
+    (step) => step.stepType === "question"
+  );
   const currentStep = questionSteps[currentStepIndex];
-  const introVideo = (activeFlow as typeof wakeUpRestedFlow & { introVideo?: string }).introVideo || '/videos/Mattress_Shopping.mp4';
+  const introVideo =
+    (activeFlow as typeof wakeUpRestedFlow & { introVideo?: string })
+      .introVideo || "/videos/Mattress_Shopping.mp4";
 
   // Get intro message from CMS
-  const introMessage = headerStep?.headerContent?.avatarIntroScript || '';
+  const introMessage = headerStep?.headerContent?.avatarIntroScript || "";
 
   // Avatar is ready when connected
   const isAvatarReady = sessionState === AvatarSessionState.CONNECTED;
@@ -101,14 +120,19 @@ function HomeContent() {
     initializeAvatar();
 
     setTimeout(() => {
-      setCurrentView('question');
+      setCurrentView("question");
       setIsTransitioning(false);
     }, 500); // Match CSS transition duration
   }, [initializeAvatar]);
 
   // Speak intro when avatar is connected
   useEffect(() => {
-    if (currentView === 'question' && isAvatarReady && !hasSpokenIntro && introMessage) {
+    if (
+      currentView === "question" &&
+      isAvatarReady &&
+      !hasSpokenIntro &&
+      introMessage
+    ) {
       setIsLoadingAvatar(false);
       setHasSpokenIntro(true);
       speak(introMessage);
@@ -118,7 +142,13 @@ function HomeContent() {
   // Show question block after Ashley finishes speaking intro
   // Only trigger when avatar has started AND stopped talking
   useEffect(() => {
-    if (currentView === 'question' && hasSpokenIntro && avatarStartedTalking && !isAvatarTalking && !hasShownIntro) {
+    if (
+      currentView === "question" &&
+      hasSpokenIntro &&
+      avatarStartedTalking &&
+      !isAvatarTalking &&
+      !hasShownIntro
+    ) {
       // Pause after avatar stops talking before showing questions
       const timer = setTimeout(() => {
         setShowQuestionBlock(true);
@@ -126,27 +156,71 @@ function HomeContent() {
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [currentView, hasSpokenIntro, avatarStartedTalking, isAvatarTalking, hasShownIntro]);
+  }, [
+    currentView,
+    hasSpokenIntro,
+    avatarStartedTalking,
+    isAvatarTalking,
+    hasShownIntro,
+  ]);
 
-  const handleAnswerSelect = useCallback((option: CMSAnswerOption) => {
-    setSelectedAnswer(option);
-    console.log('Selected:', option);
-    console.log('Ashley says:', option.avatarResponse);
+  const handleAnswerSelect = useCallback(
+    (option: CMSAnswerOption) => {
+      setSelectedAnswer(option);
+      console.log("Selected:", option);
+      console.log("Ashley says:", option.avatarResponse);
 
-    // Store the answer
-    const newAnswer: StoredAnswer = {
-      stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-      questionText: currentStep?.questionContent?.questionText || '',
-      value: option.value,
-      label: option.label,
-      timestamp: new Date(),
-    };
-    setStoredAnswers(prev => [...prev, newAnswer]);
+      // Store the answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: currentStep?.questionContent?.questionText || "",
+        value: option.value,
+        label: option.label,
+        timestamp: new Date(),
+      };
+      setStoredAnswers((prev) => [...prev, newAnswer]);
 
-    // Step 1: Show selection animation briefly, then start avatar response
-    setTimeout(() => {
-      // Step 2: Hide question block and show avatar response
-      const response = option.avatarResponse || 'Great choice! Let me ask you another question.';
+      // Step 1: Show selection animation briefly, then start avatar response
+      setTimeout(() => {
+        // Step 2: Hide question block and show avatar response
+        const response =
+          option.avatarResponse ||
+          "Great choice! Let me ask you another question.";
+        setShowQuestionBlock(false);
+        setAvatarResponse(response);
+        setIsShowingResponse(true);
+        setAvatarStartedTalking(false); // Reset for next speech detection
+
+        // Make the avatar speak the response
+        if (sessionState === AvatarSessionState.CONNECTED) {
+          speak(response);
+        }
+      }, 1800); // Pause after selection to show dimmed options
+    },
+    [sessionState, speak, currentStep, currentStepIndex]
+  );
+
+  const handleTextSubmit = useCallback(
+    (value: string) => {
+      console.log("Text submitted:", value);
+
+      // Store the answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: currentStep?.questionContent?.questionText || "",
+        value: value,
+        label: value,
+        timestamp: new Date(),
+      };
+      setStoredAnswers((prev) => [...prev, newAnswer]);
+
+      // Get the avatar response from the current step's questionContent
+      const response =
+        currentStep?.questionContent?.avatarResponse ||
+        "Thank you! Let me continue with the next question.";
+      console.log("Ashley says:", response);
+
+      // Hide question block and show avatar response
       setShowQuestionBlock(false);
       setAvatarResponse(response);
       setIsShowingResponse(true);
@@ -156,37 +230,9 @@ function HomeContent() {
       if (sessionState === AvatarSessionState.CONNECTED) {
         speak(response);
       }
-    }, 1800); // Pause after selection to show dimmed options
-  }, [sessionState, speak, currentStep, currentStepIndex]);
-
-  const handleTextSubmit = useCallback((value: string) => {
-    console.log('Text submitted:', value);
-
-    // Store the answer
-    const newAnswer: StoredAnswer = {
-      stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-      questionText: currentStep?.questionContent?.questionText || '',
-      value: value,
-      label: value,
-      timestamp: new Date(),
-    };
-    setStoredAnswers(prev => [...prev, newAnswer]);
-
-    // Get the avatar response from the current step's questionContent
-    const response = currentStep?.questionContent?.avatarResponse || 'Thank you! Let me continue with the next question.';
-    console.log('Ashley says:', response);
-
-    // Hide question block and show avatar response
-    setShowQuestionBlock(false);
-    setAvatarResponse(response);
-    setIsShowingResponse(true);
-    setAvatarStartedTalking(false); // Reset for next speech detection
-
-    // Make the avatar speak the response
-    if (sessionState === AvatarSessionState.CONNECTED) {
-      speak(response);
-    }
-  }, [currentStep, currentStepIndex, sessionState, speak]);
+    },
+    [currentStep, currentStepIndex, sessionState, speak]
+  );
 
   // Show next question after avatar finishes speaking response
   useEffect(() => {
@@ -199,27 +245,35 @@ function HomeContent() {
         setAvatarStartedTalking(false);
 
         if (currentStepIndex < questionSteps.length - 1) {
-          setCurrentStepIndex(prev => prev + 1);
+          setCurrentStepIndex((prev) => prev + 1);
           // Small delay before showing next question
           setTimeout(() => {
             setShowQuestionBlock(true);
           }, 300);
         } else {
           // End of flow - could navigate to results
-          console.log('Flow complete!');
+          console.log("Flow complete!");
         }
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [isShowingResponse, avatarStartedTalking, isAvatarTalking, currentStepIndex, questionSteps.length]);
+  }, [
+    isShowingResponse,
+    avatarStartedTalking,
+    isAvatarTalking,
+    currentStepIndex,
+    questionSteps.length,
+  ]);
 
   return (
     <main className={styles.main}>
       {/* Video Background - only show on intro */}
-      {currentView === 'intro' && (
+      {currentView === "intro" && (
         <>
           <video
-            className={`${styles.videoBackground} ${isTransitioning ? styles.fadeOut : ''}`}
+            className={`${styles.videoBackground} ${
+              isTransitioning ? styles.fadeOut : ""
+            }`}
             autoPlay
             loop
             muted
@@ -230,7 +284,11 @@ function HomeContent() {
           </video>
 
           {/* Gradient Overlay */}
-          <div className={`${styles.gradientOverlay} ${isTransitioning ? styles.fadeOut : ''}`} />
+          <div
+            className={`${styles.gradientOverlay} ${
+              isTransitioning ? styles.fadeOut : ""
+            }`}
+          />
         </>
       )}
 
@@ -238,8 +296,12 @@ function HomeContent() {
       <Header brandName={activeFlow.globalVariables.brandName} />
 
       {/* Intro View */}
-      {currentView === 'intro' && headerStep?.headerContent && (
-        <div className={`${styles.contentWrapper} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
+      {currentView === "intro" && headerStep?.headerContent && (
+        <div
+          className={`${styles.contentWrapper} ${
+            isTransitioning ? styles.fadeOut : styles.fadeIn
+          }`}
+        >
           <div className={styles.contentInner}>
             {/* Avatar */}
             <div className={styles.avatarContainer}>
@@ -262,7 +324,8 @@ function HomeContent() {
                 {headerStep.headerContent.subheadline}
                 {headerStep.headerContent.subheadlineSecondary && (
                   <>
-                    <br /><br />
+                    <br />
+                    <br />
                     {headerStep.headerContent.subheadlineSecondary}
                   </>
                 )}
@@ -285,13 +348,15 @@ function HomeContent() {
       )}
 
       {/* Question View */}
-      {currentView === 'question' && (
+      {currentView === "question" && (
         <>
           {/* Loading state while avatar initializes */}
           {isLoadingAvatar && (
             <div className={styles.loadingContainer}>
               <div className={styles.loadingSpinner} />
-              <p className={styles.loadingText}>Connecting to {activeFlow.globalVariables.avatarName}...</p>
+              <p className={styles.loadingText}>
+                Connecting to {activeFlow.globalVariables.avatarName}...
+              </p>
             </div>
           )}
 
@@ -304,40 +369,32 @@ function HomeContent() {
               <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
                 {/* HeyGen Avatar Wrapper */}
                 <div className={styles.heygenWrapper}>
-                  <HeyGenAvatar className={styles.heygenAvatar} placeholder={HEYGEN_DEV_MODE} />
+                  <HeyGenAvatar
+                    className={styles.heygenAvatar}
+                    placeholder={HEYGEN_DEV_MODE}
+                  />
 
-                  {/* Speech Bubble - intro message (only show once, before first question) */}
-                  {!hasShownIntro && !showQuestionBlock && !isShowingResponse && introMessage && (
-                    <div className={styles.speechBubble}>
-                      <p className={styles.speechText}>
-                        {introMessage.split(' ').map((word, index) => (
-                          <span
-                            key={index}
-                            className={index < 4 ? styles.introWord : `${styles.introWord} ${styles.speechTextSecondary}`}
-                            style={{ animationDelay: `${index * 0.26}s` }}
-                          >
-                            {word}{' '}
-                          </span>
-                        ))}
-                      </p>
-                    </div>
-                  )}
+                  {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
+                  {!hasShownIntro &&
+                    !showQuestionBlock &&
+                    !isShowingResponse &&
+                    introMessage && (
+                      <SpeechBubbleSequence
+                        message={introMessage}
+                        wordDelay={0.26}
+                        paragraphPauseMs={1500}
+                        className={styles.speechBubbleContainer}
+                      />
+                    )}
 
                   {/* Avatar Response Bubble - shows after answer selection */}
                   {isShowingResponse && avatarResponse && (
-                    <div className={styles.responseBubble}>
-                      <p className={styles.responseText}>
-                        {avatarResponse.split(' ').map((word, index) => (
-                          <span
-                            key={index}
-                            className={styles.responseWord}
-                            style={{ animationDelay: `${index * 0.32}s` }}
-                          >
-                            {word}{' '}
-                          </span>
-                        ))}
-                      </p>
-                    </div>
+                    <SpeechBubbleSequence
+                      message={avatarResponse}
+                      wordDelay={0.32}
+                      paragraphPauseMs={1200}
+                      className={styles.speechBubbleContainer}
+                    />
                   )}
                 </div>
               </div>
@@ -361,23 +418,12 @@ function HomeContent() {
         </>
       )}
 
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <p className={styles.copyright}>
-          © 2025 BetterSleep Tonight. All rights reserved.
-        </p>
-        <p className={styles.privacyPolicy}>
-          Privacy Policy
-        </p>
-      </footer>
-
-      {/* Progress Bar - only show during question flow */}
-      {currentView === 'question' && (
-        <ProgressBar
-          currentStep={currentStepIndex + 1}
-          totalSteps={questionSteps.length}
-        />
-      )}
+      {/* Footer with Progress Bar */}
+      <Footer
+        showProgress={currentView === "question"}
+        currentStep={currentStepIndex + 1}
+        totalSteps={questionSteps.length}
+      />
 
       {/* Dev Panel - press "/" to toggle */}
       <DevPanel
@@ -396,7 +442,10 @@ const HEYGEN_DEV_MODE = false;
 export default function Home() {
   return (
     <Suspense fallback={null}>
-      <HeyGenProvider avatarId="Ann_Therapist_public" devMode={HEYGEN_DEV_MODE}>
+      <HeyGenProvider
+        avatarName="3f56b148c07141b3b6a3bcd1be26289e"
+        devMode={HEYGEN_DEV_MODE}
+      >
         <HomeContent />
       </HeyGenProvider>
     </Suspense>

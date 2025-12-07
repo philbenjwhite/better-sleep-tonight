@@ -1,0 +1,82 @@
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+}
+
+/* Progress bar positioned above footer content */
+.progressBar {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #f6f3ed;
+  /* Negative margin pulls it up so it sits flush with footer */
+  margin-bottom: -4px;
+  transform: translateY(-100%);
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #8b1538;
+  transition: width 0.4s ease-out;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f6f3ed;
+  padding: 24px;
+}
+
+.copyright {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--background-default-alternative, #363534);
+  margin: 0;
+  max-width: 487px;
+}
+
+.privacyPolicy {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--background-default-alternative, #363534);
+  text-align: right;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .footerContent {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px 24px;
+  }
+
+  .privacyPolicy {
+    text-align: left;
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+  .footerContent {
+    font-size: 12px;
+    padding: 12px 16px;
+  }
+
+  .copyright,
+  .privacyPolicy {
+    font-size: 12px;
+  }
+}
