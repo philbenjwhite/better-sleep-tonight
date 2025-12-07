@@ -41,15 +41,15 @@ const HeyGenContext = createContext<HeyGenContextProps>({
   stopSession: async () => {},
 });
 
-// Default avatar configuration
-const DEFAULT_AVATAR_CONFIG: StartAvatarRequest = {
+// Default avatar configuration (avatarName added at runtime)
+const DEFAULT_AVATAR_CONFIG: Omit<StartAvatarRequest, "avatarName"> = {
   quality: AvatarQuality.Medium,
   language: "en",
 };
 
 interface HeyGenProviderProps {
   children: React.ReactNode;
-  avatarName?: string;
+  avatarName: string;
   /**
    * Dev mode skips API calls and simulates avatar behavior.
    * Useful for UI development without using HeyGen credits.
