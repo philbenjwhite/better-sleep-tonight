@@ -12,6 +12,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   children,
   disabled = false,
+  className,
   ...props
 }) => {
   return (
@@ -22,7 +23,8 @@ export const Button: React.FC<ButtonProps> = ({
         styles[size],
         {
           [styles.disabled]: disabled,
-        }
+        },
+        className
       )}
       disabled={disabled}
       {...props}
