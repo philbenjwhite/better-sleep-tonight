@@ -17,6 +17,8 @@ export interface HeyGenAvatarProps {
    * Useful for development to avoid HeyGen API calls.
    */
   placeholder?: boolean;
+  /** Whether the avatar audio is muted */
+  isMuted?: boolean;
 }
 
 export const HeyGenAvatar: React.FC<HeyGenAvatarProps> = ({
@@ -24,6 +26,7 @@ export const HeyGenAvatar: React.FC<HeyGenAvatarProps> = ({
   fallbackImage = "/images/hey-gen-placeholder.png",
   alt = "Ashley, your BetterSleep AI Coach",
   placeholder = false,
+  isMuted = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { sessionState, stream, error } = useHeyGen();
@@ -63,6 +66,7 @@ export const HeyGenAvatar: React.FC<HeyGenAvatarProps> = ({
           ref={videoRef}
           autoPlay
           playsInline
+          muted={isMuted}
           className={styles.avatarVideo}
         >
           <track kind="captions" />

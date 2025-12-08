@@ -1,0 +1,120 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(253, 250, 245, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  max-width: 420px;
+  width: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-family: var(--sds-typography-heading-font-family, 'Open Sans', sans-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--sds-color-text-default-default, #363534);
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.message {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--sds-color-text-default-default, #363534);
+  margin: 0 0 8px 0;
+}
+
+.detail {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.continueButton {
+  width: 100%;
+}
+
+.startFreshButton {
+  background: none;
+  border: none;
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b6b6b;
+  cursor: pointer;
+  padding: 12px;
+  transition: color 0.2s ease;
+}
+
+.startFreshButton:hover {
+  color: var(--sds-color-text-default-default, #363534);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .modal {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .message {
+    font-size: 15px;
+  }
+}

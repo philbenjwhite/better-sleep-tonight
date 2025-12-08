@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import styles from './Footer.module.css';
 
 export interface FooterProps {
@@ -32,9 +33,9 @@ export function Footer({
         <p className={styles.copyright}>
           © 2025 BetterSleep Tonight. All rights reserved.
         </p>
-        <p className={styles.privacyPolicy}>
+        <Link href="/privacy-policy" className={styles.privacyPolicy}>
           Privacy Policy
-        </p>
+        </Link>
       </div>
     </footer>
   );

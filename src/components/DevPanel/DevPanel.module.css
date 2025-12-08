@@ -189,3 +189,83 @@
   font-size: 11px;
   color: #ffffff;
 }
+
+/* Flow selection buttons */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flowButton {
+  padding: 10px 14px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #a0a0a0;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.flowButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.flowButtonActive {
+  background-color: #e94560;
+  border-color: #e94560;
+  color: #ffffff;
+}
+
+.flowButtonActive:hover {
+  background-color: #d63652;
+  border-color: #d63652;
+}
+
+/* Step navigation */
+.stepNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stepButton {
+  min-width: 44px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #a0a0a0;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stepButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.stepButtonActive {
+  background-color: #53c9b1;
+  border-color: #53c9b1;
+  color: #1a1a2e;
+}
+
+.stepButtonActive:hover {
+  background-color: #45b89f;
+  border-color: #45b89f;
+}
+
+.stepHint {
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  color: #6b6b6b;
+}

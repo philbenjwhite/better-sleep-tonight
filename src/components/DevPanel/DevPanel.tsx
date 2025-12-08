@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './DevPanel.module.css';
 
 export interface StoredAnswer {
@@ -10,6 +11,13 @@ export interface StoredAnswer {
   label: string;
   timestamp: Date;
 }
+
+// Available flows - should match FLOWS in page.tsx
+const AVAILABLE_FLOWS = [
+  { id: 'default', label: 'Default (Sleep)' },
+  { id: 'sleep', label: 'Wake Up Rested' },
+  { id: 'back-pain', label: 'Back Pain' },
+];
 
 export interface DevPanelProps {
   answers: StoredAnswer[];
@@ -23,6 +31,43 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   totalSteps,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Get current URL params
+  const currentFlow = searchParams.get('flow') || 'default';
+  const currentStepParam = searchParams.get('step');
+
+  // Navigate to a URL with updated params
+  const navigateWithParams = useCallback((params: Record<string, string | null>) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === null) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value);
+      }
+    });
+
+    const queryString = newParams.toString();
+    router.push(queryString ? `/?${queryString}` : '/');
+  }, [searchParams, router]);
+
+  // Flow selection handler
+  const handleFlowChange = useCallback((flowId: string) => {
+    navigateWithParams({
+      flow: flowId === 'default' ? null : flowId,
+      step: null // Reset step when changing flow
+    });
+  }, [navigateWithParams]);
+
+  // Step navigation handlers
+  const handleStepChange = useCallback((step: number | null) => {
+    navigateWithParams({
+      step: step === null ? null : String(step)
+    });
+  }, [navigateWithParams]);
 
   // Listen for "/" key to toggle panel
   useEffect(() => {
@@ -71,6 +116,47 @@ export const DevPanel: React.FC<DevPanelProps> = ({
         </div>
 
         <div className={styles.content}>
+          {/* Flow Selection */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>Flow Variant</h4>
+            <div className={styles.buttonGroup}>
+              {AVAILABLE_FLOWS.map((flow) => (
+                <button
+                  key={flow.id}
+                  className={`${styles.flowButton} ${currentFlow === flow.id ? styles.flowButtonActive : ''}`}
+                  onClick={() => handleFlowChange(flow.id)}
+                >
+                  {flow.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Step Navigation */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>Jump to Step</h4>
+            <div className={styles.stepNav}>
+              <button
+                className={`${styles.stepButton} ${!currentStepParam ? styles.stepButtonActive : ''}`}
+                onClick={() => handleStepChange(null)}
+              >
+                Intro
+              </button>
+              {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+                <button
+                  key={step}
+                  className={`${styles.stepButton} ${currentStepParam === String(step) ? styles.stepButtonActive : ''}`}
+                  onClick={() => handleStepChange(step)}
+                >
+                  {step}
+                </button>
+              ))}
+            </div>
+            <p className={styles.stepHint}>
+              Current: {currentStepParam ? `Step ${currentStepParam}` : 'Intro'}
+            </p>
+          </div>
+
           {/* Progress info */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Progress</h4>

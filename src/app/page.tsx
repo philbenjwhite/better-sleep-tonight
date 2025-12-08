@@ -19,6 +19,8 @@ import { DevPanel, StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
+import { RecoveryModal } from "@/components/RecoveryModal";
+import { useProgressPersistence } from "@/hooks";
 import styles from "./page.module.css";
 
 // Import flow data from CMS
@@ -60,6 +62,15 @@ function HomeContent() {
   const initialStep = stepParam ? Math.max(0, parseInt(stepParam, 10) - 1) : 0;
   const skipIntro = stepParam !== null;
 
+  // Progress persistence
+  const {
+    savedProgress,
+    hasSavedProgress,
+    saveProgress,
+    clearProgress,
+    isLoading: isLoadingProgress,
+  } = useProgressPersistence();
+
   const [currentView, setCurrentView] = useState<"intro" | "question">(
     skipIntro ? "question" : "intro"
   );
@@ -76,6 +87,9 @@ function HomeContent() {
   const [hasSpokenIntro, setHasSpokenIntro] = useState(skipIntro);
   const [avatarStartedTalking, setAvatarStartedTalking] = useState(false);
   const [storedAnswers, setStoredAnswers] = useState<StoredAnswer[]>([]);
+  const [isMuted, setIsMuted] = useState(true); // Muted by default
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -87,6 +101,59 @@ function HomeContent() {
       initializeAvatar();
     }
   }, [skipIntro, sessionState, initializeAvatar]);
+
+  // Show recovery modal if saved progress exists (and matches current flow)
+  useEffect(() => {
+    if (
+      !isLoadingProgress &&
+      hasSavedProgress &&
+      !hasHandledRecovery &&
+      savedProgress &&
+      savedProgress.flowId === flowParam &&
+      currentView === "intro"
+    ) {
+      setShowRecoveryModal(true);
+    }
+  }, [
+    isLoadingProgress,
+    hasSavedProgress,
+    hasHandledRecovery,
+    savedProgress,
+    flowParam,
+    currentView,
+  ]);
+
+  // Handle continuing from saved progress
+  const handleContinueProgress = useCallback(() => {
+    if (savedProgress) {
+      setStoredAnswers(savedProgress.answers);
+      setCurrentStepIndex(savedProgress.currentStepIndex);
+      setShowRecoveryModal(false);
+      setHasHandledRecovery(true);
+      setHasShownIntro(true);
+      setHasSpokenIntro(true);
+
+      // Go directly to question view
+      setIsTransitioning(true);
+      setIsLoadingAvatar(true);
+      setIsMuted(false);
+      initializeAvatar();
+
+      setTimeout(() => {
+        setCurrentView("question");
+        setIsTransitioning(false);
+        // Show question block immediately since we're restoring
+        setTimeout(() => setShowQuestionBlock(true), 500);
+      }, 500);
+    }
+  }, [savedProgress, initializeAvatar]);
+
+  // Handle starting fresh
+  const handleStartFresh = useCallback(() => {
+    clearProgress();
+    setShowRecoveryModal(false);
+    setHasHandledRecovery(true);
+  }, [clearProgress]);
 
   // Track when avatar starts talking (to know when it's safe to check for stop)
   useEffect(() => {
@@ -115,6 +182,7 @@ function HomeContent() {
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
     setIsLoadingAvatar(true);
+    setIsMuted(false); // Unmute when user clicks "Let's Begin"
 
     // Start initializing the avatar
     initializeAvatar();
@@ -124,6 +192,10 @@ function HomeContent() {
       setIsTransitioning(false);
     }, 500); // Match CSS transition duration
   }, [initializeAvatar]);
+
+  const handleVolumeToggle = useCallback(() => {
+    setIsMuted((prev) => !prev);
+  }, []);
 
   // Speak intro when avatar is connected
   useEffect(() => {
@@ -178,7 +250,15 @@ function HomeContent() {
         label: option.label,
         timestamp: new Date(),
       };
-      setStoredAnswers((prev) => [...prev, newAnswer]);
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Auto-save progress to localStorage
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1, // Save next step index
+        answers: updatedAnswers,
+      });
 
       // Step 1: Show selection animation briefly, then start avatar response
       setTimeout(() => {
@@ -197,7 +277,7 @@ function HomeContent() {
         }
       }, 1800); // Pause after selection to show dimmed options
     },
-    [sessionState, speak, currentStep, currentStepIndex]
+    [sessionState, speak, currentStep, currentStepIndex, storedAnswers, saveProgress, flowParam]
   );
 
   const handleTextSubmit = useCallback(
@@ -212,7 +292,15 @@ function HomeContent() {
         label: value,
         timestamp: new Date(),
       };
-      setStoredAnswers((prev) => [...prev, newAnswer]);
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Auto-save progress to localStorage
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1, // Save next step index
+        answers: updatedAnswers,
+      });
 
       // Get the avatar response from the current step's questionContent
       const response =
@@ -231,7 +319,7 @@ function HomeContent() {
         speak(response);
       }
     },
-    [currentStep, currentStepIndex, sessionState, speak]
+    [currentStep, currentStepIndex, sessionState, speak, storedAnswers, saveProgress, flowParam]
   );
 
   // Show next question after avatar finishes speaking response
@@ -293,7 +381,11 @@ function HomeContent() {
       )}
 
       {/* Header with Logo and Volume Button */}
-      <Header brandName={activeFlow.globalVariables.brandName} />
+      <Header
+        brandName={activeFlow.globalVariables.brandName}
+        isMuted={isMuted}
+        onVolumeClick={handleVolumeToggle}
+      />
 
       {/* Intro View */}
       {currentView === "intro" && headerStep?.headerContent && (
@@ -372,6 +464,7 @@ function HomeContent() {
                   <HeyGenAvatar
                     className={styles.heygenAvatar}
                     placeholder={HEYGEN_DEV_MODE}
+                    isMuted={isMuted}
                   />
 
                   {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
@@ -431,6 +524,15 @@ function HomeContent() {
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
       />
+
+      {/* Recovery Modal - shown when user has saved progress */}
+      {showRecoveryModal && savedProgress && (
+        <RecoveryModal
+          savedProgress={savedProgress}
+          onContinue={handleContinueProgress}
+          onStartFresh={handleStartFresh}
+        />
+      )}
     </main>
   );
 }

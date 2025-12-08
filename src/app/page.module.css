@@ -289,9 +289,19 @@
 
 .heygenWrapper {
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr minmax(300px, 500px);
+  grid-template-rows: 1fr;
+  align-items: end;
+  justify-items: center;
+  width: 100%;
+  max-width: 1400px;
+}
+
+.heygenWrapper > :first-child {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: center;
 }
 
 /* Mobile: center avatar at bottom */
@@ -302,6 +312,8 @@
   }
 
   .heygenWrapper {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     justify-content: center;
     margin-bottom: 0;
@@ -329,10 +341,16 @@
 
 /* Speech Bubble Container - positions the SpeechBubbleSequence component */
 .speechBubbleContainer {
-  position: absolute;
-  top: 12px;
-  right: -360px;
-  width: 437px;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  width: 100%;
+  max-width: 437px;
+  padding: 24px;
+  padding-top: 48px;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 .speechBubble {
@@ -509,6 +527,8 @@
     top: auto;
     width: calc(100vw - 3rem);
     max-width: 400px;
+    padding: 0;
+    padding-top: 0;
   }
 
   .speechBubble {
