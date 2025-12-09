@@ -1,14 +1,14 @@
 {
-  "flowId": "back-pain",
-  "displayName": "Back Pain Relief Journey",
-  "description": "A targeted flow for users experiencing back pain, focusing on mattress support and spinal alignment.",
+  "flowId": "neckpain",
+  "displayName": "Neck Pain Relief Journey",
+  "description": "A targeted flow for users experiencing neck pain, focusing on proper alignment and support.",
   "isActive": true,
   "introVideo": "/uploads/Mattress_Shopping.mp4",
   "globalVariables": {
     "avatarName": "Ashley",
     "brandName": "Better Sleep Tonight",
     "supportEmail": "support@bettersleeptonight.com",
-    "conditionKeyword": "back pain"
+    "conditionKeyword": "neck pain"
   },
   "steps": [
     {
@@ -17,9 +17,9 @@
       "order": 1,
       "stepType": "header",
       "headerContent": {
-        "headline": "Wake Up Without Back Pain",
-        "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without that nagging back pain. If you've been waking up stiff, sore, or feeling like you barely slept — you're in the right place.",
-        "avatarIntroScript": "I know how frustrating back pain can be — especially when it starts your day off wrong. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
+        "headline": "Wake Up Without Neck Pain",
+        "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without that stiff, painful neck. If you've been waking up with neck pain or stiffness — you're in the right place.",
+        "avatarIntroScript": "I know how frustrating neck pain can be — especially when it starts your day off wrong. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
         "avatarIntroEmotion": "friendly",
         "primaryButtonText": "Let's Get Started",
         "primaryButtonAction": "next",
@@ -92,7 +92,7 @@
             "label": "On My Side",
             "value": "side",
             "order": 1,
-            "avatarResponse": "Side sleeping is great for alignment, but you need the right support to keep your spine neutral.",
+            "avatarResponse": "Side sleeping requires proper neck support to keep your spine aligned. The right pillow and mattress combination is key.",
             "avatarEmotion": "friendly",
             "tags": ["side-sleeper"]
           },
@@ -101,7 +101,7 @@
             "label": "On My Back",
             "value": "back",
             "order": 2,
-            "avatarResponse": "Back sleeping is excellent for spinal alignment when you have proper lumbar support.",
+            "avatarResponse": "Back sleeping is excellent for neck alignment when you have proper support that doesn't push your head too far forward.",
             "avatarEmotion": "friendly",
             "tags": ["back-sleeper"]
           },
@@ -110,7 +110,7 @@
             "label": "On My Stomach",
             "value": "stomach",
             "order": 3,
-            "avatarResponse": "Stomach sleeping can be tough on your back. The right mattress can help minimize the strain on your spine.",
+            "avatarResponse": "Stomach sleeping is one of the most common causes of neck pain because your head is turned all night. The right mattress can help reduce the strain.",
             "avatarEmotion": "friendly",
             "tags": ["stomach-sleeper"]
           },
@@ -250,7 +250,7 @@
             "label": "Stiffness or Soreness",
             "value": "stiffness",
             "order": 2,
-            "avatarResponse": "Stiffness and soreness are often signs of poor sleep posture or inadequate lumbar support.",
+            "avatarResponse": "Neck stiffness and soreness are often signs of poor sleep posture or inadequate support.",
             "avatarEmotion": "friendly",
             "tags": ["stiffness"]
           },
@@ -259,7 +259,7 @@
             "label": "Hip or Shoulder Discomfort",
             "value": "hip-shoulder",
             "order": 3,
-            "avatarResponse": "Hip and shoulder pain can contribute to back pain since your whole spine is connected. Proper support helps everything.",
+            "avatarResponse": "Shoulder discomfort can actually contribute to neck pain since they're all connected. The right support helps everything.",
             "avatarEmotion": "friendly",
             "tags": ["pressure-points"]
           },
@@ -283,9 +283,9 @@
       "order": 7,
       "stepType": "avatar-monologue",
       "avatarContent": {
-        "scriptText": "Based on what you've told me, I can see exactly what's happening. Your current sleep setup isn't giving your back the support it needs to recover overnight. That's why you're waking up with that back pain.",
-        "secondaryScriptText": "The good news is that this is completely fixable. Tempur-Pedic mattresses are specifically designed to support your spine's natural alignment while relieving pressure points. That means less tossing and turning, and waking up actually feeling rested — not broken.",
-        "tertiaryScriptText": "Thousands of people with similar back pain have found relief with these mattresses. Let me show you my top recommendations based on your specific needs.",
+        "scriptText": "Based on what you've told me, I can see exactly what's happening. Your current sleep setup isn't giving your neck the proper support and alignment it needs. That's why you're waking up with that neck pain and stiffness.",
+        "secondaryScriptText": "The good news is that this is completely fixable. Tempur-Pedic mattresses work together with proper pillows to keep your cervical spine in perfect alignment all night long.",
+        "tertiaryScriptText": "Thousands of people with similar neck pain have found relief with these mattresses. Let me show you my top recommendations based on your specific needs.",
         "emotion": "friendly",
         "autoAdvance": false
       }
@@ -297,9 +297,9 @@
       "stepType": "cta",
       "ctaContent": {
         "headline": "Your Personalized Sleep Solutions",
-        "bodyText": "Based on your sleep profile, I've selected Tempur-Pedic mattresses specifically designed for spinal support and back pain relief. These recommendations have helped thousands of people wake up without back pain.",
+        "bodyText": "Based on your sleep profile, I've selected Tempur-Pedic mattresses specifically designed to support proper neck alignment and relieve cervical pressure. These recommendations have helped thousands of people wake up without neck pain.",
         "primaryButtonText": "View My Recommendations",
-        "primaryButtonUrl": "/recommendations?concern=back-pain",
+        "primaryButtonUrl": "/recommendations?concern=neckpain",
         "secondaryButtonText": "Talk to a Sleep Expert",
         "secondaryButtonUrl": "/contact"
       }
@@ -322,9 +322,9 @@
     }
   ],
   "metadata": {
-    "createdAt": "2025-12-02T00:00:00.000Z",
-    "updatedAt": "2025-12-09T12:00:00.000Z",
+    "createdAt": "2025-12-09T00:00:00.000Z",
+    "updatedAt": "2025-12-09T00:00:00.000Z",
     "author": "Ashley (AI Sleep Consultant)",
-    "version": "2.0"
+    "version": "1.0"
   }
 }

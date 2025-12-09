@@ -175,6 +175,7 @@ type FlowsGlobalVariables {
   supportEmail: String
   customVar1: String
   customVar2: String
+  conditionKeyword: String
 }
 
 type FlowsStepsHeaderContent {
@@ -184,6 +185,8 @@ type FlowsStepsHeaderContent {
   avatarIntroEmotion: String
   primaryButtonText: String
   primaryButtonAction: String
+  secondarySubheadline: String
+  audioNotice: String
 }
 
 type FlowsStepsQuestionContentAnswerOptions {
@@ -194,6 +197,8 @@ type FlowsStepsQuestionContentAnswerOptions {
   avatarResponse: String
   avatarEmotion: String
   nextStepOverride: String
+  terminateFlow: Boolean
+  terminationMessage: String
   tags: [String]
 }
 
@@ -207,6 +212,8 @@ type FlowsStepsQuestionContent {
 
 type FlowsStepsAvatarContent {
   scriptText: String
+  secondaryScriptText: String
+  tertiaryScriptText: String
   emotion: String
   gestureHint: String
   pauseAfterMs: Float
@@ -292,6 +299,7 @@ input FlowsGlobalVariablesFilter {
   supportEmail: StringFilter
   customVar1: StringFilter
   customVar2: StringFilter
+  conditionKeyword: StringFilter
 }
 
 input NumberFilter {
@@ -311,6 +319,8 @@ input FlowsStepsHeaderContentFilter {
   avatarIntroEmotion: StringFilter
   primaryButtonText: StringFilter
   primaryButtonAction: StringFilter
+  secondarySubheadline: StringFilter
+  audioNotice: StringFilter
 }
 
 input FlowsStepsQuestionContentAnswerOptionsFilter {
@@ -321,6 +331,8 @@ input FlowsStepsQuestionContentAnswerOptionsFilter {
   avatarResponse: StringFilter
   avatarEmotion: StringFilter
   nextStepOverride: StringFilter
+  terminateFlow: BooleanFilter
+  terminationMessage: StringFilter
   tags: StringFilter
 }
 
@@ -334,6 +346,8 @@ input FlowsStepsQuestionContentFilter {
 
 input FlowsStepsAvatarContentFilter {
   scriptText: StringFilter
+  secondaryScriptText: StringFilter
+  tertiaryScriptText: StringFilter
   emotion: StringFilter
   gestureHint: StringFilter
   pauseAfterMs: NumberFilter
@@ -473,6 +487,7 @@ input FlowsGlobalVariablesMutation {
   supportEmail: String
   customVar1: String
   customVar2: String
+  conditionKeyword: String
 }
 
 input FlowsStepsHeaderContentMutation {
@@ -482,6 +497,8 @@ input FlowsStepsHeaderContentMutation {
   avatarIntroEmotion: String
   primaryButtonText: String
   primaryButtonAction: String
+  secondarySubheadline: String
+  audioNotice: String
 }
 
 input FlowsStepsQuestionContentAnswerOptionsMutation {
@@ -492,6 +509,8 @@ input FlowsStepsQuestionContentAnswerOptionsMutation {
   avatarResponse: String
   avatarEmotion: String
   nextStepOverride: String
+  terminateFlow: Boolean
+  terminationMessage: String
   tags: [String]
 }
 
@@ -505,6 +524,8 @@ input FlowsStepsQuestionContentMutation {
 
 input FlowsStepsAvatarContentMutation {
   scriptText: String
+  secondaryScriptText: String
+  tertiaryScriptText: String
   emotion: String
   gestureHint: String
   pauseAfterMs: Float

@@ -53,6 +53,19 @@ const answerOptionFields: TinaField[] = [
     description: "Step ID to jump to (for branching logic)",
   },
   {
+    name: "terminateFlow",
+    label: "Terminate Flow",
+    type: "boolean",
+    description: "End the flow with a termination message if this option is selected",
+  },
+  {
+    name: "terminationMessage",
+    label: "Termination Message",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Message shown when flow is terminated (avatar script)",
+  },
+  {
     name: "tags",
     label: "Tags",
     type: "string",
@@ -105,6 +118,19 @@ const headerContentFields: TinaField[] = [
     name: "primaryButtonAction",
     label: "Button Action",
     type: "string",
+  },
+  {
+    name: "secondarySubheadline",
+    label: "Secondary Subheadline",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Additional subheadline text shown below the main intro",
+  },
+  {
+    name: "audioNotice",
+    label: "Audio Notice",
+    type: "string",
+    description: "Notice about audio/volume requirements",
   },
 ];
 
@@ -160,6 +186,20 @@ const avatarContentFields: TinaField[] = [
     type: "string",
     ui: { component: "textarea" },
     description: "What the avatar says. Supports variables.",
+  },
+  {
+    name: "secondaryScriptText",
+    label: "Secondary Script",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Additional script section for multi-part monologues",
+  },
+  {
+    name: "tertiaryScriptText",
+    label: "Tertiary Script",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Third script section for extended monologues",
   },
   {
     name: "emotion",
@@ -442,6 +482,12 @@ export const flowsCollection: Collection = {
           name: "customVar2",
           label: "Custom Variable 2",
           type: "string",
+        },
+        {
+          name: "conditionKeyword",
+          label: "Condition Keyword",
+          type: "string",
+          description: "The main condition/pain point (e.g., 'back pain', 'headaches') for dynamic text",
         },
       ],
     },

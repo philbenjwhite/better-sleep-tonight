@@ -26,12 +26,24 @@ import styles from "./page.module.css";
 // Import flow data from CMS
 import wakeUpRestedFlow from "../../content/flows/wake-up-rested-flow.json";
 import backPainFlow from "../../content/flows/back-pain-flow.json";
+import achesAndPainsFlow from "../../content/flows/achesandpains-flow.json";
+import headacheFlow from "../../content/flows/wakeupwithaheadache-flow.json";
+import hipPainFlow from "../../content/flows/hippain-flow.json";
+import feelingTiredFlow from "../../content/flows/wakeupfeelingtired-flow.json";
+import neckPainFlow from "../../content/flows/neckpain-flow.json";
+import shoulderPainFlow from "../../content/flows/shoulderpain-flow.json";
 
 // Flow registry - maps URL param to flow data
 const FLOWS: Record<string, typeof wakeUpRestedFlow> = {
   default: wakeUpRestedFlow,
   sleep: wakeUpRestedFlow,
   "back-pain": backPainFlow,
+  achesandpains: achesAndPainsFlow,
+  wakeupwithaheadache: headacheFlow,
+  hippain: hipPainFlow,
+  wakeupfeelingtired: feelingTiredFlow,
+  neckpain: neckPainFlow,
+  shoulderpain: shoulderPainFlow,
 };
 
 // Type for flow steps
@@ -92,6 +104,8 @@ function HomeContent() {
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
   const [currentEmotion, setCurrentEmotion] = useState<string | null>(null);
+  const [isFlowTerminated, setIsFlowTerminated] = useState(false);
+  const [terminationMessage, setTerminationMessage] = useState<string | null>(null);
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -266,24 +280,48 @@ function HomeContent() {
 
       // Step 1: Show selection animation briefly, then start avatar response
       setTimeout(() => {
-        // Step 2: Hide question block and show avatar response
-        const response =
-          option.avatarResponse ||
-          "Great choice! Let me ask you another question.";
-        const emotion = option.avatarEmotion || "friendly";
-        setShowQuestionBlock(false);
-        setAvatarResponse(response);
-        setCurrentEmotion(emotion);
-        setIsShowingResponse(true);
-        setAvatarStartedTalking(false); // Reset for next speech detection
+        // Check if this answer should terminate the flow
+        if (option.terminateFlow) {
+          // Use termination message if provided, otherwise use avatar response
+          const termMessage = option.terminationMessage || option.avatarResponse ||
+            "Thank you for your time. Based on your answers, our program may not be the best fit for your needs.";
+          const emotion = option.avatarEmotion || "friendly";
 
-        // Make the avatar speak the response
-        if (sessionState === AvatarSessionState.CONNECTED) {
-          speak(response);
+          setShowQuestionBlock(false);
+          setAvatarResponse(termMessage);
+          setCurrentEmotion(emotion);
+          setIsShowingResponse(true);
+          setAvatarStartedTalking(false);
+          setIsFlowTerminated(true);
+          setTerminationMessage(termMessage);
+
+          // Clear saved progress since flow is complete
+          clearProgress();
+
+          // Make the avatar speak the termination message
+          if (sessionState === AvatarSessionState.CONNECTED) {
+            speak(termMessage);
+          }
+        } else {
+          // Normal flow - continue to next question
+          const response =
+            option.avatarResponse ||
+            "Great choice! Let me ask you another question.";
+          const emotion = option.avatarEmotion || "friendly";
+          setShowQuestionBlock(false);
+          setAvatarResponse(response);
+          setCurrentEmotion(emotion);
+          setIsShowingResponse(true);
+          setAvatarStartedTalking(false); // Reset for next speech detection
+
+          // Make the avatar speak the response
+          if (sessionState === AvatarSessionState.CONNECTED) {
+            speak(response);
+          }
         }
       }, 1800); // Pause after selection to show dimmed options
     },
-    [sessionState, speak, currentStep, currentStepIndex, storedAnswers, saveProgress, flowParam]
+    [sessionState, speak, currentStep, currentStepIndex, storedAnswers, saveProgress, flowParam, clearProgress]
   );
 
   const handleTextSubmit = useCallback(
@@ -333,6 +371,17 @@ function HomeContent() {
     if (isShowingResponse && avatarStartedTalking && !isAvatarTalking) {
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
+        // If flow was terminated, don't proceed to next question
+        if (isFlowTerminated) {
+          // Keep showing the termination message, don't clear it
+          setIsShowingResponse(false);
+          setSelectedAnswer(null);
+          setAvatarStartedTalking(false);
+          // Flow stays terminated - user can navigate away or contact support
+          console.log("Flow terminated - user did not qualify");
+          return;
+        }
+
         setIsShowingResponse(false);
         setAvatarResponse(null);
         setSelectedAnswer(null);
@@ -357,6 +406,7 @@ function HomeContent() {
     isAvatarTalking,
     currentStepIndex,
     questionSteps.length,
+    isFlowTerminated,
   ]);
 
   return (

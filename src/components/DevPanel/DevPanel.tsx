@@ -17,6 +17,12 @@ const AVAILABLE_FLOWS = [
   { id: 'default', label: 'Default (Sleep)' },
   { id: 'sleep', label: 'Wake Up Rested' },
   { id: 'back-pain', label: 'Back Pain' },
+  { id: 'achesandpains', label: 'Aches & Pains' },
+  { id: 'wakeupwithaheadache', label: 'Headache' },
+  { id: 'hippain', label: 'Hip Pain' },
+  { id: 'wakeupfeelingtired', label: 'Feeling Tired' },
+  { id: 'neckpain', label: 'Neck Pain' },
+  { id: 'shoulderpain', label: 'Shoulder Pain' },
 ];
 
 export interface DevPanelProps {

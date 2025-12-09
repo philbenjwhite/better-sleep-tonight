@@ -32,6 +32,7 @@ fragment FlowsParts on Flows {
     supportEmail
     customVar1
     customVar2
+    conditionKeyword
   }
   steps {
     __typename
@@ -47,6 +48,8 @@ fragment FlowsParts on Flows {
       avatarIntroEmotion
       primaryButtonText
       primaryButtonAction
+      secondarySubheadline
+      audioNotice
     }
     questionContent {
       __typename
@@ -63,12 +66,16 @@ fragment FlowsParts on Flows {
         avatarResponse
         avatarEmotion
         nextStepOverride
+        terminateFlow
+        terminationMessage
         tags
       }
     }
     avatarContent {
       __typename
       scriptText
+      secondaryScriptText
+      tertiaryScriptText
       emotion
       gestureHint
       pauseAfterMs

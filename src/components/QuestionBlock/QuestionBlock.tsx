@@ -14,6 +14,9 @@ export interface CMSAnswerOption {
   order?: number;
   avatarResponse?: string;
   avatarEmotion?: string;
+  nextStepOverride?: string;
+  terminateFlow?: boolean;
+  terminationMessage?: string;
   tags?: string[];
 }
 
