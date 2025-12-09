@@ -70,7 +70,7 @@
 
 .avatar {
   display: block;
-  width: 220px;
+  width: 176px;
   height: auto;
   aspect-ratio: 562 / 490;
   animation: gentleFloat 4s ease-in-out infinite 1s;

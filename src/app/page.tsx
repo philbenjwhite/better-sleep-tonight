@@ -44,6 +44,7 @@ interface FlowStep {
     subheadline: string;
     subheadlineSecondary?: string;
     avatarIntroScript: string;
+    avatarIntroEmotion?: string;
     primaryButtonText: string;
     primaryButtonAction: string;
     audioNotice?: string;
@@ -90,6 +91,7 @@ function HomeContent() {
   const [isMuted, setIsMuted] = useState(true); // Muted by default
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
+  const [currentEmotion, setCurrentEmotion] = useState<string | null>(null);
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -173,8 +175,9 @@ function HomeContent() {
     (activeFlow as typeof wakeUpRestedFlow & { introVideo?: string })
       .introVideo || "/videos/Mattress_Shopping.mp4";
 
-  // Get intro message from CMS
+  // Get intro message and emotion from CMS
   const introMessage = headerStep?.headerContent?.avatarIntroScript || "";
+  const introEmotion = headerStep?.headerContent?.avatarIntroEmotion || "friendly";
 
   // Avatar is ready when connected
   const isAvatarReady = sessionState === AvatarSessionState.CONNECTED;
@@ -207,9 +210,10 @@ function HomeContent() {
     ) {
       setIsLoadingAvatar(false);
       setHasSpokenIntro(true);
+      setCurrentEmotion(introEmotion);
       speak(introMessage);
     }
-  }, [currentView, isAvatarReady, hasSpokenIntro, speak, introMessage]);
+  }, [currentView, isAvatarReady, hasSpokenIntro, speak, introMessage, introEmotion]);
 
   // Show question block after Ashley finishes speaking intro
   // Only trigger when avatar has started AND stopped talking
@@ -266,8 +270,10 @@ function HomeContent() {
         const response =
           option.avatarResponse ||
           "Great choice! Let me ask you another question.";
+        const emotion = option.avatarEmotion || "friendly";
         setShowQuestionBlock(false);
         setAvatarResponse(response);
+        setCurrentEmotion(emotion);
         setIsShowingResponse(true);
         setAvatarStartedTalking(false); // Reset for next speech detection
 
@@ -523,6 +529,8 @@ function HomeContent() {
         answers={storedAnswers}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
+        currentEmotion={currentEmotion || undefined}
+        sessionEmotion="friendly"
       />
 
       {/* Recovery Modal - shown when user has saved progress */}

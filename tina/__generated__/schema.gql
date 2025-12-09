@@ -181,6 +181,7 @@ type FlowsStepsHeaderContent {
   headline: String
   subheadline: String
   avatarIntroScript: String
+  avatarIntroEmotion: String
   primaryButtonText: String
   primaryButtonAction: String
 }
@@ -218,8 +219,10 @@ type FlowsStepsEmailCaptureContent {
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
+  avatarEmotionOnSubmit: String
   skipOptionText: String
   avatarResponseOnSkip: String
+  avatarEmotionOnSkip: String
 }
 
 type FlowsStepsCtaContent {
@@ -305,6 +308,7 @@ input FlowsStepsHeaderContentFilter {
   headline: StringFilter
   subheadline: StringFilter
   avatarIntroScript: StringFilter
+  avatarIntroEmotion: StringFilter
   primaryButtonText: StringFilter
   primaryButtonAction: StringFilter
 }
@@ -342,8 +346,10 @@ input FlowsStepsEmailCaptureContentFilter {
   placeholderText: StringFilter
   submitButtonText: StringFilter
   avatarResponseOnSubmit: StringFilter
+  avatarEmotionOnSubmit: StringFilter
   skipOptionText: StringFilter
   avatarResponseOnSkip: StringFilter
+  avatarEmotionOnSkip: StringFilter
 }
 
 input FlowsStepsCtaContentFilter {
@@ -473,6 +479,7 @@ input FlowsStepsHeaderContentMutation {
   headline: String
   subheadline: String
   avatarIntroScript: String
+  avatarIntroEmotion: String
   primaryButtonText: String
   primaryButtonAction: String
 }
@@ -510,8 +517,10 @@ input FlowsStepsEmailCaptureContentMutation {
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
+  avatarEmotionOnSubmit: String
   skipOptionText: String
   avatarResponseOnSkip: String
+  avatarEmotionOnSkip: String
 }
 
 input FlowsStepsCtaContentMutation {

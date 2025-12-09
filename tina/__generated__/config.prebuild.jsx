@@ -137,13 +137,13 @@ var answerOptionFields = [
     label: "Avatar Emotion",
     type: "string",
     options: [
-      { value: "neutral", label: "Neutral" },
-      { value: "empathetic", label: "Empathetic" },
-      { value: "encouraging", label: "Encouraging" },
-      { value: "curious", label: "Curious" },
-      { value: "concerned", label: "Concerned" },
-      { value: "excited", label: "Excited" }
-    ]
+      { value: "excited", label: "Excited" },
+      { value: "serious", label: "Serious" },
+      { value: "friendly", label: "Friendly" },
+      { value: "soothing", label: "Soothing" },
+      { value: "broadcaster", label: "Broadcaster" }
+    ],
+    description: "Voice emotion when speaking this response"
   },
   {
     name: "nextStepOverride",
@@ -158,6 +158,13 @@ var answerOptionFields = [
     list: true,
     description: "For analytics/categorization"
   }
+];
+var voiceEmotionOptions = [
+  { value: "excited", label: "Excited" },
+  { value: "serious", label: "Serious" },
+  { value: "friendly", label: "Friendly" },
+  { value: "soothing", label: "Soothing" },
+  { value: "broadcaster", label: "Broadcaster" }
 ];
 var headerContentFields = [
   {
@@ -176,6 +183,13 @@ var headerContentFields = [
     label: "Avatar Intro Script",
     type: "string",
     ui: { component: "textarea" }
+  },
+  {
+    name: "avatarIntroEmotion",
+    label: "Avatar Intro Emotion",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion for the intro script"
   },
   {
     name: "primaryButtonText",
@@ -242,13 +256,8 @@ var avatarContentFields = [
     name: "emotion",
     label: "Emotion",
     type: "string",
-    options: [
-      { value: "neutral", label: "Neutral" },
-      { value: "empathetic", label: "Empathetic" },
-      { value: "encouraging", label: "Encouraging" },
-      { value: "curious", label: "Curious" },
-      { value: "excited", label: "Excited" }
-    ]
+    options: voiceEmotionOptions,
+    description: "Voice emotion when speaking this script"
   },
   {
     name: "gestureHint",
@@ -294,6 +303,13 @@ var emailCaptureContentFields = [
     ui: { component: "textarea" }
   },
   {
+    name: "avatarEmotionOnSubmit",
+    label: "Avatar Emotion (Submit)",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion when email is submitted"
+  },
+  {
     name: "skipOptionText",
     label: "Skip Option Text",
     type: "string"
@@ -303,6 +319,13 @@ var emailCaptureContentFields = [
     label: "Avatar Response (Skip)",
     type: "string",
     ui: { component: "textarea" }
+  },
+  {
+    name: "avatarEmotionOnSkip",
+    label: "Avatar Emotion (Skip)",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion when email is skipped"
   }
 ];
 var ctaContentFields = [

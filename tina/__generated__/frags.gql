@@ -44,6 +44,7 @@ fragment FlowsParts on Flows {
       headline
       subheadline
       avatarIntroScript
+      avatarIntroEmotion
       primaryButtonText
       primaryButtonAction
     }
@@ -80,8 +81,10 @@ fragment FlowsParts on Flows {
       placeholderText
       submitButtonText
       avatarResponseOnSubmit
+      avatarEmotionOnSubmit
       skipOptionText
       avatarResponseOnSkip
+      avatarEmotionOnSkip
     }
     ctaContent {
       __typename

@@ -269,3 +269,40 @@
   font-size: 12px;
   color: #6b6b6b;
 }
+
+/* Emotion info */
+.emotionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emotionRow {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emotionLabel {
+  font-size: 13px;
+  color: #a0a0a0;
+}
+
+.emotionValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f9a825;
+  text-transform: capitalize;
+  padding: 2px 8px;
+  background-color: rgba(249, 168, 37, 0.15);
+  border-radius: 4px;
+}
+
+.emotionNote {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: #6b6b6b;
+  font-style: italic;
+  line-height: 1.4;
+}

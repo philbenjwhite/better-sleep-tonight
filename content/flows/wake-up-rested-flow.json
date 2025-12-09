@@ -18,7 +18,8 @@
       "headerContent": {
         "headline": "It's Time That You Sleep Better",
         "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: to help you wake up without the aches and pain, without the sleep fog, and without wondering why you're tired before the day even starts! If you're here, I'm guessing sleep hasn't been treating you right — and trust me, you're not alone.",
-        "avatarIntroScript": "A lot of people struggle with restless nights, sore mornings, and that \"why do I feel 20 years older stiffness\". And while it feels mysterious, it usually isn't. \n\nThere's always a reason — and there's almost always a solution. Let's run a quick sleep diagnosis — to figure out what's happening to your body at night.\n\nThis is a third",
+        "avatarIntroScript": "A lot of people struggle with restless nights, sore mornings, and that \"why do I feel 20 years older stiffness\". And while it feels mysterious, it usually isn't. \n\nThere's always a reason — and there's almost always a solution. Let's run a quick sleep diagnosis — to figure out what's happening to your body at night.",
+        "avatarIntroEmotion": "excited",
         "primaryButtonText": "Let's Get Started",
         "primaryButtonAction": "next"
       }
@@ -38,11 +39,9 @@
             "label": "Me",
             "value": "me",
             "order": 1,
-            "avatarResponse": "What is your age?",
-            "avatarEmotion": "curious",
-            "tags": [
-              "single-user"
-            ]
+            "avatarResponse": "What's your age?",
+            "avatarEmotion": "friendly",
+            "tags": ["single-user"]
           },
           {
             "optionId": "q1-opt2",
@@ -50,10 +49,8 @@
             "value": "partner",
             "order": 2,
             "avatarResponse": "What is your partner's age?",
-            "avatarEmotion": "curious",
-            "tags": [
-              "partner-only"
-            ]
+            "avatarEmotion": "friendly",
+            "tags": ["partner-only"]
           },
           {
             "optionId": "q1-opt3",
@@ -61,10 +58,8 @@
             "value": "me-and-partner",
             "order": 3,
             "avatarResponse": "What is your age? What is your partner's age?",
-            "avatarEmotion": "curious",
-            "tags": [
-              "couple"
-            ]
+            "avatarEmotion": "friendly",
+            "tags": ["couple"]
           },
           {
             "optionId": "q1-opt4",
@@ -72,11 +67,8 @@
             "value": "someone-else",
             "order": 4,
             "avatarResponse": "What is their age?",
-            "avatarEmotion": "curious",
-            "tags": [
-              "gift",
-              "other"
-            ]
+            "avatarEmotion": "friendly",
+            "tags": ["gift", "other"]
           }
         ]
       }
@@ -109,11 +101,8 @@
             "value": "every-night",
             "order": 1,
             "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night leaves you with less overall sleep.",
-            "avatarEmotion": "empathetic",
-            "tags": [
-              "severe",
-              "chronic"
-            ]
+            "avatarEmotion": "soothing",
+            "tags": ["severe", "chronic"]
           },
           {
             "optionId": "q3-opt2",
@@ -121,11 +110,8 @@
             "value": "frequently",
             "order": 2,
             "avatarResponse": "You aren't alone, many people are in the same situation and struggle with falling asleep fast.",
-            "avatarEmotion": "understanding",
-            "tags": [
-              "moderate",
-              "common"
-            ]
+            "avatarEmotion": "friendly",
+            "tags": ["moderate", "common"]
           },
           {
             "optionId": "q3-opt3",
@@ -133,11 +119,8 @@
             "value": "on-occasion",
             "order": 3,
             "avatarResponse": "That's completely normal and the group most people are in. Why not consider shooting for that perfect sleep where you feel rested each and every day.",
-            "avatarEmotion": "encouraging",
-            "tags": [
-              "occasional",
-              "normal"
-            ]
+            "avatarEmotion": "friendly",
+            "tags": ["occasional", "normal"]
           },
           {
             "optionId": "q3-opt4",
@@ -145,11 +128,8 @@
             "value": "never",
             "order": 4,
             "avatarResponse": "That's great to hear. You've got a great start on optimizing your sleep. It's more than just how fast you fall asleep but how supported you are throughout the night.",
-            "avatarEmotion": "positive",
-            "tags": [
-              "no-issues",
-              "optimize"
-            ]
+            "avatarEmotion": "excited",
+            "tags": ["no-issues", "optimize"]
           }
         ]
       }
@@ -161,7 +141,7 @@
       "stepType": "avatar-monologue",
       "avatarContent": {
         "scriptText": "From what you told me, it sounds like your biggest sleep disruptors are restless nights and not feeling fully rested. You'd be surprised how common those issues are — especially waking up sore, tossing and turning, or never quite feeling rested. And here's the twist most people miss: Many sleep problems start with an aging or unsupportive mattress. Our bodies change over the years — but our mattress usually doesn't! If it's been 7–10 years, or you wake up stiff and tired, your mattress is probably the culprit. Now imagine this instead — deep sleep that resets your whole body. You fall asleep faster. You stay asleep longer. You wake up thinking, 'Oh… so this is what rested feels like' - and without those aches and pains! Based on what you told me, these Tempur-Pedic mattresses are the best fit:",
-        "emotion": "encouraging",
+        "emotion": "friendly",
         "autoAdvance": false
       }
     },

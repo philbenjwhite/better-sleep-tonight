@@ -23,12 +23,16 @@ export interface DevPanelProps {
   answers: StoredAnswer[];
   currentStep: number;
   totalSteps: number;
+  currentEmotion?: string;
+  sessionEmotion?: string;
 }
 
 export const DevPanel: React.FC<DevPanelProps> = ({
   answers,
   currentStep,
   totalSteps,
+  currentEmotion,
+  sessionEmotion = 'friendly',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
@@ -163,6 +167,26 @@ export const DevPanel: React.FC<DevPanelProps> = ({
             <p className={styles.progressText}>
               Step {currentStep} of {totalSteps}
             </p>
+          </div>
+
+          {/* Avatar Emotion */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>Avatar Emotion</h4>
+            <div className={styles.emotionInfo}>
+              <p className={styles.emotionRow}>
+                <span className={styles.emotionLabel}>Session:</span>
+                <span className={styles.emotionValue}>{sessionEmotion}</span>
+              </p>
+              {currentEmotion && (
+                <p className={styles.emotionRow}>
+                  <span className={styles.emotionLabel}>CMS Value:</span>
+                  <span className={styles.emotionValue}>{currentEmotion}</span>
+                </p>
+              )}
+              <p className={styles.emotionNote}>
+                Note: HeyGen SDK only supports setting emotion at session start, not per-speak call.
+              </p>
+            </div>
           </div>
 
           {/* Stored answers */}

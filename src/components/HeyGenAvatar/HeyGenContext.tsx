@@ -13,6 +13,7 @@ import StreamingAvatar, {
   TaskMode,
   TaskType,
   StartAvatarRequest,
+  VoiceEmotion,
 } from "@heygen/streaming-avatar";
 
 export enum AvatarSessionState {
@@ -43,8 +44,11 @@ const HeyGenContext = createContext<HeyGenContextProps>({
 
 // Default avatar configuration (avatarName added at runtime)
 const DEFAULT_AVATAR_CONFIG: Omit<StartAvatarRequest, "avatarName"> = {
-  quality: AvatarQuality.Medium,
+  quality: AvatarQuality.High,
   language: "en",
+  voice: {
+    emotion: VoiceEmotion.FRIENDLY,
+  },
 };
 
 interface HeyGenProviderProps {

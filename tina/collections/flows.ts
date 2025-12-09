@@ -38,13 +38,13 @@ const answerOptionFields: TinaField[] = [
     label: "Avatar Emotion",
     type: "string",
     options: [
-      { value: "neutral", label: "Neutral" },
-      { value: "empathetic", label: "Empathetic" },
-      { value: "encouraging", label: "Encouraging" },
-      { value: "curious", label: "Curious" },
-      { value: "concerned", label: "Concerned" },
       { value: "excited", label: "Excited" },
+      { value: "serious", label: "Serious" },
+      { value: "friendly", label: "Friendly" },
+      { value: "soothing", label: "Soothing" },
+      { value: "broadcaster", label: "Broadcaster" },
     ],
+    description: "Voice emotion when speaking this response",
   },
   {
     name: "nextStepOverride",
@@ -59,6 +59,15 @@ const answerOptionFields: TinaField[] = [
     list: true,
     description: "For analytics/categorization",
   },
+];
+
+// HeyGen SDK voice emotions - used across all avatar text fields
+const voiceEmotionOptions = [
+  { value: "excited", label: "Excited" },
+  { value: "serious", label: "Serious" },
+  { value: "friendly", label: "Friendly" },
+  { value: "soothing", label: "Soothing" },
+  { value: "broadcaster", label: "Broadcaster" },
 ];
 
 // Header content fields
@@ -79,6 +88,13 @@ const headerContentFields: TinaField[] = [
     label: "Avatar Intro Script",
     type: "string",
     ui: { component: "textarea" },
+  },
+  {
+    name: "avatarIntroEmotion",
+    label: "Avatar Intro Emotion",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion for the intro script",
   },
   {
     name: "primaryButtonText",
@@ -149,13 +165,8 @@ const avatarContentFields: TinaField[] = [
     name: "emotion",
     label: "Emotion",
     type: "string",
-    options: [
-      { value: "neutral", label: "Neutral" },
-      { value: "empathetic", label: "Empathetic" },
-      { value: "encouraging", label: "Encouraging" },
-      { value: "curious", label: "Curious" },
-      { value: "excited", label: "Excited" },
-    ],
+    options: voiceEmotionOptions,
+    description: "Voice emotion when speaking this script",
   },
   {
     name: "gestureHint",
@@ -203,6 +214,13 @@ const emailCaptureContentFields: TinaField[] = [
     ui: { component: "textarea" },
   },
   {
+    name: "avatarEmotionOnSubmit",
+    label: "Avatar Emotion (Submit)",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion when email is submitted",
+  },
+  {
     name: "skipOptionText",
     label: "Skip Option Text",
     type: "string",
@@ -212,6 +230,13 @@ const emailCaptureContentFields: TinaField[] = [
     label: "Avatar Response (Skip)",
     type: "string",
     ui: { component: "textarea" },
+  },
+  {
+    name: "avatarEmotionOnSkip",
+    label: "Avatar Emotion (Skip)",
+    type: "string",
+    options: voiceEmotionOptions,
+    description: "Voice emotion when email is skipped",
   },
 ];
 
