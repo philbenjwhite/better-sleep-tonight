@@ -356,7 +356,6 @@
   align-items: end;
   justify-items: center;
   width: 100%;
-  max-width: 1400px;
 }
 
 .heygenWrapper > :first-child {
