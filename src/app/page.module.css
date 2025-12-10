@@ -698,3 +698,57 @@
     padding-bottom: 80px;
   }
 }
+
+/* Mattress Recommendation Inner - wider layout for product display */
+.mattressRecommendationInner {
+  position: relative;
+  z-index: 1;
+  width: 1000px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 24px;
+  animation: questionSlideIn 0.6s ease-out forwards;
+}
+
+@media (max-width: 900px) {
+  .mattressRecommendationInner {
+    width: 100%;
+    max-width: 600px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mattressRecommendationInner {
+    padding: 12px;
+    max-height: 85vh;
+  }
+}
+
+/* Product Recommendations Inner - 3 mattress options with scroll */
+.productRecommendationsInner {
+  position: relative;
+  z-index: 1;
+  width: 950px;
+  max-width: 95%;
+  max-height: 85vh;
+  overflow: hidden;
+  padding: 24px;
+  animation: questionSlideIn 0.6s ease-out forwards;
+}
+
+@media (max-width: 900px) {
+  .productRecommendationsInner {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .productRecommendationsInner {
+    padding: 12px;
+    max-height: 80vh;
+  }
+}

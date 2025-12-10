@@ -103,23 +103,6 @@ const headerContentFields: TinaField[] = [
     ui: { component: "textarea" },
   },
   {
-    name: "avatarIntroEmotion",
-    label: "Avatar Intro Emotion",
-    type: "string",
-    options: voiceEmotionOptions,
-    description: "Voice emotion for the intro script",
-  },
-  {
-    name: "primaryButtonText",
-    label: "Primary Button Text",
-    type: "string",
-  },
-  {
-    name: "primaryButtonAction",
-    label: "Button Action",
-    type: "string",
-  },
-  {
     name: "secondarySubheadline",
     label: "Secondary Subheadline",
     type: "string",
@@ -131,6 +114,11 @@ const headerContentFields: TinaField[] = [
     label: "Audio Notice",
     type: "string",
     description: "Notice about audio/volume requirements",
+  },
+  {
+    name: "primaryButtonText",
+    label: "Primary Button Text",
+    type: "string",
   },
 ];
 

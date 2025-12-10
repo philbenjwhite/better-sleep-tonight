@@ -20,9 +20,7 @@
         "headline": "Wake Up Actually Feeling Rested",
         "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up feeling truly refreshed. If you've been waking up tired even after a full night's sleep — you're in the right place.",
         "avatarIntroScript": "I know how frustrating it is to feel tired even when you think you've slept enough. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
-        "avatarIntroEmotion": "friendly",
         "primaryButtonText": "Let's Get Started",
-        "primaryButtonAction": "next",
         "audioNotice": "Turn up your volume to hear Ashley"
       }
     },
@@ -278,9 +276,35 @@
       }
     },
     {
+      "stepId": "mattress-recommendation-step",
+      "internalName": "Mattress Recommendation",
+      "order": 7,
+      "stepType": "mattress-recommendation",
+      "mattressRecommendationContent": {
+        "productName": "Tempur-Pedic Sense Medium 10 Inch Mattress",
+        "productDescription": "Legendary TEMPUR® formulations gently cradle your body and pressure points to help reduce aches & pains. Only Tempur-Pedic® can deliver the soft where you want it, firm where you need it™ comfort and support.",
+        "basePrice": 2299.99,
+        "productImage": "/images/mattress-tempurpedic.jpg",
+        "sizes": [
+          { "value": "twin", "label": "Twin", "priceModifier": -600 },
+          { "value": "twin-xl", "label": "Twin XL", "priceModifier": -500 },
+          { "value": "full", "label": "Full", "priceModifier": -300 },
+          { "value": "queen", "label": "Queen", "priceModifier": 0 },
+          { "value": "king", "label": "King", "priceModifier": 400 }
+        ],
+        "feels": [
+          { "value": "soft", "label": "Soft" },
+          { "value": "medium", "label": "Medium" },
+          { "value": "firm", "label": "Firm" }
+        ],
+        "avatarResponse": "Excellent choice! That mattress is specifically designed to help you achieve deeper, more restorative sleep. You're going to love waking up actually feeling rested!",
+        "avatarEmotion": "excited"
+      }
+    },
+    {
       "stepId": "analysis-step",
       "internalName": "Analysis & Recommendation",
-      "order": 7,
+      "order": 8,
       "stepType": "avatar-monologue",
       "avatarContent": {
         "scriptText": "Based on what you've told me, I can see exactly what's happening. You're not getting the deep, restorative sleep your body needs. Even if you're in bed for 8 hours, poor support means you're not truly resting.",
@@ -293,7 +317,7 @@
     {
       "stepId": "recommendation-step",
       "internalName": "Product Recommendations",
-      "order": 8,
+      "order": 9,
       "stepType": "cta",
       "ctaContent": {
         "headline": "Your Personalized Sleep Solutions",

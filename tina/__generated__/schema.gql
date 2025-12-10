@@ -182,11 +182,9 @@ type FlowsStepsHeaderContent {
   headline: String
   subheadline: String
   avatarIntroScript: String
-  avatarIntroEmotion: String
-  primaryButtonText: String
-  primaryButtonAction: String
   secondarySubheadline: String
   audioNotice: String
+  primaryButtonText: String
 }
 
 type FlowsStepsQuestionContentAnswerOptions {
@@ -316,11 +314,9 @@ input FlowsStepsHeaderContentFilter {
   headline: StringFilter
   subheadline: StringFilter
   avatarIntroScript: StringFilter
-  avatarIntroEmotion: StringFilter
-  primaryButtonText: StringFilter
-  primaryButtonAction: StringFilter
   secondarySubheadline: StringFilter
   audioNotice: StringFilter
+  primaryButtonText: StringFilter
 }
 
 input FlowsStepsQuestionContentAnswerOptionsFilter {
@@ -494,11 +490,9 @@ input FlowsStepsHeaderContentMutation {
   headline: String
   subheadline: String
   avatarIntroScript: String
-  avatarIntroEmotion: String
-  primaryButtonText: String
-  primaryButtonAction: String
   secondarySubheadline: String
   audioNotice: String
+  primaryButtonText: String
 }
 
 input FlowsStepsQuestionContentAnswerOptionsMutation {

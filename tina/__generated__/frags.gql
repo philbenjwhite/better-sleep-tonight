@@ -45,11 +45,9 @@ fragment FlowsParts on Flows {
       headline
       subheadline
       avatarIntroScript
-      avatarIntroEmotion
-      primaryButtonText
-      primaryButtonAction
       secondarySubheadline
       audioNotice
+      primaryButtonText
     }
     questionContent {
       __typename

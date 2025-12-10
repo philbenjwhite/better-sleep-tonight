@@ -10,8 +10,8 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Better Sleep Tonight",
-  description: "Better Sleep Tonight Application",
+  title: "Better Sleep Tonight | Personalized Sleep Assessment & Mattress Recommendations",
+  description: "Take our personalized sleep assessment to discover the perfect mattress for your needs. Get expert recommendations from Ashley, your AI sleep guide, and wake up feeling refreshed.",
 };
 
 export default function RootLayout({

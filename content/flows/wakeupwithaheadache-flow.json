@@ -17,12 +17,10 @@
       "order": 1,
       "stepType": "header",
       "headerContent": {
-        "headline": "Stop Waking Up with Headaches",
+        "headline": "Waking up with a headache? Get Better Sleep Tonight!",
         "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without those frustrating morning headaches. If you've been starting your day with head pain — you're in the right place.",
         "avatarIntroScript": "I know how frustrating headaches can be — especially when they start your day off wrong. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
-        "avatarIntroEmotion": "friendly",
         "primaryButtonText": "Let's Get Started",
-        "primaryButtonAction": "next",
         "audioNotice": "Turn up your volume to hear Ashley"
       }
     },
@@ -43,7 +41,9 @@
             "order": 1,
             "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night really takes a toll on your body and mind.",
             "avatarEmotion": "soothing",
-            "tags": ["severe"]
+            "tags": [
+              "severe"
+            ]
           },
           {
             "optionId": "q1-opt2",
@@ -52,7 +52,9 @@
             "order": 2,
             "avatarResponse": "You're not alone — many people struggle with falling asleep frequently. Let's figure out what's going on.",
             "avatarEmotion": "friendly",
-            "tags": ["moderate"]
+            "tags": [
+              "moderate"
+            ]
           },
           {
             "optionId": "q1-opt3",
@@ -61,7 +63,9 @@
             "order": 3,
             "avatarResponse": "That's pretty normal, but we can definitely help you get more consistent, restful sleep.",
             "avatarEmotion": "friendly",
-            "tags": ["occasional"]
+            "tags": [
+              "occasional"
+            ]
           },
           {
             "optionId": "q1-opt4",
@@ -70,9 +74,11 @@
             "order": 4,
             "avatarResponse": "That's great that falling asleep isn't an issue for you!",
             "avatarEmotion": "excited",
-            "tags": ["no-issues"],
             "terminateFlow": true,
-            "terminationMessage": "It sounds like you're not experiencing the sleep issues our program is designed to address. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts."
+            "terminationMessage": "It sounds like you're not experiencing the sleep issues our program is designed to address. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts.",
+            "tags": [
+              "no-issues"
+            ]
           }
         ]
       }
@@ -94,7 +100,9 @@
             "order": 1,
             "avatarResponse": "Side sleeping is the most common position. It's great for alignment, but you need the right support for your hips and shoulders.",
             "avatarEmotion": "friendly",
-            "tags": ["side-sleeper"]
+            "tags": [
+              "side-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt2",
@@ -103,7 +111,9 @@
             "order": 2,
             "avatarResponse": "Back sleeping is excellent for spinal alignment when you have proper lumbar support.",
             "avatarEmotion": "friendly",
-            "tags": ["back-sleeper"]
+            "tags": [
+              "back-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt3",
@@ -112,7 +122,9 @@
             "order": 3,
             "avatarResponse": "Stomach sleeping can be tough on your neck and back. The right mattress can make a big difference.",
             "avatarEmotion": "friendly",
-            "tags": ["stomach-sleeper"]
+            "tags": [
+              "stomach-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt4",
@@ -121,7 +133,9 @@
             "order": 4,
             "avatarResponse": "A combination sleeper! You need a mattress that adapts to all your positions throughout the night.",
             "avatarEmotion": "friendly",
-            "tags": ["combination-sleeper"]
+            "tags": [
+              "combination-sleeper"
+            ]
           }
         ]
       }
@@ -143,7 +157,9 @@
             "order": 1,
             "avatarResponse": "That's great — motion transfer isn't disrupting your sleep.",
             "avatarEmotion": "friendly",
-            "tags": ["no-motion-issues"]
+            "tags": [
+              "no-motion-issues"
+            ]
           },
           {
             "optionId": "q3-opt2",
@@ -152,7 +168,9 @@
             "order": 2,
             "avatarResponse": "Some motion disturbance is normal, especially if you share a bed.",
             "avatarEmotion": "friendly",
-            "tags": ["mild-motion"]
+            "tags": [
+              "mild-motion"
+            ]
           },
           {
             "optionId": "q3-opt3",
@@ -161,7 +179,9 @@
             "order": 3,
             "avatarResponse": "Regular motion disturbance can seriously impact your sleep quality. That's something we can definitely address.",
             "avatarEmotion": "soothing",
-            "tags": ["motion-issues"]
+            "tags": [
+              "motion-issues"
+            ]
           },
           {
             "optionId": "q3-opt4",
@@ -170,7 +190,9 @@
             "order": 4,
             "avatarResponse": "That's okay — sometimes it's hard to know what's waking you up. We'll factor that in.",
             "avatarEmotion": "friendly",
-            "tags": ["unknown"]
+            "tags": [
+              "unknown"
+            ]
           }
         ]
       }
@@ -192,7 +214,9 @@
             "order": 1,
             "avatarResponse": "Waking up in pain every day is exhausting. Your mattress should be helping you recover, not causing more problems.",
             "avatarEmotion": "soothing",
-            "tags": ["severe-pain"]
+            "tags": [
+              "severe-pain"
+            ]
           },
           {
             "optionId": "q4-opt2",
@@ -201,7 +225,9 @@
             "order": 2,
             "avatarResponse": "Frequent aches and pains are a clear sign your sleep setup needs attention.",
             "avatarEmotion": "friendly",
-            "tags": ["moderate-pain"]
+            "tags": [
+              "moderate-pain"
+            ]
           },
           {
             "optionId": "q4-opt3",
@@ -210,7 +236,9 @@
             "order": 3,
             "avatarResponse": "Even occasional pain is worth addressing. You deserve to wake up feeling great every day.",
             "avatarEmotion": "friendly",
-            "tags": ["occasional-pain"]
+            "tags": [
+              "occasional-pain"
+            ]
           },
           {
             "optionId": "q4-opt4",
@@ -219,9 +247,11 @@
             "order": 4,
             "avatarResponse": "That's wonderful that you're not experiencing morning pain!",
             "avatarEmotion": "excited",
-            "tags": ["no-pain"],
             "terminateFlow": true,
-            "terminationMessage": "It sounds like aches and pains aren't your main concern. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts."
+            "terminationMessage": "It sounds like aches and pains aren't your main concern. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts.",
+            "tags": [
+              "no-pain"
+            ]
           }
         ]
       }
@@ -243,7 +273,9 @@
             "order": 1,
             "avatarResponse": "I understand you're dealing with something more serious. The right mattress support is even more critical for you.",
             "avatarEmotion": "soothing",
-            "tags": ["medical"]
+            "tags": [
+              "medical"
+            ]
           },
           {
             "optionId": "q5-opt2",
@@ -252,7 +284,9 @@
             "order": 2,
             "avatarResponse": "Stiffness and soreness are often signs of poor sleep posture or inadequate support.",
             "avatarEmotion": "friendly",
-            "tags": ["stiffness"]
+            "tags": [
+              "stiffness"
+            ]
           },
           {
             "optionId": "q5-opt3",
@@ -261,7 +295,9 @@
             "order": 3,
             "avatarResponse": "Hip and shoulder pain usually comes from pressure points. That's exactly what the right mattress can fix.",
             "avatarEmotion": "friendly",
-            "tags": ["pressure-points"]
+            "tags": [
+              "pressure-points"
+            ]
           },
           {
             "optionId": "q5-opt4",
@@ -270,17 +306,25 @@
             "order": 4,
             "avatarResponse": "Thanks for letting me know.",
             "avatarEmotion": "friendly",
-            "tags": ["other"],
             "terminateFlow": true,
-            "terminationMessage": "Based on your answers, it seems like our sleep solutions might not be the best fit for your specific situation. We recommend consulting with a healthcare professional about your sleep concerns."
+            "terminationMessage": "Based on your answers, it seems like our sleep solutions might not be the best fit for your specific situation. We recommend consulting with a healthcare professional about your sleep concerns.",
+            "tags": [
+              "other"
+            ]
           }
         ]
       }
     },
     {
+      "stepId": "mattress-recommendation-step",
+      "internalName": "Mattress Recommendation",
+      "order": 7,
+      "stepType": "mattress-recommendation"
+    },
+    {
       "stepId": "analysis-step",
       "internalName": "Analysis & Recommendation",
-      "order": 7,
+      "order": 8,
       "stepType": "avatar-monologue",
       "avatarContent": {
         "scriptText": "Based on what you've told me, I can see exactly what's happening. Poor sleep quality and improper support can contribute to those morning headaches. Your body needs proper alignment and pressure relief to truly rest and recover.",
@@ -293,7 +337,7 @@
     {
       "stepId": "recommendation-step",
       "internalName": "Product Recommendations",
-      "order": 8,
+      "order": 9,
       "stepType": "cta",
       "ctaContent": {
         "headline": "Your Personalized Sleep Solutions",

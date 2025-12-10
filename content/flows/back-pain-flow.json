@@ -18,12 +18,11 @@
       "stepType": "header",
       "headerContent": {
         "headline": "Wake Up Without Back Pain",
-        "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without that nagging back pain. If you've been waking up stiff, sore, or feeling like you barely slept — you're in the right place.",
-        "avatarIntroScript": "I know how frustrating back pain can be — especially when it starts your day off wrong. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
-        "avatarIntroEmotion": "friendly",
-        "primaryButtonText": "Let's Get Started",
-        "primaryButtonAction": "next",
-        "audioNotice": "Turn up your volume to hear Ashley"
+        "subheadline": "Hey, I’m Ashley — your virtual sleep guide. My job is simple: to help you stay asleep for longer and wake up without back pain, without the sleep fog, and without wondering why you’re tired before the day even starts! If you’re here, I’m guessing that getting a good night’s sleep isn’t proving easy— and trust me, you’re not alone..",
+        "avatarIntroScript": "A lot of people struggle with back pain,  restless nights, sore mornings, and that “why do I feel 20 years older?” stiffness. And while it feels mysterious, it usually isn’t. There’s always a reason.  And there’s almost always a solution! ",
+        "primaryButtonText": "Get Better Sleep",
+        "secondarySubheadline": "The good news is that I can help. Let’s fix this!",
+        "audioNotice": "For best experience please have your audio turned on"
       }
     },
     {
@@ -43,7 +42,9 @@
             "order": 1,
             "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night really takes a toll on your body and mind.",
             "avatarEmotion": "soothing",
-            "tags": ["severe"]
+            "tags": [
+              "severe"
+            ]
           },
           {
             "optionId": "q1-opt2",
@@ -52,7 +53,9 @@
             "order": 2,
             "avatarResponse": "You're not alone — many people struggle with falling asleep frequently. Let's figure out what's going on.",
             "avatarEmotion": "friendly",
-            "tags": ["moderate"]
+            "tags": [
+              "moderate"
+            ]
           },
           {
             "optionId": "q1-opt3",
@@ -61,7 +64,9 @@
             "order": 3,
             "avatarResponse": "That's pretty normal, but we can definitely help you get more consistent, restful sleep.",
             "avatarEmotion": "friendly",
-            "tags": ["occasional"]
+            "tags": [
+              "occasional"
+            ]
           },
           {
             "optionId": "q1-opt4",
@@ -70,9 +75,11 @@
             "order": 4,
             "avatarResponse": "That's great that falling asleep isn't an issue for you!",
             "avatarEmotion": "excited",
-            "tags": ["no-issues"],
             "terminateFlow": true,
-            "terminationMessage": "It sounds like you're not experiencing the sleep issues our program is designed to address. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts."
+            "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
+            "tags": [
+              "no-issues"
+            ]
           }
         ]
       }
@@ -94,7 +101,9 @@
             "order": 1,
             "avatarResponse": "Side sleeping is great for alignment, but you need the right support to keep your spine neutral.",
             "avatarEmotion": "friendly",
-            "tags": ["side-sleeper"]
+            "tags": [
+              "side-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt2",
@@ -103,7 +112,9 @@
             "order": 2,
             "avatarResponse": "Back sleeping is excellent for spinal alignment when you have proper lumbar support.",
             "avatarEmotion": "friendly",
-            "tags": ["back-sleeper"]
+            "tags": [
+              "back-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt3",
@@ -112,7 +123,9 @@
             "order": 3,
             "avatarResponse": "Stomach sleeping can be tough on your back. The right mattress can help minimize the strain on your spine.",
             "avatarEmotion": "friendly",
-            "tags": ["stomach-sleeper"]
+            "tags": [
+              "stomach-sleeper"
+            ]
           },
           {
             "optionId": "q2-opt4",
@@ -121,7 +134,9 @@
             "order": 4,
             "avatarResponse": "A combination sleeper! You need a mattress that adapts to all your positions throughout the night.",
             "avatarEmotion": "friendly",
-            "tags": ["combination-sleeper"]
+            "tags": [
+              "combination-sleeper"
+            ]
           }
         ]
       }
@@ -143,7 +158,9 @@
             "order": 1,
             "avatarResponse": "That's great — motion transfer isn't disrupting your sleep.",
             "avatarEmotion": "friendly",
-            "tags": ["no-motion-issues"]
+            "tags": [
+              "no-motion-issues"
+            ]
           },
           {
             "optionId": "q3-opt2",
@@ -152,7 +169,9 @@
             "order": 2,
             "avatarResponse": "Some motion disturbance is normal, especially if you share a bed.",
             "avatarEmotion": "friendly",
-            "tags": ["mild-motion"]
+            "tags": [
+              "mild-motion"
+            ]
           },
           {
             "optionId": "q3-opt3",
@@ -161,7 +180,9 @@
             "order": 3,
             "avatarResponse": "Regular motion disturbance can seriously impact your sleep quality. That's something we can definitely address.",
             "avatarEmotion": "soothing",
-            "tags": ["motion-issues"]
+            "tags": [
+              "motion-issues"
+            ]
           },
           {
             "optionId": "q3-opt4",
@@ -170,7 +191,9 @@
             "order": 4,
             "avatarResponse": "That's okay — sometimes it's hard to know what's waking you up. We'll factor that in.",
             "avatarEmotion": "friendly",
-            "tags": ["unknown"]
+            "tags": [
+              "unknown"
+            ]
           }
         ]
       }
@@ -192,7 +215,9 @@
             "order": 1,
             "avatarResponse": "Waking up in pain every day is exhausting. Your mattress should be helping you recover, not causing more problems.",
             "avatarEmotion": "soothing",
-            "tags": ["severe-pain"]
+            "tags": [
+              "severe-pain"
+            ]
           },
           {
             "optionId": "q4-opt2",
@@ -201,7 +226,9 @@
             "order": 2,
             "avatarResponse": "Frequent aches and pains are a clear sign your sleep setup needs attention.",
             "avatarEmotion": "friendly",
-            "tags": ["moderate-pain"]
+            "tags": [
+              "moderate-pain"
+            ]
           },
           {
             "optionId": "q4-opt3",
@@ -210,7 +237,9 @@
             "order": 3,
             "avatarResponse": "Even occasional pain is worth addressing. You deserve to wake up feeling great every day.",
             "avatarEmotion": "friendly",
-            "tags": ["occasional-pain"]
+            "tags": [
+              "occasional-pain"
+            ]
           },
           {
             "optionId": "q4-opt4",
@@ -219,9 +248,11 @@
             "order": 4,
             "avatarResponse": "That's wonderful that you're not experiencing morning pain!",
             "avatarEmotion": "excited",
-            "tags": ["no-pain"],
             "terminateFlow": true,
-            "terminationMessage": "It sounds like aches and pains aren't your main concern. If you'd like to explore other ways to optimize your sleep, feel free to reach out to our sleep experts."
+            "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
+            "tags": [
+              "no-pain"
+            ]
           }
         ]
       }
@@ -243,7 +274,9 @@
             "order": 1,
             "avatarResponse": "I understand you're dealing with something more serious. The right mattress support is even more critical for you.",
             "avatarEmotion": "soothing",
-            "tags": ["medical"]
+            "tags": [
+              "medical"
+            ]
           },
           {
             "optionId": "q5-opt2",
@@ -252,7 +285,9 @@
             "order": 2,
             "avatarResponse": "Stiffness and soreness are often signs of poor sleep posture or inadequate lumbar support.",
             "avatarEmotion": "friendly",
-            "tags": ["stiffness"]
+            "tags": [
+              "stiffness"
+            ]
           },
           {
             "optionId": "q5-opt3",
@@ -261,7 +296,9 @@
             "order": 3,
             "avatarResponse": "Hip and shoulder pain can contribute to back pain since your whole spine is connected. Proper support helps everything.",
             "avatarEmotion": "friendly",
-            "tags": ["pressure-points"]
+            "tags": [
+              "pressure-points"
+            ]
           },
           {
             "optionId": "q5-opt4",
@@ -270,38 +307,98 @@
             "order": 4,
             "avatarResponse": "Thanks for letting me know.",
             "avatarEmotion": "friendly",
-            "tags": ["other"],
             "terminateFlow": true,
-            "terminationMessage": "Based on your answers, it seems like our sleep solutions might not be the best fit for your specific situation. We recommend consulting with a healthcare professional about your sleep concerns."
+            "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
+            "tags": [
+              "other"
+            ]
           }
         ]
       }
     },
     {
-      "stepId": "analysis-step",
-      "internalName": "Analysis & Recommendation",
+      "stepId": "answer-summary-step",
+      "internalName": "Answer Summary",
       "order": 7,
-      "stepType": "avatar-monologue",
-      "avatarContent": {
-        "scriptText": "Based on what you've told me, I can see exactly what's happening. Your current sleep setup isn't giving your back the support it needs to recover overnight. That's why you're waking up with that back pain.",
-        "secondaryScriptText": "The good news is that this is completely fixable. Tempur-Pedic mattresses are specifically designed to support your spine's natural alignment while relieving pressure points. That means less tossing and turning, and waking up actually feeling rested — not broken.",
-        "tertiaryScriptText": "Thousands of people with similar back pain have found relief with these mattresses. Let me show you my top recommendations based on your specific needs.",
+      "stepType": "answer-summary",
+      "answerSummaryContent": {
+        "introText": "From what you told me, it sounds like",
+        "outroText": "are your biggest sleep disruptors.",
         "emotion": "friendly",
-        "autoAdvance": false
+        "summaryMappings": {
+          "q1-trouble-falling-asleep": {
+            "every-night": "you have trouble falling asleep every night",
+            "frequently": "you frequently have trouble falling asleep",
+            "on-occasion": "you have trouble falling asleep on occasion"
+          },
+          "q3-motion-disturbance": {
+            "occasionally": "motion and tossing occasionally disturbs your sleep",
+            "regularly": "motion and tossing regularly wakes you up or prevents you from falling asleep"
+          },
+          "q4-aches-pains-frequency": {
+            "every-night": "you wake with aches and pains every night",
+            "frequently": "you frequently wake with aches and pains",
+            "on-occasion": "you occasionally wake with aches and pains"
+          },
+          "q5-aches-pains-type": {
+            "chronic-condition": "due to a spinal surgery, chronic condition, or bad injury",
+            "stiffness": "specifically stiffness or soreness",
+            "hip-shoulder": "specifically hip or shoulder discomfort"
+          }
+        }
       }
     },
     {
-      "stepId": "recommendation-step",
+      "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
       "order": 8,
-      "stepType": "cta",
-      "ctaContent": {
-        "headline": "Your Personalized Sleep Solutions",
-        "bodyText": "Based on your sleep profile, I've selected Tempur-Pedic mattresses specifically designed for spinal support and back pain relief. These recommendations have helped thousands of people wake up without back pain.",
-        "primaryButtonText": "View My Recommendations",
-        "primaryButtonUrl": "/recommendations?concern=back-pain",
-        "secondaryButtonText": "Talk to a Sleep Expert",
-        "secondaryButtonUrl": "/contact"
+      "stepType": "product-recommendations",
+      "productRecommendationsContent": {
+        "headline": "I've found three mattress options that are perfect for you!",
+        "introParagraph": "Now imagine this instead — deep sleep that resets your whole body! You fall asleep faster. You stay asleep longer. You wake up thinking, Oh… so this is what rested feels like!",
+        "secondaryText": "Based on what you told me earlier, I think these Tempur-Pedic mattresses are the best fit for you:",
+        "mattressOptions": [
+          {
+            "id": "tempur-sense",
+            "productName": "Tempur-Pedic Sense",
+            "productDescription": "Offers targeted support + pressure relief for fewer aches",
+            "basePrice": 2499,
+            "productImage": "/images/mattress-tempurpedic.jpg"
+          },
+          {
+            "id": "tempur-prosense",
+            "productName": "Tempur-Pedic ProSense",
+            "productDescription": "Provides adaptive contouring to the size, shape and weight of your body so the mattress fits you",
+            "basePrice": 2999,
+            "productImage": "/images/mattress-tempurpedic.jpg"
+          },
+          {
+            "id": "tempur-luxealign",
+            "productName": "Tempur-Pedic LuxeAlign",
+            "productDescription": "Has advanced ergonomic support to help support your spine",
+            "basePrice": 3499,
+            "productImage": "/images/mattress-tempurpedic.jpg"
+          }
+        ],
+        "sizes": [
+          { "value": "twin", "label": "Twin", "priceModifier": 0 },
+          { "value": "twin-xl", "label": "Twin XL", "priceModifier": 100 },
+          { "value": "full", "label": "Full", "priceModifier": 200 },
+          { "value": "queen", "label": "Queen", "priceModifier": 300 },
+          { "value": "king", "label": "King", "priceModifier": 500 }
+        ],
+        "feels": [
+          { "value": "soft", "label": "Soft" },
+          { "value": "medium", "label": "Medium" },
+          { "value": "firm", "label": "Firm" }
+        ],
+        "closeOutHeadline": "Get Better Sleep with a Tempur-Pedic",
+        "closeOutIntroParagraph": "Nice! — we've figured out what's disrupting your sleep. Now let's match you to a mattress that can help you enjoy a more comfortable, rested and undisturbed night's sleep. Please select your preferred mattress.",
+        "emailCaptureCopy": "If you want, I can put everything we just uncovered into a personalized sleep report that you can take into your nearest Ashley store. I know that mattress shopping can sometimes feel a bit overwhelming, so this report will help you find your perfect mattress without any hassle! Just enter your email— give me 5 minutes to compile — and it'll be in your inbox, pronto!",
+        "dataCaptureCopy": "Want to try out a Tempur-Pedic mattress straight away? Book a Rest Test",
+        "contactUsCopy": "Still unsure and want to talk more? I can connect you with a real human sleep specialist anytime. Contact Us",
+        "avatarResponse": "Great choice! I think that mattress is going to work wonderfully for you. Let me know if you'd like me to send you a personalized sleep report!",
+        "avatarEmotion": "excited"
       }
     },
     {

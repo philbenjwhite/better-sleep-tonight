@@ -20,11 +20,20 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
 import { RecoveryModal } from "@/components/RecoveryModal";
+import {
+  MattressRecommendation,
+  MattressRecommendationContent,
+  MattressSize,
+  MattressFeel,
+} from "@/components/MattressRecommendation";
+import {
+  ProductRecommendations,
+  ProductRecommendationsContent,
+} from "@/components/ProductRecommendations";
 import { useProgressPersistence } from "@/hooks";
 import styles from "./page.module.css";
 
 // Import flow data from CMS
-import wakeUpRestedFlow from "../../content/flows/wake-up-rested-flow.json";
 import backPainFlow from "../../content/flows/back-pain-flow.json";
 import achesAndPainsFlow from "../../content/flows/achesandpains-flow.json";
 import headacheFlow from "../../content/flows/wakeupwithaheadache-flow.json";
@@ -34,9 +43,9 @@ import neckPainFlow from "../../content/flows/neckpain-flow.json";
 import shoulderPainFlow from "../../content/flows/shoulderpain-flow.json";
 
 // Flow registry - maps URL param to flow data
-const FLOWS: Record<string, typeof wakeUpRestedFlow> = {
-  default: wakeUpRestedFlow,
-  sleep: wakeUpRestedFlow,
+// eslint-disable-next-line
+const FLOWS: Record<string, any> = {
+  default: backPainFlow,
   "back-pain": backPainFlow,
   achesandpains: achesAndPainsFlow,
   wakeupwithaheadache: headacheFlow,
@@ -46,6 +55,14 @@ const FLOWS: Record<string, typeof wakeUpRestedFlow> = {
   shoulderpain: shoulderPainFlow,
 };
 
+// Type for answer summary mappings
+interface AnswerSummaryContent {
+  introText: string;
+  outroText: string;
+  emotion: string;
+  summaryMappings: Record<string, Record<string, string>>;
+}
+
 // Type for flow steps
 interface FlowStep {
   stepId: string;
@@ -54,13 +71,14 @@ interface FlowStep {
   headerContent?: {
     headline: string;
     subheadline: string;
-    subheadlineSecondary?: string;
+    secondarySubheadline?: string;
     avatarIntroScript: string;
-    avatarIntroEmotion?: string;
     primaryButtonText: string;
-    primaryButtonAction: string;
     audioNotice?: string;
   };
+  mattressRecommendationContent?: MattressRecommendationContent;
+  answerSummaryContent?: AnswerSummaryContent;
+  productRecommendationsContent?: ProductRecommendationsContent;
 }
 
 function HomeContent() {
@@ -105,7 +123,16 @@ function HomeContent() {
   const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
   const [currentEmotion, setCurrentEmotion] = useState<string | null>(null);
   const [isFlowTerminated, setIsFlowTerminated] = useState(false);
-  const [terminationMessage, setTerminationMessage] = useState<string | null>(null);
+  const [terminationMessage, setTerminationMessage] = useState<string | null>(
+    null
+  );
+  const [selectedMattressSize, setSelectedMattressSize] = useState<
+    MattressSize | undefined
+  >(undefined);
+  const [selectedMattressFeel, setSelectedMattressFeel] = useState<
+    MattressFeel | undefined
+  >(undefined);
+  const [hasSpokenSummary, setHasSpokenSummary] = useState(false);
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -182,16 +209,56 @@ function HomeContent() {
   const flowSteps = activeFlow.steps as FlowStep[];
   const headerStep = flowSteps.find((step) => step.stepType === "header");
   const questionSteps = flowSteps.filter(
-    (step) => step.stepType === "question"
+    (step) =>
+      step.stepType === "question" ||
+      step.stepType === "mattress-recommendation" ||
+      step.stepType === "answer-summary" ||
+      step.stepType === "product-recommendations"
   );
   const currentStep = questionSteps[currentStepIndex];
-  const introVideo =
-    (activeFlow as typeof wakeUpRestedFlow & { introVideo?: string })
-      .introVideo || "/videos/Mattress_Shopping.mp4";
+  const isMattressRecommendationStep =
+    currentStep?.stepType === "mattress-recommendation";
+  const isAnswerSummaryStep = currentStep?.stepType === "answer-summary";
+  const isProductRecommendationsStep =
+    currentStep?.stepType === "product-recommendations";
+  const introVideo = activeFlow.introVideo || "/videos/Mattress_Shopping.mp4";
 
-  // Get intro message and emotion from CMS
+  // Generate dynamic answer summary text based on stored answers
+  const generateAnswerSummary = useCallback(
+    (summaryContent: AnswerSummaryContent): string => {
+      const { introText, outroText, summaryMappings } = summaryContent;
+      const summaryParts: string[] = [];
+
+      // Iterate through the mappings in order
+      Object.entries(summaryMappings).forEach(([stepId, valueMap]) => {
+        const answer = storedAnswers.find((a) => a.stepId === stepId);
+        if (answer && valueMap[answer.value]) {
+          summaryParts.push(valueMap[answer.value]);
+        }
+      });
+
+      if (summaryParts.length === 0) {
+        return "Based on what you've shared, let me show you some recommendations.";
+      }
+
+      // Join parts with proper grammar
+      let summaryText = "";
+      if (summaryParts.length === 1) {
+        summaryText = summaryParts[0];
+      } else if (summaryParts.length === 2) {
+        summaryText = `${summaryParts[0]} and ${summaryParts[1]}`;
+      } else {
+        const lastPart = summaryParts.pop();
+        summaryText = `${summaryParts.join(", ")}, and ${lastPart}`;
+      }
+
+      return `${introText} ${summaryText} ${outroText}`;
+    },
+    [storedAnswers]
+  );
+
+  // Get intro message from CMS
   const introMessage = headerStep?.headerContent?.avatarIntroScript || "";
-  const introEmotion = headerStep?.headerContent?.avatarIntroEmotion || "friendly";
 
   // Avatar is ready when connected
   const isAvatarReady = sessionState === AvatarSessionState.CONNECTED;
@@ -224,10 +291,10 @@ function HomeContent() {
     ) {
       setIsLoadingAvatar(false);
       setHasSpokenIntro(true);
-      setCurrentEmotion(introEmotion);
+      setCurrentEmotion("friendly");
       speak(introMessage);
     }
-  }, [currentView, isAvatarReady, hasSpokenIntro, speak, introMessage, introEmotion]);
+  }, [currentView, isAvatarReady, hasSpokenIntro, speak, introMessage]);
 
   // Show question block after Ashley finishes speaking intro
   // Only trigger when avatar has started AND stopped talking
@@ -252,6 +319,43 @@ function HomeContent() {
     avatarStartedTalking,
     isAvatarTalking,
     hasShownIntro,
+  ]);
+
+  // Handle answer-summary step - auto-speak and auto-advance
+  useEffect(() => {
+    if (
+      isAnswerSummaryStep &&
+      currentStep?.answerSummaryContent &&
+      showQuestionBlock &&
+      !isShowingResponse &&
+      !hasSpokenSummary &&
+      sessionState === AvatarSessionState.CONNECTED
+    ) {
+      const summaryText = generateAnswerSummary(currentStep.answerSummaryContent);
+      const emotion = currentStep.answerSummaryContent.emotion || "friendly";
+
+      // Mark summary as spoken so we don't repeat it
+      setHasSpokenSummary(true);
+
+      // Hide question block and show the summary as avatar response
+      setShowQuestionBlock(false);
+      setAvatarResponse(summaryText);
+      setCurrentEmotion(emotion);
+      setIsShowingResponse(true);
+      setAvatarStartedTalking(false);
+
+      // Make the avatar speak the summary
+      speak(summaryText);
+    }
+  }, [
+    isAnswerSummaryStep,
+    currentStep,
+    showQuestionBlock,
+    isShowingResponse,
+    hasSpokenSummary,
+    sessionState,
+    generateAnswerSummary,
+    speak,
   ]);
 
   const handleAnswerSelect = useCallback(
@@ -283,7 +387,9 @@ function HomeContent() {
         // Check if this answer should terminate the flow
         if (option.terminateFlow) {
           // Use termination message if provided, otherwise use avatar response
-          const termMessage = option.terminationMessage || option.avatarResponse ||
+          const termMessage =
+            option.terminationMessage ||
+            option.avatarResponse ||
             "Thank you for your time. Based on your answers, our program may not be the best fit for your needs.";
           const emotion = option.avatarEmotion || "friendly";
 
@@ -303,25 +409,154 @@ function HomeContent() {
             speak(termMessage);
           }
         } else {
-          // Normal flow - continue to next question
-          const response =
-            option.avatarResponse ||
-            "Great choice! Let me ask you another question.";
-          const emotion = option.avatarEmotion || "friendly";
+          // Normal flow - skip avatar response and go directly to next question
+          // (Avatar responses are disabled but CMS fields remain for future use)
           setShowQuestionBlock(false);
-          setAvatarResponse(response);
-          setCurrentEmotion(emotion);
-          setIsShowingResponse(true);
-          setAvatarStartedTalking(false); // Reset for next speech detection
+          setSelectedAnswer(null);
 
-          // Make the avatar speak the response
-          if (sessionState === AvatarSessionState.CONNECTED) {
-            speak(response);
+          // Advance to next step after brief pause
+          if (currentStepIndex < questionSteps.length - 1) {
+            setCurrentStepIndex((prev) => prev + 1);
+            setTimeout(() => {
+              setShowQuestionBlock(true);
+            }, 300);
+          } else {
+            console.log("Flow complete!");
           }
         }
-      }, 1800); // Pause after selection to show dimmed options
+      }, 1200); // Brief pause after selection before moving on
     },
-    [sessionState, speak, currentStep, currentStepIndex, storedAnswers, saveProgress, flowParam, clearProgress]
+    [
+      sessionState,
+      speak,
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+      clearProgress,
+      questionSteps.length,
+    ]
+  );
+
+  const handleMattressSelectionComplete = useCallback(
+    (selection: {
+      size: MattressSize;
+      feel: MattressFeel;
+      finalPrice: number;
+    }) => {
+      setSelectedMattressSize(selection.size);
+      setSelectedMattressFeel(selection.feel);
+
+      // Store the mattress selection as an answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: "Mattress Recommendation",
+        value: `${selection.size}-${selection.feel}`,
+        label: `Size: ${selection.size}, Feel: ${
+          selection.feel
+        }, Price: $${selection.finalPrice.toFixed(2)}`,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Auto-save progress
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1,
+        answers: updatedAnswers,
+      });
+
+      // Get avatar response from the step content
+      const response =
+        currentStep?.mattressRecommendationContent?.avatarResponse ||
+        "Excellent choice! That mattress is perfect for your sleep needs.";
+      const emotion =
+        currentStep?.mattressRecommendationContent?.avatarEmotion || "excited";
+
+      // Show avatar response
+      setTimeout(() => {
+        setShowQuestionBlock(false);
+        setAvatarResponse(response);
+        setCurrentEmotion(emotion);
+        setIsShowingResponse(true);
+        setAvatarStartedTalking(false);
+
+        if (sessionState === AvatarSessionState.CONNECTED) {
+          speak(response);
+        }
+      }, 800);
+    },
+    [
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+      sessionState,
+      speak,
+    ]
+  );
+
+  const handleProductRecommendationComplete = useCallback(
+    (selection: {
+      mattressId: string;
+      mattressName: string;
+      size: MattressSize;
+      feel: MattressFeel;
+      finalPrice: number;
+    }) => {
+      setSelectedMattressSize(selection.size);
+      setSelectedMattressFeel(selection.feel);
+
+      // Store the product selection as an answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: "Product Recommendation",
+        value: `${selection.mattressId}-${selection.size}-${selection.feel}`,
+        label: `${selection.mattressName}, Size: ${selection.size}, Feel: ${selection.feel}, Price: $${selection.finalPrice.toFixed(2)}`,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Auto-save progress
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1,
+        answers: updatedAnswers,
+      });
+
+      // Get avatar response from the step content
+      const response =
+        currentStep?.productRecommendationsContent?.avatarResponse ||
+        "Excellent choice! That mattress is perfect for your sleep needs.";
+      const emotion =
+        currentStep?.productRecommendationsContent?.avatarEmotion || "excited";
+
+      // Show avatar response
+      setTimeout(() => {
+        setShowQuestionBlock(false);
+        setAvatarResponse(response);
+        setCurrentEmotion(emotion);
+        setIsShowingResponse(true);
+        setAvatarStartedTalking(false);
+
+        if (sessionState === AvatarSessionState.CONNECTED) {
+          speak(response);
+        }
+      }, 800);
+    },
+    [
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+      sessionState,
+      speak,
+    ]
   );
 
   const handleTextSubmit = useCallback(
@@ -363,7 +598,15 @@ function HomeContent() {
         speak(response);
       }
     },
-    [currentStep, currentStepIndex, sessionState, speak, storedAnswers, saveProgress, flowParam]
+    [
+      currentStep,
+      currentStepIndex,
+      sessionState,
+      speak,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+    ]
   );
 
   // Show next question after avatar finishes speaking response
@@ -470,14 +713,12 @@ function HomeContent() {
               </h1>
               <p className={styles.subheadline}>
                 {headerStep.headerContent.subheadline}
-                {headerStep.headerContent.subheadlineSecondary && (
-                  <>
-                    <br />
-                    <br />
-                    {headerStep.headerContent.subheadlineSecondary}
-                  </>
-                )}
               </p>
+              {headerStep.headerContent.secondarySubheadline && (
+                <p className={styles.subheadline}>
+                  {headerStep.headerContent.secondarySubheadline}
+                </p>
+              )}
             </div>
 
             {/* CTA Section */}
@@ -549,19 +790,55 @@ function HomeContent() {
               </div>
 
               {/* Question Block - OUTSIDE heygenWrapper so blur works */}
-              {showQuestionBlock && currentStep?.questionContent && (
-                <div className={styles.questionBlockWrapper}>
-                  <div className={styles.questionBlockBackdrop} />
-                  <div className={styles.questionBlockInner}>
-                    <QuestionBlock
-                      questionContent={currentStep.questionContent}
-                      onAnswerSelect={handleAnswerSelect}
-                      onTextSubmit={handleTextSubmit}
-                      selectedValue={selectedAnswer?.value}
-                    />
+              {showQuestionBlock &&
+                currentStep?.questionContent &&
+                !isMattressRecommendationStep &&
+                !isAnswerSummaryStep &&
+                !isProductRecommendationsStep && (
+                  <div className={styles.questionBlockWrapper}>
+                    <div className={styles.questionBlockBackdrop} />
+                    <div className={styles.questionBlockInner}>
+                      <QuestionBlock
+                        questionContent={currentStep.questionContent}
+                        onAnswerSelect={handleAnswerSelect}
+                        onTextSubmit={handleTextSubmit}
+                        selectedValue={selectedAnswer?.value}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+              {/* Mattress Recommendation Step */}
+              {showQuestionBlock &&
+                isMattressRecommendationStep &&
+                currentStep?.mattressRecommendationContent && (
+                  <div className={styles.questionBlockWrapper}>
+                    <div className={styles.questionBlockBackdrop} />
+                    <div className={styles.mattressRecommendationInner}>
+                      <MattressRecommendation
+                        content={currentStep.mattressRecommendationContent}
+                        onSelectionComplete={handleMattressSelectionComplete}
+                        selectedSize={selectedMattressSize}
+                        selectedFeel={selectedMattressFeel}
+                      />
+                    </div>
+                  </div>
+                )}
+
+              {/* Product Recommendations Step - 3 mattress options */}
+              {showQuestionBlock &&
+                isProductRecommendationsStep &&
+                currentStep?.productRecommendationsContent && (
+                  <div className={styles.questionBlockWrapper}>
+                    <div className={styles.questionBlockBackdrop} />
+                    <div className={styles.productRecommendationsInner}>
+                      <ProductRecommendations
+                        content={currentStep.productRecommendationsContent}
+                        onSelectionComplete={handleProductRecommendationComplete}
+                      />
+                    </div>
+                  </div>
+                )}
             </>
           )}
         </>
@@ -579,6 +856,12 @@ function HomeContent() {
         answers={storedAnswers}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
+        stepNames={questionSteps.map(
+          (step) =>
+            (step as FlowStep & { internalName?: string }).internalName ||
+            step.stepId
+        )}
+        stepIds={questionSteps.map((step) => step.stepId)}
         currentEmotion={currentEmotion || undefined}
         sessionEmotion="friendly"
       />

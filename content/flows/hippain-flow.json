@@ -20,9 +20,7 @@
         "headline": "Wake Up Without Hip Pain",
         "subheadline": "Hey, I'm Ashley — and I specialize in helping people wake up without that nagging hip pain. If you've been waking up stiff, sore, or feeling like you barely slept — you're in the right place.",
         "avatarIntroScript": "I know how frustrating hip pain can be — especially when it starts your day off wrong. The good news? There's almost always a reason, and there's almost always a solution. Let me ask you a few quick questions to understand what's going on.",
-        "avatarIntroEmotion": "friendly",
         "primaryButtonText": "Let's Get Started",
-        "primaryButtonAction": "next",
         "audioNotice": "Turn up your volume to hear Ashley"
       }
     },
@@ -278,9 +276,35 @@
       }
     },
     {
+      "stepId": "mattress-recommendation-step",
+      "internalName": "Mattress Recommendation",
+      "order": 7,
+      "stepType": "mattress-recommendation",
+      "mattressRecommendationContent": {
+        "productName": "Tempur-Pedic Sense Medium 10 Inch Mattress",
+        "productDescription": "Legendary TEMPUR® formulations gently cradle your body and pressure points to help reduce aches & pains. Only Tempur-Pedic® can deliver the soft where you want it, firm where you need it™ comfort and support.",
+        "basePrice": 2299.99,
+        "productImage": "/images/mattress-tempurpedic.jpg",
+        "sizes": [
+          { "value": "twin", "label": "Twin", "priceModifier": -600 },
+          { "value": "twin-xl", "label": "Twin XL", "priceModifier": -500 },
+          { "value": "full", "label": "Full", "priceModifier": -300 },
+          { "value": "queen", "label": "Queen", "priceModifier": 0 },
+          { "value": "king", "label": "King", "priceModifier": 400 }
+        ],
+        "feels": [
+          { "value": "soft", "label": "Soft" },
+          { "value": "medium", "label": "Medium" },
+          { "value": "firm", "label": "Firm" }
+        ],
+        "avatarResponse": "Excellent choice! That mattress is specifically designed to relieve hip pressure points. You're going to love waking up without hip pain!",
+        "avatarEmotion": "excited"
+      }
+    },
+    {
       "stepId": "analysis-step",
       "internalName": "Analysis & Recommendation",
-      "order": 7,
+      "order": 8,
       "stepType": "avatar-monologue",
       "avatarContent": {
         "scriptText": "Based on what you've told me, I can see exactly what's happening. Your current sleep setup isn't giving your hips the pressure relief they need. That's why you're waking up with that hip pain.",
@@ -293,7 +317,7 @@
     {
       "stepId": "recommendation-step",
       "internalName": "Product Recommendations",
-      "order": 8,
+      "order": 9,
       "stepType": "cta",
       "ctaContent": {
         "headline": "Your Personalized Sleep Solutions",

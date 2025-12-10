@@ -14,9 +14,7 @@ export interface StoredAnswer {
 
 // Available flows - should match FLOWS in page.tsx
 const AVAILABLE_FLOWS = [
-  { id: 'default', label: 'Default (Sleep)' },
-  { id: 'sleep', label: 'Wake Up Rested' },
-  { id: 'back-pain', label: 'Back Pain' },
+  { id: 'default', label: 'Back Pain (Default)' },
   { id: 'achesandpains', label: 'Aches & Pains' },
   { id: 'wakeupwithaheadache', label: 'Headache' },
   { id: 'hippain', label: 'Hip Pain' },
@@ -29,6 +27,8 @@ export interface DevPanelProps {
   answers: StoredAnswer[];
   currentStep: number;
   totalSteps: number;
+  stepNames?: string[];
+  stepIds?: string[];
   currentEmotion?: string;
   sessionEmotion?: string;
 }
@@ -37,6 +37,8 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   answers,
   currentStep,
   totalSteps,
+  stepNames = [],
+  stepIds = [],
   currentEmotion,
   sessionEmotion = 'friendly',
 }) => {
@@ -157,13 +159,14 @@ export const DevPanel: React.FC<DevPanelProps> = ({
                   key={step}
                   className={`${styles.stepButton} ${currentStepParam === String(step) ? styles.stepButtonActive : ''}`}
                   onClick={() => handleStepChange(step)}
+                  title={stepNames[step - 1] || `Step ${step}`}
                 >
-                  {step}
+                  {step}. {stepNames[step - 1] || `Step ${step}`}
                 </button>
               ))}
             </div>
             <p className={styles.stepHint}>
-              Current: {currentStepParam ? `Step ${currentStepParam}` : 'Intro'}
+              Current: {currentStepParam ? `${currentStepParam}. ${stepNames[parseInt(currentStepParam, 10) - 1] || ''}` : 'Intro'}
             </p>
           </div>
 
@@ -189,16 +192,13 @@ export const DevPanel: React.FC<DevPanelProps> = ({
                   <span className={styles.emotionValue}>{currentEmotion}</span>
                 </p>
               )}
-              <p className={styles.emotionNote}>
-                Note: HeyGen SDK only supports setting emotion at session start, not per-speak call.
-              </p>
             </div>
           </div>
 
           {/* Stored answers */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>
-              Collected Answers ({answers.length})
+              Collected Answers ({answers.length}/{totalSteps})
             </h4>
 
             {answers.length === 0 ? (
@@ -221,19 +221,21 @@ export const DevPanel: React.FC<DevPanelProps> = ({
             )}
           </div>
 
-          {/* Raw JSON */}
-          {answers.length > 0 && (
-            <div className={styles.section}>
-              <h4 className={styles.sectionTitle}>Raw Data</h4>
-              <pre className={styles.jsonOutput}>
-                {JSON.stringify(
-                  answers.map(a => ({ [a.stepId]: a.value })),
-                  null,
-                  2
-                )}
-              </pre>
-            </div>
-          )}
+          {/* JSON Schema with collected values */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>JSON Output</h4>
+            <pre className={styles.jsonOutput}>
+              {JSON.stringify(
+                stepIds.reduce((acc, stepId, index) => {
+                  const answer = answers.find(a => a.stepId === stepId);
+                  acc[stepId] = answer?.value || null;
+                  return acc;
+                }, {} as Record<string, string | null>),
+                null,
+                2
+              )}
+            </pre>
+          </div>
         </div>
 
         <div className={styles.footer}>

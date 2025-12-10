@@ -1,17 +1,17 @@
 .avatarContainer {
   position: relative;
   width: 100%;
-  height: 720px;
-  max-height: 90vh;
+  /* Full viewport height minus footer (60px) */
+  height: calc(100vh - 60px);
   overflow: hidden;
 }
 
-/* Mobile: center avatar and make it full width */
+/* Mobile: slightly shorter to account for mobile UI */
 @media (max-width: 768px) {
   .avatarContainer {
     width: 100%;
     max-width: 100vw;
-    height: 60vh;
+    height: calc(100vh - 80px);
   }
 }
 
@@ -22,7 +22,8 @@
   object-fit: contain;
   object-position: center bottom;
   background-color: #fdfaf5;
-  transform: translateY(-24px);
+  /* Move video up to hide the black bar at top of HeyGen stream */
+  margin-top: -24px;
 }
 
 .avatarImage {
