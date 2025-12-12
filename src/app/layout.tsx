@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const openSans = Open_Sans({
@@ -21,6 +22,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={openSans.variable}>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-MQ5XK3D94V"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-MQ5XK3D94V');
+          `}
+        </Script>
+      </head>
       <body className={openSans.className}>{children}</body>
     </html>
   );
