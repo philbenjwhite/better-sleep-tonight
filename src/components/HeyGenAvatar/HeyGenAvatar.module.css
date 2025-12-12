@@ -1,8 +1,8 @@
 .avatarContainer {
   position: relative;
   width: 100%;
-  /* Full viewport height minus footer and header space */
-  height: calc(100vh - 120px);
+  /* Full viewport height minus footer/header, scaled down 10% */
+  height: calc(90vh - 108px);
   overflow: hidden;
 }
 
@@ -11,7 +11,7 @@
   .avatarContainer {
     width: 100%;
     max-width: 100vw;
-    height: calc(100vh - 80px);
+    height: calc(90vh - 72px);
   }
 }
 

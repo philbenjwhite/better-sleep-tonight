@@ -195,19 +195,20 @@
 /* Continue Button Bar - fixed at bottom, above footer */
 .continueBar {
   position: fixed;
-  bottom: 56px; /* Height of footer */
+  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px);
+  padding-bottom: calc(16px + 62px); /* 16px padding + footer height (~62px) */
   background-color: var(--sds-color-background-default-default, #ffffff);
   transform: translateY(100%);
   opacity: 0;
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   pointer-events: none;
-  z-index: 100;
+  z-index: 29; /* Just below footer z-index of 30 */
 }
 
 .continueBar.visible {

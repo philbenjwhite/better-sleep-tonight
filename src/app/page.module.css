@@ -634,12 +634,32 @@
   animation: backdropFadeIn 0.4s ease-out forwards;
 }
 
+/* When backdrop is shown without content (during transitions), don't re-animate */
+.questionBlockBackdrop.backdropOnly {
+  animation: none;
+  opacity: 1;
+}
+
+/* Fade out animation for when backdrop is removed */
+.questionBlockBackdrop.backdropFadeOut {
+  animation: backdropFadeOut 0.4s ease-out forwards;
+}
+
 @keyframes backdropFadeIn {
   from {
     opacity: 0;
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
@@ -651,18 +671,7 @@
   max-height: 80vh;
   overflow: visible;
   padding: 12px;
-  animation: questionSlideIn 0.6s ease-out forwards;
-}
-
-@keyframes questionSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  /* GSAP handles animations now */
 }
 
 /* Mobile: position question block over centered avatar */
