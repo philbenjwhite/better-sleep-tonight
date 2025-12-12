@@ -50,6 +50,13 @@ export interface ProductRecommendationsProps {
     feel: MattressFeel;
     finalPrice: number;
   }) => void;
+  onContinue?: (selection: {
+    mattressId: string;
+    mattressName: string;
+    size: MattressSize;
+    feel: MattressFeel;
+    finalPrice: number;
+  }) => void;
 }
 
 // Individual Mattress Card Component
@@ -229,6 +236,7 @@ function MattressCard({
 export function ProductRecommendations({
   content,
   onSelectionComplete,
+  onContinue,
 }: ProductRecommendationsProps) {
   const [expandedMattressId, setExpandedMattressId] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<MattressSize | null>(null);
@@ -301,6 +309,26 @@ export function ProductRecommendations({
     [selectedSize, expandedMattressId, content.mattressOptions, onSelectionComplete, calculatePrice]
   );
 
+  // Check if both selections are made
+  const isSelectionComplete = selectedSize && selectedFeel && expandedMattressId;
+
+  const handleContinue = useCallback(() => {
+    if (isSelectionComplete) {
+      const mattress = content.mattressOptions.find(
+        (m) => m.id === expandedMattressId
+      );
+      if (mattress) {
+        onContinue?.({
+          mattressId: expandedMattressId,
+          mattressName: mattress.productName,
+          size: selectedSize,
+          feel: selectedFeel,
+          finalPrice: calculatePrice(mattress.basePrice, selectedSize),
+        });
+      }
+    }
+  }, [isSelectionComplete, expandedMattressId, selectedSize, selectedFeel, content.mattressOptions, calculatePrice, onContinue]);
+
   return (
     <div className={styles.container}>
       {content.mattressOptions.map((mattress) => (
@@ -318,6 +346,20 @@ export function ProductRecommendations({
           calculatePrice={calculatePrice}
         />
       ))}
+
+      {/* Continue Button Bar - slides up when both selections are made */}
+      <div className={classNames(styles.continueBar, { [styles.visible]: isSelectionComplete })}>
+        <button
+          type="button"
+          className={styles.continueButton}
+          onClick={handleContinue}
+        >
+          <span>Continue</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }

@@ -192,6 +192,56 @@
   white-space: nowrap;
 }
 
+/* Continue Button Bar */
+.continueBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-200, 10px);
+  background-color: var(--sds-color-background-default-default, #ffffff);
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  pointer-events: none;
+}
+
+.continueBar.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.continueButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sds-size-space-200, 8px);
+  background-color: var(--sds-color-background-brand-default, #770000);
+  border: none;
+  border-radius: var(--sds-size-radius-200, 8px);
+  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.continueButton:hover {
+  background-color: #8a0000;
+}
+
+.continueButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(119, 0, 0, 0.3);
+}
+
+.continueButton svg {
+  flex-shrink: 0;
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
   .cardMain {
