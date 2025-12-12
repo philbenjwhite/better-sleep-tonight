@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import {
-  QuestionBlock,
+  AnimatedQuestionBlock,
   CMSAnswerOption,
   CMSQuestionContent,
 } from "@/components/QuestionBlock";
@@ -133,6 +133,8 @@ function HomeContent() {
     MattressFeel | undefined
   >(undefined);
   const [hasSpokenSummary, setHasSpokenSummary] = useState(false);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+  const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -186,7 +188,11 @@ function HomeContent() {
         setCurrentView("question");
         setIsTransitioning(false);
         // Show question block immediately since we're restoring
-        setTimeout(() => setShowQuestionBlock(true), 500);
+        setTimeout(() => {
+          setShowBackdrop(true);
+          setBackdropHasAnimated(true);
+          setShowQuestionBlock(true);
+        }, 500);
       }, 500);
     }
   }, [savedProgress, initializeAvatar]);
@@ -308,6 +314,8 @@ function HomeContent() {
     ) {
       // Pause after avatar stops talking before showing questions
       const timer = setTimeout(() => {
+        setShowBackdrop(true);
+        setBackdropHasAnimated(true);
         setShowQuestionBlock(true);
         setHasShownIntro(true);
       }, 1500);
@@ -337,8 +345,9 @@ function HomeContent() {
       // Mark summary as spoken so we don't repeat it
       setHasSpokenSummary(true);
 
-      // Hide question block and show the summary as avatar response
+      // Hide question block and backdrop, show the summary as avatar response
       setShowQuestionBlock(false);
+      setShowBackdrop(false); setBackdropHasAnimated(false);
       setAvatarResponse(summaryText);
       setCurrentEmotion(emotion);
       setIsShowingResponse(true);
@@ -394,6 +403,7 @@ function HomeContent() {
           const emotion = option.avatarEmotion || "friendly";
 
           setShowQuestionBlock(false);
+          setShowBackdrop(false); setBackdropHasAnimated(false);
           setAvatarResponse(termMessage);
           setCurrentEmotion(emotion);
           setIsShowingResponse(true);
@@ -411,16 +421,19 @@ function HomeContent() {
         } else {
           // Normal flow - skip avatar response and go directly to next question
           // (Avatar responses are disabled but CMS fields remain for future use)
+          // Keep backdrop visible during transition between questions
           setShowQuestionBlock(false);
           setSelectedAnswer(null);
 
-          // Advance to next step after brief pause
+          // Advance to next step after brief pause (backdrop stays visible)
           if (currentStepIndex < questionSteps.length - 1) {
             setCurrentStepIndex((prev) => prev + 1);
             setTimeout(() => {
               setShowQuestionBlock(true);
             }, 300);
           } else {
+            // Flow complete - hide backdrop
+            setShowBackdrop(false); setBackdropHasAnimated(false);
             console.log("Flow complete!");
           }
         }
@@ -475,9 +488,10 @@ function HomeContent() {
       const emotion =
         currentStep?.mattressRecommendationContent?.avatarEmotion || "excited";
 
-      // Show avatar response
+      // Show avatar response, hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
+        setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
         setCurrentEmotion(emotion);
         setIsShowingResponse(true);
@@ -499,6 +513,7 @@ function HomeContent() {
     ]
   );
 
+  // Track product selection state (without advancing)
   const handleProductRecommendationComplete = useCallback(
     (selection: {
       mattressId: string;
@@ -507,9 +522,22 @@ function HomeContent() {
       feel: MattressFeel;
       finalPrice: number;
     }) => {
+      // Just track the selection - don't advance yet
       setSelectedMattressSize(selection.size);
       setSelectedMattressFeel(selection.feel);
+    },
+    []
+  );
 
+  // Called when user clicks Continue button
+  const handleProductRecommendationContinue = useCallback(
+    (selection: {
+      mattressId: string;
+      mattressName: string;
+      size: MattressSize;
+      feel: MattressFeel;
+      finalPrice: number;
+    }) => {
       // Store the product selection as an answer
       const newAnswer: StoredAnswer = {
         stepId: currentStep?.stepId || `step-${currentStepIndex}`,
@@ -535,9 +563,10 @@ function HomeContent() {
       const emotion =
         currentStep?.productRecommendationsContent?.avatarEmotion || "excited";
 
-      // Show avatar response
+      // Show avatar response, hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
+        setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
         setCurrentEmotion(emotion);
         setIsShowingResponse(true);
@@ -587,8 +616,9 @@ function HomeContent() {
         "Thank you! Let me continue with the next question.";
       console.log("Ashley says:", response);
 
-      // Hide question block and show avatar response
+      // Hide question block and backdrop, show avatar response
       setShowQuestionBlock(false);
+      setShowBackdrop(false); setBackdropHasAnimated(false);
       setAvatarResponse(response);
       setIsShowingResponse(true);
       setAvatarStartedTalking(false); // Reset for next speech detection
@@ -632,8 +662,10 @@ function HomeContent() {
 
         if (currentStepIndex < questionSteps.length - 1) {
           setCurrentStepIndex((prev) => prev + 1);
-          // Small delay before showing next question
+          // Small delay before showing next question (show backdrop first)
           setTimeout(() => {
+            setShowBackdrop(true);
+            setBackdropHasAnimated(true);
             setShowQuestionBlock(true);
           }, 300);
         } else {
@@ -749,8 +781,8 @@ function HomeContent() {
             </div>
           )}
 
-          {/* Only show avatar content once loaded */}
-          {isAvatarReady && (
+          {/* Only show avatar content once loaded (or in dev skip mode) */}
+          {(isAvatarReady || skipIntro) && (
             <>
               {/* Full-width Gradient Overlay at Bottom */}
               <div className={styles.avatarGradientOverlay} />
@@ -789,56 +821,58 @@ function HomeContent() {
                 </div>
               </div>
 
-              {/* Question Block - OUTSIDE heygenWrapper so blur works */}
-              {showQuestionBlock &&
-                currentStep?.questionContent &&
-                !isMattressRecommendationStep &&
-                !isAnswerSummaryStep &&
-                !isProductRecommendationsStep && (
-                  <div className={styles.questionBlockWrapper}>
-                    <div className={styles.questionBlockBackdrop} />
-                    <div className={styles.questionBlockInner}>
-                      <QuestionBlock
-                        questionContent={currentStep.questionContent}
-                        onAnswerSelect={handleAnswerSelect}
-                        onTextSubmit={handleTextSubmit}
-                        selectedValue={selectedAnswer?.value}
-                      />
-                    </div>
-                  </div>
-                )}
+              {/* Persistent Backdrop - stays visible during question transitions */}
+              {(showQuestionBlock || showBackdrop) && (
+                <div className={styles.questionBlockWrapper}>
+                  <div
+                    className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
+                  />
 
-              {/* Mattress Recommendation Step */}
-              {showQuestionBlock &&
-                isMattressRecommendationStep &&
-                currentStep?.mattressRecommendationContent && (
-                  <div className={styles.questionBlockWrapper}>
-                    <div className={styles.questionBlockBackdrop} />
-                    <div className={styles.mattressRecommendationInner}>
-                      <MattressRecommendation
-                        content={currentStep.mattressRecommendationContent}
-                        onSelectionComplete={handleMattressSelectionComplete}
-                        selectedSize={selectedMattressSize}
-                        selectedFeel={selectedMattressFeel}
-                      />
-                    </div>
-                  </div>
-                )}
+                  {/* Question Block Content */}
+                  {showQuestionBlock &&
+                    currentStep?.questionContent &&
+                    !isMattressRecommendationStep &&
+                    !isAnswerSummaryStep &&
+                    !isProductRecommendationsStep && (
+                      <div className={styles.questionBlockInner}>
+                        <AnimatedQuestionBlock
+                          questionContent={currentStep.questionContent}
+                          questionKey={currentStep.stepId}
+                          onAnswerSelect={handleAnswerSelect}
+                          onTextSubmit={handleTextSubmit}
+                          selectedValue={selectedAnswer?.value}
+                        />
+                      </div>
+                    )}
 
-              {/* Product Recommendations Step - 3 mattress options */}
-              {showQuestionBlock &&
-                isProductRecommendationsStep &&
-                currentStep?.productRecommendationsContent && (
-                  <div className={styles.questionBlockWrapper}>
-                    <div className={styles.questionBlockBackdrop} />
-                    <div className={styles.productRecommendationsInner}>
-                      <ProductRecommendations
-                        content={currentStep.productRecommendationsContent}
-                        onSelectionComplete={handleProductRecommendationComplete}
-                      />
-                    </div>
-                  </div>
-                )}
+                  {/* Mattress Recommendation Step */}
+                  {showQuestionBlock &&
+                    isMattressRecommendationStep &&
+                    currentStep?.mattressRecommendationContent && (
+                      <div className={styles.mattressRecommendationInner}>
+                        <MattressRecommendation
+                          content={currentStep.mattressRecommendationContent}
+                          onSelectionComplete={handleMattressSelectionComplete}
+                          selectedSize={selectedMattressSize}
+                          selectedFeel={selectedMattressFeel}
+                        />
+                      </div>
+                    )}
+
+                  {/* Product Recommendations Step - 3 mattress options */}
+                  {showQuestionBlock &&
+                    isProductRecommendationsStep &&
+                    currentStep?.productRecommendationsContent && (
+                      <div className={styles.productRecommendationsInner}>
+                        <ProductRecommendations
+                          content={currentStep.productRecommendationsContent}
+                          onSelectionComplete={handleProductRecommendationComplete}
+                          onContinue={handleProductRecommendationContinue}
+                        />
+                      </div>
+                    )}
+                </div>
+              )}
             </>
           )}
         </>
