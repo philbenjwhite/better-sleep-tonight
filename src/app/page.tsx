@@ -30,6 +30,7 @@ import {
   ProductRecommendations,
   ProductRecommendationsContent,
 } from "@/components/ProductRecommendations";
+import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
 import { useProgressPersistence } from "@/hooks";
 import styles from "./page.module.css";
 
@@ -61,6 +62,22 @@ interface AnswerSummaryContent {
   outroText: string;
   emotion: string;
   summaryMappings: Record<string, Record<string, string>>;
+  empathyMessage?: string;
+  empathyEmotion?: string;
+  emailCTAMessage?: string;
+  emailCTAEmotion?: string;
+}
+
+// Type for email capture content
+interface EmailCaptureStepContent {
+  promptText: string;
+  placeholderText: string;
+  submitButtonText: string;
+  avatarResponseOnSubmit?: string;
+  avatarEmotionOnSubmit?: string;
+  skipOptionText?: string;
+  avatarResponseOnSkip?: string;
+  avatarEmotionOnSkip?: string;
 }
 
 // Type for flow steps
@@ -79,6 +96,7 @@ interface FlowStep {
   mattressRecommendationContent?: MattressRecommendationContent;
   answerSummaryContent?: AnswerSummaryContent;
   productRecommendationsContent?: ProductRecommendationsContent;
+  emailCaptureContent?: EmailCaptureStepContent;
 }
 
 function HomeContent() {
@@ -135,6 +153,10 @@ function HomeContent() {
   const [hasSpokenSummary, setHasSpokenSummary] = useState(false);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
+  // Track the summary sequence phase: 'summary' -> 'empathy' -> 'emailCTA' -> 'done'
+  const [summarySequencePhase, setSummarySequencePhase] = useState<
+    'summary' | 'empathy' | 'emailCTA' | 'done'
+  >('summary');
 
   // HeyGen avatar hook
   const { sessionState, isAvatarTalking, initializeAvatar, speak } =
@@ -219,7 +241,8 @@ function HomeContent() {
       step.stepType === "question" ||
       step.stepType === "mattress-recommendation" ||
       step.stepType === "answer-summary" ||
-      step.stepType === "product-recommendations"
+      step.stepType === "product-recommendations" ||
+      step.stepType === "email-capture"
   );
   const currentStep = questionSteps[currentStepIndex];
   const isMattressRecommendationStep =
@@ -227,6 +250,7 @@ function HomeContent() {
   const isAnswerSummaryStep = currentStep?.stepType === "answer-summary";
   const isProductRecommendationsStep =
     currentStep?.stepType === "product-recommendations";
+  const isEmailCaptureStep = currentStep?.stepType === "email-capture";
   const introVideo = activeFlow.introVideo || "/videos/Mattress_Shopping.mp4";
 
   // Generate dynamic answer summary text based on stored answers
@@ -329,7 +353,7 @@ function HomeContent() {
     hasShownIntro,
   ]);
 
-  // Handle answer-summary step - auto-speak and auto-advance
+  // Handle answer-summary step - auto-speak the three-message sequence
   useEffect(() => {
     if (
       isAnswerSummaryStep &&
@@ -337,6 +361,7 @@ function HomeContent() {
       showQuestionBlock &&
       !isShowingResponse &&
       !hasSpokenSummary &&
+      summarySequencePhase === 'summary' &&
       sessionState === AvatarSessionState.CONNECTED
     ) {
       const summaryText = generateAnswerSummary(currentStep.answerSummaryContent);
@@ -362,8 +387,75 @@ function HomeContent() {
     showQuestionBlock,
     isShowingResponse,
     hasSpokenSummary,
+    summarySequencePhase,
     sessionState,
     generateAnswerSummary,
+    speak,
+  ]);
+
+  // Handle progression through summary sequence (empathy → emailCTA → email capture)
+  useEffect(() => {
+    if (
+      isAnswerSummaryStep &&
+      isShowingResponse &&
+      avatarStartedTalking &&
+      !isAvatarTalking &&
+      currentStep?.answerSummaryContent
+    ) {
+      const content = currentStep.answerSummaryContent;
+
+      if (summarySequencePhase === 'summary' && content.empathyMessage) {
+        // Avatar finished summary, show empathy message
+        const timer = setTimeout(() => {
+          setSummarySequencePhase('empathy');
+          setAvatarResponse(content.empathyMessage!);
+          setCurrentEmotion(content.empathyEmotion || 'soothing');
+          setAvatarStartedTalking(false);
+          speak(content.empathyMessage!);
+        }, 800);
+        return () => clearTimeout(timer);
+      } else if (summarySequencePhase === 'empathy' && content.emailCTAMessage) {
+        // Avatar finished empathy, show email CTA message
+        const timer = setTimeout(() => {
+          setSummarySequencePhase('emailCTA');
+          setAvatarResponse(content.emailCTAMessage!);
+          setCurrentEmotion(content.emailCTAEmotion || 'friendly');
+          setAvatarStartedTalking(false);
+          speak(content.emailCTAMessage!);
+        }, 800);
+        return () => clearTimeout(timer);
+      } else if (summarySequencePhase === 'emailCTA' ||
+                 (summarySequencePhase === 'summary' && !content.empathyMessage) ||
+                 (summarySequencePhase === 'empathy' && !content.emailCTAMessage)) {
+        // Avatar finished email CTA (or no more messages), advance to email capture step
+        const timer = setTimeout(() => {
+          setSummarySequencePhase('done');
+          setIsShowingResponse(false);
+          setAvatarResponse(null);
+          setAvatarStartedTalking(false);
+
+          // Advance to next step (email capture)
+          if (currentStepIndex < questionSteps.length - 1) {
+            setCurrentStepIndex((prev) => prev + 1);
+            setTimeout(() => {
+              setShowBackdrop(true);
+              setBackdropHasAnimated(true);
+              setShowQuestionBlock(true);
+            }, 300);
+          }
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [
+    isAnswerSummaryStep,
+    isShowingResponse,
+    avatarStartedTalking,
+    isAvatarTalking,
+    summarySequencePhase,
+    currentStep,
+    currentStepIndex,
+    questionSteps.length,
     speak,
   ]);
 
@@ -639,9 +731,89 @@ function HomeContent() {
     ]
   );
 
+  // Handle email submission
+  const handleEmailSubmit = useCallback(
+    (email: string) => {
+      console.log("Email submitted:", email);
+
+      // Store the email as an answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: "Email Capture",
+        value: email,
+        label: email,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Clear saved progress since flow is complete
+      clearProgress();
+
+      // Get the avatar response from the step content
+      const response =
+        currentStep?.emailCaptureContent?.avatarResponseOnSubmit ||
+        "Perfect! I'll send that right over.";
+      const emotion =
+        currentStep?.emailCaptureContent?.avatarEmotionOnSubmit || "excited";
+
+      // Hide question block, show avatar response
+      setShowQuestionBlock(false);
+      setShowBackdrop(false);
+      setBackdropHasAnimated(false);
+      setAvatarResponse(response);
+      setCurrentEmotion(emotion);
+      setIsShowingResponse(true);
+      setAvatarStartedTalking(false);
+
+      // Make the avatar speak the response
+      if (sessionState === AvatarSessionState.CONNECTED) {
+        speak(response);
+      }
+    },
+    [
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      clearProgress,
+      sessionState,
+      speak,
+    ]
+  );
+
+  // Handle email skip
+  const handleEmailSkip = useCallback(() => {
+    console.log("Email skipped");
+
+    // Get the avatar response from the step content
+    const response =
+      currentStep?.emailCaptureContent?.avatarResponseOnSkip ||
+      "No problem! Let's continue.";
+    const emotion =
+      currentStep?.emailCaptureContent?.avatarEmotionOnSkip || "friendly";
+
+    // Hide question block, show avatar response
+    setShowQuestionBlock(false);
+    setShowBackdrop(false);
+    setBackdropHasAnimated(false);
+    setAvatarResponse(response);
+    setCurrentEmotion(emotion);
+    setIsShowingResponse(true);
+    setAvatarStartedTalking(false);
+
+    // Clear saved progress since flow is complete
+    clearProgress();
+
+    // Make the avatar speak the response
+    if (sessionState === AvatarSessionState.CONNECTED) {
+      speak(response);
+    }
+  }, [currentStep, clearProgress, sessionState, speak]);
+
   // Show next question after avatar finishes speaking response
+  // (Skip if in answer-summary step - that has its own handler for the 3-message sequence)
   useEffect(() => {
-    if (isShowingResponse && avatarStartedTalking && !isAvatarTalking) {
+    if (isShowingResponse && avatarStartedTalking && !isAvatarTalking && !isAnswerSummaryStep) {
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -679,6 +851,7 @@ function HomeContent() {
     isShowingResponse,
     avatarStartedTalking,
     isAvatarTalking,
+    isAnswerSummaryStep,
     currentStepIndex,
     questionSteps.length,
     isFlowTerminated,
@@ -833,7 +1006,8 @@ function HomeContent() {
                     currentStep?.questionContent &&
                     !isMattressRecommendationStep &&
                     !isAnswerSummaryStep &&
-                    !isProductRecommendationsStep && (
+                    !isProductRecommendationsStep &&
+                    !isEmailCaptureStep && (
                       <div className={styles.questionBlockInner}>
                         <AnimatedQuestionBlock
                           questionContent={currentStep.questionContent}
@@ -868,6 +1042,19 @@ function HomeContent() {
                           content={currentStep.productRecommendationsContent}
                           onSelectionComplete={handleProductRecommendationComplete}
                           onContinue={handleProductRecommendationContinue}
+                        />
+                      </div>
+                    )}
+
+                  {/* Email Capture Step */}
+                  {showQuestionBlock &&
+                    isEmailCaptureStep &&
+                    currentStep?.emailCaptureContent && (
+                      <div className={styles.questionBlockInner}>
+                        <EmailCapture
+                          content={currentStep.emailCaptureContent as EmailCaptureContent}
+                          onSubmit={handleEmailSubmit}
+                          onSkip={handleEmailSkip}
                         />
                       </div>
                     )}

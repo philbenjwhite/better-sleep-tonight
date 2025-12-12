@@ -341,7 +341,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 10; /* Above gradient overlay (z-index: 5) */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -351,7 +351,8 @@
 .heygenWrapper {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr minmax(300px, 500px);
+  /* Spacer starts at 2vw near 1200px, grows to 15vw on wide screens */
+  grid-template-columns: 1fr minmax(300px, 500px) clamp(2vw, calc((100vw - 1200px) * 0.05 + 2vw), 15vw);
   grid-template-rows: 1fr;
   align-items: end;
   justify-items: center;
@@ -364,19 +365,11 @@
   justify-self: center;
 }
 
-/* Mobile: center avatar at bottom */
-@media (max-width: 768px) {
+/* Below 1200px: stack layout */
+@media (max-width: 1200px) {
   .questionWrapper {
     justify-content: flex-end;
     padding: 0;
-  }
-
-  .heygenWrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 0;
   }
 }
 
@@ -414,9 +407,9 @@
 }
 
 .speechBubble {
-  position: absolute;
-  top: 12px;
-  right: -360px;
+  position: relative;
+  top: 0;
+  right: 0;
   width: 437px;
   background-color: var(--sds-color-background-default-default, #ffffff);
   padding: 16px;
@@ -426,6 +419,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  z-index: 10;
 }
 
 .speechText {
@@ -484,9 +478,9 @@
 
 /* Avatar Response Bubble */
 .responseBubble {
-  position: absolute;
-  top: 12px;
-  right: -400px;
+  position: relative;
+  top: 0;
+  right: 0;
   width: 480px;
   max-width: 500px;
   background-color: var(--sds-color-background-default-default, #ffffff);
@@ -495,6 +489,7 @@
   box-sizing: border-box;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   animation: bubbleFadeIn 0.4s ease-out forwards;
+  z-index: 10;
 }
 
 @keyframes bubbleFadeIn {
@@ -542,18 +537,20 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Below 1200px: response bubble near footer */
+@media (max-width: 1200px) {
   .responseBubble {
-    position: absolute;
-    bottom: 20%;
+    position: fixed;
+    bottom: 96px; /* 32px above footer (~64px) */
     left: 50%;
     transform: translateX(-50%);
     right: auto;
     top: auto;
-    width: calc(100vw - 3rem);
+    width: calc(100vw - 2rem);
     max-width: 400px;
     margin: 0;
     padding: 16px;
+    z-index: 15;
   }
 
   .responseText {
@@ -572,34 +569,38 @@
   }
 }
 
-/* Mobile: speech bubble positioned over avatar */
-@media (max-width: 768px) {
+/* Below 1200px: speech bubble near footer */
+@media (max-width: 1200px) {
   .heygenWrapper {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
   }
 
   .speechBubbleContainer {
-    position: absolute;
-    bottom: 20%;
+    position: fixed;
+    bottom: 96px; /* 32px above footer (~64px) */
     left: 50%;
     transform: translateX(-50%);
     right: auto;
     top: auto;
-    width: calc(100vw - 3rem);
+    width: calc(100vw - 2rem);
     max-width: 400px;
     padding: 0;
     padding-top: 0;
+    z-index: 15;
   }
 
   .speechBubble {
-    position: absolute;
-    bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
     right: auto;
     top: auto;
-    width: calc(100vw - 3rem);
-    max-width: 400px;
+    width: 100%;
+    max-width: 100%;
     margin: 0;
   }
 

@@ -20,9 +20,9 @@
         "headline": "Wake Up Without Back Pain",
         "subheadline": "Hey, I’m Ashley — your virtual sleep guide. My job is simple: to help you stay asleep for longer and wake up without back pain, without the sleep fog, and without wondering why you’re tired before the day even starts! If you’re here, I’m guessing that getting a good night’s sleep isn’t proving easy— and trust me, you’re not alone..",
         "avatarIntroScript": "A lot of people struggle with back pain,  restless nights, sore mornings, and that “why do I feel 20 years older?” stiffness. And while it feels mysterious, it usually isn’t. There’s always a reason.  And there’s almost always a solution! ",
-        "primaryButtonText": "Get Better Sleep",
         "secondarySubheadline": "The good news is that I can help. Let’s fix this!",
-        "audioNotice": "For best experience please have your audio turned on"
+        "audioNotice": "For best experience please have your audio turned on",
+        "primaryButtonText": "Get Better Sleep"
       }
     },
     {
@@ -320,102 +320,26 @@
       "stepId": "answer-summary-step",
       "internalName": "Answer Summary",
       "order": 7,
-      "stepType": "answer-summary",
-      "answerSummaryContent": {
-        "introText": "From what you told me, it sounds like",
-        "outroText": "are your biggest sleep disruptors.",
-        "emotion": "friendly",
-        "summaryMappings": {
-          "q1-trouble-falling-asleep": {
-            "every-night": "you have trouble falling asleep every night",
-            "frequently": "you frequently have trouble falling asleep",
-            "on-occasion": "you have trouble falling asleep on occasion"
-          },
-          "q3-motion-disturbance": {
-            "occasionally": "motion and tossing occasionally disturbs your sleep",
-            "regularly": "motion and tossing regularly wakes you up or prevents you from falling asleep"
-          },
-          "q4-aches-pains-frequency": {
-            "every-night": "you wake with aches and pains every night",
-            "frequently": "you frequently wake with aches and pains",
-            "on-occasion": "you occasionally wake with aches and pains"
-          },
-          "q5-aches-pains-type": {
-            "chronic-condition": "due to a spinal surgery, chronic condition, or bad injury",
-            "stiffness": "specifically stiffness or soreness",
-            "hip-shoulder": "specifically hip or shoulder discomfort"
-          }
-        }
+      "stepType": "answer-summary"
+    },
+    {
+      "stepId": "email-capture",
+      "internalName": "Email Capture",
+      "order": 8,
+      "stepType": "email-capture",
+      "emailCaptureContent": {
+        "promptText": "Enter email address",
+        "placeholderText": "email address",
+        "submitButtonText": "Email My Report",
+        "avatarResponseOnSubmit": "Perfect! I'll send that right over. Check your inbox for your personalized sleep report.",
+        "avatarEmotionOnSubmit": "excited"
       }
     },
     {
       "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
-      "order": 8,
-      "stepType": "product-recommendations",
-      "productRecommendationsContent": {
-        "headline": "I've found three mattress options that are perfect for you!",
-        "introParagraph": "Now imagine this instead — deep sleep that resets your whole body! You fall asleep faster. You stay asleep longer. You wake up thinking, Oh… so this is what rested feels like!",
-        "secondaryText": "Based on what you told me earlier, I think these Tempur-Pedic mattresses are the best fit for you:",
-        "mattressOptions": [
-          {
-            "id": "tempur-sense",
-            "productName": "Tempur-Pedic Sense",
-            "productDescription": "Offers targeted support + pressure relief for fewer aches",
-            "basePrice": 2499,
-            "productImage": "/images/mattress-tempurpedic.jpg"
-          },
-          {
-            "id": "tempur-prosense",
-            "productName": "Tempur-Pedic ProSense",
-            "productDescription": "Provides adaptive contouring to the size, shape and weight of your body so the mattress fits you",
-            "basePrice": 2999,
-            "productImage": "/images/mattress-tempurpedic.jpg"
-          },
-          {
-            "id": "tempur-luxealign",
-            "productName": "Tempur-Pedic LuxeAlign",
-            "productDescription": "Has advanced ergonomic support to help support your spine",
-            "basePrice": 3499,
-            "productImage": "/images/mattress-tempurpedic.jpg"
-          }
-        ],
-        "sizes": [
-          { "value": "twin", "label": "Twin", "priceModifier": 0 },
-          { "value": "twin-xl", "label": "Twin XL", "priceModifier": 100 },
-          { "value": "full", "label": "Full", "priceModifier": 200 },
-          { "value": "queen", "label": "Queen", "priceModifier": 300 },
-          { "value": "king", "label": "King", "priceModifier": 500 }
-        ],
-        "feels": [
-          { "value": "soft", "label": "Soft" },
-          { "value": "medium", "label": "Medium" },
-          { "value": "firm", "label": "Firm" }
-        ],
-        "closeOutHeadline": "Get Better Sleep with a Tempur-Pedic",
-        "closeOutIntroParagraph": "Nice! — we've figured out what's disrupting your sleep. Now let's match you to a mattress that can help you enjoy a more comfortable, rested and undisturbed night's sleep. Please select your preferred mattress.",
-        "emailCaptureCopy": "If you want, I can put everything we just uncovered into a personalized sleep report that you can take into your nearest Ashley store. I know that mattress shopping can sometimes feel a bit overwhelming, so this report will help you find your perfect mattress without any hassle! Just enter your email— give me 5 minutes to compile — and it'll be in your inbox, pronto!",
-        "dataCaptureCopy": "Want to try out a Tempur-Pedic mattress straight away? Book a Rest Test",
-        "contactUsCopy": "Still unsure and want to talk more? I can connect you with a real human sleep specialist anytime. Contact Us",
-        "avatarResponse": "Great choice! I think that mattress is going to work wonderfully for you. Let me know if you'd like me to send you a personalized sleep report!",
-        "avatarEmotion": "excited"
-      }
-    },
-    {
-      "stepId": "email-capture",
-      "internalName": "Email Capture",
       "order": 9,
-      "stepType": "email-capture",
-      "emailCaptureContent": {
-        "promptText": "Want me to send you a personalized sleep report?",
-        "placeholderText": "Enter your email",
-        "submitButtonText": "Send My Report",
-        "avatarResponseOnSubmit": "Perfect! I'll send that right over. Check your inbox for your personalized recommendations.",
-        "avatarEmotionOnSubmit": "excited",
-        "skipOptionText": "No thanks, just show me the mattresses",
-        "avatarResponseOnSkip": "No problem! Let's take a look at your recommendations.",
-        "avatarEmotionOnSkip": "friendly"
-      }
+      "stepType": "product-recommendations"
     }
   ],
   "metadata": {

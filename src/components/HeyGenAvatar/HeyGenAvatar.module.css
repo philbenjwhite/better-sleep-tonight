@@ -3,6 +3,8 @@
   width: 100%;
   /* Full viewport height minus footer/header, scaled down 10% */
   height: calc(90vh - 108px);
+  /* Ensure minimum height on wide screens to prevent head cropping */
+  min-height: min(500px, 60vw);
   overflow: hidden;
 }
 
@@ -19,8 +21,8 @@
   display: block;
   width: 100%;
   height: calc(100% + 24px);
-  object-fit: contain;
-  object-position: center bottom;
+  object-fit: cover;
+  object-position: center top;
   background-color: #fdfaf5;
   /* Move video up to hide the black bar at top of HeyGen stream */
   margin-top: -24px;
@@ -30,8 +32,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+  object-fit: cover;
+  object-position: center top;
   transition: opacity 0.3s ease;
 }
 
