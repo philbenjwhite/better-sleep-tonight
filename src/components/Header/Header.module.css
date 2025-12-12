@@ -14,23 +14,13 @@
 
 /* Logo - top left */
 .logo {
-  width: auto;
-  height: auto;
+  display: block;
   text-decoration: none;
 }
 
-.logoPlaceholder {
+.logoImage {
   width: 180px;
-  height: 48px;
-  border: 2px dashed #999;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 14px;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.5);
+  height: auto;
 }
 
 /* Volume button - top right */
@@ -63,9 +53,8 @@
     padding: 24px 20px;
   }
 
-  .logo {
+  .logoImage {
     width: 150px;
-    height: 77px;
   }
 }
 
@@ -75,8 +64,7 @@
     padding: 16px;
   }
 
-  .logo {
+  .logoImage {
     width: 120px;
-    height: 62px;
   }
 }

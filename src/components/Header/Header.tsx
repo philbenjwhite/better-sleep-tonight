@@ -16,7 +16,14 @@ export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, show
     <header className={styles.header}>
       {/* Logo - Top Left */}
       <Link href="/" className={styles.logo}>
-        <div className={styles.logoPlaceholder}>{brandName}</div>
+        <Image
+          src="/images/bst-logo.svg"
+          alt={brandName}
+          width={238}
+          height={64}
+          className={styles.logoImage}
+          priority
+        />
       </Link>
 
       {/* Volume Icon - Top Right */}
