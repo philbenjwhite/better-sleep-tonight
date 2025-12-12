@@ -1,80 +1,137 @@
+/* Container for all mattress cards */
 .container {
   display: flex;
-  gap: var(--sds-size-space-1200, 48px);
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--sds-size-space-600, 24px);
   width: 100%;
-  max-width: 1000px;
 }
 
-.imageSection {
-  flex: 0 0 auto;
-  width: 400px;
-  aspect-ratio: 1;
-  border-radius: var(--sds-size-radius-400, 16px);
-  overflow: hidden;
+/* Individual mattress card */
+.card {
   background-color: var(--sds-color-background-default-default, #ffffff);
+  border-radius: 4px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-400, 16px);
+}
+
+/* Main row with image, info, and select button */
+.cardMain {
+  display: flex;
+  gap: var(--sds-size-space-400, 16px);
+  align-items: flex-start;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Product image container */
+.cardImage {
+  flex-shrink: 0;
+  width: 83px;
+  height: 110px;
+  border-radius: var(--sds-size-radius-200, 8px);
+  overflow: hidden;
 }
 
 .mattressImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: var(--sds-size-radius-200, 8px);
 }
 
-.infoSection {
+/* Product info section */
+.cardInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-800, 32px);
-  align-items: flex-start;
-}
-
-.productInfo {
-  display: flex;
-  flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
-  width: 100%;
+  min-width: 0;
 }
 
 .productName {
-  font-family: var(
-    --sds-typography-title-page-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-title-page-font-weight, 700);
-  font-size: var(--sds-typography-title-page-size-base, 32px);
-  line-height: 1.2;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
-  letter-spacing: -0.64px;
   margin: 0;
 }
 
 .productDescription {
-  font-family: var(
-    --sds-typography-heading-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-heading-font-weight, 600);
-  font-size: var(--sds-typography-heading-size-base, 24px);
-  line-height: 1.2;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 400;
+  font-size: var(--sds-typography-body-size-small, 14px);
+  line-height: 1.4;
   color: #000000;
-  letter-spacing: -0.48px;
   margin: 0;
 }
 
 .productPrice {
-  font-family: var(
-    --sds-typography-subtitle-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-subtitle-font-weight, 400);
-  font-size: var(--sds-typography-subtitle-size-base, 32px);
-  line-height: 1.2;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 400;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
+  text-decoration: underline;
   margin: 0;
+}
+
+/* Select button container */
+.cardAction {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  align-self: stretch;
+}
+
+.selectButton {
+  background-color: #ffffff;
+  border: 1px solid var(--sds-color-border-neutral-secondary, #767676);
+  border-radius: var(--sds-size-radius-200, 8px);
+  padding: var(--sds-size-space-200, 8px) var(--sds-size-space-400, 16px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
+  color: var(--sds-color-text-default-default, #363534);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.selectButton:hover,
+.cardMain:hover .selectButton {
+  background-color: #f5f5f5;
+}
+
+.selectButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
+}
+
+.selectButton.selected {
+  background-color: var(--sds-color-text-default-default, #363534);
+  border-color: var(--sds-color-text-default-default, #363534);
+  color: #ffffff;
+}
+
+.selectButton.selected:hover,
+.cardMain:hover .selectButton.selected {
+  background-color: #4a4948;
+}
+
+/* Expanded options section */
+.cardOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-200, 8px);
+  width: 100%;
+  padding-top: var(--sds-size-space-200, 8px);
 }
 
 .selectionGroup {
@@ -84,16 +141,11 @@
 }
 
 .selectionLabel {
-  font-family: var(
-    --sds-typography-heading-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-heading-font-weight, 600);
-  font-size: var(--sds-typography-heading-size-base, 24px);
-  line-height: 1.2;
-  color: #000000;
-  letter-spacing: -0.48px;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--sds-color-text-default-secondary, #757575);
   margin: 0;
 }
 
@@ -105,94 +157,67 @@
 
 .optionButton {
   background-color: var(--sds-color-background-default-default, #ffffff);
-  padding: var(--sds-size-space-600, 24px);
-  border-radius: var(--sds-size-radius-400, 16px);
-  border: 2px solid transparent;
+  border: 1px solid var(--sds-color-border-default-secondary, #757575);
+  border-radius: 18px;
+  padding: var(--sds-size-space-400, 16px);
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease,
-    box-shadow 0.2s ease, border-color 0.2s ease;
-  user-select: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .optionButton:hover {
   background-color: #f5f5f5;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .optionButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(119, 0, 0, 0.2);
-}
-
-.optionButton:active {
-  transform: translateY(0);
+  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
 }
 
 .optionButton.selected {
-  border: 2px solid var(--sds-color-border-brand-default, #363534);
+  border: 1px solid var(--sds-color-border-brand-default, #363534);
   background-color: var(--sds-color-background-default-default, #ffffff);
-  box-shadow: 0 0 0 4px rgba(54, 53, 52, 0.15);
-}
-
-.optionButton.selected:hover {
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  transform: none;
+  box-shadow: inset 0 0 0 1px var(--sds-color-border-brand-default, #363534), 0 0 0 2px rgba(54, 53, 52, 0.15);
 }
 
 .optionText {
-  font-family: var(
-    --sds-typography-subtitle-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-subtitle-font-weight, 600);
-  font-size: var(--sds-typography-subtitle-size-base, 24px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 500;
+  font-size: 14px;
   line-height: 1.2;
   color: var(--sds-color-text-default-default, #363534);
-  letter-spacing: -0.48px;
   white-space: nowrap;
 }
 
 /* Responsive styles */
-@media (max-width: 900px) {
-  .container {
-    flex-direction: column;
-    gap: var(--sds-size-space-800, 32px);
-  }
-
-  .imageSection {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .infoSection {
-    width: 100%;
-  }
-}
-
 @media (max-width: 600px) {
-  .productName {
-    font-size: 24px;
+  .cardMain {
+    flex-wrap: wrap;
   }
 
-  .productDescription {
-    font-size: 18px;
+  .cardInfo {
+    flex: 1 1 calc(100% - 99px);
   }
 
-  .productPrice {
-    font-size: 24px;
+  .cardAction {
+    flex: 0 0 auto;
+    width: auto;
+    align-self: flex-start;
   }
 
   .selectionLabel {
-    font-size: 18px;
+    font-size: 13px;
   }
 
   .optionButton {
-    padding: var(--sds-size-space-400, 16px);
+    padding: var(--sds-size-space-300, 12px);
+    height: 32px;
   }
 
   .optionText {
-    font-size: 18px;
+    font-size: 13px;
   }
 }
