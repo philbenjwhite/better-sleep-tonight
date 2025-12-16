@@ -10,11 +10,11 @@ import {
   CMSQuestionContent,
 } from "@/components/QuestionBlock";
 import {
-  HeyGenProvider,
-  HeyGenAvatar,
-  useHeyGen,
-  AvatarSessionState,
-} from "@/components/HeyGenAvatar";
+  VideoAvatarProvider,
+  VideoAvatar,
+  useVideoAvatar,
+  VideoState,
+} from "@/components/VideoAvatar";
 import { DevPanel, StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -171,16 +171,19 @@ function HomeContent() {
     'summary' | 'empathy' | 'emailCTA' | 'done'
   >('summary');
 
-  // HeyGen avatar hook
-  const { sessionState, isAvatarTalking, initializeAvatar, speak } =
-    useHeyGen();
+  // Video avatar hook
+  const { videoState, isPlaying, play } = useVideoAvatar();
 
-  // Dev mode: auto-initialize avatar when skipping intro
+  // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
+  const isVideoPlaying = isPlaying;
+  const isVideoReady = videoState !== VideoState.ERROR;
+
+  // Dev mode: auto-play intro video when skipping intro
   useEffect(() => {
-    if (skipIntro && sessionState === AvatarSessionState.INACTIVE) {
-      initializeAvatar();
+    if (skipIntro && videoState === VideoState.IDLE) {
+      play('avatar-intro');
     }
-  }, [skipIntro, sessionState, initializeAvatar]);
+  }, [skipIntro, videoState, play]);
 
   // Show recovery modal if saved progress exists (and matches current flow)
   useEffect(() => {
@@ -215,9 +218,8 @@ function HomeContent() {
 
       // Go directly to question view
       setIsTransitioning(true);
-      setIsLoadingAvatar(true);
+      setIsLoadingAvatar(false); // No loading needed for MP4
       setIsMuted(false);
-      initializeAvatar();
 
       setTimeout(() => {
         setCurrentView("question");
@@ -230,7 +232,7 @@ function HomeContent() {
         }, 500);
       }, 500);
     }
-  }, [savedProgress, initializeAvatar]);
+  }, [savedProgress]);
 
   // Handle starting fresh
   const handleStartFresh = useCallback(() => {
@@ -239,12 +241,12 @@ function HomeContent() {
     setHasHandledRecovery(true);
   }, [clearProgress]);
 
-  // Track when avatar starts talking (to know when it's safe to check for stop)
+  // Track when video starts playing (to know when it's safe to check for stop)
   useEffect(() => {
-    if (isAvatarTalking) {
+    if (isVideoPlaying) {
       setAvatarStartedTalking(true);
     }
-  }, [isAvatarTalking]);
+  }, [isVideoPlaying]);
 
   // Get flow data from CMS (uses activeFlow based on ?flow= param)
   const flowSteps = activeFlow.steps as FlowStep[];
@@ -309,53 +311,50 @@ function HomeContent() {
   // Get intro message from CMS
   const introMessage = headerStep?.headerContent?.avatarIntroScript || "";
 
-  // Avatar is ready when connected
-  const isAvatarReady = sessionState === AvatarSessionState.CONNECTED;
+  // Video is ready when not in error state
+  const isAvatarReady = isVideoReady;
 
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
-    setIsLoadingAvatar(true);
+    setIsLoadingAvatar(false); // No loading needed for MP4
     setIsMuted(false); // Unmute when user clicks "Let's Begin"
-
-    // Start initializing the avatar
-    initializeAvatar();
 
     setTimeout(() => {
       setCurrentView("question");
       setIsTransitioning(false);
+      // Play intro video after transition
+      play('avatar-intro');
     }, 500); // Match CSS transition duration
-  }, [initializeAvatar]);
+  }, [play]);
 
   const handleVolumeToggle = useCallback(() => {
     setIsMuted((prev) => !prev);
   }, []);
 
-  // Speak intro when avatar is connected
+  // Mark intro as spoken when video starts playing
   useEffect(() => {
     if (
       currentView === "question" &&
-      isAvatarReady &&
-      !hasSpokenIntro &&
-      introMessage
+      isVideoPlaying &&
+      !hasSpokenIntro
     ) {
-      setIsLoadingAvatar(false);
       setHasSpokenIntro(true);
       setCurrentEmotion("friendly");
-      speak(introMessage);
     }
-  }, [currentView, isAvatarReady, hasSpokenIntro, speak, introMessage]);
+  }, [currentView, isVideoPlaying, hasSpokenIntro]);
 
   // Show question block after Ashley finishes speaking intro
-  // Only trigger when avatar has started AND stopped talking
+  // Only trigger when video has started AND stopped playing
   useEffect(() => {
     if (
       currentView === "question" &&
       hasSpokenIntro &&
       avatarStartedTalking &&
-      !isAvatarTalking &&
+      !isVideoPlaying &&
+      videoState === VideoState.ENDED &&
       !hasShownIntro
     ) {
-      // Pause after avatar stops talking before showing questions
+      // Pause after video stops before showing questions
       const timer = setTimeout(() => {
         setShowBackdrop(true);
         setBackdropHasAnimated(true);
@@ -368,11 +367,13 @@ function HomeContent() {
     currentView,
     hasSpokenIntro,
     avatarStartedTalking,
-    isAvatarTalking,
+    isVideoPlaying,
+    videoState,
     hasShownIntro,
   ]);
 
-  // Handle answer-summary step - auto-speak the three-message sequence
+  // Handle answer-summary step - show summary text (no video for dynamic content)
+  // TODO: Add summary video when available
   useEffect(() => {
     if (
       isAnswerSummaryStep &&
@@ -380,8 +381,7 @@ function HomeContent() {
       showQuestionBlock &&
       !isShowingResponse &&
       !hasSpokenSummary &&
-      summarySequencePhase === 'summary' &&
-      sessionState === AvatarSessionState.CONNECTED
+      summarySequencePhase === 'summary'
     ) {
       const summaryText = generateAnswerSummary(currentStep.answerSummaryContent);
       const emotion = currentStep.answerSummaryContent.emotion || "friendly";
@@ -395,10 +395,12 @@ function HomeContent() {
       setAvatarResponse(summaryText);
       setCurrentEmotion(emotion);
       setIsShowingResponse(true);
-      setAvatarStartedTalking(false);
+      setAvatarStartedTalking(true); // Simulate video started
 
-      // Make the avatar speak the summary
-      speak(summaryText);
+      // Auto-advance after showing text (since no video to wait for)
+      setTimeout(() => {
+        setAvatarStartedTalking(false);
+      }, 3000); // Show summary for 3 seconds
     }
   }, [
     isAnswerSummaryStep,
@@ -407,46 +409,47 @@ function HomeContent() {
     isShowingResponse,
     hasSpokenSummary,
     summarySequencePhase,
-    sessionState,
     generateAnswerSummary,
-    speak,
   ]);
 
   // Handle progression through summary sequence (empathy → emailCTA → email capture)
+  // With MP4 videos, we use text display with timeouts since dynamic speech is pre-recorded
   useEffect(() => {
     if (
       isAnswerSummaryStep &&
       isShowingResponse &&
       avatarStartedTalking &&
-      !isAvatarTalking &&
+      !isVideoPlaying &&
       currentStep?.answerSummaryContent
     ) {
       const content = currentStep.answerSummaryContent;
 
       if (summarySequencePhase === 'summary' && content.empathyMessage) {
-        // Avatar finished summary, show empathy message
+        // Summary finished, show empathy message (text only, no video)
         const timer = setTimeout(() => {
           setSummarySequencePhase('empathy');
           setAvatarResponse(content.empathyMessage!);
           setCurrentEmotion(content.empathyEmotion || 'soothing');
-          setAvatarStartedTalking(false);
-          speak(content.empathyMessage!);
+          setAvatarStartedTalking(true); // Simulate start
+          // Auto-advance after showing text
+          setTimeout(() => setAvatarStartedTalking(false), 3000);
         }, 800);
         return () => clearTimeout(timer);
       } else if (summarySequencePhase === 'empathy' && content.emailCTAMessage) {
-        // Avatar finished empathy, show email CTA message
+        // Empathy finished, show email CTA message (text only, no video)
         const timer = setTimeout(() => {
           setSummarySequencePhase('emailCTA');
           setAvatarResponse(content.emailCTAMessage!);
           setCurrentEmotion(content.emailCTAEmotion || 'friendly');
-          setAvatarStartedTalking(false);
-          speak(content.emailCTAMessage!);
+          setAvatarStartedTalking(true); // Simulate start
+          // Auto-advance after showing text
+          setTimeout(() => setAvatarStartedTalking(false), 3000);
         }, 800);
         return () => clearTimeout(timer);
       } else if (summarySequencePhase === 'emailCTA' ||
                  (summarySequencePhase === 'summary' && !content.empathyMessage) ||
                  (summarySequencePhase === 'empathy' && !content.emailCTAMessage)) {
-        // Avatar finished email CTA (or no more messages), advance to email capture step
+        // Finished email CTA (or no more messages), advance to email capture step
         const timer = setTimeout(() => {
           setSummarySequencePhase('done');
           setIsShowingResponse(false);
@@ -470,12 +473,11 @@ function HomeContent() {
     isAnswerSummaryStep,
     isShowingResponse,
     avatarStartedTalking,
-    isAvatarTalking,
+    isVideoPlaying,
     summarySequencePhase,
     currentStep,
     currentStepIndex,
     questionSteps.length,
-    speak,
   ]);
 
   const handleAnswerSelect = useCallback(
@@ -518,17 +520,15 @@ function HomeContent() {
           setAvatarResponse(termMessage);
           setCurrentEmotion(emotion);
           setIsShowingResponse(true);
-          setAvatarStartedTalking(false);
+          setAvatarStartedTalking(true); // Simulate start for text display
           setIsFlowTerminated(true);
           setTerminationMessage(termMessage);
 
           // Clear saved progress since flow is complete
           clearProgress();
 
-          // Make the avatar speak the termination message
-          if (sessionState === AvatarSessionState.CONNECTED) {
-            speak(termMessage);
-          }
+          // Auto-advance after showing termination text (no video for dynamic content)
+          setTimeout(() => setAvatarStartedTalking(false), 4000);
         } else {
           // Normal flow - skip avatar response and go directly to next question
           // (Avatar responses are disabled but CMS fields remain for future use)
@@ -551,8 +551,6 @@ function HomeContent() {
       }, 1200); // Brief pause after selection before moving on
     },
     [
-      sessionState,
-      speak,
       currentStep,
       currentStepIndex,
       storedAnswers,
@@ -599,18 +597,17 @@ function HomeContent() {
       const emotion =
         currentStep?.mattressRecommendationContent?.avatarEmotion || "excited";
 
-      // Show avatar response, hide backdrop
+      // Show avatar response (text only), hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
         setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
         setCurrentEmotion(emotion);
         setIsShowingResponse(true);
-        setAvatarStartedTalking(false);
+        setAvatarStartedTalking(true); // Simulate start for text display
 
-        if (sessionState === AvatarSessionState.CONNECTED) {
-          speak(response);
-        }
+        // Auto-advance after showing text (no video for dynamic content)
+        setTimeout(() => setAvatarStartedTalking(false), 3000);
       }, 800);
     },
     [
@@ -619,8 +616,6 @@ function HomeContent() {
       storedAnswers,
       saveProgress,
       flowParam,
-      sessionState,
-      speak,
     ]
   );
 
@@ -674,18 +669,17 @@ function HomeContent() {
       const emotion =
         currentStep?.productRecommendationsContent?.avatarEmotion || "excited";
 
-      // Show avatar response, hide backdrop
+      // Show avatar response (text only), hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
         setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
         setCurrentEmotion(emotion);
         setIsShowingResponse(true);
-        setAvatarStartedTalking(false);
+        setAvatarStartedTalking(true); // Simulate start for text display
 
-        if (sessionState === AvatarSessionState.CONNECTED) {
-          speak(response);
-        }
+        // Auto-advance after showing text (no video for dynamic content)
+        setTimeout(() => setAvatarStartedTalking(false), 3000);
       }, 800);
     },
     [
@@ -694,8 +688,6 @@ function HomeContent() {
       storedAnswers,
       saveProgress,
       flowParam,
-      sessionState,
-      speak,
     ]
   );
 
@@ -727,23 +719,19 @@ function HomeContent() {
         "Thank you! Let me continue with the next question.";
       console.log("Ashley says:", response);
 
-      // Hide question block and backdrop, show avatar response
+      // Hide question block and backdrop, show avatar response (text only)
       setShowQuestionBlock(false);
       setShowBackdrop(false); setBackdropHasAnimated(false);
       setAvatarResponse(response);
       setIsShowingResponse(true);
-      setAvatarStartedTalking(false); // Reset for next speech detection
+      setAvatarStartedTalking(true); // Simulate start for text display
 
-      // Make the avatar speak the response
-      if (sessionState === AvatarSessionState.CONNECTED) {
-        speak(response);
-      }
+      // Auto-advance after showing text (no video for dynamic content)
+      setTimeout(() => setAvatarStartedTalking(false), 3000);
     },
     [
       currentStep,
       currentStepIndex,
-      sessionState,
-      speak,
       storedAnswers,
       saveProgress,
       flowParam,
@@ -869,10 +857,10 @@ function HomeContent() {
     ]
   );
 
-  // Show next question after avatar finishes speaking response
+  // Show next question after avatar response finishes
   // (Skip if in answer-summary step - that has its own handler for the 3-message sequence)
   useEffect(() => {
-    if (isShowingResponse && avatarStartedTalking && !isAvatarTalking && !isAnswerSummaryStep) {
+    if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isAnswerSummaryStep) {
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -909,7 +897,7 @@ function HomeContent() {
   }, [
     isShowingResponse,
     avatarStartedTalking,
-    isAvatarTalking,
+    isVideoPlaying,
     isAnswerSummaryStep,
     currentStepIndex,
     questionSteps.length,
@@ -1020,11 +1008,10 @@ function HomeContent() {
               <div className={styles.avatarGradientOverlay} />
 
               <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
-                {/* HeyGen Avatar Wrapper */}
+                {/* Video Avatar Wrapper */}
                 <div className={styles.heygenWrapper}>
-                  <HeyGenAvatar
+                  <VideoAvatar
                     className={styles.heygenAvatar}
-                    placeholder={HEYGEN_DEV_MODE}
                     isMuted={isMuted}
                   />
 
@@ -1194,19 +1181,13 @@ function HomeContent() {
   );
 }
 
-// Set to true to skip HeyGen API calls and simulate avatar behavior
-const HEYGEN_DEV_MODE = false;
-
-// Wrap with HeyGen Provider and Suspense (required for useSearchParams)
+// Wrap with Video Avatar Provider and Suspense (required for useSearchParams)
 export default function Home() {
   return (
     <Suspense fallback={null}>
-      <HeyGenProvider
-        avatarName="3f56b148c07141b3b6a3bcd1be26289e"
-        devMode={HEYGEN_DEV_MODE}
-      >
+      <VideoAvatarProvider>
         <HomeContent />
-      </HeyGenProvider>
+      </VideoAvatarProvider>
     </Suspense>
   );
 }
