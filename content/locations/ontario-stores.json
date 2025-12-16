@@ -1,0 +1,336 @@
+{
+  "collectionId": "ontario-stores",
+  "displayName": "Ontario Ashley HomeStore Locations",
+  "description": "All Ashley HomeStore locations in Ontario, Canada",
+  "locations": [
+    {
+      "id": "barrie",
+      "city": "Barrie",
+      "storeName": "Barrie Ashley HomeStore",
+      "address": "30 North Village Way, Unit 4",
+      "storePhone": "+17057287838",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 44.3894,
+        "lng": -79.6903
+      }
+    },
+    {
+      "id": "belleville",
+      "city": "Belleville",
+      "storeName": "Belleville Ashley HomeStore",
+      "address": "390 N Front St, Unit 10003",
+      "storePhone": "+16139021689",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 44.1628,
+        "lng": -77.3832
+      }
+    },
+    {
+      "id": "brampton",
+      "city": "Brampton",
+      "storeName": "Brampton Ashley HomeStore",
+      "address": "70 Great Lakes Dr, Unit 149",
+      "storePhone": "+19057993284",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 43.7315,
+        "lng": -79.7624
+      }
+    },
+    {
+      "id": "brantford",
+      "city": "Brantford",
+      "storeName": "Brantford Ashley HomeStore",
+      "address": "184 Lynden Rd",
+      "storePhone": "+12262500138",
+      "customerServicePhone": "+12262500138",
+      "coordinates": {
+        "lat": 43.1394,
+        "lng": -80.2644
+      }
+    },
+    {
+      "id": "burlington",
+      "city": "Burlington",
+      "storeName": "Burlington Ashley HomeStore",
+      "address": "7-3060 Davidson Court",
+      "storePhone": "+19053151700",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 43.3255,
+        "lng": -79.7990
+      }
+    },
+    {
+      "id": "espanola",
+      "city": "Espanola",
+      "storeName": "Espanola Ashley HomeStore",
+      "address": "613 Centre St",
+      "storePhone": "+17058694771",
+      "customerServicePhone": "+18003563605",
+      "coordinates": {
+        "lat": 46.2567,
+        "lng": -81.7656
+      }
+    },
+    {
+      "id": "guelph",
+      "city": "Guelph",
+      "storeName": "Guelph Ashley HomeStore",
+      "address": "389 Woodlawn Rd W",
+      "storePhone": "+12267801373",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.5448,
+        "lng": -80.2482
+      }
+    },
+    {
+      "id": "kingston",
+      "city": "Kingston",
+      "storeName": "Kingston Ashley HomeStore",
+      "address": "2776 Princess St",
+      "storePhone": "+16133842444",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 44.2312,
+        "lng": -76.4860
+      }
+    },
+    {
+      "id": "kitchener",
+      "city": "Kitchener",
+      "storeName": "Kitchener Ashley HomeStore",
+      "address": "D2-655 Fairway Rd S",
+      "storePhone": "+15198939595",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.4168,
+        "lng": -80.4883
+      }
+    },
+    {
+      "id": "london",
+      "city": "London",
+      "storeName": "London Ashley HomeStore",
+      "address": "3325 Wonderland Rd South, Unit 1",
+      "storePhone": "+15196521637",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 42.9490,
+        "lng": -81.2760
+      }
+    },
+    {
+      "id": "mississauga-mavis",
+      "city": "Mississauga",
+      "storeName": "Mississauga Ashley HomeStore",
+      "address": "5900 Mavis Rd, Unit 2",
+      "storePhone": "+15877602789",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.6205,
+        "lng": -79.6525
+      }
+    },
+    {
+      "id": "mississauga-matheson",
+      "city": "Mississauga",
+      "storeName": "Mississauga Ashley Clearance Centre",
+      "address": "333 Matheson Blvd W",
+      "storePhone": "+19057129846",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.6629,
+        "lng": -79.6127
+      }
+    },
+    {
+      "id": "newmarket",
+      "city": "Newmarket",
+      "storeName": "Newmarket Ashley HomeStore",
+      "address": "17700 Yonge Street",
+      "storePhone": "+12893192770",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 44.0592,
+        "lng": -79.4613
+      }
+    },
+    {
+      "id": "north-bay",
+      "city": "North Bay",
+      "storeName": "North Bay Ashley HomeStore",
+      "address": "111 Drury St",
+      "storePhone": "+17054720123",
+      "customerServicePhone": "+18003643605",
+      "coordinates": {
+        "lat": 46.3091,
+        "lng": -79.4608
+      }
+    },
+    {
+      "id": "ottawa",
+      "city": "Ottawa",
+      "storeName": "Ottawa Ashley HomeStore",
+      "address": "530 West Hunt Club Rd",
+      "storePhone": "+16132321441",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 45.3476,
+        "lng": -75.6903
+      }
+    },
+    {
+      "id": "prescott",
+      "city": "Prescott",
+      "storeName": "Prescott Ashley HomeStore",
+      "address": "707 Lawrence St",
+      "storePhone": "+16139751160",
+      "customerServicePhone": "+16139151160",
+      "coordinates": {
+        "lat": 44.7142,
+        "lng": -75.5178
+      }
+    },
+    {
+      "id": "richmond-hill",
+      "city": "Richmond Hill",
+      "storeName": "Richmond Hill Ashley HomeStore",
+      "address": "45 Red Maple Rd",
+      "storePhone": "+19057636020",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 43.8828,
+        "lng": -79.4403
+      }
+    },
+    {
+      "id": "sault-ste-marie",
+      "city": "Sault Ste. Marie",
+      "storeName": "Sault Ste. Marie Ashley HomeStore",
+      "address": "115 Northern Ave E",
+      "storePhone": "+17059462538",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 46.5136,
+        "lng": -84.3358
+      }
+    },
+    {
+      "id": "scarborough",
+      "city": "Scarborough",
+      "storeName": "Scarborough Ashley HomeStore",
+      "address": "23 William Kitchen Rd, H3",
+      "storePhone": "+14162991098",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 43.7764,
+        "lng": -79.2318
+      }
+    },
+    {
+      "id": "st-catharines",
+      "city": "St. Catharines",
+      "storeName": "St. Catharines Ashley HomeStore",
+      "address": "285 Geneva St",
+      "storePhone": "+16474278359",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.1594,
+        "lng": -79.2469
+      }
+    },
+    {
+      "id": "stoney-creek",
+      "city": "Stoney Creek",
+      "storeName": "Stoney Creek Ashley HomeStore",
+      "address": "1776 Stone Church Rd E, Unit 2",
+      "storePhone": "+19056434646",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.2075,
+        "lng": -79.7441
+      }
+    },
+    {
+      "id": "sudbury",
+      "city": "Sudbury",
+      "storeName": "Sudbury Ashley HomeStore",
+      "address": "800 Barry Downe Rd",
+      "storePhone": "+17055663511",
+      "customerServicePhone": "+17055667669",
+      "coordinates": {
+        "lat": 46.5107,
+        "lng": -81.0050
+      }
+    },
+    {
+      "id": "thunder-bay",
+      "city": "Thunder Bay",
+      "storeName": "Thunder Bay Ashley HomeStore",
+      "address": "640 Balmoral Street",
+      "storePhone": "+18074761466",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 48.4001,
+        "lng": -89.2477
+      }
+    },
+    {
+      "id": "toronto",
+      "city": "Toronto",
+      "storeName": "Toronto Ashley HomeStore",
+      "address": "1602 The Queensway",
+      "storePhone": "+16474263110",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.6205,
+        "lng": -79.5132
+      }
+    },
+    {
+      "id": "whitby",
+      "city": "Whitby",
+      "storeName": "Whitby Ashley HomeStore",
+      "address": "1650 Victoria St E, Unit 5A",
+      "storePhone": "+19057234786",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.8971,
+        "lng": -78.9091
+      }
+    },
+    {
+      "id": "windsor",
+      "city": "Windsor",
+      "storeName": "Windsor Ashley HomeStore",
+      "address": "1-650 Division Rd",
+      "storePhone": "+15199695814",
+      "customerServicePhone": "+18007373233",
+      "coordinates": {
+        "lat": 42.2879,
+        "lng": -82.9877
+      }
+    },
+    {
+      "id": "woodbridge",
+      "city": "Woodbridge",
+      "storeName": "Woodbridge Ashley HomeStore",
+      "address": "3900 Hwy 7",
+      "storePhone": "+16474273900",
+      "customerServicePhone": null,
+      "coordinates": {
+        "lat": 43.7942,
+        "lng": -79.5932
+      }
+    }
+  ],
+  "metadata": {
+    "createdAt": "2025-12-15T00:00:00.000Z",
+    "updatedAt": "2025-12-15T00:00:00.000Z",
+    "totalLocations": 27
+  }
+}

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { AVAILABLE_FLOWS } from '@/config';
 import styles from './DevPanel.module.css';
 
 export interface StoredAnswer {
@@ -11,17 +12,6 @@ export interface StoredAnswer {
   label: string;
   timestamp: Date;
 }
-
-// Available flows - should match FLOWS in page.tsx
-const AVAILABLE_FLOWS = [
-  { id: 'default', label: 'Back Pain (Default)' },
-  { id: 'achesandpains', label: 'Aches & Pains' },
-  { id: 'wakeupwithaheadache', label: 'Headache' },
-  { id: 'hippain', label: 'Hip Pain' },
-  { id: 'wakeupfeelingtired', label: 'Feeling Tired' },
-  { id: 'neckpain', label: 'Neck Pain' },
-  { id: 'shoulderpain', label: 'Shoulder Pain' },
-];
 
 export interface DevPanelProps {
   answers: StoredAnswer[];

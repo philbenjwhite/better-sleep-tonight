@@ -31,30 +31,12 @@ import {
   ProductRecommendationsContent,
 } from "@/components/ProductRecommendations";
 import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
+import { SeeOptionsPrompt, SeeOptionsPromptContent } from "@/components/SeeOptionsPrompt";
+import { StoreLocations, StoreLocationsContent } from "@/components/StoreLocations";
+import { ZipCodeCapture, ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { useProgressPersistence } from "@/hooks";
+import { FLOWS } from "@/config";
 import styles from "./page.module.css";
-
-// Import flow data from CMS
-import backPainFlow from "../../content/flows/back-pain-flow.json";
-import achesAndPainsFlow from "../../content/flows/achesandpains-flow.json";
-import headacheFlow from "../../content/flows/wakeupwithaheadache-flow.json";
-import hipPainFlow from "../../content/flows/hippain-flow.json";
-import feelingTiredFlow from "../../content/flows/wakeupfeelingtired-flow.json";
-import neckPainFlow from "../../content/flows/neckpain-flow.json";
-import shoulderPainFlow from "../../content/flows/shoulderpain-flow.json";
-
-// Flow registry - maps URL param to flow data
-// eslint-disable-next-line
-const FLOWS: Record<string, any> = {
-  default: backPainFlow,
-  "back-pain": backPainFlow,
-  achesandpains: achesAndPainsFlow,
-  wakeupwithaheadache: headacheFlow,
-  hippain: hipPainFlow,
-  wakeupfeelingtired: feelingTiredFlow,
-  neckpain: neckPainFlow,
-  shoulderpain: shoulderPainFlow,
-};
 
 // Type for answer summary mappings
 interface AnswerSummaryContent {
@@ -80,6 +62,33 @@ interface EmailCaptureStepContent {
   avatarEmotionOnSkip?: string;
 }
 
+// Type for see-options content
+interface SeeOptionsStepContent {
+  promptText: string;
+  buttonText: string;
+  avatarMessage?: string;
+  avatarEmotion?: string;
+}
+
+// Type for zipcode-capture content
+interface ZipCodeCaptureStepContent {
+  headline: string;
+  placeholderText: string;
+  buttonText: string;
+}
+
+// Type for store-locations content
+interface StoreLocationsStepContent {
+  headerText: string;
+  defaultPostalCode: string;
+  ctaBookTitle: string;
+  ctaBookDescription: string;
+  ctaBookButtonText: string;
+  ctaContactTitle: string;
+  ctaContactDescription: string;
+  ctaContactButtonText: string;
+}
+
 // Type for flow steps
 interface FlowStep {
   stepId: string;
@@ -97,6 +106,9 @@ interface FlowStep {
   answerSummaryContent?: AnswerSummaryContent;
   productRecommendationsContent?: ProductRecommendationsContent;
   emailCaptureContent?: EmailCaptureStepContent;
+  seeOptionsContent?: SeeOptionsStepContent;
+  zipcodeCaptureContent?: ZipCodeCaptureStepContent;
+  storeLocationsContent?: StoreLocationsStepContent;
 }
 
 function HomeContent() {
@@ -153,6 +165,7 @@ function HomeContent() {
   const [hasSpokenSummary, setHasSpokenSummary] = useState(false);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
+  const [userZipCode, setUserZipCode] = useState<string | null>(null);
   // Track the summary sequence phase: 'summary' -> 'empathy' -> 'emailCTA' -> 'done'
   const [summarySequencePhase, setSummarySequencePhase] = useState<
     'summary' | 'empathy' | 'emailCTA' | 'done'
@@ -242,7 +255,10 @@ function HomeContent() {
       step.stepType === "mattress-recommendation" ||
       step.stepType === "answer-summary" ||
       step.stepType === "product-recommendations" ||
-      step.stepType === "email-capture"
+      step.stepType === "email-capture" ||
+      step.stepType === "see-options" ||
+      step.stepType === "zipcode-capture" ||
+      step.stepType === "store-locations"
   );
   const currentStep = questionSteps[currentStepIndex];
   const isMattressRecommendationStep =
@@ -251,6 +267,9 @@ function HomeContent() {
   const isProductRecommendationsStep =
     currentStep?.stepType === "product-recommendations";
   const isEmailCaptureStep = currentStep?.stepType === "email-capture";
+  const isSeeOptionsStep = currentStep?.stepType === "see-options";
+  const isZipCodeCaptureStep = currentStep?.stepType === "zipcode-capture";
+  const isStoreLocationsStep = currentStep?.stepType === "store-locations";
   const introVideo = activeFlow.introVideo || "/videos/Mattress_Shopping.mp4";
 
   // Generate dynamic answer summary text based on stored answers
@@ -747,37 +766,30 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
 
-      // Clear saved progress since flow is complete
-      clearProgress();
+      // Save progress (don't clear yet - we're continuing to see-options)
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1,
+        answers: updatedAnswers,
+      });
 
-      // Get the avatar response from the step content
-      const response =
-        currentStep?.emailCaptureContent?.avatarResponseOnSubmit ||
-        "Perfect! I'll send that right over.";
-      const emotion =
-        currentStep?.emailCaptureContent?.avatarEmotionOnSubmit || "excited";
-
-      // Hide question block, show avatar response
+      // Hide email capture and advance directly to see-options step
       setShowQuestionBlock(false);
-      setShowBackdrop(false);
-      setBackdropHasAnimated(false);
-      setAvatarResponse(response);
-      setCurrentEmotion(emotion);
-      setIsShowingResponse(true);
-      setAvatarStartedTalking(false);
 
-      // Make the avatar speak the response
-      if (sessionState === AvatarSessionState.CONNECTED) {
-        speak(response);
+      if (currentStepIndex < questionSteps.length - 1) {
+        setCurrentStepIndex((prev) => prev + 1);
+        setTimeout(() => {
+          setShowQuestionBlock(true);
+        }, 300);
       }
     },
     [
       currentStep,
       currentStepIndex,
       storedAnswers,
-      clearProgress,
-      sessionState,
-      speak,
+      saveProgress,
+      flowParam,
+      questionSteps.length,
     ]
   );
 
@@ -785,30 +797,77 @@ function HomeContent() {
   const handleEmailSkip = useCallback(() => {
     console.log("Email skipped");
 
-    // Get the avatar response from the step content
-    const response =
-      currentStep?.emailCaptureContent?.avatarResponseOnSkip ||
-      "No problem! Let's continue.";
-    const emotion =
-      currentStep?.emailCaptureContent?.avatarEmotionOnSkip || "friendly";
-
-    // Hide question block, show avatar response
+    // Hide email capture and advance directly to see-options step
     setShowQuestionBlock(false);
-    setShowBackdrop(false);
-    setBackdropHasAnimated(false);
-    setAvatarResponse(response);
-    setCurrentEmotion(emotion);
-    setIsShowingResponse(true);
-    setAvatarStartedTalking(false);
 
-    // Clear saved progress since flow is complete
-    clearProgress();
-
-    // Make the avatar speak the response
-    if (sessionState === AvatarSessionState.CONNECTED) {
-      speak(response);
+    if (currentStepIndex < questionSteps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
+      setTimeout(() => {
+        setShowQuestionBlock(true);
+      }, 300);
     }
-  }, [currentStep, clearProgress, sessionState, speak]);
+  }, [currentStepIndex, questionSteps.length]);
+
+  // Handle see options button click
+  const handleSeeOptionsClick = useCallback(() => {
+    console.log("See options clicked");
+
+    // Simply advance to the next step (product recommendations)
+    setShowQuestionBlock(false);
+
+    if (currentStepIndex < questionSteps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
+      setTimeout(() => {
+        setShowQuestionBlock(true);
+      }, 300);
+    }
+  }, [currentStepIndex, questionSteps.length]);
+
+  // Handle zipcode submission
+  const handleZipCodeSubmit = useCallback(
+    (zipCode: string) => {
+      console.log("Zip code submitted:", zipCode);
+
+      // Store the zipcode for the store locations step
+      setUserZipCode(zipCode);
+
+      // Store as an answer
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: "Zip Code",
+        value: zipCode,
+        label: zipCode,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      // Save progress
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1,
+        answers: updatedAnswers,
+      });
+
+      // Advance to next step (store locations)
+      setShowQuestionBlock(false);
+
+      if (currentStepIndex < questionSteps.length - 1) {
+        setCurrentStepIndex((prev) => prev + 1);
+        setTimeout(() => {
+          setShowQuestionBlock(true);
+        }, 300);
+      }
+    },
+    [
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+      questionSteps.length,
+    ]
+  );
 
   // Show next question after avatar finishes speaking response
   // (Skip if in answer-summary step - that has its own handler for the 3-message sequence)
@@ -1055,6 +1114,42 @@ function HomeContent() {
                           content={currentStep.emailCaptureContent as EmailCaptureContent}
                           onSubmit={handleEmailSubmit}
                           onSkip={handleEmailSkip}
+                        />
+                      </div>
+                    )}
+
+                  {/* See Options Prompt Step */}
+                  {showQuestionBlock &&
+                    isSeeOptionsStep &&
+                    currentStep?.seeOptionsContent && (
+                      <div className={styles.questionBlockInner}>
+                        <SeeOptionsPrompt
+                          content={currentStep.seeOptionsContent as SeeOptionsPromptContent}
+                          onContinue={handleSeeOptionsClick}
+                        />
+                      </div>
+                    )}
+
+                  {/* Zip Code Capture Step */}
+                  {showQuestionBlock &&
+                    isZipCodeCaptureStep &&
+                    currentStep?.zipcodeCaptureContent && (
+                      <div className={styles.questionBlockInner}>
+                        <ZipCodeCapture
+                          content={currentStep.zipcodeCaptureContent as ZipCodeCaptureContent}
+                          onSubmit={handleZipCodeSubmit}
+                        />
+                      </div>
+                    )}
+
+                  {/* Store Locations Step */}
+                  {showQuestionBlock &&
+                    isStoreLocationsStep &&
+                    currentStep?.storeLocationsContent && (
+                      <div className={styles.storeLocationsInner}>
+                        <StoreLocations
+                          content={currentStep.storeLocationsContent as StoreLocationsContent}
+                          postalCode={userZipCode || currentStep.storeLocationsContent.defaultPostalCode}
                         />
                       </div>
                     )}

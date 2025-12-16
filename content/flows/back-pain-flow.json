@@ -336,10 +336,49 @@
       }
     },
     {
+      "stepId": "see-options-step",
+      "internalName": "See Options Prompt",
+      "order": 9,
+      "stepType": "see-options",
+      "seeOptionsContent": {
+        "promptText": "I've found three mattress options that are perfect for you based on your responses!",
+        "buttonText": "See My Options",
+        "avatarMessage": "I've found three mattress options that are perfect for you based on your responses!",
+        "avatarEmotion": "excited"
+      }
+    },
+    {
       "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
-      "order": 9,
+      "order": 10,
       "stepType": "product-recommendations"
+    },
+    {
+      "stepId": "zipcode-capture-step",
+      "internalName": "Zip Code Capture",
+      "order": 11,
+      "stepType": "zipcode-capture",
+      "zipcodeCaptureContent": {
+        "headline": "Enter zip code",
+        "placeholderText": "zipcode",
+        "buttonText": "Continue"
+      }
+    },
+    {
+      "stepId": "store-locations-step",
+      "internalName": "Store Locations",
+      "order": 12,
+      "stepType": "store-locations",
+      "storeLocationsContent": {
+        "headerText": "Select your preferred location near",
+        "defaultPostalCode": "L7M 4X7",
+        "ctaBookTitle": "Prefer to test the mattress in person?",
+        "ctaBookDescription": "You can book a sleep-test appointment right away.",
+        "ctaBookButtonText": "Book a Rest Test",
+        "ctaContactTitle": "Still unsure and want to talk more?",
+        "ctaContactDescription": "I can connect you with a real human sleep specialist anytime.",
+        "ctaContactButtonText": "Contact Us"
+      }
     }
   ],
   "metadata": {
