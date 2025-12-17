@@ -25,13 +25,14 @@ a {
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --background-rgb: 246, 243, 237; /* #F6F3ED */
 }
 
+/* Override dark mode - always use light cream background */
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
+    --foreground-rgb: 0, 0, 0;
+    --background-rgb: 246, 243, 237; /* #F6F3ED */
   }
 }
 

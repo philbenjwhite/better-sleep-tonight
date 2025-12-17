@@ -320,7 +320,40 @@
       "stepId": "answer-summary-step",
       "internalName": "Answer Summary",
       "order": 7,
-      "stepType": "answer-summary"
+      "stepType": "answer-summary",
+      "answerSummaryContent": {
+        "videoId": "answer-summary",
+        "introText": "Based on what you've shared with me,",
+        "outroText": "Let me show you some mattress options that could really help.",
+        "emotion": "friendly",
+        "empathyMessage": "I completely understand how frustrating sleep issues can be. You deserve to wake up feeling refreshed.",
+        "empathyEmotion": "soothing",
+        "emailCTAMessage": "I'd love to send you a personalized sleep report with my recommendations. Can I get your email?",
+        "emailCTAEmotion": "friendly",
+        "summaryMappings": {
+          "q1-trouble-falling-asleep": {
+            "every-night": "you struggle to fall asleep every night",
+            "frequently": "you frequently have trouble falling asleep",
+            "on-occasion": "you occasionally have trouble falling asleep"
+          },
+          "q2-sleep-position": {
+            "side": "you're a side sleeper",
+            "back": "you sleep on your back",
+            "stomach": "you're a stomach sleeper",
+            "varies": "you change positions throughout the night"
+          },
+          "q4-aches-pains-frequency": {
+            "every-night": "you wake up with aches and pains every day",
+            "frequently": "you frequently wake up with aches and pains",
+            "on-occasion": "you occasionally wake up with aches and pains"
+          },
+          "q5-aches-pains-type": {
+            "chronic-condition": "you're dealing with a chronic condition",
+            "stiffness": "you experience stiffness and soreness",
+            "hip-shoulder": "you have hip or shoulder discomfort"
+          }
+        }
+      }
     },
     {
       "stepId": "email-capture",

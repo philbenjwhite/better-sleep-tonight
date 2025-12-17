@@ -15,7 +15,6 @@
     "figma:publish": "figma connect publish"
   },
   "dependencies": {
-    "@heygen/streaming-avatar": "^2.1.0",
     "@tinacms/cli": "^1.12.5",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",

@@ -356,6 +356,67 @@ var emailCaptureContentFields = [
     description: "Voice emotion when email is skipped"
   }
 ];
+var answerSummaryContentFields = [
+  {
+    name: "videoId",
+    label: "Video ID",
+    type: "string",
+    description: "ID of the video to play (from VIDEO_REGISTRY, e.g., 'answer-summary')"
+  },
+  {
+    name: "introText",
+    label: "Intro Text",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Opening text before the dynamic summary"
+  },
+  {
+    name: "outroText",
+    label: "Outro Text",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Closing text after the dynamic summary"
+  },
+  {
+    name: "emotion",
+    label: "Emotion",
+    type: "string",
+    options: voiceEmotionOptions
+  },
+  {
+    name: "empathyMessage",
+    label: "Empathy Message",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Empathetic follow-up message after summary"
+  },
+  {
+    name: "empathyEmotion",
+    label: "Empathy Emotion",
+    type: "string",
+    options: voiceEmotionOptions
+  },
+  {
+    name: "emailCTAMessage",
+    label: "Email CTA Message",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "Call-to-action message for email capture"
+  },
+  {
+    name: "emailCTAEmotion",
+    label: "Email CTA Emotion",
+    type: "string",
+    options: voiceEmotionOptions
+  },
+  {
+    name: "summaryMappings",
+    label: "Summary Mappings (JSON)",
+    type: "string",
+    ui: { component: "textarea" },
+    description: "JSON object mapping step IDs to answer values to summary text"
+  }
+];
 var ctaContentFields = [
   {
     name: "headline",
@@ -417,7 +478,12 @@ var stepFields = [
       { value: "question", label: "Question" },
       { value: "avatar-monologue", label: "Avatar Monologue" },
       { value: "transition", label: "Transition" },
+      { value: "answer-summary", label: "Answer Summary" },
       { value: "email-capture", label: "Email Capture" },
+      { value: "see-options", label: "See Options Prompt" },
+      { value: "product-recommendations", label: "Product Recommendations" },
+      { value: "zipcode-capture", label: "Zip Code Capture" },
+      { value: "store-locations", label: "Store Locations" },
       { value: "cta", label: "Call to Action" },
       { value: "results", label: "Results Summary" }
     ],
@@ -452,6 +518,12 @@ var stepFields = [
     label: "CTA Content",
     type: "object",
     fields: ctaContentFields
+  },
+  {
+    name: "answerSummaryContent",
+    label: "Answer Summary Content",
+    type: "object",
+    fields: answerSummaryContentFields
   },
   {
     name: "styling",

@@ -239,6 +239,18 @@ type FlowsStepsCtaContent {
   secondaryButtonUrl: String
 }
 
+type FlowsStepsAnswerSummaryContent {
+  videoId: String
+  introText: String
+  outroText: String
+  emotion: String
+  empathyMessage: String
+  empathyEmotion: String
+  emailCTAMessage: String
+  emailCTAEmotion: String
+  summaryMappings: String
+}
+
 type FlowsStepsStyling {
   backgroundColor: String
   customCssClass: String
@@ -259,6 +271,7 @@ type FlowsSteps {
   avatarContent: FlowsStepsAvatarContent
   emailCaptureContent: FlowsStepsEmailCaptureContent
   ctaContent: FlowsStepsCtaContent
+  answerSummaryContent: FlowsStepsAnswerSummaryContent
   styling: FlowsStepsStyling
   analytics: FlowsStepsAnalytics
 }
@@ -371,6 +384,18 @@ input FlowsStepsCtaContentFilter {
   secondaryButtonUrl: StringFilter
 }
 
+input FlowsStepsAnswerSummaryContentFilter {
+  videoId: StringFilter
+  introText: StringFilter
+  outroText: StringFilter
+  emotion: StringFilter
+  empathyMessage: StringFilter
+  empathyEmotion: StringFilter
+  emailCTAMessage: StringFilter
+  emailCTAEmotion: StringFilter
+  summaryMappings: StringFilter
+}
+
 input FlowsStepsStylingFilter {
   backgroundColor: StringFilter
   customCssClass: StringFilter
@@ -391,6 +416,7 @@ input FlowsStepsFilter {
   avatarContent: FlowsStepsAvatarContentFilter
   emailCaptureContent: FlowsStepsEmailCaptureContentFilter
   ctaContent: FlowsStepsCtaContentFilter
+  answerSummaryContent: FlowsStepsAnswerSummaryContentFilter
   styling: FlowsStepsStylingFilter
   analytics: FlowsStepsAnalyticsFilter
 }
@@ -547,6 +573,18 @@ input FlowsStepsCtaContentMutation {
   secondaryButtonUrl: String
 }
 
+input FlowsStepsAnswerSummaryContentMutation {
+  videoId: String
+  introText: String
+  outroText: String
+  emotion: String
+  empathyMessage: String
+  empathyEmotion: String
+  emailCTAMessage: String
+  emailCTAEmotion: String
+  summaryMappings: String
+}
+
 input FlowsStepsStylingMutation {
   backgroundColor: String
   customCssClass: String
@@ -567,6 +605,7 @@ input FlowsStepsMutation {
   avatarContent: FlowsStepsAvatarContentMutation
   emailCaptureContent: FlowsStepsEmailCaptureContentMutation
   ctaContent: FlowsStepsCtaContentMutation
+  answerSummaryContent: FlowsStepsAnswerSummaryContentMutation
   styling: FlowsStepsStylingMutation
   analytics: FlowsStepsAnalyticsMutation
 }
