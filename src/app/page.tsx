@@ -40,6 +40,7 @@ import styles from "./page.module.css";
 
 // Type for answer summary mappings
 interface AnswerSummaryContent {
+  videoId?: string;
   introText: string;
   outroText: string;
   emotion: string;
@@ -172,7 +173,7 @@ function HomeContent() {
   >('summary');
 
   // Video avatar hook
-  const { videoState, isPlaying, play } = useVideoAvatar();
+  const { videoState, isPlaying, isNearingEnd, play } = useVideoAvatar();
 
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
@@ -343,37 +344,31 @@ function HomeContent() {
     }
   }, [currentView, isVideoPlaying, hasSpokenIntro]);
 
-  // Show question block after Ashley finishes speaking intro
-  // Only trigger when video has started AND stopped playing
+  // Show question block when video is nearing end (1 second before)
+  // This creates a smooth overlap transition
   useEffect(() => {
     if (
       currentView === "question" &&
       hasSpokenIntro &&
       avatarStartedTalking &&
-      !isVideoPlaying &&
-      videoState === VideoState.ENDED &&
+      isNearingEnd &&
       !hasShownIntro
     ) {
-      // Pause after video stops before showing questions
-      const timer = setTimeout(() => {
-        setShowBackdrop(true);
-        setBackdropHasAnimated(true);
-        setShowQuestionBlock(true);
-        setHasShownIntro(true);
-      }, 1500);
-      return () => clearTimeout(timer);
+      // Start showing overlay ~1 second before video ends
+      setShowBackdrop(true);
+      setBackdropHasAnimated(true);
+      setShowQuestionBlock(true);
+      setHasShownIntro(true);
     }
   }, [
     currentView,
     hasSpokenIntro,
     avatarStartedTalking,
-    isVideoPlaying,
-    videoState,
+    isNearingEnd,
     hasShownIntro,
   ]);
 
-  // Handle answer-summary step - show summary text (no video for dynamic content)
-  // TODO: Add summary video when available
+  // Handle answer-summary step - play video if videoId is specified
   useEffect(() => {
     if (
       isAnswerSummaryStep &&
@@ -385,6 +380,7 @@ function HomeContent() {
     ) {
       const summaryText = generateAnswerSummary(currentStep.answerSummaryContent);
       const emotion = currentStep.answerSummaryContent.emotion || "friendly";
+      const videoId = currentStep.answerSummaryContent.videoId;
 
       // Mark summary as spoken so we don't repeat it
       setHasSpokenSummary(true);
@@ -395,12 +391,17 @@ function HomeContent() {
       setAvatarResponse(summaryText);
       setCurrentEmotion(emotion);
       setIsShowingResponse(true);
-      setAvatarStartedTalking(true); // Simulate video started
+      setAvatarStartedTalking(true);
 
-      // Auto-advance after showing text (since no video to wait for)
-      setTimeout(() => {
-        setAvatarStartedTalking(false);
-      }, 3000); // Show summary for 3 seconds
+      // If video is specified, play it
+      if (videoId) {
+        play(videoId);
+      } else {
+        // No video - auto-advance after showing text
+        setTimeout(() => {
+          setAvatarStartedTalking(false);
+        }, 3000); // Show summary for 3 seconds
+      }
     }
   }, [
     isAnswerSummaryStep,
@@ -410,6 +411,7 @@ function HomeContent() {
     hasSpokenSummary,
     summarySequencePhase,
     generateAnswerSummary,
+    play,
   ]);
 
   // Handle progression through summary sequence (empathy → emailCTA → email capture)

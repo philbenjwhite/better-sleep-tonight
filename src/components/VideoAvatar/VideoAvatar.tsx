@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useVideoAvatar, VideoState } from './VideoAvatarContext';
 import styles from './VideoAvatar.module.css';
@@ -14,7 +14,7 @@ export interface VideoAvatarProps {
 
 export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   className,
-  fallbackImage = '/images/avatar-2x.png',
+  fallbackImage = '/images/ashley-video-frame.png',
   alt = 'Ashley, your virtual sleep guide',
   isMuted = false,
 }) => {
@@ -25,9 +25,12 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
     onVideoLoaded,
     onVideoPlay,
     onVideoError,
+    onVideoTimeUpdate,
   } = useVideoAvatar();
 
   const videoElementRef = useRef<HTMLVideoElement>(null);
+  // Track if a video has ever been loaded (to know when to show fallback vs last frame)
+  const [hasPlayedVideo, setHasPlayedVideo] = useState(false);
 
   // Register video element with context
   useEffect(() => {
@@ -35,14 +38,43 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
     return () => setVideoRef(null);
   }, [setVideoRef]);
 
+  // Track when video has played at least once
+  useEffect(() => {
+    if (videoState === VideoState.PLAYING) {
+      setHasPlayedVideo(true);
+    }
+  }, [videoState]);
+
   const isLoading = videoState === VideoState.LOADING;
   const hasError = videoState === VideoState.ERROR;
   const isIdle = videoState === VideoState.IDLE;
-  const showVideo = !isIdle && !hasError;
+  const isEnded = videoState === VideoState.ENDED;
+  const isPlaying = videoState === VideoState.PLAYING;
+  const isReady = videoState === VideoState.READY;
+
+  // Show fallback image when:
+  // 1. Before first video plays (idle and never played)
+  // 2. On error
+  // 3. When video has ended (to prevent black frame)
+  const showFallbackImage = (isIdle && !hasPlayedVideo) || hasError || isEnded;
+
+  // Video is visible when playing or ready to play
+  const showVideo = isPlaying || isReady || isLoading;
 
   return (
     <div className={`${styles.avatarContainer} ${className || ''}`}>
-      {/* Video element - hidden when idle, shown when playing */}
+      {/* Fallback image - shown as background when video ends to prevent black frame */}
+      {showFallbackImage && (
+        <Image
+          src={fallbackImage}
+          alt={alt}
+          fill
+          className={styles.avatarImage}
+          priority
+        />
+      )}
+
+      {/* Video element - overlays fallback image when playing */}
       <video
         ref={videoElementRef}
         className={styles.avatarVideo}
@@ -52,19 +84,12 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         onPlay={onVideoPlay}
         onEnded={onVideoEnded}
         onError={onVideoError}
-        style={{ display: showVideo ? 'block' : 'none' }}
+        onTimeUpdate={onVideoTimeUpdate}
+        style={{
+          display: showVideo ? 'block' : 'none',
+          opacity: hasError ? 0 : 1,
+        }}
       />
-
-      {/* Fallback image - shown when idle or on error */}
-      {(isIdle || hasError) && (
-        <Image
-          src={fallbackImage}
-          alt={alt}
-          fill
-          className={styles.avatarImage}
-          priority
-        />
-      )}
 
       {/* Loading spinner */}
       {isLoading && (
