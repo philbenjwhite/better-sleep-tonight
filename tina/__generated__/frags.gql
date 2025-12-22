@@ -25,6 +25,7 @@ fragment FlowsParts on Flows {
   description
   isActive
   introVideo
+  avatarIntroScript
   globalVariables {
     __typename
     avatarName
@@ -44,7 +45,6 @@ fragment FlowsParts on Flows {
       __typename
       headline
       subheadline
-      avatarIntroScript
       secondarySubheadline
       audioNotice
       primaryButtonText

@@ -4,6 +4,7 @@
   "description": "A targeted flow for users experiencing back pain, focusing on mattress support and spinal alignment.",
   "isActive": true,
   "introVideo": "/uploads/Mattress_Shopping.mp4",
+  "avatarIntroScript": "A lot of people struggle with back pain, restless nights, sore mornings, and that \"why do I feel 20 years older?\" stiffness. And while it feels mysterious, it usually isn't. There's always a reason. And there's almost always a solution!",
   "globalVariables": {
     "avatarName": "Ashley",
     "brandName": "Better Sleep Tonight",
@@ -18,9 +19,8 @@
       "stepType": "header",
       "headerContent": {
         "headline": "Wake Up Without Back Pain",
-        "subheadline": "Hey, I’m Ashley — your virtual sleep guide. My job is simple: to help you stay asleep for longer and wake up without back pain, without the sleep fog, and without wondering why you’re tired before the day even starts! If you’re here, I’m guessing that getting a good night’s sleep isn’t proving easy— and trust me, you’re not alone..",
-        "avatarIntroScript": "A lot of people struggle with back pain,  restless nights, sore mornings, and that “why do I feel 20 years older?” stiffness. And while it feels mysterious, it usually isn’t. There’s always a reason.  And there’s almost always a solution! ",
-        "secondarySubheadline": "The good news is that I can help. Let’s fix this!",
+        "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: to help you stay asleep for longer and wake up without back pain, without the sleep fog, and without wondering why you're tired before the day even starts! If you're here, I'm guessing that getting a good night's sleep isn't proving easy— and trust me, you're not alone..",
+        "secondarySubheadline": "The good news is that I can help. Let's fix this!",
         "audioNotice": "For best experience please have your audio turned on",
         "primaryButtonText": "Get Better Sleep"
       }

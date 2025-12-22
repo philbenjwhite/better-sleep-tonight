@@ -99,7 +99,6 @@ interface FlowStep {
     headline: string;
     subheadline: string;
     secondarySubheadline?: string;
-    avatarIntroScript: string;
     primaryButtonText: string;
     audioNotice?: string;
   };
@@ -309,8 +308,8 @@ function HomeContent() {
     [storedAnswers]
   );
 
-  // Get intro message from CMS
-  const introMessage = headerStep?.headerContent?.avatarIntroScript || "";
+  // Get intro message from CMS (now at top-level flow, not inside headerContent)
+  const introMessage = activeFlow.avatarIntroScript || "";
 
   // Video is ready when not in error state
   const isAvatarReady = isVideoReady;

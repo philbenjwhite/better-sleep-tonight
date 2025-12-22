@@ -192,12 +192,6 @@ var headerContentFields = [
     ui: { component: "textarea" }
   },
   {
-    name: "avatarIntroScript",
-    label: "Avatar Intro Script",
-    type: "string",
-    ui: { component: "textarea" }
-  },
-  {
     name: "secondarySubheadline",
     label: "Secondary Subheadline",
     type: "string",
@@ -596,6 +590,13 @@ var flowsCollection = {
       label: "Intro Video",
       type: "image",
       description: "Background video shown on the intro screen"
+    },
+    {
+      name: "avatarIntroScript",
+      label: "Avatar Intro Script",
+      type: "string",
+      ui: { component: "textarea" },
+      description: "What the avatar says during the intro"
     },
     {
       name: "globalVariables",

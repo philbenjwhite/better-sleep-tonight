@@ -181,7 +181,6 @@ type FlowsGlobalVariables {
 type FlowsStepsHeaderContent {
   headline: String
   subheadline: String
-  avatarIntroScript: String
   secondarySubheadline: String
   audioNotice: String
   primaryButtonText: String
@@ -289,6 +288,7 @@ type Flows implements Node & Document {
   description: String
   isActive: Boolean
   introVideo: String
+  avatarIntroScript: String
   globalVariables: FlowsGlobalVariables
   steps: [FlowsSteps]
   metadata: FlowsMetadata
@@ -326,7 +326,6 @@ input NumberFilter {
 input FlowsStepsHeaderContentFilter {
   headline: StringFilter
   subheadline: StringFilter
-  avatarIntroScript: StringFilter
   secondarySubheadline: StringFilter
   audioNotice: StringFilter
   primaryButtonText: StringFilter
@@ -442,6 +441,7 @@ input FlowsFilter {
   description: StringFilter
   isActive: BooleanFilter
   introVideo: ImageFilter
+  avatarIntroScript: StringFilter
   globalVariables: FlowsGlobalVariablesFilter
   steps: FlowsStepsFilter
   metadata: FlowsMetadataFilter
@@ -515,7 +515,6 @@ input FlowsGlobalVariablesMutation {
 input FlowsStepsHeaderContentMutation {
   headline: String
   subheadline: String
-  avatarIntroScript: String
   secondarySubheadline: String
   audioNotice: String
   primaryButtonText: String
@@ -623,6 +622,7 @@ input FlowsMutation {
   description: String
   isActive: Boolean
   introVideo: String
+  avatarIntroScript: String
   globalVariables: FlowsGlobalVariablesMutation
   steps: [FlowsStepsMutation]
   metadata: FlowsMetadataMutation
