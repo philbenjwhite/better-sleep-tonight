@@ -11,7 +11,7 @@ import React, {
 
 // Video registry - maps video IDs to file paths
 export const VIDEO_REGISTRY: Record<string, string> = {
-  'avatar-intro': '/videos/ashley/mp4/ashley-1.mp4',
+  'avatar-intro': '/videos/ashley/ashley-1.mp4',
 };
 
 export type VideoId = keyof typeof VIDEO_REGISTRY;

@@ -319,7 +319,7 @@
       "order": 7,
       "stepType": "video",
       "videoContent": {
-        "video": "/videos/ashley/mp4/ashley-2.mp4",
+        "video": "/videos/ashley/ashley-2.mp4",
         "script": "Based on what you've shared with me, I can see you're dealing with some real sleep challenges. Let me show you some mattress options that could really help. I completely understand how frustrating sleep issues can be. You deserve to wake up feeling refreshed."
       }
     },
@@ -342,7 +342,7 @@
       "order": 9,
       "stepType": "video",
       "videoContent": {
-        "video": "/videos/ashley/mp4/ashley-3.mp4",
+        "video": "/videos/ashley/ashley-3.mp4",
         "script": "[YOUR TEXT HERE]"
       }
     },
@@ -370,7 +370,7 @@
       "order": 12,
       "stepType": "video",
       "videoContent": {
-        "video": "/videos/ashley/mp4/ashley-4.mp4",
+        "video": "/videos/ashley/ashley-4.mp4",
         "script": "[YOUR TEXT HERE]"
       }
     },
