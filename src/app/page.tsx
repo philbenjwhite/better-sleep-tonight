@@ -38,17 +38,10 @@ import { useProgressPersistence } from "@/hooks";
 import { FLOWS } from "@/config";
 import styles from "./page.module.css";
 
-// Type for answer summary mappings
-interface AnswerSummaryContent {
-  videoId?: string;
-  introText: string;
-  outroText: string;
-  emotion: string;
-  summaryMappings: Record<string, Record<string, string>>;
-  empathyMessage?: string;
-  empathyEmotion?: string;
-  emailCTAMessage?: string;
-  emailCTAEmotion?: string;
+// Type for video step content
+interface VideoContent {
+  video?: string;
+  script?: string;
 }
 
 // Type for email capture content
@@ -95,7 +88,7 @@ interface FlowStep {
   stepId: string;
   stepType: string;
   questionContent?: CMSQuestionContent;
-  headerContent?: {
+  introContent?: {
     headline: string;
     subheadline: string;
     secondarySubheadline?: string;
@@ -103,7 +96,7 @@ interface FlowStep {
     audioNotice?: string;
   };
   mattressRecommendationContent?: MattressRecommendationContent;
-  answerSummaryContent?: AnswerSummaryContent;
+  videoContent?: VideoContent;
   productRecommendationsContent?: ProductRecommendationsContent;
   emailCaptureContent?: EmailCaptureStepContent;
   seeOptionsContent?: SeeOptionsStepContent;
@@ -136,7 +129,6 @@ function HomeContent() {
     skipIntro ? "question" : "intro"
   );
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const [showQuestionBlock, setShowQuestionBlock] = useState(skipIntro);
   const [currentStepIndex, setCurrentStepIndex] = useState(initialStep);
   const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(
@@ -166,10 +158,6 @@ function HomeContent() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
-  // Track the summary sequence phase: 'summary' -> 'empathy' -> 'emailCTA' -> 'done'
-  const [summarySequencePhase, setSummarySequencePhase] = useState<
-    'summary' | 'empathy' | 'emailCTA' | 'done'
-  >('summary');
 
   // Video avatar hook
   const { videoState, isPlaying, isNearingEnd, play } = useVideoAvatar();
@@ -218,7 +206,6 @@ function HomeContent() {
 
       // Go directly to question view
       setIsTransitioning(true);
-      setIsLoadingAvatar(false); // No loading needed for MP4
       setIsMuted(false);
 
       setTimeout(() => {
@@ -250,12 +237,12 @@ function HomeContent() {
 
   // Get flow data from CMS (uses activeFlow based on ?flow= param)
   const flowSteps = activeFlow.steps as FlowStep[];
-  const headerStep = flowSteps.find((step) => step.stepType === "header");
+  const introStep = flowSteps.find((step) => step.stepType === "intro");
   const questionSteps = flowSteps.filter(
     (step) =>
       step.stepType === "question" ||
       step.stepType === "mattress-recommendation" ||
-      step.stepType === "answer-summary" ||
+      step.stepType === "video" ||
       step.stepType === "product-recommendations" ||
       step.stepType === "email-capture" ||
       step.stepType === "see-options" ||
@@ -265,7 +252,7 @@ function HomeContent() {
   const currentStep = questionSteps[currentStepIndex];
   const isMattressRecommendationStep =
     currentStep?.stepType === "mattress-recommendation";
-  const isAnswerSummaryStep = currentStep?.stepType === "answer-summary";
+  const isVideoStep = currentStep?.stepType === "video";
   const isProductRecommendationsStep =
     currentStep?.stepType === "product-recommendations";
   const isEmailCaptureStep = currentStep?.stepType === "email-capture";
@@ -274,41 +261,7 @@ function HomeContent() {
   const isStoreLocationsStep = currentStep?.stepType === "store-locations";
   const introVideo = activeFlow.introVideo || "/videos/Mattress_Shopping.mp4";
 
-  // Generate dynamic answer summary text based on stored answers
-  const generateAnswerSummary = useCallback(
-    (summaryContent: AnswerSummaryContent): string => {
-      const { introText, outroText, summaryMappings } = summaryContent;
-      const summaryParts: string[] = [];
-
-      // Iterate through the mappings in order
-      Object.entries(summaryMappings).forEach(([stepId, valueMap]) => {
-        const answer = storedAnswers.find((a) => a.stepId === stepId);
-        if (answer && valueMap[answer.value]) {
-          summaryParts.push(valueMap[answer.value]);
-        }
-      });
-
-      if (summaryParts.length === 0) {
-        return "Based on what you've shared, let me show you some recommendations.";
-      }
-
-      // Join parts with proper grammar
-      let summaryText = "";
-      if (summaryParts.length === 1) {
-        summaryText = summaryParts[0];
-      } else if (summaryParts.length === 2) {
-        summaryText = `${summaryParts[0]} and ${summaryParts[1]}`;
-      } else {
-        const lastPart = summaryParts.pop();
-        summaryText = `${summaryParts.join(", ")}, and ${lastPart}`;
-      }
-
-      return `${introText} ${summaryText} ${outroText}`;
-    },
-    [storedAnswers]
-  );
-
-  // Get intro message from CMS (now at top-level flow, not inside headerContent)
+  // Get intro message from CMS (at top-level flow, not inside introContent)
   const introMessage = activeFlow.avatarIntroScript || "";
 
   // Video is ready when not in error state
@@ -316,7 +269,6 @@ function HomeContent() {
 
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
-    setIsLoadingAvatar(false); // No loading needed for MP4
     setIsMuted(false); // Unmute when user clicks "Let's Begin"
 
     setTimeout(() => {
@@ -367,34 +319,31 @@ function HomeContent() {
     hasShownIntro,
   ]);
 
-  // Handle answer-summary step - play video if videoId is specified
+  // Handle video step - play video if videoId is specified
   useEffect(() => {
     if (
-      isAnswerSummaryStep &&
-      currentStep?.answerSummaryContent &&
+      isVideoStep &&
+      currentStep?.videoContent &&
       showQuestionBlock &&
       !isShowingResponse &&
-      !hasSpokenSummary &&
-      summarySequencePhase === 'summary'
+      !hasSpokenSummary
     ) {
-      const summaryText = generateAnswerSummary(currentStep.answerSummaryContent);
-      const emotion = currentStep.answerSummaryContent.emotion || "friendly";
-      const videoId = currentStep.answerSummaryContent.videoId;
+      const scriptText = currentStep.videoContent.script || "";
+      const videoPath = currentStep.videoContent.video;
 
       // Mark summary as spoken so we don't repeat it
       setHasSpokenSummary(true);
 
-      // Hide question block and backdrop, show the summary as avatar response
+      // Hide question block and backdrop, show the script in speech bubble
       setShowQuestionBlock(false);
       setShowBackdrop(false); setBackdropHasAnimated(false);
-      setAvatarResponse(summaryText);
-      setCurrentEmotion(emotion);
+      setAvatarResponse(scriptText);
       setIsShowingResponse(true);
       setAvatarStartedTalking(true);
 
-      // If video is specified, play it
-      if (videoId) {
-        play(videoId);
+      // If video is specified, play it (accepts direct path or registry ID)
+      if (videoPath) {
+        play(videoPath);
       } else {
         // No video - auto-advance after showing text
         setTimeout(() => {
@@ -403,80 +352,47 @@ function HomeContent() {
       }
     }
   }, [
-    isAnswerSummaryStep,
+    isVideoStep,
     currentStep,
     showQuestionBlock,
     isShowingResponse,
     hasSpokenSummary,
-    summarySequencePhase,
-    generateAnswerSummary,
     play,
   ]);
 
-  // Handle progression through summary sequence (empathy → emailCTA → email capture)
-  // With MP4 videos, we use text display with timeouts since dynamic speech is pre-recorded
+  // Handle video step completion - advance to next step when video ends
   useEffect(() => {
     if (
-      isAnswerSummaryStep &&
+      isVideoStep &&
       isShowingResponse &&
       avatarStartedTalking &&
       !isVideoPlaying &&
-      currentStep?.answerSummaryContent
+      hasSpokenSummary
     ) {
-      const content = currentStep.answerSummaryContent;
+      // Video finished, advance to next step
+      const timer = setTimeout(() => {
+        setIsShowingResponse(false);
+        setAvatarResponse(null);
+        setAvatarStartedTalking(false);
 
-      if (summarySequencePhase === 'summary' && content.empathyMessage) {
-        // Summary finished, show empathy message (text only, no video)
-        const timer = setTimeout(() => {
-          setSummarySequencePhase('empathy');
-          setAvatarResponse(content.empathyMessage!);
-          setCurrentEmotion(content.empathyEmotion || 'soothing');
-          setAvatarStartedTalking(true); // Simulate start
-          // Auto-advance after showing text
-          setTimeout(() => setAvatarStartedTalking(false), 3000);
-        }, 800);
-        return () => clearTimeout(timer);
-      } else if (summarySequencePhase === 'empathy' && content.emailCTAMessage) {
-        // Empathy finished, show email CTA message (text only, no video)
-        const timer = setTimeout(() => {
-          setSummarySequencePhase('emailCTA');
-          setAvatarResponse(content.emailCTAMessage!);
-          setCurrentEmotion(content.emailCTAEmotion || 'friendly');
-          setAvatarStartedTalking(true); // Simulate start
-          // Auto-advance after showing text
-          setTimeout(() => setAvatarStartedTalking(false), 3000);
-        }, 800);
-        return () => clearTimeout(timer);
-      } else if (summarySequencePhase === 'emailCTA' ||
-                 (summarySequencePhase === 'summary' && !content.empathyMessage) ||
-                 (summarySequencePhase === 'empathy' && !content.emailCTAMessage)) {
-        // Finished email CTA (or no more messages), advance to email capture step
-        const timer = setTimeout(() => {
-          setSummarySequencePhase('done');
-          setIsShowingResponse(false);
-          setAvatarResponse(null);
-          setAvatarStartedTalking(false);
-
-          // Advance to next step (email capture)
-          if (currentStepIndex < questionSteps.length - 1) {
-            setCurrentStepIndex((prev) => prev + 1);
-            setTimeout(() => {
-              setShowBackdrop(true);
-              setBackdropHasAnimated(true);
-              setShowQuestionBlock(true);
-            }, 300);
-          }
-        }, 500);
-        return () => clearTimeout(timer);
-      }
+        // Advance to next step
+        if (currentStepIndex < questionSteps.length - 1) {
+          setCurrentStepIndex((prev) => prev + 1);
+          setTimeout(() => {
+            setShowBackdrop(true);
+            setBackdropHasAnimated(true);
+            setShowQuestionBlock(true);
+          }, 300);
+        }
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [
-    isAnswerSummaryStep,
+    isVideoStep,
     isShowingResponse,
     avatarStartedTalking,
     isVideoPlaying,
-    summarySequencePhase,
-    currentStep,
+    hasSpokenSummary,
     currentStepIndex,
     questionSteps.length,
   ]);
@@ -786,6 +702,24 @@ function HomeContent() {
   const handleEmailSkip = useCallback(() => {
     console.log("Email skipped");
 
+    // Store "skipped" as the answer for this step
+    const newAnswer: StoredAnswer = {
+      stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+      questionText: "Email Capture",
+      value: "skipped",
+      label: "Skipped",
+      timestamp: new Date(),
+    };
+    const updatedAnswers = [...storedAnswers, newAnswer];
+    setStoredAnswers(updatedAnswers);
+
+    // Save progress
+    saveProgress({
+      flowId: flowParam,
+      currentStepIndex: currentStepIndex + 1,
+      answers: updatedAnswers,
+    });
+
     // Hide email capture and advance directly to see-options step
     setShowQuestionBlock(false);
 
@@ -795,7 +729,14 @@ function HomeContent() {
         setShowQuestionBlock(true);
       }, 300);
     }
-  }, [currentStepIndex, questionSteps.length]);
+  }, [
+    currentStep,
+    currentStepIndex,
+    storedAnswers,
+    saveProgress,
+    flowParam,
+    questionSteps.length,
+  ]);
 
   // Handle see options button click
   const handleSeeOptionsClick = useCallback(() => {
@@ -859,9 +800,9 @@ function HomeContent() {
   );
 
   // Show next question after avatar response finishes
-  // (Skip if in answer-summary step - that has its own handler for the 3-message sequence)
+  // (Skip if in video step - that has its own handler)
   useEffect(() => {
-    if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isAnswerSummaryStep) {
+    if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isVideoStep) {
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -899,7 +840,7 @@ function HomeContent() {
     isShowingResponse,
     avatarStartedTalking,
     isVideoPlaying,
-    isAnswerSummaryStep,
+    isVideoStep,
     currentStepIndex,
     questionSteps.length,
     isFlowTerminated,
@@ -940,7 +881,7 @@ function HomeContent() {
       />
 
       {/* Intro View */}
-      {currentView === "intro" && headerStep?.headerContent && (
+      {currentView === "intro" && introStep?.introContent && (
         <div
           className={`${styles.contentWrapper} ${
             isTransitioning ? styles.fadeOut : styles.fadeIn
@@ -962,27 +903,27 @@ function HomeContent() {
             {/* Text Content */}
             <div className={styles.textContent}>
               <h1 className={styles.titlePage}>
-                {headerStep.headerContent.headline}
+                {introStep.introContent.headline}
               </h1>
               <p className={styles.subheadline}>
-                {headerStep.headerContent.subheadline}
+                {introStep.introContent.subheadline}
               </p>
-              {headerStep.headerContent.secondarySubheadline && (
+              {introStep.introContent.secondarySubheadline && (
                 <p className={styles.subheadline}>
-                  {headerStep.headerContent.secondarySubheadline}
+                  {introStep.introContent.secondarySubheadline}
                 </p>
               )}
             </div>
 
             {/* CTA Section */}
             <div className={styles.ctaSection}>
-              {headerStep.headerContent.audioNotice && (
+              {introStep.introContent.audioNotice && (
                 <p className={styles.audioNotice}>
-                  {headerStep.headerContent.audioNotice}
+                  {introStep.introContent.audioNotice}
                 </p>
               )}
               <Button variant="primary" size="large" onClick={handleBegin}>
-                {headerStep.headerContent.primaryButtonText}
+                {introStep.introContent.primaryButtonText}
               </Button>
             </div>
           </div>
@@ -990,160 +931,145 @@ function HomeContent() {
       )}
 
       {/* Question View */}
-      {currentView === "question" && (
+      {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
-          {/* Loading state while avatar initializes */}
-          {isLoadingAvatar && (
-            <div className={styles.loadingContainer}>
-              <div className={styles.loadingSpinner} />
-              <p className={styles.loadingText}>
-                Connecting to {activeFlow.globalVariables.avatarName}...
-              </p>
-            </div>
-          )}
+          {/* Full-width Gradient Overlay at Bottom */}
+          <div className={styles.avatarGradientOverlay} />
 
-          {/* Only show avatar content once loaded (or in dev skip mode) */}
-          {(isAvatarReady || skipIntro) && (
-            <>
-              {/* Full-width Gradient Overlay at Bottom */}
-              <div className={styles.avatarGradientOverlay} />
+          <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
+            {/* Video Avatar Wrapper */}
+            <div className={styles.heygenWrapper}>
+              <VideoAvatar
+                className={styles.heygenAvatar}
+                isMuted={isMuted}
+              />
 
-              <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
-                {/* Video Avatar Wrapper */}
-                <div className={styles.heygenWrapper}>
-                  <VideoAvatar
-                    className={styles.heygenAvatar}
-                    isMuted={isMuted}
+              {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
+              {!hasShownIntro &&
+                !showQuestionBlock &&
+                !isShowingResponse &&
+                introMessage && (
+                  <SpeechBubbleSequence
+                    message={introMessage}
+                    wordDelay={0.26}
+                    paragraphPauseMs={1500}
+                    className={styles.speechBubbleContainer}
                   />
+                )}
 
-                  {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
-                  {!hasShownIntro &&
-                    !showQuestionBlock &&
-                    !isShowingResponse &&
-                    introMessage && (
-                      <SpeechBubbleSequence
-                        message={introMessage}
-                        wordDelay={0.26}
-                        paragraphPauseMs={1500}
-                        className={styles.speechBubbleContainer}
-                      />
-                    )}
-
-                  {/* Avatar Response Bubble - shows after answer selection */}
-                  {isShowingResponse && avatarResponse && (
-                    <SpeechBubbleSequence
-                      message={avatarResponse}
-                      wordDelay={0.32}
-                      paragraphPauseMs={1200}
-                      className={styles.speechBubbleContainer}
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Persistent Backdrop - stays visible during question transitions */}
-              {(showQuestionBlock || showBackdrop) && (
-                <div className={styles.questionBlockWrapper}>
-                  <div
-                    className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
-                  />
-
-                  {/* Question Block Content */}
-                  {showQuestionBlock &&
-                    currentStep?.questionContent &&
-                    !isMattressRecommendationStep &&
-                    !isAnswerSummaryStep &&
-                    !isProductRecommendationsStep &&
-                    !isEmailCaptureStep && (
-                      <div className={styles.questionBlockInner}>
-                        <AnimatedQuestionBlock
-                          questionContent={currentStep.questionContent}
-                          questionKey={currentStep.stepId}
-                          onAnswerSelect={handleAnswerSelect}
-                          onTextSubmit={handleTextSubmit}
-                          selectedValue={selectedAnswer?.value}
-                        />
-                      </div>
-                    )}
-
-                  {/* Mattress Recommendation Step */}
-                  {showQuestionBlock &&
-                    isMattressRecommendationStep &&
-                    currentStep?.mattressRecommendationContent && (
-                      <div className={styles.mattressRecommendationInner}>
-                        <MattressRecommendation
-                          content={currentStep.mattressRecommendationContent}
-                          onSelectionComplete={handleMattressSelectionComplete}
-                          selectedSize={selectedMattressSize}
-                          selectedFeel={selectedMattressFeel}
-                        />
-                      </div>
-                    )}
-
-                  {/* Product Recommendations Step - 3 mattress options */}
-                  {showQuestionBlock &&
-                    isProductRecommendationsStep &&
-                    currentStep?.productRecommendationsContent && (
-                      <div className={styles.productRecommendationsInner}>
-                        <ProductRecommendations
-                          content={currentStep.productRecommendationsContent}
-                          onSelectionComplete={handleProductRecommendationComplete}
-                          onContinue={handleProductRecommendationContinue}
-                        />
-                      </div>
-                    )}
-
-                  {/* Email Capture Step */}
-                  {showQuestionBlock &&
-                    isEmailCaptureStep &&
-                    currentStep?.emailCaptureContent && (
-                      <div className={styles.questionBlockInner}>
-                        <EmailCapture
-                          content={currentStep.emailCaptureContent as EmailCaptureContent}
-                          onSubmit={handleEmailSubmit}
-                          onSkip={handleEmailSkip}
-                        />
-                      </div>
-                    )}
-
-                  {/* See Options Prompt Step */}
-                  {showQuestionBlock &&
-                    isSeeOptionsStep &&
-                    currentStep?.seeOptionsContent && (
-                      <div className={styles.questionBlockInner}>
-                        <SeeOptionsPrompt
-                          content={currentStep.seeOptionsContent as SeeOptionsPromptContent}
-                          onContinue={handleSeeOptionsClick}
-                        />
-                      </div>
-                    )}
-
-                  {/* Zip Code Capture Step */}
-                  {showQuestionBlock &&
-                    isZipCodeCaptureStep &&
-                    currentStep?.zipcodeCaptureContent && (
-                      <div className={styles.questionBlockInner}>
-                        <ZipCodeCapture
-                          content={currentStep.zipcodeCaptureContent as ZipCodeCaptureContent}
-                          onSubmit={handleZipCodeSubmit}
-                        />
-                      </div>
-                    )}
-
-                  {/* Store Locations Step */}
-                  {showQuestionBlock &&
-                    isStoreLocationsStep &&
-                    currentStep?.storeLocationsContent && (
-                      <div className={styles.storeLocationsInner}>
-                        <StoreLocations
-                          content={currentStep.storeLocationsContent as StoreLocationsContent}
-                          postalCode={userZipCode || currentStep.storeLocationsContent.defaultPostalCode}
-                        />
-                      </div>
-                    )}
-                </div>
+              {/* Avatar Response Bubble - shows after answer selection */}
+              {isShowingResponse && avatarResponse && (
+                <SpeechBubbleSequence
+                  message={avatarResponse}
+                  wordDelay={0.32}
+                  paragraphPauseMs={1200}
+                  className={styles.speechBubbleContainer}
+                />
               )}
-            </>
+            </div>
+          </div>
+
+          {/* Persistent Backdrop - stays visible during question transitions */}
+          {(showQuestionBlock || showBackdrop) && (
+            <div className={styles.questionBlockWrapper}>
+              <div
+                className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
+              />
+
+              {/* Question Block Content */}
+              {showQuestionBlock &&
+                currentStep?.questionContent &&
+                !isMattressRecommendationStep &&
+                !isVideoStep &&
+                !isProductRecommendationsStep &&
+                !isEmailCaptureStep && (
+                  <div className={styles.questionBlockInner}>
+                    <AnimatedQuestionBlock
+                      questionContent={currentStep.questionContent}
+                      questionKey={currentStep.stepId}
+                      onAnswerSelect={handleAnswerSelect}
+                      onTextSubmit={handleTextSubmit}
+                      selectedValue={selectedAnswer?.value}
+                    />
+                  </div>
+                )}
+
+              {/* Mattress Recommendation Step */}
+              {showQuestionBlock &&
+                isMattressRecommendationStep &&
+                currentStep?.mattressRecommendationContent && (
+                  <div className={styles.mattressRecommendationInner}>
+                    <MattressRecommendation
+                      content={currentStep.mattressRecommendationContent}
+                      onSelectionComplete={handleMattressSelectionComplete}
+                      selectedSize={selectedMattressSize}
+                      selectedFeel={selectedMattressFeel}
+                    />
+                  </div>
+                )}
+
+              {/* Product Recommendations Step - 3 mattress options */}
+              {showQuestionBlock &&
+                isProductRecommendationsStep &&
+                currentStep?.productRecommendationsContent && (
+                  <div className={styles.productRecommendationsInner}>
+                    <ProductRecommendations
+                      content={currentStep.productRecommendationsContent}
+                      onSelectionComplete={handleProductRecommendationComplete}
+                      onContinue={handleProductRecommendationContinue}
+                    />
+                  </div>
+                )}
+
+              {/* Email Capture Step */}
+              {showQuestionBlock &&
+                isEmailCaptureStep &&
+                currentStep?.emailCaptureContent && (
+                  <div className={styles.questionBlockInner}>
+                    <EmailCapture
+                      content={currentStep.emailCaptureContent as EmailCaptureContent}
+                      onSubmit={handleEmailSubmit}
+                      onSkip={handleEmailSkip}
+                    />
+                  </div>
+                )}
+
+              {/* See Options Prompt Step */}
+              {showQuestionBlock &&
+                isSeeOptionsStep &&
+                currentStep?.seeOptionsContent && (
+                  <div className={styles.questionBlockInner}>
+                    <SeeOptionsPrompt
+                      content={currentStep.seeOptionsContent as SeeOptionsPromptContent}
+                      onContinue={handleSeeOptionsClick}
+                    />
+                  </div>
+                )}
+
+              {/* Zip Code Capture Step */}
+              {showQuestionBlock &&
+                isZipCodeCaptureStep &&
+                currentStep?.zipcodeCaptureContent && (
+                  <div className={styles.questionBlockInner}>
+                    <ZipCodeCapture
+                      content={currentStep.zipcodeCaptureContent as ZipCodeCaptureContent}
+                      onSubmit={handleZipCodeSubmit}
+                    />
+                  </div>
+                )}
+
+              {/* Store Locations Step */}
+              {showQuestionBlock &&
+                isStoreLocationsStep &&
+                currentStep?.storeLocationsContent && (
+                  <div className={styles.storeLocationsInner}>
+                    <StoreLocations
+                      content={currentStep.storeLocationsContent as StoreLocationsContent}
+                      postalCode={userZipCode || currentStep.storeLocationsContent.defaultPostalCode}
+                    />
+                  </div>
+                )}
+            </div>
           )}
         </>
       )}

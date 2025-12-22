@@ -56,7 +56,8 @@ const answerOptionFields: TinaField[] = [
     name: "terminateFlow",
     label: "Terminate Flow",
     type: "boolean",
-    description: "End the flow with a termination message if this option is selected",
+    description:
+      "End the flow with a termination message if this option is selected",
   },
   {
     name: "terminationMessage",
@@ -83,8 +84,8 @@ const voiceEmotionOptions = [
   { value: "broadcaster", label: "Broadcaster" },
 ];
 
-// Header content fields
-const headerContentFields: TinaField[] = [
+// Intro content fields
+const introContentFields: TinaField[] = [
   {
     name: "headline",
     label: "Headline",
@@ -235,93 +236,22 @@ const emailCaptureContentFields: TinaField[] = [
     type: "string",
     ui: { component: "textarea" },
   },
-  {
-    name: "avatarEmotionOnSubmit",
-    label: "Avatar Emotion (Submit)",
-    type: "string",
-    options: voiceEmotionOptions,
-    description: "Voice emotion when email is submitted",
-  },
-  {
-    name: "skipOptionText",
-    label: "Skip Option Text",
-    type: "string",
-  },
-  {
-    name: "avatarResponseOnSkip",
-    label: "Avatar Response (Skip)",
-    type: "string",
-    ui: { component: "textarea" },
-  },
-  {
-    name: "avatarEmotionOnSkip",
-    label: "Avatar Emotion (Skip)",
-    type: "string",
-    options: voiceEmotionOptions,
-    description: "Voice emotion when email is skipped",
-  },
 ];
 
-// Answer Summary content fields
-const answerSummaryContentFields: TinaField[] = [
+// Video step content fields
+const videoContentFields: TinaField[] = [
   {
-    name: "videoId",
-    label: "Video ID",
-    type: "string",
-    description: "ID of the video to play (from VIDEO_REGISTRY, e.g., 'answer-summary')",
+    name: "video",
+    label: "Video",
+    type: "image",
+    description: "Video file to play during this step",
   },
   {
-    name: "introText",
-    label: "Intro Text",
+    name: "script",
+    label: "Script",
     type: "string",
     ui: { component: "textarea" },
-    description: "Opening text before the dynamic summary",
-  },
-  {
-    name: "outroText",
-    label: "Outro Text",
-    type: "string",
-    ui: { component: "textarea" },
-    description: "Closing text after the dynamic summary",
-  },
-  {
-    name: "emotion",
-    label: "Emotion",
-    type: "string",
-    options: voiceEmotionOptions,
-  },
-  {
-    name: "empathyMessage",
-    label: "Empathy Message",
-    type: "string",
-    ui: { component: "textarea" },
-    description: "Empathetic follow-up message after summary",
-  },
-  {
-    name: "empathyEmotion",
-    label: "Empathy Emotion",
-    type: "string",
-    options: voiceEmotionOptions,
-  },
-  {
-    name: "emailCTAMessage",
-    label: "Email CTA Message",
-    type: "string",
-    ui: { component: "textarea" },
-    description: "Call-to-action message for email capture",
-  },
-  {
-    name: "emailCTAEmotion",
-    label: "Email CTA Emotion",
-    type: "string",
-    options: voiceEmotionOptions,
-  },
-  {
-    name: "summaryMappings",
-    label: "Summary Mappings (JSON)",
-    type: "string",
-    ui: { component: "textarea" },
-    description: "JSON object mapping step IDs to answer values to summary text",
+    description: "Text displayed in the speech bubble (should match the video)",
   },
 ];
 
@@ -385,11 +315,11 @@ const stepFields: TinaField[] = [
     label: "Step Type",
     type: "string",
     options: [
-      { value: "header", label: "Header/Intro" },
+      { value: "intro", label: "Intro" },
       { value: "question", label: "Question" },
       { value: "avatar-monologue", label: "Avatar Monologue" },
       { value: "transition", label: "Transition" },
-      { value: "answer-summary", label: "Answer Summary" },
+      { value: "video", label: "Video" },
       { value: "email-capture", label: "Email Capture" },
       { value: "see-options", label: "See Options Prompt" },
       { value: "product-recommendations", label: "Product Recommendations" },
@@ -401,10 +331,10 @@ const stepFields: TinaField[] = [
     required: true,
   },
   {
-    name: "headerContent",
-    label: "Header Content",
+    name: "introContent",
+    label: "Intro Content",
     type: "object",
-    fields: headerContentFields,
+    fields: introContentFields,
   },
   {
     name: "questionContent",
@@ -431,10 +361,10 @@ const stepFields: TinaField[] = [
     fields: ctaContentFields,
   },
   {
-    name: "answerSummaryContent",
-    label: "Answer Summary Content",
+    name: "videoContent",
+    label: "Video Content",
     type: "object",
-    fields: answerSummaryContentFields,
+    fields: videoContentFields,
   },
   {
     name: "styling",
@@ -492,7 +422,7 @@ export const flowsCollection: Collection = {
       type: "string",
       required: true,
     },
-        {
+    {
       name: "description",
       label: "Description",
       type: "string",
@@ -511,7 +441,7 @@ export const flowsCollection: Collection = {
     },
     {
       name: "avatarIntroScript",
-      label: "Avatar Intro Script",
+      label: "Video Script",
       type: "string",
       ui: { component: "textarea" },
       description: "What the avatar says during the intro",
@@ -522,35 +452,9 @@ export const flowsCollection: Collection = {
       type: "object",
       fields: [
         {
-          name: "avatarName",
-          label: "Avatar Name",
-          type: "string",
-        },
-        {
           name: "brandName",
           label: "Brand Name",
           type: "string",
-        },
-        {
-          name: "supportEmail",
-          label: "Support Email",
-          type: "string",
-        },
-        {
-          name: "customVar1",
-          label: "Custom Variable 1",
-          type: "string",
-        },
-        {
-          name: "customVar2",
-          label: "Custom Variable 2",
-          type: "string",
-        },
-        {
-          name: "conditionKeyword",
-          label: "Condition Keyword",
-          type: "string",
-          description: "The main condition/pain point (e.g., 'back pain', 'headaches') for dynamic text",
         },
       ],
     },
@@ -561,7 +465,9 @@ export const flowsCollection: Collection = {
       list: true,
       ui: {
         itemProps: (item) => ({
-          label: `Step ${item?.order || "?"}: ${item?.internalName || item?.stepType || "Untitled"}`,
+          label: `Step ${item?.order || "?"}: ${
+            item?.internalName || item?.stepType || "Untitled"
+          }`,
         }),
         defaultItem: {
           order: 1,

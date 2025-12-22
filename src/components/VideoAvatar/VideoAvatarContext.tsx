@@ -11,11 +11,7 @@ import React, {
 
 // Video registry - maps video IDs to file paths
 export const VIDEO_REGISTRY: Record<string, string> = {
-  'avatar-intro': '/videos/ashley_with_voice_we_control.mp4',
-  'answer-summary': '/videos/ashley_with_voice_we_control.mp4', // TODO: Replace with actual answer summary video
-  // Add more videos as they're created:
-  // 'empathy-general': '/videos/avatar/empathy-general.mp4',
-  // 'email-cta': '/videos/avatar/email-cta.mp4',
+  'avatar-intro': '/videos/ashley/mp4/ashley-1.mp4',
 };
 
 export type VideoId = keyof typeof VIDEO_REGISTRY;
@@ -69,10 +65,14 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     videoRef.current = ref;
   }, []);
 
-  const play = useCallback(async (videoId: string): Promise<void> => {
-    const videoSrc = VIDEO_REGISTRY[videoId];
+  const play = useCallback(async (videoIdOrPath: string): Promise<void> => {
+    // Accept either a registry ID or a direct path (starting with /)
+    const videoSrc = videoIdOrPath.startsWith('/')
+      ? videoIdOrPath
+      : VIDEO_REGISTRY[videoIdOrPath];
+
     if (!videoSrc) {
-      console.error(`[VideoAvatar] Unknown video ID: ${videoId}`);
+      console.error(`[VideoAvatar] Unknown video ID: ${videoIdOrPath}`);
       return;
     }
 
@@ -107,7 +107,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         playPromiseRef.current = { resolve, reject };
 
         setVideoState(VideoState.LOADING);
-        setCurrentVideoId(videoId);
+        setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false); // Reset for new video
 
         // Update video source and load

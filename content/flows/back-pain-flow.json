@@ -6,18 +6,15 @@
   "introVideo": "/uploads/Mattress_Shopping.mp4",
   "avatarIntroScript": "A lot of people struggle with back pain, restless nights, sore mornings, and that \"why do I feel 20 years older?\" stiffness. And while it feels mysterious, it usually isn't. There's always a reason. And there's almost always a solution!",
   "globalVariables": {
-    "avatarName": "Ashley",
-    "brandName": "Better Sleep Tonight",
-    "supportEmail": "support@bettersleeptonight.com",
-    "conditionKeyword": "back pain"
+    "brandName": "Better Sleep Tonight"
   },
   "steps": [
     {
       "stepId": "intro-step",
       "internalName": "Welcome & Introduction",
       "order": 1,
-      "stepType": "header",
-      "headerContent": {
+      "stepType": "intro",
+      "introContent": {
         "headline": "Wake Up Without Back Pain",
         "subheadline": "Hey, I'm Ashley — your virtual sleep guide. My job is simple: to help you stay asleep for longer and wake up without back pain, without the sleep fog, and without wondering why you're tired before the day even starts! If you're here, I'm guessing that getting a good night's sleep isn't proving easy— and trust me, you're not alone..",
         "secondarySubheadline": "The good news is that I can help. Let's fix this!",
@@ -317,42 +314,13 @@
       }
     },
     {
-      "stepId": "answer-summary-step",
-      "internalName": "Answer Summary",
+      "stepId": "video-step-1",
+      "internalName": "Summary Video",
       "order": 7,
-      "stepType": "answer-summary",
-      "answerSummaryContent": {
-        "videoId": "answer-summary",
-        "introText": "Based on what you've shared with me,",
-        "outroText": "Let me show you some mattress options that could really help.",
-        "emotion": "friendly",
-        "empathyMessage": "I completely understand how frustrating sleep issues can be. You deserve to wake up feeling refreshed.",
-        "empathyEmotion": "soothing",
-        "emailCTAMessage": "I'd love to send you a personalized sleep report with my recommendations. Can I get your email?",
-        "emailCTAEmotion": "friendly",
-        "summaryMappings": {
-          "q1-trouble-falling-asleep": {
-            "every-night": "you struggle to fall asleep every night",
-            "frequently": "you frequently have trouble falling asleep",
-            "on-occasion": "you occasionally have trouble falling asleep"
-          },
-          "q2-sleep-position": {
-            "side": "you're a side sleeper",
-            "back": "you sleep on your back",
-            "stomach": "you're a stomach sleeper",
-            "varies": "you change positions throughout the night"
-          },
-          "q4-aches-pains-frequency": {
-            "every-night": "you wake up with aches and pains every day",
-            "frequently": "you frequently wake up with aches and pains",
-            "on-occasion": "you occasionally wake up with aches and pains"
-          },
-          "q5-aches-pains-type": {
-            "chronic-condition": "you're dealing with a chronic condition",
-            "stiffness": "you experience stiffness and soreness",
-            "hip-shoulder": "you have hip or shoulder discomfort"
-          }
-        }
+      "stepType": "video",
+      "videoContent": {
+        "video": "/videos/ashley/mp4/ashley-2.mp4",
+        "script": "Based on what you've shared with me, I can see you're dealing with some real sleep challenges. Let me show you some mattress options that could really help. I completely understand how frustrating sleep issues can be. You deserve to wake up feeling refreshed."
       }
     },
     {
@@ -369,9 +337,19 @@
       }
     },
     {
+      "stepId": "video-step-2",
+      "internalName": "Post-Email Video",
+      "order": 9,
+      "stepType": "video",
+      "videoContent": {
+        "video": "/videos/ashley/mp4/ashley-3.mp4",
+        "script": "[YOUR TEXT HERE]"
+      }
+    },
+    {
       "stepId": "see-options-step",
       "internalName": "See Options Prompt",
-      "order": 9,
+      "order": 10,
       "stepType": "see-options",
       "seeOptionsContent": {
         "promptText": "I've found three mattress options that are perfect for you based on your responses!",
@@ -383,13 +361,23 @@
     {
       "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
-      "order": 10,
+      "order": 11,
       "stepType": "product-recommendations"
+    },
+    {
+      "stepId": "video-step-3",
+      "internalName": "Post-Selection Video",
+      "order": 12,
+      "stepType": "video",
+      "videoContent": {
+        "video": "/videos/ashley/mp4/ashley-4.mp4",
+        "script": "[YOUR TEXT HERE]"
+      }
     },
     {
       "stepId": "zipcode-capture-step",
       "internalName": "Zip Code Capture",
-      "order": 11,
+      "order": 13,
       "stepType": "zipcode-capture",
       "zipcodeCaptureContent": {
         "headline": "Enter zip code",
@@ -400,7 +388,7 @@
     {
       "stepId": "store-locations-step",
       "internalName": "Store Locations",
-      "order": 12,
+      "order": 14,
       "stepType": "store-locations",
       "storeLocationsContent": {
         "headerText": "Select your preferred location near",

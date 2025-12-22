@@ -96,14 +96,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
 
   return (
     <>
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          className={styles.overlay}
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
       {/* Panel */}
       <div className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}>
         <div className={styles.header}>

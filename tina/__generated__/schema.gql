@@ -170,15 +170,10 @@ type InputTypesConnection implements Connection {
 }
 
 type FlowsGlobalVariables {
-  avatarName: String
   brandName: String
-  supportEmail: String
-  customVar1: String
-  customVar2: String
-  conditionKeyword: String
 }
 
-type FlowsStepsHeaderContent {
+type FlowsStepsIntroContent {
   headline: String
   subheadline: String
   secondarySubheadline: String
@@ -223,10 +218,6 @@ type FlowsStepsEmailCaptureContent {
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
-  avatarEmotionOnSubmit: String
-  skipOptionText: String
-  avatarResponseOnSkip: String
-  avatarEmotionOnSkip: String
 }
 
 type FlowsStepsCtaContent {
@@ -238,16 +229,9 @@ type FlowsStepsCtaContent {
   secondaryButtonUrl: String
 }
 
-type FlowsStepsAnswerSummaryContent {
-  videoId: String
-  introText: String
-  outroText: String
-  emotion: String
-  empathyMessage: String
-  empathyEmotion: String
-  emailCTAMessage: String
-  emailCTAEmotion: String
-  summaryMappings: String
+type FlowsStepsVideoContent {
+  video: String
+  script: String
 }
 
 type FlowsStepsStyling {
@@ -265,12 +249,12 @@ type FlowsSteps {
   internalName: String
   order: Float!
   stepType: String!
-  headerContent: FlowsStepsHeaderContent
+  introContent: FlowsStepsIntroContent
   questionContent: FlowsStepsQuestionContent
   avatarContent: FlowsStepsAvatarContent
   emailCaptureContent: FlowsStepsEmailCaptureContent
   ctaContent: FlowsStepsCtaContent
-  answerSummaryContent: FlowsStepsAnswerSummaryContent
+  videoContent: FlowsStepsVideoContent
   styling: FlowsStepsStyling
   analytics: FlowsStepsAnalytics
 }
@@ -305,12 +289,7 @@ input ImageFilter {
 }
 
 input FlowsGlobalVariablesFilter {
-  avatarName: StringFilter
   brandName: StringFilter
-  supportEmail: StringFilter
-  customVar1: StringFilter
-  customVar2: StringFilter
-  conditionKeyword: StringFilter
 }
 
 input NumberFilter {
@@ -323,7 +302,7 @@ input NumberFilter {
   in: [Float]
 }
 
-input FlowsStepsHeaderContentFilter {
+input FlowsStepsIntroContentFilter {
   headline: StringFilter
   subheadline: StringFilter
   secondarySubheadline: StringFilter
@@ -368,10 +347,6 @@ input FlowsStepsEmailCaptureContentFilter {
   placeholderText: StringFilter
   submitButtonText: StringFilter
   avatarResponseOnSubmit: StringFilter
-  avatarEmotionOnSubmit: StringFilter
-  skipOptionText: StringFilter
-  avatarResponseOnSkip: StringFilter
-  avatarEmotionOnSkip: StringFilter
 }
 
 input FlowsStepsCtaContentFilter {
@@ -383,16 +358,9 @@ input FlowsStepsCtaContentFilter {
   secondaryButtonUrl: StringFilter
 }
 
-input FlowsStepsAnswerSummaryContentFilter {
-  videoId: StringFilter
-  introText: StringFilter
-  outroText: StringFilter
-  emotion: StringFilter
-  empathyMessage: StringFilter
-  empathyEmotion: StringFilter
-  emailCTAMessage: StringFilter
-  emailCTAEmotion: StringFilter
-  summaryMappings: StringFilter
+input FlowsStepsVideoContentFilter {
+  video: ImageFilter
+  script: StringFilter
 }
 
 input FlowsStepsStylingFilter {
@@ -410,12 +378,12 @@ input FlowsStepsFilter {
   internalName: StringFilter
   order: NumberFilter
   stepType: StringFilter
-  headerContent: FlowsStepsHeaderContentFilter
+  introContent: FlowsStepsIntroContentFilter
   questionContent: FlowsStepsQuestionContentFilter
   avatarContent: FlowsStepsAvatarContentFilter
   emailCaptureContent: FlowsStepsEmailCaptureContentFilter
   ctaContent: FlowsStepsCtaContentFilter
-  answerSummaryContent: FlowsStepsAnswerSummaryContentFilter
+  videoContent: FlowsStepsVideoContentFilter
   styling: FlowsStepsStylingFilter
   analytics: FlowsStepsAnalyticsFilter
 }
@@ -504,15 +472,10 @@ input InputTypesMutation {
 }
 
 input FlowsGlobalVariablesMutation {
-  avatarName: String
   brandName: String
-  supportEmail: String
-  customVar1: String
-  customVar2: String
-  conditionKeyword: String
 }
 
-input FlowsStepsHeaderContentMutation {
+input FlowsStepsIntroContentMutation {
   headline: String
   subheadline: String
   secondarySubheadline: String
@@ -557,10 +520,6 @@ input FlowsStepsEmailCaptureContentMutation {
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
-  avatarEmotionOnSubmit: String
-  skipOptionText: String
-  avatarResponseOnSkip: String
-  avatarEmotionOnSkip: String
 }
 
 input FlowsStepsCtaContentMutation {
@@ -572,16 +531,9 @@ input FlowsStepsCtaContentMutation {
   secondaryButtonUrl: String
 }
 
-input FlowsStepsAnswerSummaryContentMutation {
-  videoId: String
-  introText: String
-  outroText: String
-  emotion: String
-  empathyMessage: String
-  empathyEmotion: String
-  emailCTAMessage: String
-  emailCTAEmotion: String
-  summaryMappings: String
+input FlowsStepsVideoContentMutation {
+  video: String
+  script: String
 }
 
 input FlowsStepsStylingMutation {
@@ -599,12 +551,12 @@ input FlowsStepsMutation {
   internalName: String
   order: Float
   stepType: String
-  headerContent: FlowsStepsHeaderContentMutation
+  introContent: FlowsStepsIntroContentMutation
   questionContent: FlowsStepsQuestionContentMutation
   avatarContent: FlowsStepsAvatarContentMutation
   emailCaptureContent: FlowsStepsEmailCaptureContentMutation
   ctaContent: FlowsStepsCtaContentMutation
-  answerSummaryContent: FlowsStepsAnswerSummaryContentMutation
+  videoContent: FlowsStepsVideoContentMutation
   styling: FlowsStepsStylingMutation
   analytics: FlowsStepsAnalyticsMutation
 }

@@ -28,12 +28,7 @@ fragment FlowsParts on Flows {
   avatarIntroScript
   globalVariables {
     __typename
-    avatarName
     brandName
-    supportEmail
-    customVar1
-    customVar2
-    conditionKeyword
   }
   steps {
     __typename
@@ -41,7 +36,7 @@ fragment FlowsParts on Flows {
     internalName
     order
     stepType
-    headerContent {
+    introContent {
       __typename
       headline
       subheadline
@@ -86,10 +81,6 @@ fragment FlowsParts on Flows {
       placeholderText
       submitButtonText
       avatarResponseOnSubmit
-      avatarEmotionOnSubmit
-      skipOptionText
-      avatarResponseOnSkip
-      avatarEmotionOnSkip
     }
     ctaContent {
       __typename
@@ -100,17 +91,10 @@ fragment FlowsParts on Flows {
       secondaryButtonText
       secondaryButtonUrl
     }
-    answerSummaryContent {
+    videoContent {
       __typename
-      videoId
-      introText
-      outroText
-      emotion
-      empathyMessage
-      empathyEmotion
-      emailCTAMessage
-      emailCTAEmotion
-      summaryMappings
+      video
+      script
     }
     styling {
       __typename
