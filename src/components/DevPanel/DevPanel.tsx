@@ -203,21 +203,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
             )}
           </div>
 
-          {/* JSON Schema with collected values */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>JSON Output</h4>
-            <pre className={styles.jsonOutput}>
-              {JSON.stringify(
-                stepIds.reduce((acc, stepId, index) => {
-                  const answer = answers.find(a => a.stepId === stepId);
-                  acc[stepId] = answer?.value || null;
-                  return acc;
-                }, {} as Record<string, string | null>),
-                null,
-                2
-              )}
-            </pre>
-          </div>
         </div>
 
         <div className={styles.footer}>

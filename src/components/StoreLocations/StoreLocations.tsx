@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Image from 'next/image';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import styles from './StoreLocations.module.css';
 
 // Import locations data
@@ -90,6 +89,17 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   onContactUs,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (listRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+      setIsScrolledDown(scrollTop > 10);
+      setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 10);
+    }
+  }, []);
 
   // Calculate distances and sort locations
   const sortedLocations = useMemo(() => {
@@ -122,8 +132,8 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       {/* Main Content */}
       <div className={styles.contentWrapper}>
         {/* Left Column - Locations List */}
-        <div className={styles.locationsListWrapper}>
-          <div className={styles.locationsList}>
+        <div className={`${styles.locationsListWrapper} ${isScrolledDown ? styles.scrolledDown : ''} ${isAtBottom ? styles.atBottom : ''}`}>
+          <div className={styles.locationsList} ref={listRef} onScroll={handleScroll}>
             {sortedLocations.map((location) => (
               <button
                 key={location.id}
@@ -182,23 +192,19 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
         <div className={styles.sidebar}>
           {/* Map Placeholder */}
           <div className={styles.mapContainer}>
-            <Image
-              src="/images/map-placeholder.png"
-              alt="Store locations map"
-              width={420}
-              height={223}
-              className={styles.mapImage}
-              priority
-            />
+            <div className={styles.mapPlaceholder}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#770000"/>
+              </svg>
+              <span>Map View</span>
+            </div>
           </div>
 
           {/* Store Logo */}
           <div className={styles.logoContainer}>
-            <Image
-              src="/images/ashley-logo.png"
-              alt="Ashley HomeStore"
-              width={152}
-              height={72}
+            <img
+              src="/images/bst-logo.svg"
+              alt="Better Sleep Tonight"
               className={styles.storeLogo}
             />
           </div>

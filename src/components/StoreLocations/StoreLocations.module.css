@@ -34,6 +34,41 @@
 .locationsListWrapper {
   flex: 1;
   min-width: 0;
+  position: relative;
+}
+
+.locationsListWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.locationsListWrapper.scrolledDown::before {
+  opacity: 1;
+}
+
+.locationsListWrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to top, #ffffff 0%, #ffffff 40%, transparent 100%);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.locationsListWrapper.atBottom::after {
+  opacity: 0;
 }
 
 .locationsList {
@@ -180,13 +215,36 @@
   object-fit: cover;
 }
 
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  color: #770000;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.storeLogoText {
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 700;
+  font-size: 24px;
+  color: #770000;
+  letter-spacing: -0.5px;
+}
+
 .logoContainer {
   display: flex;
   align-items: flex-start;
 }
 
 .storeLogo {
-  width: 152px;
+  width: 280px;
   height: auto;
 }
 

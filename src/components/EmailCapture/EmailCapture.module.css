@@ -1,83 +1,70 @@
 .emailCaptureContainer {
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-800, 32px);
+  gap: 24px;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--sds-size-space-600, 24px);
   width: 100%;
-  border-radius: 4px;
-  box-sizing: border-box;
+  max-width: 820px;
 }
 
 .promptText {
-  font-family: var(
-    --sds-typography-title-page-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: var(--sds-typography-title-page-font-weight, 700);
-  font-size: var(--sds-typography-title-page-size-base, 32px);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
   line-height: 1.2;
-  color: var(--sds-color-text-default-default, #363534);
   letter-spacing: -0.64px;
+  color: #363534;
   margin: 0;
   width: 100%;
 }
 
 .formWrapper {
   width: 100%;
+  max-width: 772px;
 }
 
 .inputRow {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
   width: 100%;
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  padding: var(--sds-size-space-600, 24px);
-  border-radius: var(--sds-size-radius-400, 16px);
-}
-
-.inputRow > * + * {
-  margin-left: 0;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
 }
 
 .inputWrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-200, 8px);
+  gap: 8px;
   min-width: 0;
-  width: clamp(200px, 100%, 553px);
-  max-width: 553px;
 }
 
 .emailInput {
   width: 100%;
-  min-width: 240px;
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
-  border: var(--sds-size-stroke-border, 1px) solid
-    var(--sds-color-border-default-default, #d9d9d9);
-  border-radius: var(--sds-size-radius-200, 8px);
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: var(--sds-typography-body-font-weight-regular, 400);
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  color: var(--sds-color-text-default-default, #363534);
-  line-height: 1;
+  height: 46px;
+  padding: 12px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #ffffff;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #363534;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
 .emailInput::placeholder {
-  color: var(--sds-color-text-default-secondary, #757575);
+  color: #999;
 }
 
 .emailInput:focus {
-  outline: none;
-  border-color: var(--sds-color-border-brand-default, #770000);
-  box-shadow: 0 0 0 3px rgba(119, 0, 0, 0.1);
+  border-color: #770000;
 }
 
 .emailInput.invalid {
@@ -89,33 +76,34 @@
 }
 
 .errorMessage {
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   color: #dc3545;
 }
 
 .submitButton {
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
-  background-color: var(--sds-color-background-brand-default, #770000);
-  color: #ffffff;
+  height: 46px;
+  padding: 12px 24px;
+  background: #770000;
   border: none;
-  border-radius: var(--sds-size-radius-200, 8px);
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  border-radius: 8px;
+  font-family: 'Open Sans', sans-serif;
   font-weight: 600;
-  font-size: var(--sds-typography-body-size-medium, 16px);
+  font-size: 16px;
   line-height: 1.4;
+  color: #ffffff;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease;
   flex-shrink: 0;
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #5a0000;
+  background: #5a0000;
 }
 
 .submitButton:focus {
-  outline: 2px solid var(--sds-color-background-brand-default, #770000);
+  outline: 2px solid #770000;
   outline-offset: 2px;
 }
 
@@ -124,24 +112,24 @@
 }
 
 .submitButton:disabled {
-  opacity: 0.5;
+  background: #ccc;
   cursor: not-allowed;
 }
 
 .skipButton {
   background: none;
   border: none;
-  padding: var(--sds-size-space-200, 8px) 0;
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  color: var(--sds-color-text-default-secondary, #757575);
+  padding: 8px 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  color: #757575;
   cursor: pointer;
   text-decoration: underline;
   transition: color 0.2s ease;
 }
 
 .skipButton:hover:not(:disabled) {
-  color: var(--sds-color-text-default-default, #363534);
+  color: #363534;
 }
 
 .skipButton:disabled {
@@ -151,19 +139,27 @@
 
 /* Mobile responsive */
 @media (max-width: 600px) {
-  .inputRow {
-    flex-direction: column;
-  }
-
-  .emailInput {
-    min-width: 100%;
-  }
-
-  .submitButton {
-    width: 100%;
+  .emailCaptureContainer {
+    gap: 20px;
   }
 
   .promptText {
     font-size: 24px;
+  }
+
+  .inputRow {
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+  }
+
+  .emailInput {
+    width: 100%;
+    height: 48px;
+  }
+
+  .submitButton {
+    width: 100%;
+    height: 48px;
   }
 }
