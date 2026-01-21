@@ -6,6 +6,23 @@
   width: 100%;
 }
 
+/* Headline above recommendations */
+.headline {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.64px;
+  color: #363534;
+  margin: 0 0 8px 0;
+}
+
+@media (max-width: 600px) {
+  .headline {
+    font-size: 24px;
+  }
+}
+
 /* Individual mattress card */
 .card {
   background-color: var(--sds-color-background-default-default, #ffffff);

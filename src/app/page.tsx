@@ -137,6 +137,7 @@ function HomeContent() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
+  const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
 
   // Video avatar hook
   const { videoState, isPlaying, isNearingEnd, play } = useVideoAvatar();
@@ -889,7 +890,7 @@ function HomeContent() {
   ]);
 
   return (
-    <main className={styles.main}>
+    <main className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''}`}>
       {/* Video Background - only show on intro */}
       {currentView === "intro" && (
         <>
@@ -1163,6 +1164,7 @@ function HomeContent() {
         stepIds={questionSteps.map((step) => step.stepId)}
         currentEmotion={currentEmotion || undefined}
         sessionEmotion="friendly"
+        onOpenChange={setIsDevPanelOpen}
       />
 
       {/* Recovery Modal - shown when user has saved progress */}

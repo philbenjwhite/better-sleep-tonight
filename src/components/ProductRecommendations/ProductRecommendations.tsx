@@ -331,6 +331,9 @@ export function ProductRecommendations({
 
   return (
     <div className={styles.container}>
+      {content.headline && (
+        <h2 className={styles.headline}>{content.headline}</h2>
+      )}
       {content.mattressOptions.map((mattress) => (
         <MattressCard
           key={mattress.id}

@@ -21,6 +21,8 @@ export interface DevPanelProps {
   stepIds?: string[];
   currentEmotion?: string;
   sessionEmotion?: string;
+  /** Callback when panel open state changes */
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
 export const DevPanel: React.FC<DevPanelProps> = ({
@@ -31,8 +33,15 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   stepIds = [],
   currentEmotion,
   sessionEmotion = 'friendly',
+  onOpenChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Notify parent when open state changes
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
+
   const searchParams = useSearchParams();
   const router = useRouter();
 

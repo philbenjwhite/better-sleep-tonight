@@ -334,7 +334,7 @@
       "internalName": "Product Recommendations",
       "_template": "productRecommendationsStep",
       "productRecommendationsContent": {
-        "headline": "Your Personalized Mattress Options",
+        "headline": "Which of these mattresses seem like the best fit?",
         "mattressOptions": [
           {
             "id": "serenity-hybrid",
