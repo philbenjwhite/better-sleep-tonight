@@ -10,12 +10,12 @@
   padding: 48px;
   box-sizing: border-box;
   background-color: #F9F4ED;
-  transition: padding-right 0.3s ease-out;
+  transition: width 0.3s ease-out;
 }
 
-/* Shrink main content when dev panel is open */
+/* Shrink entire app when dev panel is open */
 .main.devPanelOpen {
-  padding-right: 420px; /* 400px panel + 20px breathing room */
+  width: calc(100% - 400px); /* Shrink by panel width */
 }
 
 /* Video background */
