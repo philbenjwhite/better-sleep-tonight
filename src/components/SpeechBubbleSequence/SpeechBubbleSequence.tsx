@@ -18,6 +18,8 @@ export interface SpeechBubbleSequenceProps {
   onComplete?: () => void;
   /** Optional class name for the container */
   className?: string;
+  /** Keep the bubble visible after animation completes (parent controls hiding) */
+  stayVisible?: boolean;
 }
 
 export function SpeechBubbleSequence({
@@ -28,6 +30,7 @@ export function SpeechBubbleSequence({
   paragraphPauseMs = 1500,
   onComplete,
   className,
+  stayVisible = false,
 }: SpeechBubbleSequenceProps) {
   // Split message into paragraphs by double newline
   const paragraphs = message.split(/\n\n+/).filter(p => p.trim());
@@ -111,7 +114,13 @@ export function SpeechBubbleSequence({
     setIsComplete(false);
   }, [message]);
 
-  if (isComplete || paragraphs.length === 0) {
+  // Hide component when complete (unless stayVisible is true)
+  // Always hide if there are no paragraphs to show
+  if (paragraphs.length === 0) {
+    return null;
+  }
+
+  if (isComplete && !stayVisible) {
     return null;
   }
 
