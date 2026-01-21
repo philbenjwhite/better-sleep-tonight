@@ -24,28 +24,31 @@ fragment FlowsParts on Flows {
   displayName
   description
   isActive
-  introVideo
-  avatarIntroScript
+  introScreen {
+    __typename
+    avatarImage
+    backgroundVideo
+    headline
+    subheadline
+    secondarySubheadline
+    audioNotice
+    primaryButtonText
+  }
   globalVariables {
     __typename
     brandName
   }
   steps {
     __typename
-    stepId
-    internalName
-    order
-    stepType
-    introContent {
-      __typename
-      headline
-      subheadline
-      secondarySubheadline
-      audioNotice
-      primaryButtonText
+    ... on FlowsStepsVideoStep {
+      stepId
+      internalName
+      video
+      script
     }
-    questionContent {
-      __typename
+    ... on FlowsStepsQuestionStep {
+      stepId
+      internalName
       questionText
       inputType
       helperText
@@ -64,26 +67,51 @@ fragment FlowsParts on Flows {
         tags
       }
     }
-    avatarContent {
-      __typename
-      scriptText
-      secondaryScriptText
-      tertiaryScriptText
-      emotion
-      gestureHint
-      pauseAfterMs
-      autoAdvance
-      autoAdvanceDelayMs
-    }
-    emailCaptureContent {
-      __typename
+    ... on FlowsStepsEmailCaptureStep {
+      stepId
+      internalName
       promptText
       placeholderText
       submitButtonText
       avatarResponseOnSubmit
     }
-    ctaContent {
-      __typename
+    ... on FlowsStepsSeeOptionsStep {
+      stepId
+      internalName
+      promptText
+      buttonText
+      avatarMessage
+      avatarEmotion
+    }
+    ... on FlowsStepsProductRecommendationsStep {
+      stepId
+      internalName
+      headline
+      avatarResponse
+      avatarEmotion
+    }
+    ... on FlowsStepsZipcodeCaptureStep {
+      stepId
+      internalName
+      headline
+      placeholderText
+      buttonText
+    }
+    ... on FlowsStepsStoreLocationsStep {
+      stepId
+      internalName
+      headerText
+      defaultPostalCode
+      ctaBookTitle
+      ctaBookDescription
+      ctaBookButtonText
+      ctaContactTitle
+      ctaContactDescription
+      ctaContactButtonText
+    }
+    ... on FlowsStepsCtaStep {
+      stepId
+      internalName
       headline
       bodyText
       primaryButtonText
@@ -91,20 +119,11 @@ fragment FlowsParts on Flows {
       secondaryButtonText
       secondaryButtonUrl
     }
-    videoContent {
-      __typename
-      video
-      script
-    }
-    styling {
-      __typename
-      backgroundColor
-      customCssClass
-    }
-    analytics {
-      __typename
-      trackingEventName
-      customProperties
+    ... on FlowsStepsResultsStep {
+      stepId
+      internalName
+      headline
+      bodyText
     }
   }
   metadata {

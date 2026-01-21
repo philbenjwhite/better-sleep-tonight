@@ -169,11 +169,9 @@ type InputTypesConnection implements Connection {
   edges: [InputTypesConnectionEdges]
 }
 
-type FlowsGlobalVariables {
-  brandName: String
-}
-
-type FlowsStepsIntroContent {
+type FlowsIntroScreen {
+  avatarImage: String
+  backgroundVideo: String
   headline: String
   subheadline: String
   secondarySubheadline: String
@@ -181,7 +179,18 @@ type FlowsStepsIntroContent {
   primaryButtonText: String
 }
 
-type FlowsStepsQuestionContentAnswerOptions {
+type FlowsGlobalVariables {
+  brandName: String
+}
+
+type FlowsStepsVideoStep {
+  stepId: String!
+  internalName: String
+  video: String
+  script: String
+}
+
+type FlowsStepsQuestionStepAnswerOptions {
   optionId: String!
   label: String!
   value: String!
@@ -194,33 +203,66 @@ type FlowsStepsQuestionContentAnswerOptions {
   tags: [String]
 }
 
-type FlowsStepsQuestionContent {
+type FlowsStepsQuestionStep {
+  stepId: String!
+  internalName: String
   questionText: String
   inputType: String
   helperText: String
   isRequired: Boolean
-  answerOptions: [FlowsStepsQuestionContentAnswerOptions]
+  answerOptions: [FlowsStepsQuestionStepAnswerOptions]
 }
 
-type FlowsStepsAvatarContent {
-  scriptText: String
-  secondaryScriptText: String
-  tertiaryScriptText: String
-  emotion: String
-  gestureHint: String
-  pauseAfterMs: Float
-  autoAdvance: Boolean
-  autoAdvanceDelayMs: Float
-}
-
-type FlowsStepsEmailCaptureContent {
+type FlowsStepsEmailCaptureStep {
+  stepId: String!
+  internalName: String
   promptText: String
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
 }
 
-type FlowsStepsCtaContent {
+type FlowsStepsSeeOptionsStep {
+  stepId: String!
+  internalName: String
+  promptText: String
+  buttonText: String
+  avatarMessage: String
+  avatarEmotion: String
+}
+
+type FlowsStepsProductRecommendationsStep {
+  stepId: String!
+  internalName: String
+  headline: String
+  avatarResponse: String
+  avatarEmotion: String
+}
+
+type FlowsStepsZipcodeCaptureStep {
+  stepId: String!
+  internalName: String
+  headline: String
+  placeholderText: String
+  buttonText: String
+}
+
+type FlowsStepsStoreLocationsStep {
+  stepId: String!
+  internalName: String
+  headerText: String
+  defaultPostalCode: String
+  ctaBookTitle: String
+  ctaBookDescription: String
+  ctaBookButtonText: String
+  ctaContactTitle: String
+  ctaContactDescription: String
+  ctaContactButtonText: String
+}
+
+type FlowsStepsCtaStep {
+  stepId: String!
+  internalName: String
   headline: String
   bodyText: String
   primaryButtonText: String
@@ -229,35 +271,14 @@ type FlowsStepsCtaContent {
   secondaryButtonUrl: String
 }
 
-type FlowsStepsVideoContent {
-  video: String
-  script: String
-}
-
-type FlowsStepsStyling {
-  backgroundColor: String
-  customCssClass: String
-}
-
-type FlowsStepsAnalytics {
-  trackingEventName: String
-  customProperties: String
-}
-
-type FlowsSteps {
+type FlowsStepsResultsStep {
   stepId: String!
   internalName: String
-  order: Float!
-  stepType: String!
-  introContent: FlowsStepsIntroContent
-  questionContent: FlowsStepsQuestionContent
-  avatarContent: FlowsStepsAvatarContent
-  emailCaptureContent: FlowsStepsEmailCaptureContent
-  ctaContent: FlowsStepsCtaContent
-  videoContent: FlowsStepsVideoContent
-  styling: FlowsStepsStyling
-  analytics: FlowsStepsAnalytics
+  headline: String
+  bodyText: String
 }
+
+union FlowsSteps = FlowsStepsVideoStep | FlowsStepsQuestionStep | FlowsStepsEmailCaptureStep | FlowsStepsSeeOptionsStep | FlowsStepsProductRecommendationsStep | FlowsStepsZipcodeCaptureStep | FlowsStepsStoreLocationsStep | FlowsStepsCtaStep | FlowsStepsResultsStep
 
 type FlowsMetadata {
   createdAt: String
@@ -271,8 +292,7 @@ type Flows implements Node & Document {
   displayName: String!
   description: String
   isActive: Boolean
-  introVideo: String
-  avatarIntroScript: String
+  introScreen: FlowsIntroScreen
   globalVariables: FlowsGlobalVariables
   steps: [FlowsSteps]
   metadata: FlowsMetadata
@@ -288,8 +308,25 @@ input ImageFilter {
   in: [String]
 }
 
+input FlowsIntroScreenFilter {
+  avatarImage: ImageFilter
+  backgroundVideo: ImageFilter
+  headline: StringFilter
+  subheadline: StringFilter
+  secondarySubheadline: StringFilter
+  audioNotice: StringFilter
+  primaryButtonText: StringFilter
+}
+
 input FlowsGlobalVariablesFilter {
   brandName: StringFilter
+}
+
+input FlowsStepsVideoStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  video: ImageFilter
+  script: StringFilter
 }
 
 input NumberFilter {
@@ -302,15 +339,7 @@ input NumberFilter {
   in: [Float]
 }
 
-input FlowsStepsIntroContentFilter {
-  headline: StringFilter
-  subheadline: StringFilter
-  secondarySubheadline: StringFilter
-  audioNotice: StringFilter
-  primaryButtonText: StringFilter
-}
-
-input FlowsStepsQuestionContentAnswerOptionsFilter {
+input FlowsStepsQuestionStepAnswerOptionsFilter {
   optionId: StringFilter
   label: StringFilter
   value: StringFilter
@@ -323,33 +352,66 @@ input FlowsStepsQuestionContentAnswerOptionsFilter {
   tags: StringFilter
 }
 
-input FlowsStepsQuestionContentFilter {
+input FlowsStepsQuestionStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
   questionText: StringFilter
   inputType: StringFilter
   helperText: StringFilter
   isRequired: BooleanFilter
-  answerOptions: FlowsStepsQuestionContentAnswerOptionsFilter
+  answerOptions: FlowsStepsQuestionStepAnswerOptionsFilter
 }
 
-input FlowsStepsAvatarContentFilter {
-  scriptText: StringFilter
-  secondaryScriptText: StringFilter
-  tertiaryScriptText: StringFilter
-  emotion: StringFilter
-  gestureHint: StringFilter
-  pauseAfterMs: NumberFilter
-  autoAdvance: BooleanFilter
-  autoAdvanceDelayMs: NumberFilter
-}
-
-input FlowsStepsEmailCaptureContentFilter {
+input FlowsStepsEmailCaptureStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
   promptText: StringFilter
   placeholderText: StringFilter
   submitButtonText: StringFilter
   avatarResponseOnSubmit: StringFilter
 }
 
-input FlowsStepsCtaContentFilter {
+input FlowsStepsSeeOptionsStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  promptText: StringFilter
+  buttonText: StringFilter
+  avatarMessage: StringFilter
+  avatarEmotion: StringFilter
+}
+
+input FlowsStepsProductRecommendationsStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  headline: StringFilter
+  avatarResponse: StringFilter
+  avatarEmotion: StringFilter
+}
+
+input FlowsStepsZipcodeCaptureStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  headline: StringFilter
+  placeholderText: StringFilter
+  buttonText: StringFilter
+}
+
+input FlowsStepsStoreLocationsStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  headerText: StringFilter
+  defaultPostalCode: StringFilter
+  ctaBookTitle: StringFilter
+  ctaBookDescription: StringFilter
+  ctaBookButtonText: StringFilter
+  ctaContactTitle: StringFilter
+  ctaContactDescription: StringFilter
+  ctaContactButtonText: StringFilter
+}
+
+input FlowsStepsCtaStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
   headline: StringFilter
   bodyText: StringFilter
   primaryButtonText: StringFilter
@@ -358,34 +420,23 @@ input FlowsStepsCtaContentFilter {
   secondaryButtonUrl: StringFilter
 }
 
-input FlowsStepsVideoContentFilter {
-  video: ImageFilter
-  script: StringFilter
-}
-
-input FlowsStepsStylingFilter {
-  backgroundColor: StringFilter
-  customCssClass: StringFilter
-}
-
-input FlowsStepsAnalyticsFilter {
-  trackingEventName: StringFilter
-  customProperties: StringFilter
+input FlowsStepsResultsStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  headline: StringFilter
+  bodyText: StringFilter
 }
 
 input FlowsStepsFilter {
-  stepId: StringFilter
-  internalName: StringFilter
-  order: NumberFilter
-  stepType: StringFilter
-  introContent: FlowsStepsIntroContentFilter
-  questionContent: FlowsStepsQuestionContentFilter
-  avatarContent: FlowsStepsAvatarContentFilter
-  emailCaptureContent: FlowsStepsEmailCaptureContentFilter
-  ctaContent: FlowsStepsCtaContentFilter
-  videoContent: FlowsStepsVideoContentFilter
-  styling: FlowsStepsStylingFilter
-  analytics: FlowsStepsAnalyticsFilter
+  videoStep: FlowsStepsVideoStepFilter
+  questionStep: FlowsStepsQuestionStepFilter
+  emailCaptureStep: FlowsStepsEmailCaptureStepFilter
+  seeOptionsStep: FlowsStepsSeeOptionsStepFilter
+  productRecommendationsStep: FlowsStepsProductRecommendationsStepFilter
+  zipcodeCaptureStep: FlowsStepsZipcodeCaptureStepFilter
+  storeLocationsStep: FlowsStepsStoreLocationsStepFilter
+  ctaStep: FlowsStepsCtaStepFilter
+  resultsStep: FlowsStepsResultsStepFilter
 }
 
 input DatetimeFilter {
@@ -408,8 +459,7 @@ input FlowsFilter {
   displayName: StringFilter
   description: StringFilter
   isActive: BooleanFilter
-  introVideo: ImageFilter
-  avatarIntroScript: StringFilter
+  introScreen: FlowsIntroScreenFilter
   globalVariables: FlowsGlobalVariablesFilter
   steps: FlowsStepsFilter
   metadata: FlowsMetadataFilter
@@ -471,11 +521,9 @@ input InputTypesMutation {
   validationPattern: String
 }
 
-input FlowsGlobalVariablesMutation {
-  brandName: String
-}
-
-input FlowsStepsIntroContentMutation {
+input FlowsIntroScreenMutation {
+  avatarImage: String
+  backgroundVideo: String
   headline: String
   subheadline: String
   secondarySubheadline: String
@@ -483,7 +531,18 @@ input FlowsStepsIntroContentMutation {
   primaryButtonText: String
 }
 
-input FlowsStepsQuestionContentAnswerOptionsMutation {
+input FlowsGlobalVariablesMutation {
+  brandName: String
+}
+
+input FlowsStepsVideoStepMutation {
+  stepId: String
+  internalName: String
+  video: String
+  script: String
+}
+
+input FlowsStepsQuestionStepAnswerOptionsMutation {
   optionId: String
   label: String
   value: String
@@ -496,33 +555,66 @@ input FlowsStepsQuestionContentAnswerOptionsMutation {
   tags: [String]
 }
 
-input FlowsStepsQuestionContentMutation {
+input FlowsStepsQuestionStepMutation {
+  stepId: String
+  internalName: String
   questionText: String
   inputType: String
   helperText: String
   isRequired: Boolean
-  answerOptions: [FlowsStepsQuestionContentAnswerOptionsMutation]
+  answerOptions: [FlowsStepsQuestionStepAnswerOptionsMutation]
 }
 
-input FlowsStepsAvatarContentMutation {
-  scriptText: String
-  secondaryScriptText: String
-  tertiaryScriptText: String
-  emotion: String
-  gestureHint: String
-  pauseAfterMs: Float
-  autoAdvance: Boolean
-  autoAdvanceDelayMs: Float
-}
-
-input FlowsStepsEmailCaptureContentMutation {
+input FlowsStepsEmailCaptureStepMutation {
+  stepId: String
+  internalName: String
   promptText: String
   placeholderText: String
   submitButtonText: String
   avatarResponseOnSubmit: String
 }
 
-input FlowsStepsCtaContentMutation {
+input FlowsStepsSeeOptionsStepMutation {
+  stepId: String
+  internalName: String
+  promptText: String
+  buttonText: String
+  avatarMessage: String
+  avatarEmotion: String
+}
+
+input FlowsStepsProductRecommendationsStepMutation {
+  stepId: String
+  internalName: String
+  headline: String
+  avatarResponse: String
+  avatarEmotion: String
+}
+
+input FlowsStepsZipcodeCaptureStepMutation {
+  stepId: String
+  internalName: String
+  headline: String
+  placeholderText: String
+  buttonText: String
+}
+
+input FlowsStepsStoreLocationsStepMutation {
+  stepId: String
+  internalName: String
+  headerText: String
+  defaultPostalCode: String
+  ctaBookTitle: String
+  ctaBookDescription: String
+  ctaBookButtonText: String
+  ctaContactTitle: String
+  ctaContactDescription: String
+  ctaContactButtonText: String
+}
+
+input FlowsStepsCtaStepMutation {
+  stepId: String
+  internalName: String
   headline: String
   bodyText: String
   primaryButtonText: String
@@ -531,34 +623,23 @@ input FlowsStepsCtaContentMutation {
   secondaryButtonUrl: String
 }
 
-input FlowsStepsVideoContentMutation {
-  video: String
-  script: String
-}
-
-input FlowsStepsStylingMutation {
-  backgroundColor: String
-  customCssClass: String
-}
-
-input FlowsStepsAnalyticsMutation {
-  trackingEventName: String
-  customProperties: String
+input FlowsStepsResultsStepMutation {
+  stepId: String
+  internalName: String
+  headline: String
+  bodyText: String
 }
 
 input FlowsStepsMutation {
-  stepId: String
-  internalName: String
-  order: Float
-  stepType: String
-  introContent: FlowsStepsIntroContentMutation
-  questionContent: FlowsStepsQuestionContentMutation
-  avatarContent: FlowsStepsAvatarContentMutation
-  emailCaptureContent: FlowsStepsEmailCaptureContentMutation
-  ctaContent: FlowsStepsCtaContentMutation
-  videoContent: FlowsStepsVideoContentMutation
-  styling: FlowsStepsStylingMutation
-  analytics: FlowsStepsAnalyticsMutation
+  videoStep: FlowsStepsVideoStepMutation
+  questionStep: FlowsStepsQuestionStepMutation
+  emailCaptureStep: FlowsStepsEmailCaptureStepMutation
+  seeOptionsStep: FlowsStepsSeeOptionsStepMutation
+  productRecommendationsStep: FlowsStepsProductRecommendationsStepMutation
+  zipcodeCaptureStep: FlowsStepsZipcodeCaptureStepMutation
+  storeLocationsStep: FlowsStepsStoreLocationsStepMutation
+  ctaStep: FlowsStepsCtaStepMutation
+  resultsStep: FlowsStepsResultsStepMutation
 }
 
 input FlowsMetadataMutation {
@@ -573,8 +654,7 @@ input FlowsMutation {
   displayName: String
   description: String
   isActive: Boolean
-  introVideo: String
-  avatarIntroScript: String
+  introScreen: FlowsIntroScreenMutation
   globalVariables: FlowsGlobalVariablesMutation
   steps: [FlowsStepsMutation]
   metadata: FlowsMetadataMutation
