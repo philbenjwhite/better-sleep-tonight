@@ -4,6 +4,90 @@
   flex-direction: column;
   gap: var(--sds-size-space-600, 24px);
   width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Scrollable list wrapper with gradient fades */
+.listWrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.listWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.listWrapper.scrolledDown::before {
+  opacity: 1;
+}
+
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-400, 16px);
+  max-height: calc(85vh - 120px); /* Account for headline and padding */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+@media (max-width: 600px) {
+  .list {
+    max-height: calc(80vh - 100px);
+  }
+}
+
+/* Show More / Show Less button */
+.showMoreButton {
+  background-color: transparent;
+  border: 1px solid var(--sds-color-border-neutral-secondary, #767676);
+  border-radius: var(--sds-size-radius-200, 8px);
+  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
+  color: var(--sds-color-text-default-default, #363534);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.showMoreButton:hover {
+  background-color: rgba(54, 53, 52, 0.05);
+}
+
+.showMoreButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
+}
+
+/* Custom scrollbar for the list */
+.list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: #d9d9d9;
+  border-radius: 8px;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: var(--sds-color-text-default-default, #363534);
+  border-radius: 8px;
 }
 
 /* Headline above recommendations */
@@ -25,12 +109,31 @@
 
 /* Individual mattress card */
 .card {
+  position: relative;
   background-color: var(--sds-color-background-default-default, #ffffff);
   border-radius: 4px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #363534;
+  color: #ffffff;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 1;
 }
 
 /* Main row with image, info, and select button */
@@ -45,8 +148,8 @@
 /* Product image container */
 .cardImage {
   flex-shrink: 0;
-  width: 83px;
-  height: 110px;
+  width: 100px;
+  height: 133px;
   border-radius: var(--sds-size-radius-200, 8px);
   overflow: hidden;
 }
@@ -67,6 +170,14 @@
   min-width: 0;
 }
 
+/* Product header with name and profile */
+.productHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sds-size-space-200, 8px);
+  flex-wrap: wrap;
+}
+
 .productName {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 600;
@@ -74,6 +185,15 @@
   line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
   margin: 0;
+}
+
+.profile {
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #757575;
+  white-space: nowrap;
 }
 
 .productDescription {
@@ -85,13 +205,77 @@
   margin: 0;
 }
 
+/* Attribute Bars (Cooling, Pressure Relief) */
+.attributeBars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-200, 8px);
+}
+
+.attributeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sds-size-space-200, 8px);
+}
+
+.attributeLabel {
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #363534;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.attributeBar {
+  flex: 1;
+  height: 8px;
+  background-color: #E8E5E1;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 150px;
+}
+
+.attributeFill {
+  height: 100%;
+  background-color: #D4830A;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Features List */
+.featuresList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sds-size-space-100, 4px);
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sds-size-space-200, 8px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #363534;
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .productPrice {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 400;
   font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
-  text-decoration: underline;
   margin: 0;
 }
 
@@ -99,10 +283,10 @@
 .cardAction {
   flex-shrink: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  width: 78px;
-  align-self: stretch;
+  width: auto;
+  align-self: flex-start;
 }
 
 .selectButton {
@@ -118,7 +302,6 @@
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
-  width: 100%;
 }
 
 .selectButton:hover,
@@ -142,13 +325,14 @@
   background-color: #4a4948;
 }
 
-/* Expanded options section */
+/* Expanded options section - nested under price in cardInfo */
 .cardOptions {
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-200, 8px);
   width: 100%;
   padding-top: var(--sds-size-space-200, 8px);
+  margin-top: var(--sds-size-space-200, 8px);
 }
 
 .selectionGroup {
@@ -267,12 +451,54 @@
 
 /* Responsive styles */
 @media (max-width: 600px) {
+  .card {
+    padding-top: 36px; /* Extra space for badge on mobile */
+  }
+
+  .badge {
+    top: 8px;
+    left: 8px;
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
   .cardMain {
     flex-wrap: wrap;
   }
 
   .cardInfo {
     flex: 1 1 calc(100% - 99px);
+    gap: var(--sds-size-space-200, 8px);
+  }
+
+  .productHeader {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .productName {
+    font-size: 14px;
+  }
+
+  .profile {
+    font-size: 11px;
+  }
+
+  .productDescription {
+    font-size: 13px;
+  }
+
+  .attributeLabel {
+    min-width: 80px;
+    font-size: 11px;
+  }
+
+  .attributeBar {
+    max-width: 120px;
+  }
+
+  .featureItem {
+    font-size: 12px;
   }
 
   .cardAction {

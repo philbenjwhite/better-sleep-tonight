@@ -16,11 +16,12 @@
   }
 }
 
-/* On very wide screens, limit the width and let height adjust */
+/* On very wide screens, limit the width but still respect viewport height */
 @media (min-width: 1200px) {
   .avatarContainer {
-    max-width: 450px; /* Cap width on large screens */
+    max-width: min(450px, calc((100vh - 108px) * (9 / 16))); /* Cap width, but scale down for shorter viewports */
     height: auto;
+    max-height: calc(100vh - 108px); /* Never exceed viewport height minus header/footer */
     aspect-ratio: 9 / 16;
   }
 }

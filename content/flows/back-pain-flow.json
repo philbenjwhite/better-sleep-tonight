@@ -337,25 +337,160 @@
         "headline": "Which of these mattresses seem like the best fit?",
         "mattressOptions": [
           {
-            "id": "serenity-hybrid",
-            "productName": "Serenity Hybrid",
-            "productDescription": "Perfect for back pain relief with targeted lumbar support",
-            "basePrice": 1299.00,
-            "productImage": "/images/mattress-tempurpedic.jpg"
+            "id": "tempur-sense-medium",
+            "productName": "TEMPUR SENSE® MEDIUM",
+            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
+            "basePrice": 2199.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "badge": "Best Value",
+            "profile": "10-11\"",
+            "coolingLevel": 2,
+            "pressureReliefLevel": 3,
+            "features": [
+              "3 layer foam construction",
+              "Fast-adapting foam for pressure relief",
+              "Premium fabric cover"
+            ]
           },
           {
-            "id": "cloud-comfort",
-            "productName": "Cloud Comfort",
-            "productDescription": "Pressure-relieving memory foam for side sleepers",
-            "basePrice": 999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg"
+            "id": "tempur-sense-firm",
+            "productName": "TEMPUR SENSE® FIRM",
+            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
+            "basePrice": 2199.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "10-11\"",
+            "coolingLevel": 2,
+            "pressureReliefLevel": 3,
+            "features": [
+              "3 layer foam construction",
+              "Fast-adapting foam for pressure relief",
+              "Premium fabric cover"
+            ]
           },
           {
-            "id": "firm-support-pro",
-            "productName": "Firm Support Pro",
-            "productDescription": "Extra firm support for stomach and back sleepers",
-            "basePrice": 1499.00,
-            "productImage": "/images/mattress-tempurpedic.jpg"
+            "id": "tempur-sense-soft",
+            "productName": "TEMPUR SENSE® SOFT",
+            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
+            "basePrice": 2199.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "10-11\"",
+            "coolingLevel": 2,
+            "pressureReliefLevel": 3,
+            "features": [
+              "3 layer foam construction",
+              "Fast-adapting foam for pressure relief",
+              "Premium fabric cover"
+            ]
+          },
+          {
+            "id": "tempur-prosense-firm",
+            "productName": "TEMPUR PROSENSE® FIRM",
+            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
+            "basePrice": 2999.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "badge": "Most Popular",
+            "profile": "12\"",
+            "coolingLevel": 4,
+            "pressureReliefLevel": 4,
+            "features": [
+              "4 layer foam construction",
+              "TEMPUR-APR+™ for advanced pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-prosense-medium",
+            "productName": "TEMPUR PROSENSE® MEDIUM",
+            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
+            "basePrice": 2999.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "12\"",
+            "coolingLevel": 4,
+            "pressureReliefLevel": 4,
+            "features": [
+              "4 layer foam construction",
+              "TEMPUR-APR+™ for advanced pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-prosense-soft",
+            "productName": "TEMPUR PROSENSE® SOFT",
+            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
+            "basePrice": 2999.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "12\"",
+            "coolingLevel": 4,
+            "pressureReliefLevel": 4,
+            "features": [
+              "4 layer foam construction",
+              "TEMPUR-APR+™ for advanced pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-prosense-medium-hybrid",
+            "productName": "TEMPUR PROSENSE® MEDIUM HYBRID",
+            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
+            "basePrice": 3299.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "12\"",
+            "coolingLevel": 4,
+            "pressureReliefLevel": 4,
+            "features": [
+              "4 layer foam construction",
+              "TEMPUR-APR+™ for advanced pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-luxealign-firm",
+            "productName": "TEMPUR LUXEALIGN® FIRM",
+            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
+            "basePrice": 3999.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "badge": "Most Advanced",
+            "profile": "13\"",
+            "coolingLevel": 5,
+            "pressureReliefLevel": 5,
+            "features": [
+              "5 layer construction",
+              "Zoned ergonomic layer adapts to your body to help support your spine",
+              "TEMPUR-APR+™ for maximum pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-luxealign-soft",
+            "productName": "TEMPUR LUXEALIGN® SOFT",
+            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
+            "basePrice": 3999.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "13\"",
+            "coolingLevel": 5,
+            "pressureReliefLevel": 5,
+            "features": [
+              "5 layer construction",
+              "Zoned ergonomic layer adapts to your body to help support your spine",
+              "TEMPUR-APR+™ for maximum pressure relief",
+              "Cool-to-touch removable cover"
+            ]
+          },
+          {
+            "id": "tempur-luxealign-medium-hybrid",
+            "productName": "TEMPUR LUXEALIGN® MEDIUM HYBRID",
+            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
+            "basePrice": 4299.00,
+            "productImage": "/images/mattress-tempurpedic.jpg",
+            "profile": "13\"",
+            "coolingLevel": 5,
+            "pressureReliefLevel": 5,
+            "features": [
+              "5 layer construction",
+              "Zoned ergonomic layer adapts to your body to help support your spine",
+              "TEMPUR-APR+™ for maximum pressure relief",
+              "Cool-to-touch removable cover"
+            ]
           }
         ],
         "sizes": [
