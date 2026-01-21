@@ -37,11 +37,24 @@
   background-color: #16213e;
 }
 
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #e94560;
+}
+
+.currentStepText {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a0a0a0;
 }
 
 .closeButton {

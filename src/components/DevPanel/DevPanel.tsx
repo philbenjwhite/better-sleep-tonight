@@ -99,7 +99,12 @@ export const DevPanel: React.FC<DevPanelProps> = ({
       {/* Panel */}
       <div className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}>
         <div className={styles.header}>
-          <h3 className={styles.title}>Dev Panel</h3>
+          <div className={styles.headerContent}>
+            <h3 className={styles.title}>Dev Panel</h3>
+            <p className={styles.currentStepText}>
+              {currentStepParam ? `${currentStepParam}. ${stepNames[parseInt(currentStepParam, 10) - 1] || ''}` : 'Intro'}
+            </p>
+          </div>
           <button
             className={styles.closeButton}
             onClick={() => setIsOpen(false)}
@@ -110,22 +115,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
         </div>
 
         <div className={styles.content}>
-          {/* Flow Selection */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Flow Variant</h4>
-            <div className={styles.buttonGroup}>
-              {AVAILABLE_FLOWS.map((flow) => (
-                <button
-                  key={flow.id}
-                  className={`${styles.flowButton} ${currentFlow === flow.id ? styles.flowButtonActive : ''}`}
-                  onClick={() => handleFlowChange(flow.id)}
-                >
-                  {flow.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Step Navigation */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Jump to Step</h4>
@@ -147,17 +136,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
                 </button>
               ))}
             </div>
-            <p className={styles.stepHint}>
-              Current: {currentStepParam ? `${currentStepParam}. ${stepNames[parseInt(currentStepParam, 10) - 1] || ''}` : 'Intro'}
-            </p>
-          </div>
-
-          {/* Progress info */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Progress</h4>
-            <p className={styles.progressText}>
-              Step {currentStep} of {totalSteps}
-            </p>
           </div>
 
           {/* Stored answers */}
