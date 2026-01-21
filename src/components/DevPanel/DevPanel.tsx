@@ -160,23 +160,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
             </p>
           </div>
 
-          {/* Avatar Emotion */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Avatar Emotion</h4>
-            <div className={styles.emotionInfo}>
-              <p className={styles.emotionRow}>
-                <span className={styles.emotionLabel}>Session:</span>
-                <span className={styles.emotionValue}>{sessionEmotion}</span>
-              </p>
-              {currentEmotion && (
-                <p className={styles.emotionRow}>
-                  <span className={styles.emotionLabel}>CMS Value:</span>
-                  <span className={styles.emotionValue}>{currentEmotion}</span>
-                </p>
-              )}
-            </div>
-          </div>
-
           {/* Stored answers */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>
