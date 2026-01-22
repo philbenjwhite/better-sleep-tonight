@@ -141,6 +141,11 @@ export function SpeechBubbleSequence({
             </span>
           ))}
         </p>
+        <img
+          src="/images/chat-bubble-tail.svg"
+          alt=""
+          className={styles.tail}
+        />
       </div>
 
     </div>

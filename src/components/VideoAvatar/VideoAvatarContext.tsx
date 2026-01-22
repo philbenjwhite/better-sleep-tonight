@@ -30,6 +30,8 @@ interface VideoAvatarContextType {
   isPlaying: boolean;
   isNearingEnd: boolean;
   currentVideoId: string | null;
+  currentTime: number;
+  duration: number;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   play: (videoId: string) => Promise<void>;
   stop: () => void;
@@ -55,6 +57,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   const [videoState, setVideoState] = useState<VideoState>(VideoState.IDLE);
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
   const [isNearingEnd, setIsNearingEnd] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playPromiseRef = useRef<{
     resolve: () => void;
@@ -160,9 +164,11 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
   const onVideoTimeUpdate = useCallback(() => {
     if (videoRef.current) {
-      const { currentTime, duration } = videoRef.current;
+      const { currentTime: time, duration: dur } = videoRef.current;
+      setCurrentTime(time);
+      setDuration(dur || 0);
       // Trigger "nearing end" when ~1 second from end
-      if (duration && currentTime >= duration - 1 && !isNearingEnd) {
+      if (dur && time >= dur - 1 && !isNearingEnd) {
         setIsNearingEnd(true);
       }
     }
@@ -177,6 +183,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         isPlaying,
         isNearingEnd,
         currentVideoId,
+        currentTime,
+        duration,
         videoRef,
         play,
         stop,
