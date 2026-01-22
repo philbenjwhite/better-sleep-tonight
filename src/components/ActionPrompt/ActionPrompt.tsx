@@ -1,32 +1,31 @@
 'use client';
 
-import styles from './SeeOptionsPrompt.module.css';
+import styles from './ActionPrompt.module.css';
 
-export interface SeeOptionsPromptContent {
+export interface ActionPromptContent {
   promptText: string;
   buttonText: string;
   avatarResponseOnClick?: string;
-  avatarEmotionOnClick?: string;
 }
 
-export interface SeeOptionsPromptProps {
-  content: SeeOptionsPromptContent;
+export interface ActionPromptProps {
+  content: ActionPromptContent;
   onContinue: () => void;
   disabled?: boolean;
 }
 
-export const SeeOptionsPrompt: React.FC<SeeOptionsPromptProps> = ({
+export const ActionPrompt: React.FC<ActionPromptProps> = ({
   content,
   onContinue,
   disabled = false,
 }) => {
   return (
-    <div className={styles.seeOptionsContainer}>
+    <div className={styles.container}>
       <h2 className={styles.promptText}>{content.promptText}</h2>
 
       <button
         type="button"
-        className={styles.seeOptionsButton}
+        className={styles.actionButton}
         onClick={onContinue}
         disabled={disabled}
       >
@@ -52,4 +51,4 @@ export const SeeOptionsPrompt: React.FC<SeeOptionsPromptProps> = ({
   );
 };
 
-export default SeeOptionsPrompt;
+export default ActionPrompt;

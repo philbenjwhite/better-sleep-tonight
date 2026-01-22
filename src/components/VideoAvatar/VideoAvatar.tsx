@@ -20,6 +20,8 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
 }) => {
   const {
     videoState,
+    currentTime,
+    duration,
     setVideoRef,
     onVideoEnded,
     onVideoLoaded,
@@ -61,6 +63,22 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Video is visible when playing, ready, loading, OR ended (to show last frame)
   const showVideo = isPlaying || isReady || isLoading || isEnded;
 
+  // Calculate video opacity for fade in/out effect (0.5s each)
+  const FADE_DURATION = 0.5;
+  let videoOpacity = 1;
+  if (hasError) {
+    videoOpacity = 0;
+  } else if (isPlaying && duration > 0) {
+    // Fade in during first 0.5s
+    if (currentTime < FADE_DURATION) {
+      videoOpacity = currentTime / FADE_DURATION;
+    }
+    // Fade out during last 0.5s
+    else if (currentTime > duration - FADE_DURATION) {
+      videoOpacity = (duration - currentTime) / FADE_DURATION;
+    }
+  }
+
   return (
     <div className={`${styles.avatarContainer} ${className || ''}`}>
       {/* Fallback image - shown as background when video ends to prevent black frame */}
@@ -87,7 +105,8 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         onTimeUpdate={onVideoTimeUpdate}
         style={{
           display: showVideo ? 'block' : 'none',
-          opacity: hasError ? 0 : 1,
+          opacity: videoOpacity,
+          transition: 'opacity 0.1s ease-out',
         }}
       />
 

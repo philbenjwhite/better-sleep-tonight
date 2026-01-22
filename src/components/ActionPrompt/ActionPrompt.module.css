@@ -1,4 +1,4 @@
-.seeOptionsContainer {
+.container {
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-800, 32px);
@@ -25,7 +25,7 @@
   width: 100%;
 }
 
-.seeOptionsButton {
+.actionButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -43,20 +43,20 @@
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-.seeOptionsButton:hover:not(:disabled) {
+.actionButton:hover:not(:disabled) {
   background-color: #5a0000;
 }
 
-.seeOptionsButton:focus {
+.actionButton:focus {
   outline: 2px solid var(--sds-color-background-brand-default, #770000);
   outline-offset: 2px;
 }
 
-.seeOptionsButton:active:not(:disabled) {
+.actionButton:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-.seeOptionsButton:disabled {
+.actionButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -73,7 +73,7 @@
     font-size: 24px;
   }
 
-  .seeOptionsButton {
+  .actionButton {
     width: 100%;
   }
 }

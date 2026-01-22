@@ -311,6 +311,39 @@
   transform: scale(0.98);
 }
 
+.ctaButtonOutline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sds-size-space-200, 8px);
+  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  background-color: transparent;
+  color: var(--sds-color-background-brand-default, #770000);
+  border: 2px solid var(--sds-color-background-brand-default, #770000);
+  border-radius: var(--sds-size-radius-200, 8px);
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  align-self: flex-start;
+}
+
+.ctaButtonOutline:hover {
+  background-color: var(--sds-color-background-brand-default, #770000);
+  color: #ffffff;
+}
+
+.ctaButtonOutline:focus {
+  outline: 2px solid var(--sds-color-background-brand-default, #770000);
+  outline-offset: 2px;
+}
+
+.ctaButtonOutline:active {
+  transform: scale(0.98);
+}
+
 /* Mobile responsive */
 @media (max-width: 900px) {
   .contentWrapper {

@@ -31,7 +31,7 @@ import {
   ProductRecommendationsContent,
 } from "@/components/ProductRecommendations";
 import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
-import { SeeOptionsPrompt, SeeOptionsPromptContent } from "@/components/SeeOptionsPrompt";
+import { ActionPrompt, ActionPromptContent } from "@/components/ActionPrompt";
 import { StoreLocations, StoreLocationsContent } from "@/components/StoreLocations";
 import { ZipCodeCapture, ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { useProgressPersistence } from "@/hooks";
@@ -841,6 +841,31 @@ function HomeContent() {
     ]
   );
 
+  // Handle going back to previous step
+  const handleGoBack = useCallback(() => {
+    if (currentStepIndex > 0) {
+      // Remove the last stored answer (for the current step we're leaving)
+      const updatedAnswers = storedAnswers.slice(0, -1);
+      setStoredAnswers(updatedAnswers);
+
+      // Go back one step
+      setCurrentStepIndex((prev) => prev - 1);
+
+      // Reset UI state
+      setSelectedAnswer(null);
+      setIsShowingResponse(false);
+      setAvatarResponse(null);
+      setShowQuestionBlock(true);
+
+      // Save the updated progress
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex - 1,
+        answers: updatedAnswers,
+      });
+    }
+  }, [currentStepIndex, storedAnswers, saveProgress, flowParam]);
+
   // Show next question after avatar response finishes
   // (Skip if in video step - that has its own handler)
   useEffect(() => {
@@ -1020,6 +1045,21 @@ function HomeContent() {
                 className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
               />
 
+              {/* Back Button - shown on steps after the first */}
+              {showQuestionBlock && currentStepIndex > 0 && (
+                <button
+                  type="button"
+                  className={styles.backButton}
+                  onClick={handleGoBack}
+                  aria-label="Go back to previous question"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Back
+                </button>
+              )}
+
               {/* Question Block Content */}
               {showQuestionBlock &&
                 isQuestionStep &&
@@ -1072,10 +1112,10 @@ function HomeContent() {
                   </div>
                 )}
 
-              {/* Email Capture Step */}
+              {/* Email Capture Step - rendered outside question block for wider layout */}
               {showQuestionBlock &&
                 isEmailCaptureStep && (
-                  <div className={styles.questionBlockInner}>
+                  <div className={styles.emailCaptureWrapper}>
                     <EmailCapture
                       content={{
                         promptText: currentStep?.promptText,
@@ -1089,17 +1129,16 @@ function HomeContent() {
                   </div>
                 )}
 
-              {/* See Options Prompt Step */}
+              {/* Action Prompt Step */}
               {showQuestionBlock &&
                 isSeeOptionsStep && (
                   <div className={styles.questionBlockInner}>
-                    <SeeOptionsPrompt
+                    <ActionPrompt
                       content={{
                         promptText: currentStep?.promptText,
                         buttonText: currentStep?.buttonText,
-                        avatarMessage: currentStep?.avatarMessage,
-                        avatarEmotion: currentStep?.avatarEmotion,
-                      } as SeeOptionsPromptContent}
+                        avatarResponseOnClick: currentStep?.avatarMessage,
+                      } as ActionPromptContent}
                       onContinue={handleSeeOptionsClick}
                     />
                   </div>

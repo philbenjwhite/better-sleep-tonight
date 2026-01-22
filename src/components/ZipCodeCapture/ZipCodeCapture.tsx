@@ -37,6 +37,7 @@ export function ZipCodeCapture({ content, onSubmit }: ZipCodeCaptureProps) {
             placeholder={content.placeholderText}
             className={styles.input}
             maxLength={10}
+            autoFocus
           />
           <button
             type="submit"

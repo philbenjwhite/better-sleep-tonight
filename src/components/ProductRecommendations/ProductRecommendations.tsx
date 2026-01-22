@@ -301,13 +301,10 @@ export function ProductRecommendations({
   const [selectedFeel, setSelectedFeel] = useState<MattressFeel | null>(null);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
-  const [showAllMattresses, setShowAllMattresses] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Filter mattresses: show only those with badges by default, or all if expanded
-  const badgedMattresses = content.mattressOptions.filter((m) => m.badge);
-  const displayedMattresses = showAllMattresses ? content.mattressOptions : badgedMattresses;
-  const hasMoreMattresses = content.mattressOptions.length > badgedMattresses.length;
+  // Show only mattresses with badges (the top 3 recommendations)
+  const displayedMattresses = content.mattressOptions.filter((m) => m.badge);
 
   const handleScroll = useCallback(() => {
     if (listRef.current) {
@@ -435,17 +432,7 @@ export function ProductRecommendations({
               calculatePrice={calculatePrice}
             />
           ))}
-          {/* Show More / Show Less button */}
-          {hasMoreMattresses && (
-            <button
-              type="button"
-              className={styles.showMoreButton}
-              onClick={() => setShowAllMattresses(!showAllMattresses)}
-            >
-              {showAllMattresses ? "Show Less" : `Show ${content.mattressOptions.length - badgedMattresses.length} More`}
-            </button>
-          )}
-        </div>
+                  </div>
       </div>
 
       {/* Continue Button Bar - slides up when both selections are made */}

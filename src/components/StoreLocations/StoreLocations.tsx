@@ -200,15 +200,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             </div>
           </div>
 
-          {/* Store Logo */}
-          <div className={styles.logoContainer}>
-            <img
-              src="/images/bst-logo.svg"
-              alt="Better Sleep Tonight"
-              className={styles.storeLogo}
-            />
-          </div>
-
           {/* CTA Section 1 - Book a Rest Test */}
           <div className={styles.ctaSection}>
             <div className={styles.ctaText}>
@@ -232,7 +223,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             </div>
             <button
               type="button"
-              className={styles.ctaButton}
+              className={styles.ctaButtonOutline}
               onClick={onContactUs}
             >
               {content.ctaContactButtonText}

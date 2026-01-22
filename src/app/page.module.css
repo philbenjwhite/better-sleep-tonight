@@ -357,8 +357,8 @@
 .heygenWrapper {
   position: relative;
   display: grid;
-  /* Spacer starts at 2vw near 1200px, grows to 15vw on wide screens */
-  grid-template-columns: 1fr minmax(300px, 500px) clamp(2vw, calc((100vw - 1200px) * 0.05 + 2vw), 15vw);
+  /* Equal spacers on both sides to center the avatar and speech bubble */
+  grid-template-columns: 1fr minmax(300px, 500px) 1fr;
   grid-template-rows: 1fr;
   align-items: end;
   justify-items: center;
@@ -681,6 +681,40 @@
   /* GSAP handles animations now */
 }
 
+/* Back Button - top left of question block */
+.backButton {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--sds-color-text-default-secondary, #666);
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.backButton:hover {
+  color: var(--sds-color-text-default-default, #333);
+}
+
+.backButton:focus {
+  outline: 2px solid var(--sds-color-border-brand, #770000);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.backButton svg {
+  flex-shrink: 0;
+}
+
 /* Mobile: position question block over centered avatar */
 @media (max-width: 768px) {
   .questionBlockWrapper {
@@ -791,5 +825,27 @@
   .storeLocationsInner {
     padding: 12px;
     max-height: 80vh;
+  }
+}
+
+/* Email Capture Wrapper - wider layout for email input */
+.emailCaptureWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 600px;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow: visible;
+  padding: 12px;
+}
+
+@media (max-width: 768px) {
+  .emailCaptureWrapper {
+    min-width: auto;
+    width: calc(100vw - 3rem);
+    max-width: calc(100vw - 3rem);
+    padding: 12px;
+    margin: 0 auto;
   }
 }

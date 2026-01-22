@@ -74,6 +74,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({
               disabled={disabled}
               aria-label="Email address"
               aria-invalid={!isValid}
+              autoFocus
             />
             {!isValid && (
               <span className={styles.errorMessage}>
