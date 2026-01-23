@@ -100,13 +100,28 @@ export function SpeechBubbleSequence({
   const currentParagraph = paragraphs[currentParagraphIndex] || '';
   const words = currentParagraph.split(' ').filter(w => w);
 
+  // In video-sync mode, calculate dynamic word delay based on cue duration
+  // This ensures all words animate within the time the cue is displayed
+  const currentCue = isVideoSyncMode && videoCueIndex >= 0 ? subtitleCues![videoCueIndex] : null;
+  const cueDuration = currentCue ? currentCue.endTime - currentCue.startTime : 0;
+
+  // Calculate effective word delay for video-sync mode
+  // Reserve 15% of time at end for reading, distribute rest across words
+  const effectiveWordDelay = isVideoSyncMode && words.length > 0 && cueDuration > 0
+    ? (cueDuration * 0.85) / words.length
+    : wordDelay;
+
   // Calculate delay for a word based on punctuation
   // Only apply sentence-end delays when punctuation is truly at the end (not inside quotes)
   const getWordDelay = useCallback((word: string): number => {
+    // In video-sync mode, use uniform timing to fit within cue duration
+    if (isVideoSyncMode) {
+      return effectiveWordDelay;
+    }
+
     const trimmedWord = word.trim();
     // Get the last character(s) to check punctuation
     const lastChar = trimmedWord.slice(-1);
-    const lastTwoChars = trimmedWord.slice(-2);
 
     // Check if punctuation is followed by a closing quote (means it's inside a quote, not sentence end)
     const endsWithQuotedPunctuation = /[.!?]["'"'»]$/.test(trimmedWord);
@@ -124,16 +139,21 @@ export function SpeechBubbleSequence({
       return wordDelay * commaDelayMultiplier;
     }
     return wordDelay;
-  }, [wordDelay, commaDelayMultiplier, sentenceEndDelayMultiplier]);
+  }, [isVideoSyncMode, effectiveWordDelay, wordDelay, commaDelayMultiplier, sentenceEndDelayMultiplier]);
 
   // Calculate cumulative delays for each word
   const getCumulativeDelay = useCallback((wordIndex: number): number => {
+    // In video-sync mode, use simple linear timing
+    if (isVideoSyncMode) {
+      return wordIndex * effectiveWordDelay;
+    }
+
     let totalDelay = 0;
     for (let i = 0; i < wordIndex; i++) {
       totalDelay += getWordDelay(words[i]);
     }
     return totalDelay;
-  }, [words, getWordDelay]);
+  }, [isVideoSyncMode, effectiveWordDelay, words, getWordDelay]);
 
   // Calculate total animation time accounting for punctuation delays
   const totalAnimationTime = words.reduce((total, word) => total + getWordDelay(word), 0) * 1000;
