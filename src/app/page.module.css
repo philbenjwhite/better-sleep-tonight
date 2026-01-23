@@ -735,7 +735,7 @@
     /* Position from top instead of centering */
     align-items: flex-start;
     justify-content: flex-start;
-    padding-top: 100px; /* Consistent distance from top (below header) */
+    padding-top: 125px; /* Consistent distance from top (below header) - pushed down 1.5rem */
     padding-bottom: 80px; /* Space from bottom for footer */
   }
 
@@ -757,7 +757,7 @@
 
 @media (max-width: 480px) {
   .questionBlockWrapper {
-    padding-top: 90px;
+    padding-top: 115px;
     padding-bottom: 60px;
   }
 }
