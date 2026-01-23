@@ -49,7 +49,7 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
       productName: "Serenity Hybrid",
       productDescription: "Our most advanced sleep technology with cooling gel memory foam and individually wrapped coils for ultimate support.",
       basePrice: 1299,
-      productImage: "/images/mattress-1.jpg",
+      productImage: "/images/mattress-tempurpedic.jpg",
       badge: "Best Value",
       profile: '12"',
       coolingLevel: 4,
@@ -66,7 +66,7 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
       productName: "ComfortPlus Elite",
       productDescription: "Premium comfort with enhanced lumbar support, perfect for back and side sleepers.",
       basePrice: 1699,
-      productImage: "/images/mattress-2.jpg",
+      productImage: "/images/mattress-tempurpedic.jpg",
       badge: "Most Popular",
       profile: '13"',
       coolingLevel: 5,
@@ -83,7 +83,7 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
       productName: "Dream Supreme",
       productDescription: "Luxury hotel-quality sleep with advanced pressure relief and motion isolation.",
       basePrice: 2199,
-      productImage: "/images/mattress-3.jpg",
+      productImage: "/images/mattress-tempurpedic.jpg",
       badge: "Premium Choice",
       profile: '14"',
       coolingLevel: 5,
@@ -348,6 +348,20 @@ function HomeContent() {
   const isZipCodeCaptureStep = currentStep?._template === "zipcodeCaptureStep";
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
   const isQuestionStep = currentStep?._template === "questionStep";
+
+  // Debug: Log step and render state
+  useEffect(() => {
+    console.log('[StepDebug]', {
+      currentStepIndex,
+      stepId: currentStep?.stepId,
+      template: currentStep?._template,
+      showQuestionBlock,
+      showBackdrop,
+      isZipCodeCaptureStep,
+      isVideoStep,
+    });
+  }, [currentStepIndex, currentStep, showQuestionBlock, showBackdrop, isZipCodeCaptureStep, isVideoStep]);
+
   // Get intro video from intro screen config (used as background on intro screen)
   const introVideo = introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
 
@@ -520,6 +534,16 @@ function HomeContent() {
   const isVideoEnded = videoState === VideoState.ENDED;
 
   useEffect(() => {
+    console.log('[VideoStepComplete] Check:', {
+      isVideoStep,
+      isShowingResponse,
+      avatarStartedTalking,
+      isVideoEnded,
+      hasSpokenSummary,
+      currentStepIndex,
+      videoState,
+    });
+
     if (
       isVideoStep &&
       isShowingResponse &&
@@ -527,9 +551,11 @@ function HomeContent() {
       isVideoEnded &&
       hasSpokenSummary
     ) {
+      console.log('[VideoStepComplete] All conditions met, starting 2s timer');
       // Video finished - wait a moment before advancing to let user finish reading
       // Keep speech bubble visible for 2 seconds after video ends
       const timer = setTimeout(() => {
+        console.log('[VideoStepComplete] Timer fired, advancing to next step');
         setIsShowingResponse(false);
         setAvatarResponse(null);
         setAvatarStartedTalking(false);
@@ -537,15 +563,20 @@ function HomeContent() {
 
         // Advance to next step
         if (currentStepIndex < questionSteps.length - 1) {
+          console.log('[VideoStepComplete] Advancing from step', currentStepIndex, 'to', currentStepIndex + 1);
           setCurrentStepIndex((prev) => prev + 1);
           setTimeout(() => {
+            console.log('[VideoStepComplete] Setting showQuestionBlock to true');
             setShowBackdrop(true);
             setBackdropHasAnimated(true);
             setShowQuestionBlock(true);
           }, 300);
         }
       }, 2000); // 2 second delay after video ends before hiding speech bubble
-      return () => clearTimeout(timer);
+      return () => {
+        console.log('[VideoStepComplete] Cleanup - clearing timer');
+        clearTimeout(timer);
+      };
     }
   }, [
     isVideoStep,
@@ -1177,8 +1208,8 @@ function HomeContent() {
                 className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
               />
 
-              {/* Back Button - shown on steps after the first */}
-              {showQuestionBlock && currentStepIndex > 0 && (
+              {/* Back Button - shown on steps after the first, uses showBackdrop to stay persistent during transitions */}
+              {(showQuestionBlock || showBackdrop) && currentStepIndex > 0 && (
                 <button
                   type="button"
                   className={styles.backButton}

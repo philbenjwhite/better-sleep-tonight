@@ -157,3 +157,47 @@
 .textInputWrapper {
   width: 100%;
 }
+
+/* Mobile: smaller question text and tighter spacing */
+@media (max-width: 768px) {
+  .questionBlock {
+    gap: var(--sds-size-space-500, 20px);
+  }
+
+  .questionText {
+    font-size: 24px;
+    letter-spacing: -0.48px;
+    line-height: 1.2;
+  }
+
+  .answersContainer {
+    gap: var(--sds-size-space-400, 16px);
+  }
+
+  .answersList {
+    gap: var(--sds-size-space-300, 12px);
+  }
+
+  .answerOption {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .label {
+    font-size: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  .letter {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .questionText {
+    font-size: 24px;
+    letter-spacing: -0.48px;
+  }
+}
