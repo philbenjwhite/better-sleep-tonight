@@ -39,6 +39,78 @@ import { useProgressPersistence } from "@/hooks";
 import { FLOWS } from "@/config";
 import styles from "./page.module.css";
 
+// Default product recommendations content (fallback when CMS content not provided)
+const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
+  headline: "Your Perfect Mattress Matches",
+  introParagraph: "Based on your sleep profile, I've found three mattresses that will help you wake up without back pain.",
+  mattressOptions: [
+    {
+      id: "serenity-hybrid",
+      productName: "Serenity Hybrid",
+      productDescription: "Our most advanced sleep technology with cooling gel memory foam and individually wrapped coils for ultimate support.",
+      basePrice: 1299,
+      productImage: "/images/mattress-1.jpg",
+      badge: "Best Value",
+      profile: '12"',
+      coolingLevel: 4,
+      pressureReliefLevel: 5,
+      features: [
+        "Cooling gel-infused memory foam",
+        "Individually wrapped coils",
+        "Reinforced lumbar support zone",
+        "CertiPUR-US certified foams",
+      ],
+    },
+    {
+      id: "comfort-plus",
+      productName: "ComfortPlus Elite",
+      productDescription: "Premium comfort with enhanced lumbar support, perfect for back and side sleepers.",
+      basePrice: 1699,
+      productImage: "/images/mattress-2.jpg",
+      badge: "Most Popular",
+      profile: '13"',
+      coolingLevel: 5,
+      pressureReliefLevel: 4,
+      features: [
+        "Phase-change cooling cover",
+        "Zoned support system",
+        "High-density base foam",
+        "365-night sleep trial",
+      ],
+    },
+    {
+      id: "dream-supreme",
+      productName: "Dream Supreme",
+      productDescription: "Luxury hotel-quality sleep with advanced pressure relief and motion isolation.",
+      basePrice: 2199,
+      productImage: "/images/mattress-3.jpg",
+      badge: "Premium Choice",
+      profile: '14"',
+      coolingLevel: 5,
+      pressureReliefLevel: 5,
+      features: [
+        "Organic cotton cover",
+        "Natural latex comfort layer",
+        "Advanced motion isolation",
+        "Lifetime warranty",
+      ],
+    },
+  ],
+  sizes: [
+    { value: "twin", label: "Twin", priceModifier: -300 },
+    { value: "twin-xl", label: "Twin XL", priceModifier: -200 },
+    { value: "full", label: "Full", priceModifier: -100 },
+    { value: "queen", label: "Queen", priceModifier: 0 },
+    { value: "king", label: "King", priceModifier: 200 },
+  ],
+  feels: [
+    { value: "soft", label: "Soft" },
+    { value: "medium", label: "Medium" },
+    { value: "firm", label: "Firm" },
+  ],
+  avatarResponse: "Great choice! This mattress is perfect for your sleep needs.",
+};
+
 // Type for flow steps - using template-based structure
 // Each step has _template to identify its type, and fields are at the top level
 interface FlowStep {
@@ -1154,14 +1226,11 @@ function HomeContent() {
                 )}
 
               {/* Product Recommendations Step - 3 mattress options */}
-              {/* Note: ProductRecommendations requires complex nested content (mattressOptions, sizes, feels arrays) */}
-              {/* This step type needs additional CMS schema work to fully support */}
               {showQuestionBlock &&
-                isProductRecommendationsStep &&
-                currentStep?.productRecommendationsContent && (
+                isProductRecommendationsStep && (
                   <div className={styles.productRecommendationsInner}>
                     <ProductRecommendations
-                      content={currentStep.productRecommendationsContent}
+                      content={currentStep?.productRecommendationsContent || DEFAULT_PRODUCT_RECOMMENDATIONS}
                       onSelectionComplete={handleProductRecommendationComplete}
                       onContinue={handleProductRecommendationContinue}
                     />
