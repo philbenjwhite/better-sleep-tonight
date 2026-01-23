@@ -43,7 +43,6 @@ const painLocationQuestion: CMSQuestionContent = {
       value: 'lower-back',
       order: 1,
       avatarResponse: 'Ah, the lower back - that\'s the most common spot...',
-      avatarEmotion: 'empathetic',
     },
     {
       optionId: 'bp2-opt2',
@@ -51,7 +50,6 @@ const painLocationQuestion: CMSQuestionContent = {
       value: 'middle-back',
       order: 2,
       avatarResponse: 'Middle back pain is tricky...',
-      avatarEmotion: 'curious',
     },
     {
       optionId: 'bp2-opt3',
@@ -59,7 +57,6 @@ const painLocationQuestion: CMSQuestionContent = {
       value: 'upper-back',
       order: 3,
       avatarResponse: 'That area between your shoulder blades...',
-      avatarEmotion: 'empathetic',
     },
     {
       optionId: 'bp2-opt4',
@@ -67,7 +64,6 @@ const painLocationQuestion: CMSQuestionContent = {
       value: 'multiple-areas',
       order: 4,
       avatarResponse: 'When the pain shows up in multiple places...',
-      avatarEmotion: 'concerned',
     },
   ],
 };
@@ -115,42 +111,36 @@ const discomfortTypeQuestion: CMSQuestionContent = {
       label: 'Tight and tense',
       value: 'tightness',
       order: 1,
-      avatarEmotion: 'empathetic',
     },
     {
       optionId: 'bp3-opt2',
       label: 'Sharp or stabbing',
       value: 'sharp-pain',
       order: 2,
-      avatarEmotion: 'concerned',
     },
     {
       optionId: 'bp3-opt3',
       label: 'Dull and achy',
       value: 'dull-ache',
       order: 3,
-      avatarEmotion: 'empathetic',
     },
     {
       optionId: 'bp3-opt4',
       label: 'Stiff and hard to move',
       value: 'stiffness',
       order: 4,
-      avatarEmotion: 'encouraging',
     },
     {
       optionId: 'bp3-opt5',
       label: 'Burning or radiating',
       value: 'burning',
       order: 5,
-      avatarEmotion: 'concerned',
     },
     {
       optionId: 'bp3-opt6',
       label: 'It varies day to day',
       value: 'varies',
       order: 6,
-      avatarEmotion: 'curious',
     },
   ],
 };

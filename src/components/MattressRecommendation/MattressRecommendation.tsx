@@ -41,7 +41,6 @@ export interface MattressRecommendationContent {
     label: string;
   }>;
   avatarResponse?: string;
-  avatarEmotion?: string;
 }
 
 export interface MattressRecommendationProps {

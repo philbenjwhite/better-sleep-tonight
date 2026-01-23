@@ -36,7 +36,6 @@
           "value": "every-night",
           "order": 1,
           "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night really takes a toll on your body and mind.",
-          "avatarEmotion": "soothing",
           "tags": [
             "severe"
           ]
@@ -47,7 +46,6 @@
           "value": "frequently",
           "order": 2,
           "avatarResponse": "You're not alone — many people struggle with falling asleep frequently. Let's figure out what's going on.",
-          "avatarEmotion": "friendly",
           "tags": [
             "moderate"
           ]
@@ -58,7 +56,6 @@
           "value": "on-occasion",
           "order": 3,
           "avatarResponse": "That's pretty normal, but we can definitely help you get more consistent, restful sleep.",
-          "avatarEmotion": "friendly",
           "tags": [
             "occasional"
           ]
@@ -69,7 +66,6 @@
           "value": "never",
           "order": 4,
           "avatarResponse": "That's great that falling asleep isn't an issue for you!",
-          "avatarEmotion": "excited",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": [
@@ -92,7 +88,6 @@
           "value": "side",
           "order": 1,
           "avatarResponse": "Side sleeping is great for alignment, but you need the right support to keep your spine neutral.",
-          "avatarEmotion": "friendly",
           "tags": [
             "side-sleeper"
           ]
@@ -103,7 +98,6 @@
           "value": "back",
           "order": 2,
           "avatarResponse": "Back sleeping is excellent for spinal alignment when you have proper lumbar support.",
-          "avatarEmotion": "friendly",
           "tags": [
             "back-sleeper"
           ]
@@ -114,7 +108,6 @@
           "value": "stomach",
           "order": 3,
           "avatarResponse": "Stomach sleeping can be tough on your back. The right mattress can help minimize the strain on your spine.",
-          "avatarEmotion": "friendly",
           "tags": [
             "stomach-sleeper"
           ]
@@ -125,7 +118,6 @@
           "value": "varies",
           "order": 4,
           "avatarResponse": "A combination sleeper! You need a mattress that adapts to all your positions throughout the night.",
-          "avatarEmotion": "friendly",
           "tags": [
             "combination-sleeper"
           ]
@@ -146,7 +138,6 @@
           "value": "never",
           "order": 1,
           "avatarResponse": "That's great — motion transfer isn't disrupting your sleep.",
-          "avatarEmotion": "friendly",
           "tags": [
             "no-motion-issues"
           ]
@@ -157,7 +148,6 @@
           "value": "occasionally",
           "order": 2,
           "avatarResponse": "Some motion disturbance is normal, especially if you share a bed.",
-          "avatarEmotion": "friendly",
           "tags": [
             "mild-motion"
           ]
@@ -168,7 +158,6 @@
           "value": "regularly",
           "order": 3,
           "avatarResponse": "Regular motion disturbance can seriously impact your sleep quality. That's something we can definitely address.",
-          "avatarEmotion": "soothing",
           "tags": [
             "motion-issues"
           ]
@@ -179,7 +168,6 @@
           "value": "not-sure",
           "order": 4,
           "avatarResponse": "That's okay — sometimes it's hard to know what's waking you up. We'll factor that in.",
-          "avatarEmotion": "friendly",
           "tags": [
             "unknown"
           ]
@@ -200,7 +188,6 @@
           "value": "every-night",
           "order": 1,
           "avatarResponse": "Waking up in pain every day is exhausting. Your mattress should be helping you recover, not causing more problems.",
-          "avatarEmotion": "soothing",
           "tags": [
             "severe-pain"
           ]
@@ -211,7 +198,6 @@
           "value": "frequently",
           "order": 2,
           "avatarResponse": "Frequent aches and pains are a clear sign your sleep setup needs attention.",
-          "avatarEmotion": "friendly",
           "tags": [
             "moderate-pain"
           ]
@@ -222,7 +208,6 @@
           "value": "on-occasion",
           "order": 3,
           "avatarResponse": "Even occasional pain is worth addressing. You deserve to wake up feeling great every day.",
-          "avatarEmotion": "friendly",
           "tags": [
             "occasional-pain"
           ]
@@ -233,7 +218,6 @@
           "value": "never",
           "order": 4,
           "avatarResponse": "That's wonderful that you're not experiencing morning pain!",
-          "avatarEmotion": "excited",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": [
@@ -256,7 +240,6 @@
           "value": "chronic-condition",
           "order": 1,
           "avatarResponse": "I understand you're dealing with something more serious. The right mattress support is even more critical for you.",
-          "avatarEmotion": "soothing",
           "tags": [
             "medical"
           ]
@@ -267,7 +250,6 @@
           "value": "stiffness",
           "order": 2,
           "avatarResponse": "Stiffness and soreness are often signs of poor sleep posture or inadequate lumbar support.",
-          "avatarEmotion": "friendly",
           "tags": [
             "stiffness"
           ]
@@ -278,7 +260,6 @@
           "value": "hip-shoulder",
           "order": 3,
           "avatarResponse": "Hip and shoulder pain can contribute to back pain since your whole spine is connected. Proper support helps everything.",
-          "avatarEmotion": "friendly",
           "tags": [
             "pressure-points"
           ]
@@ -289,7 +270,6 @@
           "value": "none",
           "order": 4,
           "avatarResponse": "Thanks for letting me know.",
-          "avatarEmotion": "friendly",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": [
@@ -506,8 +486,7 @@
           { "value": "firm", "label": "Firm" },
           { "value": "hybrid", "label": "Hybrid" }
         ],
-        "avatarResponse": "Excellent choice! That mattress is perfect for your sleep needs.",
-        "avatarEmotion": "excited"
+        "avatarResponse": "Excellent choice! That mattress is perfect for your sleep needs."
       }
     },
     {

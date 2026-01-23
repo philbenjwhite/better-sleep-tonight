@@ -19,8 +19,6 @@ export interface DevPanelProps {
   totalSteps: number;
   stepNames?: string[];
   stepIds?: string[];
-  currentEmotion?: string;
-  sessionEmotion?: string;
   /** Callback when panel open state changes */
   onOpenChange?: (isOpen: boolean) => void;
 }
@@ -31,8 +29,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   totalSteps,
   stepNames = [],
   stepIds = [],
-  currentEmotion,
-  sessionEmotion = 'friendly',
   onOpenChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);

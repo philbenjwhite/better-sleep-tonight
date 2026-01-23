@@ -13,7 +13,6 @@ export interface CMSAnswerOption {
   value: string;
   order?: number;
   avatarResponse?: string;
-  avatarEmotion?: string;
   nextStepOverride?: string;
   terminateFlow?: boolean;
   terminationMessage?: string;
@@ -35,7 +34,6 @@ export interface CMSQuestionContent {
     errorMessage?: string;
   };
   avatarResponse?: string;
-  avatarEmotion?: string;
 }
 
 export interface QuestionBlockProps {

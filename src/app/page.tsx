@@ -61,7 +61,6 @@ interface FlowStep {
   // See options fields
   buttonText?: string;
   avatarMessage?: string;
-  avatarEmotion?: string;
   // Product recommendations fields
   headline?: string;
   avatarResponse?: string;
@@ -122,7 +121,6 @@ function HomeContent() {
   const [isMuted, setIsMuted] = useState(true); // Muted by default
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
-  const [currentEmotion, setCurrentEmotion] = useState<string | null>(null);
   const [isFlowTerminated, setIsFlowTerminated] = useState(false);
   const [terminationMessage, setTerminationMessage] = useState<string | null>(
     null
@@ -285,6 +283,38 @@ function HomeContent() {
   // Video is ready when not in error state
   const isAvatarReady = isVideoReady;
 
+  // Helper function to log flow data in clean JSON format
+  const logFlowData = useCallback((answers: StoredAnswer[], context?: string) => {
+    const flowData = {
+      flowId: flowParam,
+      timestamp: new Date().toISOString(),
+      sessionData: {
+        currentStep: currentStepIndex + 1,
+        totalSteps: questionSteps.length,
+        email: answers.find(a => a.stepId === 'email-capture')?.value || null,
+        zipCode: userZipCode,
+        mattressSelection: selectedMattressSize && selectedMattressFeel ? {
+          size: selectedMattressSize,
+          feel: selectedMattressFeel,
+        } : null,
+      },
+      answers: answers.map(({ stepId, questionText, value, label, timestamp }) => ({
+        stepId,
+        question: questionText,
+        answer: {
+          value,
+          label,
+        },
+        answeredAt: timestamp instanceof Date ? timestamp.toISOString() : timestamp,
+      })),
+    };
+
+    console.log(`\n📋 Flow Data${context ? ` (${context})` : ''}:`);
+    console.log(JSON.stringify(flowData, null, 2));
+
+    return flowData;
+  }, [flowParam, currentStepIndex, questionSteps.length, userZipCode, selectedMattressSize, selectedMattressFeel]);
+
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
     setIsMuted(false); // Unmute when user clicks "Let's Begin"
@@ -313,7 +343,6 @@ function HomeContent() {
       !hasSpokenIntro
     ) {
       setHasSpokenIntro(true);
-      setCurrentEmotion("friendly");
     }
   }, [currentView, isVideoPlaying, hasSpokenIntro]);
 
@@ -424,8 +453,6 @@ function HomeContent() {
   const handleAnswerSelect = useCallback(
     (option: CMSAnswerOption) => {
       setSelectedAnswer(option);
-      console.log("Selected:", option);
-      console.log("Ashley says:", option.avatarResponse);
 
       // Store the answer
       const newAnswer: StoredAnswer = {
@@ -437,6 +464,9 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+
+      // Log flow data after each answer
+      logFlowData(updatedAnswers, `Answer: ${option.label}`);
 
       // Auto-save progress to localStorage
       saveProgress({
@@ -454,12 +484,10 @@ function HomeContent() {
             option.terminationMessage ||
             option.avatarResponse ||
             "Thank you for your time. Based on your answers, our program may not be the best fit for your needs.";
-          const emotion = option.avatarEmotion || "friendly";
 
           setShowQuestionBlock(false);
           setShowBackdrop(false); setBackdropHasAnimated(false);
           setAvatarResponse(termMessage);
-          setCurrentEmotion(emotion);
           setIsShowingResponse(true);
           setAvatarStartedTalking(true); // Simulate start for text display
           setIsFlowTerminated(true);
@@ -499,6 +527,7 @@ function HomeContent() {
       flowParam,
       clearProgress,
       questionSteps.length,
+      logFlowData,
     ]
   );
 
@@ -524,6 +553,9 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
 
+      // Log flow data after mattress selection
+      logFlowData(updatedAnswers, `Mattress: ${selection.size} ${selection.feel}`);
+
       // Auto-save progress
       saveProgress({
         flowId: flowParam,
@@ -535,15 +567,12 @@ function HomeContent() {
       const response =
         currentStep?.avatarResponse ||
         "Excellent choice! That mattress is perfect for your sleep needs.";
-      const emotion =
-        currentStep?.avatarEmotion || "excited";
 
       // Show avatar response (text only), hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
         setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
-        setCurrentEmotion(emotion);
         setIsShowingResponse(true);
         setAvatarStartedTalking(true); // Simulate start for text display
 
@@ -557,6 +586,7 @@ function HomeContent() {
       storedAnswers,
       saveProgress,
       flowParam,
+      logFlowData,
     ]
   );
 
@@ -596,6 +626,9 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
 
+      // Log flow data after product selection
+      logFlowData(updatedAnswers, `Product: ${selection.mattressName}`);
+
       // Auto-save progress
       saveProgress({
         flowId: flowParam,
@@ -607,15 +640,12 @@ function HomeContent() {
       const response =
         currentStep?.avatarResponse ||
         "Excellent choice! That mattress is perfect for your sleep needs.";
-      const emotion =
-        currentStep?.avatarEmotion || "excited";
 
       // Show avatar response (text only), hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
         setShowBackdrop(false); setBackdropHasAnimated(false);
         setAvatarResponse(response);
-        setCurrentEmotion(emotion);
         setIsShowingResponse(true);
         setAvatarStartedTalking(true); // Simulate start for text display
 
@@ -629,13 +659,12 @@ function HomeContent() {
       storedAnswers,
       saveProgress,
       flowParam,
+      logFlowData,
     ]
   );
 
   const handleTextSubmit = useCallback(
     (value: string) => {
-      console.log("Text submitted:", value);
-
       // Store the answer
       const newAnswer: StoredAnswer = {
         stepId: currentStep?.stepId || `step-${currentStepIndex}`,
@@ -647,6 +676,9 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
 
+      // Log flow data after text submission
+      logFlowData(updatedAnswers, `Text: ${value}`);
+
       // Auto-save progress to localStorage
       saveProgress({
         flowId: flowParam,
@@ -656,7 +688,6 @@ function HomeContent() {
 
       // Get the avatar response (text input doesn't have per-option responses)
       const response = "Thank you! Let me continue with the next question.";
-      console.log("Ashley says:", response);
 
       // Hide question block and backdrop, show avatar response (text only)
       setShowQuestionBlock(false);
@@ -674,34 +705,13 @@ function HomeContent() {
       storedAnswers,
       saveProgress,
       flowParam,
+      logFlowData,
     ]
   );
 
   // Handle email submission
   const handleEmailSubmit = useCallback(
     async (email: string) => {
-      console.log("Email submitted:", email);
-
-      // TODO: POST to CRM (endpoint TBD)
-      // Example structure for when CRM is ready:
-      // try {
-      //   const response = await fetch('/api/crm/subscribe', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify({
-      //       email,
-      //       source: 'sleep-report',
-      //       flowId: flowParam,
-      //       answers: storedAnswers,
-      //     }),
-      //   });
-      //   if (!response.ok) {
-      //     console.error('CRM submission failed:', response.status);
-      //   }
-      // } catch (error) {
-      //   console.error('CRM submission error:', error);
-      // }
-
       // Store the email as an answer
       const newAnswer: StoredAnswer = {
         stepId: currentStep?.stepId || `step-${currentStepIndex}`,
@@ -712,6 +722,9 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+
+      // Log flow data after email submission
+      logFlowData(updatedAnswers, `Email: ${email}`);
 
       // Save progress (don't clear yet - we're continuing to see-options)
       saveProgress({
@@ -737,6 +750,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       questionSteps.length,
+      logFlowData,
     ]
   );
 
@@ -798,8 +812,6 @@ function HomeContent() {
   // Handle zipcode submission
   const handleZipCodeSubmit = useCallback(
     (zipCode: string) => {
-      console.log("Zip code submitted:", zipCode);
-
       // Store the zipcode for the store locations step
       setUserZipCode(zipCode);
 
@@ -813,6 +825,9 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+
+      // Log flow data after zip code submission
+      logFlowData(updatedAnswers, `Zip Code: ${zipCode}`);
 
       // Save progress
       saveProgress({
@@ -838,6 +853,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       questionSteps.length,
+      logFlowData,
     ]
   );
 
@@ -1201,8 +1217,6 @@ function HomeContent() {
             step.stepId
         )}
         stepIds={questionSteps.map((step) => step.stepId)}
-        currentEmotion={currentEmotion || undefined}
-        sessionEmotion="friendly"
         onOpenChange={setIsDevPanelOpen}
       />
 

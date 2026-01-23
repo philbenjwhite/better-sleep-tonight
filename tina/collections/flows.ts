@@ -34,19 +34,6 @@ const answerOptionFields: TinaField[] = [
       "What the avatar says when this option is selected. Supports {thisAnswer}, {previousAnswer}, etc.",
   },
   {
-    name: "avatarEmotion",
-    label: "Avatar Emotion",
-    type: "string",
-    options: [
-      { value: "excited", label: "Excited" },
-      { value: "serious", label: "Serious" },
-      { value: "friendly", label: "Friendly" },
-      { value: "soothing", label: "Soothing" },
-      { value: "broadcaster", label: "Broadcaster" },
-    ],
-    description: "Voice emotion when speaking this response",
-  },
-  {
     name: "nextStepOverride",
     label: "Skip to Step (Optional)",
     type: "string",
@@ -73,15 +60,6 @@ const answerOptionFields: TinaField[] = [
     list: true,
     description: "For analytics/categorization",
   },
-];
-
-// HeyGen SDK voice emotions - used across all avatar text fields
-const voiceEmotionOptions = [
-  { value: "excited", label: "Excited" },
-  { value: "serious", label: "Serious" },
-  { value: "friendly", label: "Friendly" },
-  { value: "soothing", label: "Soothing" },
-  { value: "broadcaster", label: "Broadcaster" },
 ];
 
 // Intro screen fields (shown before steps begin)
@@ -265,12 +243,6 @@ const seeOptionsStepTemplate: Template = {
       type: "string",
       ui: { component: "textarea" },
     },
-    {
-      name: "avatarEmotion",
-      label: "Avatar Emotion",
-      type: "string",
-      options: voiceEmotionOptions,
-    },
   ],
 };
 
@@ -290,12 +262,6 @@ const productRecommendationsStepTemplate: Template = {
       type: "string",
       ui: { component: "textarea" },
       description: "What the avatar says after selection",
-    },
-    {
-      name: "avatarEmotion",
-      label: "Avatar Emotion",
-      type: "string",
-      options: voiceEmotionOptions,
     },
   ],
 };

@@ -43,7 +43,6 @@ export interface ProductRecommendationsContent {
   dataCaptureCopy?: string;
   contactUsCopy?: string;
   avatarResponse?: string;
-  avatarEmotion?: string;
 }
 
 export interface ProductRecommendationsProps {

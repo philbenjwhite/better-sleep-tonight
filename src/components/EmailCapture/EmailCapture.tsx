@@ -8,10 +8,8 @@ export interface EmailCaptureContent {
   placeholderText: string;
   submitButtonText: string;
   avatarResponseOnSubmit?: string;
-  avatarEmotionOnSubmit?: string;
   skipOptionText?: string;
   avatarResponseOnSkip?: string;
-  avatarEmotionOnSkip?: string;
 }
 
 export interface EmailCaptureProps {
