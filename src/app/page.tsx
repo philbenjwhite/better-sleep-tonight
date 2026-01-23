@@ -1006,7 +1006,7 @@ function HomeContent() {
 
           <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
             {/* Video Avatar Wrapper */}
-            <div className={styles.heygenWrapper}>
+            <div className={styles.avatarWrapper}>
               <VideoAvatar
                 className={styles.heygenAvatar}
                 isMuted={isMuted}

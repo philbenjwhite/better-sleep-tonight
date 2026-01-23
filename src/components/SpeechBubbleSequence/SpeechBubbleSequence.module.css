@@ -18,15 +18,21 @@
 
 .tail {
   position: absolute;
-  bottom: -10px;
-  left: -10px;
+  bottom: 0.75rem;
+  right: calc(100% - 2px);
+  top: 50%;
+  transform: translateY(-50%);
   width: 34px;
   height: 38px;
   pointer-events: none;
 }
 
 .text {
-  font-family: var(--sds-typography-heading-font-family, 'Open Sans', sans-serif);
+  font-family: var(
+    --sds-typography-heading-font-family,
+    "Open Sans",
+    sans-serif
+  );
   font-size: 20px;
   font-weight: 600;
   line-height: 1.4;
@@ -79,6 +85,17 @@
   to {
     opacity: 0;
     transform: translateY(-30px);
+  }
+}
+
+/* Mid-range screens: slightly smaller text */
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .text {
+    font-size: 18px;
+  }
+
+  .bubble {
+    padding: 14px 18px;
   }
 }
 
