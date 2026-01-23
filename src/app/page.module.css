@@ -733,9 +733,10 @@
 @media (max-width: 768px) {
   .questionBlockWrapper {
     /* Remove blur backdrop on mobile - avatar shows behind */
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    padding-bottom: 100px; /* Space from bottom for footer */
+    padding-bottom: 80px; /* Space from bottom for footer */
+    padding-top: 80px; /* Space from top for header */
   }
 
   .questionBlockBackdrop {
@@ -750,15 +751,17 @@
     max-width: calc(100vw - 3rem);
     padding: 12px;
     margin: 0 auto;
-    height: 100%;
+    height: auto;
     display: flex;
+    align-items: center;
     justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
   .questionBlockWrapper {
-    padding-bottom: 80px;
+    padding-bottom: 60px;
+    padding-top: 60px;
   }
 }
 

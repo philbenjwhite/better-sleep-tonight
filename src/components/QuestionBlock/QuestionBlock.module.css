@@ -46,3 +46,23 @@
   padding: 8px;
   margin: -8px;
 }
+
+/* Mobile: smaller question text and tighter spacing */
+@media (max-width: 768px) {
+  .questionBlock {
+    gap: var(--sds-size-space-600, 24px);
+  }
+
+  .questionText {
+    font-size: 22px;
+    letter-spacing: -0.44px;
+  }
+
+  .answersContainer {
+    gap: var(--sds-size-space-400, 16px);
+  }
+
+  .answersList {
+    gap: var(--sds-size-space-300, 12px);
+  }
+}

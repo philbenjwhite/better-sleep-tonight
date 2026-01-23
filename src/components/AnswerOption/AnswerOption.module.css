@@ -81,3 +81,16 @@
   letter-spacing: -0.48px;
   display: block;
 }
+
+/* Mobile: smaller answer buttons */
+@media (max-width: 768px) {
+  .answerOption {
+    padding: 16px 18px;
+    border-radius: 12px;
+  }
+
+  .label {
+    font-size: 18px;
+    letter-spacing: -0.36px;
+  }
+}
