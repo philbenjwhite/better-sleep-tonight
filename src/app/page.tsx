@@ -515,12 +515,16 @@ function HomeContent() {
   ]);
 
   // Handle video step completion - advance to next step when video ends
+  // Important: Check for ENDED state specifically, not just !isPlaying
+  // because isPlaying is false during loading too
+  const isVideoEnded = videoState === VideoState.ENDED;
+
   useEffect(() => {
     if (
       isVideoStep &&
       isShowingResponse &&
       avatarStartedTalking &&
-      !isVideoPlaying &&
+      isVideoEnded &&
       hasSpokenSummary
     ) {
       // Video finished - wait a moment before advancing to let user finish reading
@@ -547,7 +551,7 @@ function HomeContent() {
     isVideoStep,
     isShowingResponse,
     avatarStartedTalking,
-    isVideoPlaying,
+    isVideoEnded,
     hasSpokenSummary,
     currentStepIndex,
     questionSteps.length,
