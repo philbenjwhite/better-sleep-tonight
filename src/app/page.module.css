@@ -722,6 +722,13 @@
   flex-shrink: 0;
 }
 
+/* Hide back button on mobile */
+@media (max-width: 768px) {
+  .backButton {
+    display: none;
+  }
+}
+
 /* Mobile: position question block over centered avatar */
 @media (max-width: 768px) {
   .questionBlockWrapper {
