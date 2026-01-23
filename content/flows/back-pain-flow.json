@@ -20,7 +20,7 @@
       "stepId": "intro-video",
       "internalName": "Intro Video",
       "video": "/videos/ashley/ashley-1.mp4",
-      "script": "A lot of people wake up with a headache, restless nights, sore mornings and that \"Why do I feel 20 years older?\" stiffness. And while it feels mysterious, it usually isn't. There's always a reason and there's almost always a solution. Let's run a quick sleep diagnosis and figure out what's happening to your body at night.",
+      "script": "A lot of people wake up with a headache, restless nights, sore mornings and that 'Why do I feel 20 years older?' stiffness. \n\nAnd while it feels mysterious, it usually isn't. There's always a reason and there's almost always a solution. \n\nLet's run a quick sleep diagnosis and figure out what's happening to your body at night.",
       "_template": "videoStep"
     },
     {
@@ -36,9 +36,7 @@
           "value": "every-night",
           "order": 1,
           "avatarResponse": "I'm sorry to hear that. Having trouble falling asleep every night really takes a toll on your body and mind.",
-          "tags": [
-            "severe"
-          ]
+          "tags": ["severe"]
         },
         {
           "optionId": "q1-opt2",
@@ -46,9 +44,7 @@
           "value": "frequently",
           "order": 2,
           "avatarResponse": "You're not alone — many people struggle with falling asleep frequently. Let's figure out what's going on.",
-          "tags": [
-            "moderate"
-          ]
+          "tags": ["moderate"]
         },
         {
           "optionId": "q1-opt3",
@@ -56,9 +52,7 @@
           "value": "on-occasion",
           "order": 3,
           "avatarResponse": "That's pretty normal, but we can definitely help you get more consistent, restful sleep.",
-          "tags": [
-            "occasional"
-          ]
+          "tags": ["occasional"]
         },
         {
           "optionId": "q1-opt4",
@@ -68,9 +62,7 @@
           "avatarResponse": "That's great that falling asleep isn't an issue for you!",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
-          "tags": [
-            "no-issues"
-          ]
+          "tags": ["no-issues"]
         }
       ],
       "_template": "questionStep"
@@ -88,9 +80,7 @@
           "value": "side",
           "order": 1,
           "avatarResponse": "Side sleeping is great for alignment, but you need the right support to keep your spine neutral.",
-          "tags": [
-            "side-sleeper"
-          ]
+          "tags": ["side-sleeper"]
         },
         {
           "optionId": "q2-opt2",
@@ -98,9 +88,7 @@
           "value": "back",
           "order": 2,
           "avatarResponse": "Back sleeping is excellent for spinal alignment when you have proper lumbar support.",
-          "tags": [
-            "back-sleeper"
-          ]
+          "tags": ["back-sleeper"]
         },
         {
           "optionId": "q2-opt3",
@@ -108,9 +96,7 @@
           "value": "stomach",
           "order": 3,
           "avatarResponse": "Stomach sleeping can be tough on your back. The right mattress can help minimize the strain on your spine.",
-          "tags": [
-            "stomach-sleeper"
-          ]
+          "tags": ["stomach-sleeper"]
         },
         {
           "optionId": "q2-opt4",
@@ -118,9 +104,7 @@
           "value": "varies",
           "order": 4,
           "avatarResponse": "A combination sleeper! You need a mattress that adapts to all your positions throughout the night.",
-          "tags": [
-            "combination-sleeper"
-          ]
+          "tags": ["combination-sleeper"]
         }
       ],
       "_template": "questionStep"
@@ -138,9 +122,7 @@
           "value": "never",
           "order": 1,
           "avatarResponse": "That's great — motion transfer isn't disrupting your sleep.",
-          "tags": [
-            "no-motion-issues"
-          ]
+          "tags": ["no-motion-issues"]
         },
         {
           "optionId": "q3-opt2",
@@ -148,9 +130,7 @@
           "value": "occasionally",
           "order": 2,
           "avatarResponse": "Some motion disturbance is normal, especially if you share a bed.",
-          "tags": [
-            "mild-motion"
-          ]
+          "tags": ["mild-motion"]
         },
         {
           "optionId": "q3-opt3",
@@ -158,9 +138,7 @@
           "value": "regularly",
           "order": 3,
           "avatarResponse": "Regular motion disturbance can seriously impact your sleep quality. That's something we can definitely address.",
-          "tags": [
-            "motion-issues"
-          ]
+          "tags": ["motion-issues"]
         },
         {
           "optionId": "q3-opt4",
@@ -168,9 +146,7 @@
           "value": "not-sure",
           "order": 4,
           "avatarResponse": "That's okay — sometimes it's hard to know what's waking you up. We'll factor that in.",
-          "tags": [
-            "unknown"
-          ]
+          "tags": ["unknown"]
         }
       ],
       "_template": "questionStep"
@@ -188,9 +164,7 @@
           "value": "every-night",
           "order": 1,
           "avatarResponse": "Waking up in pain every day is exhausting. Your mattress should be helping you recover, not causing more problems.",
-          "tags": [
-            "severe-pain"
-          ]
+          "tags": ["severe-pain"]
         },
         {
           "optionId": "q4-opt2",
@@ -198,9 +172,7 @@
           "value": "frequently",
           "order": 2,
           "avatarResponse": "Frequent aches and pains are a clear sign your sleep setup needs attention.",
-          "tags": [
-            "moderate-pain"
-          ]
+          "tags": ["moderate-pain"]
         },
         {
           "optionId": "q4-opt3",
@@ -208,9 +180,7 @@
           "value": "on-occasion",
           "order": 3,
           "avatarResponse": "Even occasional pain is worth addressing. You deserve to wake up feeling great every day.",
-          "tags": [
-            "occasional-pain"
-          ]
+          "tags": ["occasional-pain"]
         },
         {
           "optionId": "q4-opt4",
@@ -220,9 +190,7 @@
           "avatarResponse": "That's wonderful that you're not experiencing morning pain!",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
-          "tags": [
-            "no-pain"
-          ]
+          "tags": ["no-pain"]
         }
       ],
       "_template": "questionStep"
@@ -240,9 +208,7 @@
           "value": "chronic-condition",
           "order": 1,
           "avatarResponse": "I understand you're dealing with something more serious. The right mattress support is even more critical for you.",
-          "tags": [
-            "medical"
-          ]
+          "tags": ["medical"]
         },
         {
           "optionId": "q5-opt2",
@@ -250,9 +216,7 @@
           "value": "stiffness",
           "order": 2,
           "avatarResponse": "Stiffness and soreness are often signs of poor sleep posture or inadequate lumbar support.",
-          "tags": [
-            "stiffness"
-          ]
+          "tags": ["stiffness"]
         },
         {
           "optionId": "q5-opt3",
@@ -260,9 +224,7 @@
           "value": "hip-shoulder",
           "order": 3,
           "avatarResponse": "Hip and shoulder pain can contribute to back pain since your whole spine is connected. Proper support helps everything.",
-          "tags": [
-            "pressure-points"
-          ]
+          "tags": ["pressure-points"]
         },
         {
           "optionId": "q5-opt4",
@@ -272,9 +234,7 @@
           "avatarResponse": "Thanks for letting me know.",
           "terminateFlow": true,
           "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
-          "tags": [
-            "other"
-          ]
+          "tags": ["other"]
         }
       ],
       "_template": "questionStep"
@@ -312,182 +272,7 @@
     {
       "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
-      "_template": "productRecommendationsStep",
-      "productRecommendationsContent": {
-        "headline": "Which of these mattresses seem like the best fit?",
-        "mattressOptions": [
-          {
-            "id": "tempur-sense-medium",
-            "productName": "TEMPUR SENSE® MEDIUM",
-            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
-            "basePrice": 2199.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "badge": "Best Value",
-            "profile": "10-11\"",
-            "coolingLevel": 2,
-            "pressureReliefLevel": 3,
-            "features": [
-              "3 layer foam construction",
-              "Fast-adapting foam for pressure relief",
-              "Premium fabric cover"
-            ]
-          },
-          {
-            "id": "tempur-sense-firm",
-            "productName": "TEMPUR SENSE® FIRM",
-            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
-            "basePrice": 2199.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "10-11\"",
-            "coolingLevel": 2,
-            "pressureReliefLevel": 3,
-            "features": [
-              "3 layer foam construction",
-              "Fast-adapting foam for pressure relief",
-              "Premium fabric cover"
-            ]
-          },
-          {
-            "id": "tempur-sense-soft",
-            "productName": "TEMPUR SENSE® SOFT",
-            "productDescription": "Adaptive support, pressure relief, and motion absorption—powered by TEMPUR® Material and finished with a premium cover.",
-            "basePrice": 2199.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "10-11\"",
-            "coolingLevel": 2,
-            "pressureReliefLevel": 3,
-            "features": [
-              "3 layer foam construction",
-              "Fast-adapting foam for pressure relief",
-              "Premium fabric cover"
-            ]
-          },
-          {
-            "id": "tempur-prosense-firm",
-            "productName": "TEMPUR PROSENSE® FIRM",
-            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
-            "basePrice": 2999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "badge": "Most Popular",
-            "profile": "12\"",
-            "coolingLevel": 4,
-            "pressureReliefLevel": 4,
-            "features": [
-              "4 layer foam construction",
-              "TEMPUR-APR+™ for advanced pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-prosense-medium",
-            "productName": "TEMPUR PROSENSE® MEDIUM",
-            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
-            "basePrice": 2999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "12\"",
-            "coolingLevel": 4,
-            "pressureReliefLevel": 4,
-            "features": [
-              "4 layer foam construction",
-              "TEMPUR-APR+™ for advanced pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-prosense-soft",
-            "productName": "TEMPUR PROSENSE® SOFT",
-            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
-            "basePrice": 2999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "12\"",
-            "coolingLevel": 4,
-            "pressureReliefLevel": 4,
-            "features": [
-              "4 layer foam construction",
-              "TEMPUR-APR+™ for advanced pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-prosense-medium-hybrid",
-            "productName": "TEMPUR PROSENSE® MEDIUM HYBRID",
-            "productDescription": "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ Material plus adaptive support and motion isolation.",
-            "basePrice": 3299.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "12\"",
-            "coolingLevel": 4,
-            "pressureReliefLevel": 4,
-            "features": [
-              "4 layer foam construction",
-              "TEMPUR-APR+™ for advanced pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-luxealign-firm",
-            "productName": "TEMPUR LUXEALIGN® FIRM",
-            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
-            "basePrice": 3999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "badge": "Most Advanced",
-            "profile": "13\"",
-            "coolingLevel": 5,
-            "pressureReliefLevel": 5,
-            "features": [
-              "5 layer construction",
-              "Zoned ergonomic layer adapts to your body to help support your spine",
-              "TEMPUR-APR+™ for maximum pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-luxealign-soft",
-            "productName": "TEMPUR LUXEALIGN® SOFT",
-            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
-            "basePrice": 3999.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "13\"",
-            "coolingLevel": 5,
-            "pressureReliefLevel": 5,
-            "features": [
-              "5 layer construction",
-              "Zoned ergonomic layer adapts to your body to help support your spine",
-              "TEMPUR-APR+™ for maximum pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          },
-          {
-            "id": "tempur-luxealign-medium-hybrid",
-            "productName": "TEMPUR LUXEALIGN® MEDIUM HYBRID",
-            "productDescription": "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+™ elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
-            "basePrice": 4299.00,
-            "productImage": "/images/mattress-tempurpedic.jpg",
-            "profile": "13\"",
-            "coolingLevel": 5,
-            "pressureReliefLevel": 5,
-            "features": [
-              "5 layer construction",
-              "Zoned ergonomic layer adapts to your body to help support your spine",
-              "TEMPUR-APR+™ for maximum pressure relief",
-              "Cool-to-touch removable cover"
-            ]
-          }
-        ],
-        "sizes": [
-          { "value": "twin", "label": "Twin", "priceModifier": 0 },
-          { "value": "twin-xl", "label": "Twin XL", "priceModifier": 100 },
-          { "value": "full", "label": "Full", "priceModifier": 200 },
-          { "value": "queen", "label": "Queen", "priceModifier": 300 },
-          { "value": "king", "label": "King", "priceModifier": 500 }
-        ],
-        "feels": [
-          { "value": "soft", "label": "Soft" },
-          { "value": "medium", "label": "Medium" },
-          { "value": "firm", "label": "Firm" },
-          { "value": "hybrid", "label": "Hybrid" }
-        ],
-        "avatarResponse": "Excellent choice! That mattress is perfect for your sleep needs."
-      }
+      "_template": "productRecommendationsStep"
     },
     {
       "stepId": "video-step-3",
@@ -499,15 +284,14 @@
     {
       "stepId": "zipcode-capture-step",
       "internalName": "Zip Code Capture",
-      "_template": "zipcodeCaptureStep",
       "headline": "Enter zip code",
       "placeholderText": "zipcode",
-      "buttonText": "Continue"
+      "buttonText": "Continue",
+      "_template": "zipcodeCaptureStep"
     },
     {
       "stepId": "store-locations-step",
       "internalName": "Store Locations",
-      "_template": "storeLocationsStep",
       "headerText": "Stores near",
       "defaultPostalCode": "L7M",
       "ctaBookTitle": "Book a Rest Test",
@@ -515,7 +299,8 @@
       "ctaBookButtonText": "Schedule Appointment",
       "ctaContactTitle": "Questions? We're here to help",
       "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
-      "ctaContactButtonText": "Contact Us"
+      "ctaContactButtonText": "Contact Us",
+      "_template": "storeLocationsStep"
     }
   ],
   "metadata": {

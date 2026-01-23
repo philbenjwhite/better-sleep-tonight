@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from './SpeechBubbleSequence.module.css';
 
+export interface SubtitleCue {
+  startTime: number; // seconds
+  endTime: number; // seconds
+  text: string;
+}
+
 export interface SpeechBubbleSequenceProps {
   /** Full message text - paragraphs separated by double newlines */
   message: string;
@@ -20,6 +26,10 @@ export interface SpeechBubbleSequenceProps {
   className?: string;
   /** Keep the bubble visible after animation completes (parent controls hiding) */
   stayVisible?: boolean;
+  /** VTT subtitle cues - when provided, uses video time for paragraph transitions */
+  subtitleCues?: SubtitleCue[];
+  /** Current video playback time in seconds - required when subtitleCues is provided */
+  videoCurrentTime?: number;
 }
 
 export function SpeechBubbleSequence({
@@ -31,13 +41,61 @@ export function SpeechBubbleSequence({
   onComplete,
   className,
   stayVisible = false,
+  subtitleCues,
+  videoCurrentTime,
 }: SpeechBubbleSequenceProps) {
-  // Split message into paragraphs by double newline
-  const paragraphs = message.split(/\n\n+/).filter(p => p.trim());
+  // Determine if we're in video-synced mode
+  const isVideoSyncMode = subtitleCues && subtitleCues.length > 0 && videoCurrentTime !== undefined;
+
+  // In video-sync mode, use cue texts as paragraphs; otherwise split by double newline
+  const paragraphs = isVideoSyncMode
+    ? subtitleCues!.map(cue => cue.text)
+    : message.split(/\n\n+/).filter(p => p.trim());
 
   const [currentParagraphIndex, setCurrentParagraphIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [lastShownCueIndex, setLastShownCueIndex] = useState(-1);
+
+  // In video-sync mode, determine current cue based on video time
+  const videoCueIndex = isVideoSyncMode
+    ? subtitleCues!.findIndex(
+        (cue, index) =>
+          videoCurrentTime! >= cue.startTime &&
+          (index === subtitleCues!.length - 1 || videoCurrentTime! < subtitleCues![index + 1].startTime)
+      )
+    : -1;
+
+  // Handle cue transitions in video-sync mode
+  useEffect(() => {
+    if (!isVideoSyncMode || videoCueIndex < 0) return;
+
+    // If we've moved to a new cue
+    if (videoCueIndex !== lastShownCueIndex && videoCueIndex > lastShownCueIndex) {
+      // Trigger transition animation if not the first cue
+      if (lastShownCueIndex >= 0) {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setCurrentParagraphIndex(videoCueIndex);
+          setLastShownCueIndex(videoCueIndex);
+          setIsTransitioning(false);
+        }, 400); // Match CSS transition duration
+      } else {
+        // First cue - no transition needed
+        setCurrentParagraphIndex(videoCueIndex);
+        setLastShownCueIndex(videoCueIndex);
+      }
+    }
+
+    // Check if we've completed all cues
+    if (videoCueIndex === subtitleCues!.length - 1) {
+      const lastCue = subtitleCues![videoCueIndex];
+      if (videoCurrentTime! >= lastCue.endTime) {
+        setIsComplete(true);
+        onComplete?.();
+      }
+    }
+  }, [isVideoSyncMode, videoCueIndex, lastShownCueIndex, subtitleCues, videoCurrentTime, onComplete]);
 
   const currentParagraph = paragraphs[currentParagraphIndex] || '';
   const words = currentParagraph.split(' ').filter(w => w);
@@ -96,8 +154,10 @@ export function SpeechBubbleSequence({
     }
   }, [currentParagraphIndex, paragraphs.length, onComplete]);
 
-  // Auto-advance after paragraph animation completes
+  // Auto-advance after paragraph animation completes (timer-based mode only)
   useEffect(() => {
+    // Skip timer-based advancement in video-sync mode
+    if (isVideoSyncMode) return;
     if (words.length === 0 || isTransitioning || isComplete) return;
 
     const timer = setTimeout(() => {
@@ -105,13 +165,14 @@ export function SpeechBubbleSequence({
     }, totalAnimationTime + paragraphPauseMs);
 
     return () => clearTimeout(timer);
-  }, [words.length, totalAnimationTime, paragraphPauseMs, isTransitioning, isComplete, advanceToNextParagraph]);
+  }, [isVideoSyncMode, words.length, totalAnimationTime, paragraphPauseMs, isTransitioning, isComplete, advanceToNextParagraph]);
 
   // Reset when message changes
   useEffect(() => {
     setCurrentParagraphIndex(0);
     setIsTransitioning(false);
     setIsComplete(false);
+    setLastShownCueIndex(-1);
   }, [message]);
 
   // Hide component when complete (unless stayVisible is true)

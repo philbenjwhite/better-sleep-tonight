@@ -13,6 +13,12 @@ const openSans = Open_Sans({
 export const metadata: Metadata = {
   title: "Better Sleep Tonight | Personalized Sleep Assessment & Mattress Recommendations",
   description: "Take our personalized sleep assessment to discover the perfect mattress for your needs. Get expert recommendations from Ashley, your AI sleep guide, and wake up feeling refreshed.",
+  icons: {
+    icon: [
+      { url: "/favicon_16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon_32.png", sizes: "32x32", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

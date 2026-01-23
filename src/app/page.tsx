@@ -18,7 +18,8 @@ import {
 import { DevPanel, StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
+import { SpeechBubbleSequence, SubtitleCue } from "@/components/SpeechBubbleSequence";
+import { parseVtt, getVttPathFromVideo } from "@/lib/subtitles";
 import { RecoveryModal } from "@/components/RecoveryModal";
 import {
   MattressRecommendation,
@@ -137,9 +138,10 @@ function HomeContent() {
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
   const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
+  const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
   // Video avatar hook
-  const { videoState, isPlaying, isNearingEnd, play } = useVideoAvatar();
+  const { videoState, isPlaying, isNearingEnd, play, currentTime } = useVideoAvatar();
 
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
@@ -373,6 +375,16 @@ function HomeContent() {
 
   // Handle video step - play video if videoId is specified
   useEffect(() => {
+    // Debug logging
+    console.log('[VideoStep] Check:', {
+      isVideoStep,
+      hasCurrentStep: !!currentStep,
+      showQuestionBlock,
+      isShowingResponse,
+      hasSpokenSummary,
+      stepId: currentStep?.stepId,
+    });
+
     if (
       isVideoStep &&
       currentStep &&
@@ -380,6 +392,7 @@ function HomeContent() {
       !isShowingResponse &&
       !hasSpokenSummary
     ) {
+      console.log('[VideoStep] Starting video step:', currentStep.stepId);
       const scriptText = currentStep.script || "";
       const videoPath = currentStep.video;
 
@@ -393,11 +406,28 @@ function HomeContent() {
       setIsShowingResponse(true);
       setAvatarStartedTalking(true);
 
-      // If video is specified, play it (accepts direct path or registry ID)
+      // If video is specified, play it and fetch VTT subtitles
       if (videoPath) {
+        console.log('[VideoStep] Playing video:', videoPath);
+
+        // Fetch VTT file for subtitle timing
+        const vttPath = getVttPathFromVideo(videoPath);
+        fetch(vttPath)
+          .then(res => res.ok ? res.text() : Promise.reject('VTT not found'))
+          .then(vttContent => {
+            const track = parseVtt(vttContent);
+            console.log('[VideoStep] Loaded VTT cues:', track.cues.length);
+            setVideoSubtitleCues(track.cues);
+          })
+          .catch(err => {
+            console.log('[VideoStep] No VTT file found, using timer-based display');
+            setVideoSubtitleCues([]); // Fall back to timer-based mode
+          });
+
         play(videoPath);
       } else {
         // No video - auto-advance after showing text
+        setVideoSubtitleCues([]); // No sync mode
         setTimeout(() => {
           setAvatarStartedTalking(false);
         }, 3000); // Show summary for 3 seconds
@@ -1057,6 +1087,8 @@ function HomeContent() {
                   paragraphPauseMs={1200}
                   className={styles.speechBubbleContainer}
                   stayVisible={isVideoPlaying}
+                  subtitleCues={isVideoStep && videoSubtitleCues.length > 0 ? videoSubtitleCues : undefined}
+                  videoCurrentTime={isVideoStep && videoSubtitleCues.length > 0 ? currentTime : undefined}
                 />
               )}
             </div>
