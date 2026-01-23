@@ -103,14 +103,14 @@
 
 /* Title Page style - matches Figma design token */
 .titlePage {
-  color: var(--sds-color-text-default-default, #363534);
+  color: var(--sds-color-text-default-default);
   text-align: center;
-  font-family: var(--sds-typography-heading-font-family, "Open Sans", sans-serif);
-  font-size: var(--sds-typography-heading-size-base, 24px);
+  font-family: var(--sds-typography-title-page-font-family);
+  font-size: var(--sds-typography-title-page-size-base);
   font-style: normal;
-  font-weight: var(--sds-typography-heading-font-weight, 700);
+  font-weight: var(--sds-typography-title-page-font-weight);
   line-height: 120%;
-  letter-spacing: -0.48px;
+  letter-spacing: -0.64px;
   margin: 0;
   max-width: 640px;
   width: 100%;
