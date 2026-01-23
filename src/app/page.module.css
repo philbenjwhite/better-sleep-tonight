@@ -103,21 +103,17 @@
 
 /* Title Page style - matches Figma design token */
 .titlePage {
-  font-family: var(
-    --sds-typography-title-page-font-family,
-    "Open Sans",
-    sans-serif
-  );
-  font-weight: 700;
-  font-size: 32px;
-  line-height: 1.2;
-  letter-spacing: -0.64px;
   color: var(--sds-color-text-default-default, #363534);
   text-align: center;
+  font-family: var(--sds-typography-heading-font-family, "Open Sans", sans-serif);
+  font-size: var(--sds-typography-heading-size-base, 24px);
+  font-style: normal;
+  font-weight: var(--sds-typography-heading-font-weight, 700);
+  line-height: 120%;
+  letter-spacing: -0.48px;
   margin: 0;
   max-width: 640px;
   width: 100%;
-  white-space: nowrap;
 }
 
 /* Subheadline/paragraph style for intro text */
@@ -173,8 +169,6 @@
   }
 
   .titlePage {
-    font-size: 28px;
-    white-space: normal;
     width: 100%;
   }
 
@@ -195,10 +189,6 @@
     padding: 16px;
   }
 
-  .titlePage {
-    font-size: 24px;
-  }
-
   .heading {
     font-size: 16px;
   }
@@ -213,10 +203,6 @@
   .avatar {
     width: 140px;
     height: 140px;
-  }
-
-  .titlePage {
-    font-size: 24px;
   }
 
   .heading {
