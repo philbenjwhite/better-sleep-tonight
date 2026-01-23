@@ -37,7 +37,7 @@
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: var(--sds-typography-body-font-weight-regular, 400);
   font-size: var(--sds-typography-body-size-medium, 16px);
-  color: var(--sds-color-text-default-secondary, #757575);
+  color: var(--sds-color-text-default-secondary, #5a5a5a);
   margin: 0;
 }
 
@@ -136,7 +136,7 @@
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 600;
   font-size: 14px;
-  color: var(--sds-color-text-default-secondary, #757575);
+  color: var(--sds-color-text-default-secondary, #5a5a5a);
   flex-shrink: 0;
 }
 

@@ -1,7 +1,7 @@
 :root {
   /* Colors - Text */
   --sds-color-text-default-default: #363534;
-  --sds-color-text-default-secondary: #757575;
+  --sds-color-text-default-secondary: #5a5a5a; /* Darkened from #757575 for WCAG AA compliance */
   --text-default-alternative: #ffffff;
   --background-default-alternative: #363534;
 

@@ -145,7 +145,7 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 1.4;
-  color: var(--sds-color-text-default-secondary, #757575);
+  color: var(--sds-color-text-default-secondary, #5a5a5a);
   margin: 0;
 }
 
@@ -157,7 +157,7 @@
 
 .optionButton {
   background-color: var(--sds-color-background-default-default, #ffffff);
-  border: 1px solid var(--sds-color-border-default-secondary, #757575);
+  border: 1px solid var(--sds-color-border-default-secondary, #5a5a5a);
   border-radius: 18px;
   padding: var(--sds-size-space-400, 16px);
   height: 36px;

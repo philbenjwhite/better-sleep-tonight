@@ -7,6 +7,38 @@
   flex-direction: column;
 }
 
+.closeButton {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 100;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.closeButton:hover {
+  background-color: #f5f5f5;
+  transform: scale(1.05);
+}
+
+.closeButton:focus {
+  outline: 2px solid #770000;
+  outline-offset: 2px;
+}
+
+.closeButton:active {
+  transform: scale(0.98);
+}
+
 .content {
   flex: 1;
   max-width: 800px;
@@ -28,7 +60,7 @@
 .lastUpdated {
   font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
   font-size: 14px;
-  color: #666;
+  color: #5a5a5a;
   margin: 0 0 48px;
 }
 

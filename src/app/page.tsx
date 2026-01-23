@@ -562,9 +562,8 @@ function HomeContent() {
       isVideoEnded &&
       hasSpokenSummary
     ) {
-      console.log('[VideoStepComplete] All conditions met, starting 2s timer');
-      // Video finished - wait a moment before advancing to let user finish reading
-      // Keep speech bubble visible for 2 seconds after video ends
+      console.log('[VideoStepComplete] All conditions met, starting timer');
+      // Video finished - brief moment before advancing
       const timer = setTimeout(() => {
         console.log('[VideoStepComplete] Timer fired, advancing to next step');
         setIsShowingResponse(false);
@@ -581,9 +580,9 @@ function HomeContent() {
             setShowBackdrop(true);
             setBackdropHasAnimated(true);
             setShowQuestionBlock(true);
-          }, 300);
+          }, 100);
         }
-      }, 2000); // 2 second delay after video ends before hiding speech bubble
+      }, 500); // 500ms delay after video ends before hiding speech bubble
       return () => {
         console.log('[VideoStepComplete] Cleanup - clearing timer');
         clearTimeout(timer);
@@ -659,14 +658,14 @@ function HomeContent() {
             setCurrentStepIndex((prev) => prev + 1);
             setTimeout(() => {
               setShowQuestionBlock(true);
-            }, 300);
+            }, 100);
           } else {
             // Flow complete - hide backdrop
             setShowBackdrop(false); setBackdropHasAnimated(false);
             console.log("Flow complete!");
           }
         }
-      }, 1200); // Brief pause after selection before moving on
+      }, 400); // Brief pause after selection before moving on
     },
     [
       currentStep,
@@ -889,7 +888,7 @@ function HomeContent() {
         setCurrentStepIndex((prev) => prev + 1);
         setTimeout(() => {
           setShowQuestionBlock(true);
-        }, 300);
+        }, 100);
       }
     },
     [
@@ -932,7 +931,7 @@ function HomeContent() {
       setCurrentStepIndex((prev) => prev + 1);
       setTimeout(() => {
         setShowQuestionBlock(true);
-      }, 300);
+      }, 100);
     }
   }, [
     currentStep,
@@ -954,7 +953,7 @@ function HomeContent() {
       setCurrentStepIndex((prev) => prev + 1);
       setTimeout(() => {
         setShowQuestionBlock(true);
-      }, 300);
+      }, 100);
     }
   }, [currentStepIndex, questionSteps.length]);
 
@@ -992,7 +991,7 @@ function HomeContent() {
         setCurrentStepIndex((prev) => prev + 1);
         setTimeout(() => {
           setShowQuestionBlock(true);
-        }, 300);
+        }, 100);
       }
     },
     [
@@ -1049,7 +1048,7 @@ function HomeContent() {
       currentStepTemplate: currentStep?._template,
     });
     if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isVideoStep) {
-      console.log('[AvatarResponseComplete] Conditions met - starting 500ms timer to advance');
+      console.log('[AvatarResponseComplete] Conditions met - starting timer to advance');
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -1076,12 +1075,12 @@ function HomeContent() {
             setShowBackdrop(true);
             setBackdropHasAnimated(true);
             setShowQuestionBlock(true);
-          }, 300);
+          }, 100);
         } else {
           // End of flow - could navigate to results
           console.log("Flow complete!");
         }
-      }, 500);
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [
@@ -1200,8 +1199,8 @@ function HomeContent() {
                 introMessage && (
                   <SpeechBubbleSequence
                     message={introMessage}
-                    wordDelay={0.26}
-                    paragraphPauseMs={1500}
+                    wordDelay={0.12}
+                    paragraphPauseMs={600}
                     className={styles.speechBubbleContainer}
                   />
                 )}
@@ -1210,8 +1209,8 @@ function HomeContent() {
               {isShowingResponse && avatarResponse && (
                 <SpeechBubbleSequence
                   message={avatarResponse}
-                  wordDelay={0.32}
-                  paragraphPauseMs={1200}
+                  wordDelay={0.15}
+                  paragraphPauseMs={600}
                   className={styles.speechBubbleContainer}
                   stayVisible={isVideoPlaying}
                   subtitleCues={isVideoStep && videoSubtitleCues.length > 0 ? videoSubtitleCues : undefined}

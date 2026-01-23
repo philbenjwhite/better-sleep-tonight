@@ -31,14 +31,14 @@
   opacity: 0.2;
 }
 
-/* Gradient overlay - fades from transparent to white at bottom */
+/* Gradient overlay - fades from transparent to background color at bottom */
 .gradientOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 431px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff);
+  background: linear-gradient(to bottom, rgba(249, 244, 237, 0), #f9f4ed);
   z-index: 1;
   pointer-events: none;
 }
@@ -376,7 +376,7 @@
   right: 0;
   width: 100vw;
   height: 431px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #f8f2ef 80%);
+  background: linear-gradient(180deg, rgba(249, 244, 237, 0) 0%, #f9f4ed 80%);
   pointer-events: none;
   z-index: 5;
 }
@@ -628,7 +628,7 @@
   height: 100vh;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  background-color: rgba(253, 250, 245, 0.7);
+  background-color: rgba(249, 244, 237, 0.7);
   z-index: -1;
   animation: backdropFadeIn 0.4s ease-out forwards;
 }
@@ -685,7 +685,7 @@
   padding: 8px 12px;
   background: transparent;
   border: none;
-  color: var(--sds-color-text-default-secondary, #666);
+  color: var(--sds-color-text-default-secondary, #5a5a5a);
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-size: 14px;
   font-weight: 500;
@@ -729,7 +729,7 @@
     /* Lighter blur on mobile so avatar is more visible */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    background-color: rgba(253, 250, 245, 0.5);
+    background-color: rgba(249, 244, 237, 0.5);
   }
 
   .questionBlockInner {

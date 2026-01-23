@@ -15,6 +15,7 @@
     "figma:publish": "figma connect publish"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@tinacms/cli": "^1.12.5",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import styles from './QuestionBlock.module.css';
 import { AnswerOption } from '../AnswerOption';
@@ -83,7 +83,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
     ? [...questionContent.answerOptions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     : [];
 
-  const handleSelect = (value: string) => {
+  const handleSelect = useCallback((value: string) => {
     if (disabled) return;
 
     // Update internal state for uncontrolled mode
@@ -96,7 +96,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
     if (selectedOption && onAnswerSelect) {
       onAnswerSelect(selectedOption);
     }
-  };
+  }, [disabled, selectedValue, sortedOptions, onAnswerSelect]);
 
   const handleTextChange = (value: string) => {
     setInternalTextValue(value);
@@ -131,6 +131,31 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
       onTextSubmit(currentTextValue);
     }
   };
+
+  // Keyboard shortcuts: A, B, C, D to select answers
+  useEffect(() => {
+    // Only add keyboard shortcuts for option-based inputs (not text inputs)
+    if (questionContent.inputType === 'text') return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      const key = e.key.toUpperCase();
+      const keyToIndex: Record<string, number> = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+
+      if (key in keyToIndex) {
+        const index = keyToIndex[key];
+        if (sortedOptions[index] && !disabled) {
+          e.preventDefault();
+          handleSelect(sortedOptions[index].value);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [questionContent.inputType, sortedOptions, disabled, handleSelect]);
 
   // Render text input if inputType is 'text'
   if (questionContent.inputType === 'text') {

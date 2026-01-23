@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
 import styles from './Header.module.css';
 
 export interface HeaderProps {
@@ -31,14 +32,14 @@ export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, show
         <button
           className={styles.volumeButton}
           aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+          title={isMuted ? "Sound off" : "Sound on"}
           onClick={onVolumeClick}
         >
-          <Image
-            src={isMuted ? "/images/volume-mute-icon.svg" : "/images/volume-icon.svg"}
-            alt=""
-            width={20}
-            height={20}
-          />
+          {isMuted ? (
+            <SpeakerSlash size={20} weight="bold" color="#363534" />
+          ) : (
+            <SpeakerHigh size={20} weight="bold" color="#363534" />
+          )}
         </button>
       )}
     </header>

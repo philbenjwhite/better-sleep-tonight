@@ -1,11 +1,31 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { X } from '@phosphor-icons/react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import styles from './page.module.css';
 
 export default function PrivacyPolicy() {
+  const router = useRouter();
+
+  const handleClose = () => {
+    router.back();
+  };
+
   return (
     <main className={styles.main}>
       <Header brandName="BetterSleep Tonight" showVolumeButton={false} />
+
+      {/* Close button */}
+      <button
+        className={styles.closeButton}
+        onClick={handleClose}
+        aria-label="Close and go back"
+        title="Close"
+      >
+        <X size={24} weight="bold" color="#363534" />
+      </button>
 
       <div className={styles.content}>
         <h1 className={styles.title}>Privacy Policy</h1>
