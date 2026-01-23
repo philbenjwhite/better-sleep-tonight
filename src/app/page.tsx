@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import {
@@ -81,6 +81,7 @@ interface FlowStep {
 
 function HomeContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Flow selection: ?flow=back-pain, ?flow=sleep, etc.
   const flowParam = searchParams.get("flow") || "default";
@@ -860,12 +861,14 @@ function HomeContent() {
   // Handle going back to previous step
   const handleGoBack = useCallback(() => {
     if (currentStepIndex > 0) {
+      const newStepIndex = currentStepIndex - 1;
+
       // Remove the last stored answer (for the current step we're leaving)
       const updatedAnswers = storedAnswers.slice(0, -1);
       setStoredAnswers(updatedAnswers);
 
       // Go back one step
-      setCurrentStepIndex((prev) => prev - 1);
+      setCurrentStepIndex(newStepIndex);
 
       // Reset UI state
       setSelectedAnswer(null);
@@ -873,14 +876,19 @@ function HomeContent() {
       setAvatarResponse(null);
       setShowQuestionBlock(true);
 
+      // Update the URL to reflect the new step (1-indexed for URL)
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set("step", String(newStepIndex + 1));
+      router.push(`/?${newParams.toString()}`);
+
       // Save the updated progress
       saveProgress({
         flowId: flowParam,
-        currentStepIndex: currentStepIndex - 1,
+        currentStepIndex: newStepIndex,
         answers: updatedAnswers,
       });
     }
-  }, [currentStepIndex, storedAnswers, saveProgress, flowParam]);
+  }, [currentStepIndex, storedAnswers, saveProgress, flowParam, searchParams, router]);
 
   // Show next question after avatar response finishes
   // (Skip if in video step - that has its own handler)

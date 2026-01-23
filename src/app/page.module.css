@@ -687,11 +687,12 @@
   /* GSAP handles animations now */
 }
 
-/* Back Button - top left of question block */
+/* Back Button - vertically centered on left side of page */
 .backButton {
-  position: absolute;
-  top: 24px;
+  position: fixed;
+  top: 50%;
   left: 24px;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -704,7 +705,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
-  z-index: 10;
+  z-index: 40;
 }
 
 .backButton:hover {

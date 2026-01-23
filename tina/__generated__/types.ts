@@ -314,7 +314,6 @@ export type FlowsStepsQuestionStepAnswerOptions = {
   value: Scalars['String']['output'];
   order?: Maybe<Scalars['Float']['output']>;
   avatarResponse?: Maybe<Scalars['String']['output']>;
-  avatarEmotion?: Maybe<Scalars['String']['output']>;
   nextStepOverride?: Maybe<Scalars['String']['output']>;
   terminateFlow?: Maybe<Scalars['Boolean']['output']>;
   terminationMessage?: Maybe<Scalars['String']['output']>;
@@ -349,7 +348,6 @@ export type FlowsStepsSeeOptionsStep = {
   promptText?: Maybe<Scalars['String']['output']>;
   buttonText?: Maybe<Scalars['String']['output']>;
   avatarMessage?: Maybe<Scalars['String']['output']>;
-  avatarEmotion?: Maybe<Scalars['String']['output']>;
 };
 
 export type FlowsStepsProductRecommendationsStep = {
@@ -358,7 +356,6 @@ export type FlowsStepsProductRecommendationsStep = {
   internalName?: Maybe<Scalars['String']['output']>;
   headline?: Maybe<Scalars['String']['output']>;
   avatarResponse?: Maybe<Scalars['String']['output']>;
-  avatarEmotion?: Maybe<Scalars['String']['output']>;
 };
 
 export type FlowsStepsZipcodeCaptureStep = {
@@ -473,7 +470,6 @@ export type FlowsStepsQuestionStepAnswerOptionsFilter = {
   value?: InputMaybe<StringFilter>;
   order?: InputMaybe<NumberFilter>;
   avatarResponse?: InputMaybe<StringFilter>;
-  avatarEmotion?: InputMaybe<StringFilter>;
   nextStepOverride?: InputMaybe<StringFilter>;
   terminateFlow?: InputMaybe<BooleanFilter>;
   terminationMessage?: InputMaybe<StringFilter>;
@@ -505,7 +501,6 @@ export type FlowsStepsSeeOptionsStepFilter = {
   promptText?: InputMaybe<StringFilter>;
   buttonText?: InputMaybe<StringFilter>;
   avatarMessage?: InputMaybe<StringFilter>;
-  avatarEmotion?: InputMaybe<StringFilter>;
 };
 
 export type FlowsStepsProductRecommendationsStepFilter = {
@@ -513,7 +508,6 @@ export type FlowsStepsProductRecommendationsStepFilter = {
   internalName?: InputMaybe<StringFilter>;
   headline?: InputMaybe<StringFilter>;
   avatarResponse?: InputMaybe<StringFilter>;
-  avatarEmotion?: InputMaybe<StringFilter>;
 };
 
 export type FlowsStepsZipcodeCaptureStepFilter = {
@@ -748,7 +742,6 @@ export type FlowsStepsQuestionStepAnswerOptionsMutation = {
   value?: InputMaybe<Scalars['String']['input']>;
   order?: InputMaybe<Scalars['Float']['input']>;
   avatarResponse?: InputMaybe<Scalars['String']['input']>;
-  avatarEmotion?: InputMaybe<Scalars['String']['input']>;
   nextStepOverride?: InputMaybe<Scalars['String']['input']>;
   terminateFlow?: InputMaybe<Scalars['Boolean']['input']>;
   terminationMessage?: InputMaybe<Scalars['String']['input']>;
@@ -780,7 +773,6 @@ export type FlowsStepsSeeOptionsStepMutation = {
   promptText?: InputMaybe<Scalars['String']['input']>;
   buttonText?: InputMaybe<Scalars['String']['input']>;
   avatarMessage?: InputMaybe<Scalars['String']['input']>;
-  avatarEmotion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type FlowsStepsProductRecommendationsStepMutation = {
@@ -788,7 +780,6 @@ export type FlowsStepsProductRecommendationsStepMutation = {
   internalName?: InputMaybe<Scalars['String']['input']>;
   headline?: InputMaybe<Scalars['String']['input']>;
   avatarResponse?: InputMaybe<Scalars['String']['input']>;
-  avatarEmotion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type FlowsStepsZipcodeCaptureStepMutation = {
@@ -864,7 +855,7 @@ export type StepTypesPartsFragment = { __typename: 'StepTypes', slug: string, di
 
 export type InputTypesPartsFragment = { __typename: 'InputTypes', slug: string, displayName: string, description?: string | null, allowsMultiple?: boolean | null, hasOptions?: boolean | null, validationPattern?: string | null };
 
-export type FlowsPartsFragment = { __typename: 'Flows', flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null };
+export type FlowsPartsFragment = { __typename: 'Flows', flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null };
 
 export type StepTypesQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
@@ -909,7 +900,7 @@ export type FlowsQueryVariables = Exact<{
 }>;
 
 
-export type FlowsQuery = { __typename?: 'Query', flows: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } };
+export type FlowsQuery = { __typename?: 'Query', flows: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } };
 
 export type FlowsConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -921,7 +912,7 @@ export type FlowsConnectionQueryVariables = Exact<{
 }>;
 
 
-export type FlowsConnectionQuery = { __typename?: 'Query', flowsConnection: { __typename?: 'FlowsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'FlowsConnectionEdges', cursor: string, node?: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, avatarEmotion?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null, avatarEmotion?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } | null } | null> | null } };
+export type FlowsConnectionQuery = { __typename?: 'Query', flowsConnection: { __typename?: 'FlowsConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'FlowsConnectionEdges', cursor: string, node?: { __typename: 'Flows', id: string, flowId: string, displayName: string, description?: string | null, isActive?: boolean | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, introScreen?: { __typename: 'FlowsIntroScreen', avatarImage?: string | null, backgroundVideo?: string | null, headline?: string | null, subheadline?: string | null, secondarySubheadline?: string | null, audioNotice?: string | null, primaryButtonText?: string | null } | null, globalVariables?: { __typename: 'FlowsGlobalVariables', brandName?: string | null } | null, steps?: Array<{ __typename: 'FlowsStepsVideoStep', stepId: string, internalName?: string | null, video?: string | null, script?: string | null } | { __typename: 'FlowsStepsQuestionStep', stepId: string, internalName?: string | null, questionText?: string | null, inputType?: string | null, helperText?: string | null, isRequired?: boolean | null, answerOptions?: Array<{ __typename: 'FlowsStepsQuestionStepAnswerOptions', optionId: string, label: string, value: string, order?: number | null, avatarResponse?: string | null, nextStepOverride?: string | null, terminateFlow?: boolean | null, terminationMessage?: string | null, tags?: Array<string | null> | null } | null> | null } | { __typename: 'FlowsStepsEmailCaptureStep', stepId: string, internalName?: string | null, promptText?: string | null, placeholderText?: string | null, submitButtonText?: string | null, avatarResponseOnSubmit?: string | null } | { __typename: 'FlowsStepsSeeOptionsStep', stepId: string, internalName?: string | null, promptText?: string | null, buttonText?: string | null, avatarMessage?: string | null } | { __typename: 'FlowsStepsProductRecommendationsStep', stepId: string, internalName?: string | null, headline?: string | null, avatarResponse?: string | null } | { __typename: 'FlowsStepsZipcodeCaptureStep', stepId: string, internalName?: string | null, headline?: string | null, placeholderText?: string | null, buttonText?: string | null } | { __typename: 'FlowsStepsStoreLocationsStep', stepId: string, internalName?: string | null, headerText?: string | null, defaultPostalCode?: string | null, ctaBookTitle?: string | null, ctaBookDescription?: string | null, ctaBookButtonText?: string | null, ctaContactTitle?: string | null, ctaContactDescription?: string | null, ctaContactButtonText?: string | null } | { __typename: 'FlowsStepsCtaStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null, primaryButtonText?: string | null, primaryButtonUrl?: string | null, secondaryButtonText?: string | null, secondaryButtonUrl?: string | null } | { __typename: 'FlowsStepsResultsStep', stepId: string, internalName?: string | null, headline?: string | null, bodyText?: string | null } | null> | null, metadata?: { __typename: 'FlowsMetadata', createdAt?: string | null, updatedAt?: string | null, author?: string | null, version?: string | null } | null } | null } | null> | null } };
 
 export const StepTypesPartsFragmentDoc = gql`
     fragment StepTypesParts on StepTypes {
@@ -988,7 +979,6 @@ export const FlowsPartsFragmentDoc = gql`
         value
         order
         avatarResponse
-        avatarEmotion
         nextStepOverride
         terminateFlow
         terminationMessage
@@ -1009,14 +999,12 @@ export const FlowsPartsFragmentDoc = gql`
       promptText
       buttonText
       avatarMessage
-      avatarEmotion
     }
     ... on FlowsStepsProductRecommendationsStep {
       stepId
       internalName
       headline
       avatarResponse
-      avatarEmotion
     }
     ... on FlowsStepsZipcodeCaptureStep {
       stepId

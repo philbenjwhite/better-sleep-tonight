@@ -133,19 +133,6 @@ var answerOptionFields = [
     description: "What the avatar says when this option is selected. Supports {thisAnswer}, {previousAnswer}, etc."
   },
   {
-    name: "avatarEmotion",
-    label: "Avatar Emotion",
-    type: "string",
-    options: [
-      { value: "excited", label: "Excited" },
-      { value: "serious", label: "Serious" },
-      { value: "friendly", label: "Friendly" },
-      { value: "soothing", label: "Soothing" },
-      { value: "broadcaster", label: "Broadcaster" }
-    ],
-    description: "Voice emotion when speaking this response"
-  },
-  {
     name: "nextStepOverride",
     label: "Skip to Step (Optional)",
     type: "string",
@@ -171,13 +158,6 @@ var answerOptionFields = [
     list: true,
     description: "For analytics/categorization"
   }
-];
-var voiceEmotionOptions = [
-  { value: "excited", label: "Excited" },
-  { value: "serious", label: "Serious" },
-  { value: "friendly", label: "Friendly" },
-  { value: "soothing", label: "Soothing" },
-  { value: "broadcaster", label: "Broadcaster" }
 ];
 var introScreenFields = [
   {
@@ -351,12 +331,6 @@ var seeOptionsStepTemplate = {
       label: "Avatar Message",
       type: "string",
       ui: { component: "textarea" }
-    },
-    {
-      name: "avatarEmotion",
-      label: "Avatar Emotion",
-      type: "string",
-      options: voiceEmotionOptions
     }
   ]
 };
@@ -376,12 +350,6 @@ var productRecommendationsStepTemplate = {
       type: "string",
       ui: { component: "textarea" },
       description: "What the avatar says after selection"
-    },
-    {
-      name: "avatarEmotion",
-      label: "Avatar Emotion",
-      type: "string",
-      options: voiceEmotionOptions
     }
   ]
 };
