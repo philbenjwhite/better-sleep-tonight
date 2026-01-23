@@ -47,10 +47,52 @@ export function SpeechBubbleSequence({
   // Determine if we're in video-synced mode
   const isVideoSyncMode = subtitleCues && subtitleCues.length > 0 && videoCurrentTime !== undefined;
 
-  // In video-sync mode, use cue texts as paragraphs; otherwise split by double newline
+  // Split message into paragraphs, preserving double newlines inside quotes
+  const splitIntoParagraphs = (text: string): string[] => {
+    const paragraphs: string[] = [];
+    let current = '';
+    let inQuote = false;
+    let i = 0;
+
+    while (i < text.length) {
+      const char = text[i];
+
+      // Track quote state (handle double quotes " " " and single quotes ' ' ')
+      // Using Unicode: " = \u201C, " = \u201D, ' = \u2018, ' = \u2019
+      if (char === '"' || char === '\u201C' || char === '\u201D' || char === "'" || char === '\u2018' || char === '\u2019') {
+        inQuote = !inQuote;
+        current += char;
+        i++;
+      }
+      // Check for double newline (paragraph break)
+      else if (!inQuote && text.slice(i, i + 2) === '\n\n') {
+        // Skip all consecutive newlines
+        if (current.trim()) {
+          paragraphs.push(current.trim());
+        }
+        current = '';
+        while (i < text.length && text[i] === '\n') {
+          i++;
+        }
+      }
+      else {
+        current += char;
+        i++;
+      }
+    }
+
+    // Add final paragraph
+    if (current.trim()) {
+      paragraphs.push(current.trim());
+    }
+
+    return paragraphs;
+  };
+
+  // In video-sync mode, use cue texts as paragraphs; otherwise split preserving quotes
   const paragraphs = isVideoSyncMode
     ? subtitleCues!.map(cue => cue.text)
-    : message.split(/\n\n+/).filter(p => p.trim());
+    : splitIntoParagraphs(message);
 
   const [currentParagraphIndex, setCurrentParagraphIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
