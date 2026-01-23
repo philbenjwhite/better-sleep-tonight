@@ -88,10 +88,21 @@
 @media (max-width: 600px) {
   .container {
     gap: 20px;
+    /* Center vertically on mobile using fixed positioning */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    padding: 0 16px;
+    justify-content: center;
+    align-items: center;
   }
 
   .headline {
     font-size: 24px;
+    text-align: center;
   }
 
   .inputWrapper {
