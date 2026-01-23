@@ -299,7 +299,7 @@
       "stepId": "video-step-2",
       "internalName": "Post-Email Video",
       "video": "/videos/ashley/ashley-3.mp4",
-      "script": "Great! You should receive your email soon and be sure to check your spam folder as well. Did you know that many sleep problems start with an aging or unsupportive mattress? Our bodies change over the years, but our mattress usually doesn't. If it's been 7 to 10 years since you changed your mattress or you wake up stiff and tired, your mattress may well be a factor that's stopping you from getting a better night's sleep. I've found three mattress options that are perfect for you based on your responses.",
+      "script": "Great! You should receive your email soon and be sure to check your spam folder as well.\n\nDid you know that many sleep problems start with an aging or unsupportive mattress? Our bodies change over the years, but our mattress usually doesn't. If it's been 7 to 10 years since you changed your mattress or you wake up stiff and tired, your mattress may well be a factor that's stopping you from getting a better night's sleep.\n\nI've found three mattress options that are perfect for you based on your responses.",
       "_template": "videoStep"
     },
     {
