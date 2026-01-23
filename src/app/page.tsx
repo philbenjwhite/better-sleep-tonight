@@ -215,6 +215,11 @@ function HomeContent() {
   // Video avatar hook
   const { videoState, isPlaying, isNearingEnd, play, currentTime } = useVideoAvatar();
 
+  // Debug: Log video state changes
+  useEffect(() => {
+    console.log('[VideoStateChange] videoState:', videoState);
+  }, [videoState]);
+
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
   const isVideoReady = videoState !== VideoState.ERROR;
@@ -359,8 +364,12 @@ function HomeContent() {
       showBackdrop,
       isZipCodeCaptureStep,
       isVideoStep,
+      videoState,
+      isShowingResponse,
+      avatarStartedTalking,
+      hasSpokenSummary,
     });
-  }, [currentStepIndex, currentStep, showQuestionBlock, showBackdrop, isZipCodeCaptureStep, isVideoStep]);
+  }, [currentStepIndex, currentStep, showQuestionBlock, showBackdrop, isZipCodeCaptureStep, isVideoStep, videoState, isShowingResponse, avatarStartedTalking, hasSpokenSummary]);
 
   // Get intro video from intro screen config (used as background on intro screen)
   const introVideo = introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
@@ -537,17 +546,19 @@ function HomeContent() {
     console.log('[VideoStepComplete] Check:', {
       isVideoStep,
       isShowingResponse,
-      avatarStartedTalking,
       isVideoEnded,
       hasSpokenSummary,
       currentStepIndex,
       videoState,
     });
 
+    // Note: We removed avatarStartedTalking from this check because:
+    // 1. hasSpokenSummary indicates we started the video step
+    // 2. isVideoEnded (ENDED state) confirms video finished playing
+    // 3. avatarStartedTalking can be incorrectly reset by other effects
     if (
       isVideoStep &&
       isShowingResponse &&
-      avatarStartedTalking &&
       isVideoEnded &&
       hasSpokenSummary
     ) {
@@ -581,11 +592,11 @@ function HomeContent() {
   }, [
     isVideoStep,
     isShowingResponse,
-    avatarStartedTalking,
     isVideoEnded,
     hasSpokenSummary,
     currentStepIndex,
     questionSteps.length,
+    videoState, // For logging only
   ]);
 
   const handleAnswerSelect = useCallback(
@@ -1030,7 +1041,15 @@ function HomeContent() {
   // Show next question after avatar response finishes
   // (Skip if in video step - that has its own handler)
   useEffect(() => {
+    console.log('[AvatarResponseComplete] Check:', {
+      isShowingResponse,
+      avatarStartedTalking,
+      isVideoPlaying,
+      isVideoStep,
+      currentStepTemplate: currentStep?._template,
+    });
     if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isVideoStep) {
+      console.log('[AvatarResponseComplete] Conditions met - starting 500ms timer to advance');
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -1073,6 +1092,7 @@ function HomeContent() {
     currentStepIndex,
     questionSteps.length,
     isFlowTerminated,
+    currentStep?._template,
   ]);
 
   return (

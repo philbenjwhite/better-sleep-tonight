@@ -169,67 +169,72 @@ function MattressCard({
           />
         </div>
 
-        {/* Product Info */}
+        {/* Product Info - Two Column Layout */}
         <div className={styles.cardInfo}>
-          <div className={styles.productHeader}>
-            <p className={styles.productName}>{mattress.productName}</p>
-            {mattress.profile && (
-              <span className={styles.profile}>{mattress.profile} Profile</span>
-            )}
-          </div>
-          <p className={styles.productDescription}>{mattress.productDescription}</p>
-
-          {/* Attribute Bars */}
-          {(mattress.coolingLevel || mattress.pressureReliefLevel) && (
-            <div className={styles.attributeBars}>
-              {mattress.coolingLevel && (
-                <div className={styles.attributeRow}>
-                  <span className={styles.attributeLabel}>Cooling</span>
-                  <div className={styles.attributeBar}>
-                    <div
-                      className={styles.attributeFill}
-                      style={{ width: `${(mattress.coolingLevel / 5) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-              {mattress.pressureReliefLevel && (
-                <div className={styles.attributeRow}>
-                  <span className={styles.attributeLabel}>Pressure Relief</span>
-                  <div className={styles.attributeBar}>
-                    <div
-                      className={styles.attributeFill}
-                      style={{ width: `${(mattress.pressureReliefLevel / 5) * 100}%` }}
-                    />
-                  </div>
-                </div>
+          {/* Column 1: Product info (name, description, price) */}
+          <div className={styles.cardInfoPrimary}>
+            <div className={styles.productHeader}>
+              <p className={styles.productName}>{mattress.productName}</p>
+              {mattress.profile && (
+                <span className={styles.profile}>{mattress.profile} Profile</span>
               )}
             </div>
-          )}
+            <p className={styles.productDescription}>{mattress.productDescription}</p>
+            <p className={styles.productPrice}>
+              {displayPrice.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+              }).replace("$", "")}
+            </p>
+          </div>
 
-          {/* Features */}
-          {mattress.features && mattress.features.length > 0 && (
-            <ul className={styles.featuresList}>
-              {mattress.features.map((feature, index) => (
-                <li key={index} className={styles.featureItem}>
-                  <svg className={styles.checkIcon} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.6667 3.5L5.25 9.91667L2.33333 7" stroke="#D4830A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Column 2: Specs (attribute bars + features) */}
+          <div className={styles.cardInfoSecondary}>
+            {/* Attribute Bars */}
+            {(mattress.coolingLevel || mattress.pressureReliefLevel) && (
+              <div className={styles.attributeBars}>
+                {mattress.coolingLevel && (
+                  <div className={styles.attributeRow}>
+                    <span className={styles.attributeLabel}>Cooling</span>
+                    <div className={styles.attributeBar}>
+                      <div
+                        className={styles.attributeFill}
+                        style={{ width: `${(mattress.coolingLevel / 5) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {mattress.pressureReliefLevel && (
+                  <div className={styles.attributeRow}>
+                    <span className={styles.attributeLabel}>Pressure Relief</span>
+                    <div className={styles.attributeBar}>
+                      <div
+                        className={styles.attributeFill}
+                        style={{ width: `${(mattress.pressureReliefLevel / 5) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-          <p className={styles.productPrice}>
-            {displayPrice.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-              minimumFractionDigits: 2,
-            }).replace("$", "")}
-          </p>
+            {/* Features */}
+            {mattress.features && mattress.features.length > 0 && (
+              <ul className={styles.featuresList}>
+                {mattress.features.map((feature, index) => (
+                  <li key={index} className={styles.featureItem}>
+                    <svg className={styles.checkIcon} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.6667 3.5L5.25 9.91667L2.33333 7" stroke="#D4830A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
-          {/* Expanded options (size and feel) - nested under price */}
+          {/* Expanded options (size and feel) - full width below both columns */}
           {isExpanded && (
             <div className={styles.cardOptions} ref={optionsRef}>
               {/* Size Selection */}

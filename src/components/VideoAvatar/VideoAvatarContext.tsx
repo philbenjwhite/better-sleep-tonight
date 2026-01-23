@@ -145,10 +145,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   }, []);
 
   const onVideoPlay = useCallback(() => {
+    console.log('[VideoAvatarContext] onVideoPlay - setting state to PLAYING');
     setVideoState(VideoState.PLAYING);
   }, []);
 
   const onVideoEnded = useCallback(() => {
+    console.log('[VideoAvatarContext] onVideoEnded - setting state to ENDED');
     setVideoState(VideoState.ENDED);
     playPromiseRef.current?.resolve();
     playPromiseRef.current = null;
