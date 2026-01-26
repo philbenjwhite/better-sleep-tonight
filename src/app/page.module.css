@@ -699,7 +699,7 @@
 }
 
 .backButton:focus {
-  outline: 2px solid var(--sds-color-border-brand, #770000);
+  outline: 2px solid var(--sds-color-border-brand, #f68b29);
   outline-offset: 2px;
   border-radius: 4px;
 }

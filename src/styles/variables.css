@@ -15,9 +15,9 @@
   --sds-color-slate-200: #e3e3e3;
 
   /* Colors - Brand */
-  --sds-color-background-brand-default: #770000;
-  --sds-color-border-brand-default: #770000;
-  --sds-color-text-brand-on-brand: #ffffff;
+  --sds-color-background-brand-default: #f68b29;
+  --sds-color-border-brand-default: #f68b29;
+  --sds-color-text-brand-on-brand: #000000;
 
   /* Typography - Title Page (from Figma) */
   --sds-typography-title-page-font-family: var(--font-open-sans, 'Open Sans', sans-serif);

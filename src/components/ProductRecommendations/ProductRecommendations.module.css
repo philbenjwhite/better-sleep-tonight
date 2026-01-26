@@ -444,7 +444,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--sds-size-space-200, 8px);
-  background-color: var(--sds-color-background-brand-default, #770000);
+  background-color: var(--sds-color-background-brand-default, #f68b29);
   border: none;
   border-radius: var(--sds-size-radius-200, 8px);
   padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
@@ -458,12 +458,12 @@
 }
 
 .continueButton:hover {
-  background-color: #8a0000;
+  background-color: #ffa54d;
 }
 
 .continueButton:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(119, 0, 0, 0.3);
+  box-shadow: 0 0 0 2px rgba(246, 139, 41, 0.3);
 }
 
 .continueButton svg {

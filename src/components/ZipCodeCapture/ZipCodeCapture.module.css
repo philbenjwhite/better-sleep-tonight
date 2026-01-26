@@ -55,13 +55,13 @@
 }
 
 .input:focus {
-  border-color: #770000;
+  border-color: #f68b29;
 }
 
 .button {
   height: 46px;
   padding: 12px 24px;
-  background: #770000;
+  background: #f68b29;
   border: none;
   border-radius: 8px;
   font-family: 'Open Sans', sans-serif;
@@ -76,7 +76,7 @@
 }
 
 .button:hover:not(:disabled) {
-  background: #5a0000;
+  background: #ffa54d;
 }
 
 .button:disabled {

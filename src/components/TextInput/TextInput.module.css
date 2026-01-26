@@ -75,8 +75,8 @@
 }
 
 .input.focused {
-  border-color: var(--sds-color-border-brand-active, #770000);
-  box-shadow: 0 0 0 3px rgba(119, 0, 0, 0.1);
+  border-color: var(--sds-color-border-brand-active, #f68b29);
+  box-shadow: 0 0 0 3px rgba(246, 139, 41, 0.15);
 }
 
 .input.hasError {
@@ -110,7 +110,7 @@
   padding: 0 var(--sds-size-space-800, 32px);
   min-width: 120px;
 
-  background: var(--sds-color-background-brand-default, #770000);
+  background: var(--sds-color-background-brand-default, #f68b29);
   border: none;
   border-radius: var(--sds-size-radius-400, 16px);
 
@@ -126,7 +126,7 @@
 }
 
 .button:hover:not(:disabled) {
-  background: var(--sds-color-background-brand-hover, #5c0000);
+  background: var(--sds-color-background-brand-hover, #ffa54d);
 }
 
 .button:active:not(:disabled) {
@@ -134,7 +134,7 @@
 }
 
 .button:focus-visible {
-  outline: 3px solid var(--sds-color-border-brand-active, #770000);
+  outline: 3px solid var(--sds-color-border-brand-active, #f68b29);
   outline-offset: 2px;
 }
 

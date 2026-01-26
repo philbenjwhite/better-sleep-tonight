@@ -2,7 +2,7 @@
   border: none;
   border-radius: var(--sds-size-radius-200, 8px);
   cursor: pointer;
-  font-weight: var(--sds-typography-body-font-weight-regular, 600);
+  font-weight: 700;
   font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
   transition: all 0.2s ease;
   overflow: clip;
@@ -19,12 +19,12 @@
 
 /* Variants */
 .primary {
-  background-color: var(--sds-color-background-brand-default, #770000);
-  color: var(--sds-color-text-brand-on-brand, #ffffff);
+  background-color: #f68b29;
+  color: #000000;
 }
 
 .primary:hover:not(.disabled) {
-  background-color: #5a0000;
+  background-color: #ffa54d;
 }
 
 .secondary {
@@ -40,12 +40,12 @@
 .tertiary {
   background-color: transparent;
   color: var(--sds-color-text-default-default, #363534);
-  border: var(--sds-size-stroke-border, 1px) solid var(--sds-color-border-brand-default, #770000);
+  border: var(--sds-size-stroke-border, 1px) solid var(--sds-color-border-brand-default, #f68b29);
 }
 
 .tertiary:hover:not(.disabled) {
-  background-color: var(--sds-color-background-brand-default, #770000);
-  color: var(--sds-color-text-brand-on-brand, #ffffff);
+  background-color: var(--sds-color-background-brand-default, #f68b29);
+  color: #000000;
 }
 
 /* Sizes */
