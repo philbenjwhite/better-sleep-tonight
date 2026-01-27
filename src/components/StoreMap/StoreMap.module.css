@@ -12,14 +12,25 @@
   min-height: 200px;
 }
 
-/* Store marker */
+/* Store marker - fixed size container to prevent popup offset accumulation */
 .marker {
   cursor: pointer;
   transition: transform 0.2s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Fixed container size - largest marker size (selected) */
+  width: 28px;
+  height: 35px;
+}
+
+.marker svg {
+  display: block;
 }
 
 .marker:hover {
   transform: scale(1.1);
+  transform-origin: bottom center;
 }
 
 .markerSelected {

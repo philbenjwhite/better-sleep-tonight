@@ -16,6 +16,8 @@ export interface FooterProps {
   avatarVideoSrc?: string;
   /** Text to display next to avatar */
   avatarText?: string;
+  /** Controls audio mute state for the avatar video */
+  isMuted?: boolean;
 }
 
 export function Footer({
@@ -25,6 +27,7 @@ export function Footer({
   showAvatarSection = false,
   avatarVideoSrc,
   avatarText,
+  isMuted = true,
 }: FooterProps) {
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
@@ -45,7 +48,7 @@ export function Footer({
             src={avatarVideoSrc}
             autoPlay
             playsInline
-            muted
+            muted={isMuted}
           />
           {avatarText && <p className={styles.avatarText}>{avatarText}</p>}
         </div>

@@ -1192,16 +1192,17 @@ function HomeContent() {
       {/* Question View */}
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
-          {/* Full-width Gradient Overlay at Bottom */}
-          <div className={styles.avatarGradientOverlay} />
+          {/* Full-width Gradient Overlay at Bottom - hide on store locations step */}
+          {!isStoreLocationsStep && <div className={styles.avatarGradientOverlay} />}
 
-          <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
-            {/* Video Avatar Wrapper */}
-            <div className={styles.avatarWrapper}>
-              <VideoAvatar
-                className={styles.heygenAvatar}
-                isMuted={isMuted}
-              />
+          {/* Video Avatar Wrapper - hide on store locations step */}
+          {!isStoreLocationsStep && (
+            <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
+              <div className={styles.avatarWrapper}>
+                <VideoAvatar
+                  className={styles.heygenAvatar}
+                  isMuted={isMuted}
+                />
 
               {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
               {!hasShownIntro &&
@@ -1228,15 +1229,19 @@ function HomeContent() {
                   videoCurrentTime={isVideoStep && videoSubtitleCues.length > 0 ? currentTime : undefined}
                 />
               )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (
             <div className={styles.questionBlockWrapper}>
-              <div
-                className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
-              />
+              {/* Hide backdrop on store locations step to show full map/list view */}
+              {!isStoreLocationsStep && (
+                <div
+                  className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
+                />
+              )}
 
               {/* Back Button - shown on steps after the first, uses showBackdrop to stay persistent during transitions */}
               {(showQuestionBlock || showBackdrop) && currentStepIndex > 0 && (
@@ -1382,6 +1387,7 @@ function HomeContent() {
         showAvatarSection={isStoreLocationsStep}
         avatarVideoSrc="/videos/ashley/last-step-avatar.mp4"
         avatarText="All the Ashley stores that stock your mattress are listed down the left hand side."
+        isMuted={isMuted}
       />
 
       {/* Dev Panel - press "/" to toggle */}

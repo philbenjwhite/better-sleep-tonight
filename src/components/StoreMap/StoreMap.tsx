@@ -31,9 +31,17 @@ export const StoreMap: React.FC<StoreMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const popupRef = useRef<mapboxgl.Popup | null>(null);
+  const onMarkerClickRef = useRef(onMarkerClick);
   const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Initialize map
+  // Keep the callback ref updated
+  useEffect(() => {
+    onMarkerClickRef.current = onMarkerClick;
+  }, [onMarkerClick]);
+
+  // Initialize map (only once)
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
@@ -66,106 +74,151 @@ export const StoreMap: React.FC<StoreMapProps> = ({
     });
 
     map.current.on('load', () => {
-      setMapLoaded(true);
+      if (!map.current) return;
+
+      // Add individual markers for each location
+      locations.forEach((location) => {
+        const el = document.createElement('div');
+        el.className = styles.marker;
+        // Don't set inline width/height - let CSS handle it to avoid offset accumulation issues
+        el.innerHTML = `
+          <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#363534"/>
+          </svg>
+        `;
+
+        el.addEventListener('click', () => {
+          onMarkerClickRef.current?.(location.id);
+        });
+
+        const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat([location.coordinates.lng, location.coordinates.lat])
+          .addTo(map.current!);
+
+        markersRef.current.set(location.id, marker);
+      });
 
       // Fit to bounds with padding
-      if (map.current) {
-        map.current.fitBounds(bounds, {
-          padding: 50,
-          maxZoom: 12,
-        });
-      }
+      map.current.fitBounds(bounds, {
+        padding: 50,
+        maxZoom: 12,
+      });
+
+      setMapLoaded(true);
     });
 
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     return () => {
+      // Clean up markers
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current.clear();
+
       if (map.current) {
         map.current.remove();
         map.current = null;
       }
     };
-  }, [locations, userCoordinates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
-  // Add/update markers when map loads or locations change
+  // Add user location marker
+  useEffect(() => {
+    if (!map.current || !mapLoaded || !userCoordinates) return;
+
+    // Remove existing user marker
+    if (userMarkerRef.current) {
+      userMarkerRef.current.remove();
+    }
+
+    const userEl = document.createElement('div');
+    userEl.className = styles.userMarker;
+    userEl.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+      </svg>
+    `;
+
+    userMarkerRef.current = new mapboxgl.Marker({ element: userEl })
+      .setLngLat([userCoordinates.lng, userCoordinates.lat])
+      .addTo(map.current);
+  }, [mapLoaded, userCoordinates]);
+
+  // Handle selected location - update marker style and show popup
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
 
-    // Clear existing markers
-    markersRef.current.forEach((marker) => marker.remove());
-    markersRef.current.clear();
-
-    // Add user location marker if available
-    if (userCoordinates) {
-      const userEl = document.createElement('div');
-      userEl.className = styles.userMarker;
-      userEl.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="10" cy="10" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-        </svg>
-      `;
-
-      new mapboxgl.Marker({ element: userEl })
-        .setLngLat([userCoordinates.lng, userCoordinates.lat])
-        .addTo(map.current);
+    // Remove previous popup and detach from any marker
+    if (popupRef.current) {
+      popupRef.current.remove();
+      popupRef.current = null;
     }
-
-    // Add store markers
-    locations.forEach((location) => {
-      const isSelected = selectedLocationId === location.id;
-      const el = document.createElement('div');
-      el.className = `${styles.marker} ${isSelected ? styles.markerSelected : ''}`;
-
-      // Use smaller markers by default (20x25), larger when selected (28x35)
-      const width = isSelected ? 28 : 20;
-      const height = isSelected ? 35 : 25;
-
-      el.innerHTML = `
-        <svg width="${width}" height="${height}" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 0C7.16 0 0 7.16 0 16c0 12 16 24 16 24s16-12 16-24c0-8.84-7.16-16-16-16zm0 22c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" fill="${isSelected ? '#f68b29' : '#363534'}"/>
-        </svg>
-      `;
-
-      el.addEventListener('click', () => {
-        onMarkerClick?.(location.id);
-      });
-
-      const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
-        .setLngLat([location.coordinates.lng, location.coordinates.lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: isSelected ? 20 : 15, closeButton: false })
-            .setHTML(`
-              <div class="${styles.popup}">
-                <strong>${location.city}</strong>
-                <span>${location.storeName}</span>
-              </div>
-            `)
-        )
-        .addTo(map.current!);
-
-      markersRef.current.set(location.id, marker);
+    // Also clear any existing popup attachments from all markers
+    markersRef.current.forEach((marker) => {
+      const existingPopup = marker.getPopup();
+      if (existingPopup) {
+        existingPopup.remove();
+        marker.setPopup(undefined as unknown as mapboxgl.Popup);
+      }
     });
-  }, [mapLoaded, locations, selectedLocationId, userCoordinates, onMarkerClick]);
 
-  // Fly to selected location
-  useEffect(() => {
-    if (!map.current || !mapLoaded || !selectedLocationId) return;
+    // Reset all markers to default style
+    // Use consistent container size to prevent popup offset accumulation
+    markersRef.current.forEach((marker, id) => {
+      const el = marker.getElement();
+      const isSelected = id === selectedLocationId;
+
+      // Keep container size consistent, only change the SVG inside
+      el.className = isSelected ? `${styles.marker} ${styles.markerSelected}` : styles.marker;
+
+      if (isSelected) {
+        el.innerHTML = `
+          <svg width="28" height="35" viewBox="0 0 28 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 21 14 21s14-10.5 14-21c0-7.73-6.27-14-14-14zm0 19.25c-2.9 0-5.25-2.35-5.25-5.25S11.1 8.75 14 8.75s5.25 2.35 5.25 5.25-2.35 5.25-5.25 5.25z" fill="#f68b29"/>
+          </svg>
+        `;
+      } else {
+        el.innerHTML = `
+          <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#363534"/>
+          </svg>
+        `;
+      }
+    });
+
+    if (!selectedLocationId) return;
 
     const selectedLocation = locations.find((loc) => loc.id === selectedLocationId);
-    if (selectedLocation) {
-      map.current.flyTo({
-        center: [selectedLocation.coordinates.lng, selectedLocation.coordinates.lat],
-        zoom: 14,
-        duration: 1000,
-      });
+    if (!selectedLocation) return;
 
-      // Open the popup for the selected marker
-      const marker = markersRef.current.get(selectedLocationId);
-      if (marker) {
-        marker.togglePopup();
-      }
-    }
+    const selectedMarker = markersRef.current.get(selectedLocationId);
+    if (!selectedMarker) return;
+
+    // Add popup attached to the marker (not to a coordinate)
+    // This ensures consistent positioning regardless of map state
+    popupRef.current = new mapboxgl.Popup({
+      offset: [0, -10], // Small offset from top of marker
+      anchor: 'bottom',
+      closeButton: false,
+    })
+      .setHTML(`
+        <div class="${styles.popup}">
+          <strong>${selectedLocation.city}</strong>
+          <span>${selectedLocation.storeName}</span>
+        </div>
+      `);
+
+    // Attach popup to the marker instead of setting LngLat
+    selectedMarker.setPopup(popupRef.current);
+    popupRef.current.addTo(map.current);
+
+    // Fly to selected location
+    map.current.flyTo({
+      center: [selectedLocation.coordinates.lng, selectedLocation.coordinates.lat],
+      zoom: 14,
+      duration: 1000,
+    });
   }, [selectedLocationId, locations, mapLoaded]);
 
   return (

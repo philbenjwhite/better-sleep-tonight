@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import styles from './StoreLocations.module.css';
 import { StoreMap } from '@/components/StoreMap';
 
@@ -93,8 +93,9 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
-  const [isVideoEnded, setIsVideoEnded] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const locationCardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const hasInitializedRef = useRef(false);
 
   const handleScroll = useCallback(() => {
     if (listRef.current) {
@@ -120,23 +121,30 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       .sort((a, b) => a.distance - b.distance);
   }, [userCoordinates]);
 
+  // Auto-select the closest location on initial load
+  useEffect(() => {
+    if (!hasInitializedRef.current && sortedLocations.length > 0) {
+      hasInitializedRef.current = true;
+      const closestLocation = sortedLocations[0];
+      setSelectedLocationId(closestLocation.id);
+      onLocationSelect?.(closestLocation);
+    }
+  }, [sortedLocations, onLocationSelect]);
+
   const handleLocationClick = (location: StoreLocation) => {
     setSelectedLocationId(location.id);
     onLocationSelect?.(location);
   };
 
+  const scrollToLocation = useCallback((locationId: string) => {
+    const cardElement = locationCardRefs.current.get(locationId);
+    if (cardElement && listRef.current) {
+      cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, []);
+
   return (
     <div className={styles.storeLocationsContainer}>
-      {/* Circular Video Avatar */}
-      <div className={`${styles.videoAvatarContainer} ${isVideoEnded ? styles.videoEnded : ''}`}>
-        <video
-          className={styles.videoAvatar}
-          src="/videos/ashley/last-step-avatar.mp4"
-          autoPlay
-          playsInline
-          onEnded={() => setIsVideoEnded(true)}
-        />
-      </div>
       {/* Header */}
       <h2 className={styles.headerText}>
         {content.headerText} {postalCode}
@@ -150,6 +158,11 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             {sortedLocations.map((location) => (
               <button
                 key={location.id}
+                ref={(el) => {
+                  if (el) {
+                    locationCardRefs.current.set(location.id, el);
+                  }
+                }}
                 type="button"
                 className={`${styles.locationCard} ${
                   selectedLocationId === location.id ? styles.selected : ''
@@ -211,6 +224,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               userCoordinates={userCoordinates}
               onMarkerClick={(locationId) => {
                 setSelectedLocationId(locationId);
+                scrollToLocation(locationId);
                 const location = sortedLocations.find((loc) => loc.id === locationId);
                 if (location) {
                   onLocationSelect?.(location);
