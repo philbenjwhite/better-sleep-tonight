@@ -8,15 +8,8 @@
 
 /* Progress bar positioned above footer content */
 .progressBar {
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
   height: 4px;
   background-color: #f6f3ed;
-  /* Negative margin pulls it up so it sits flush with footer */
-  margin-bottom: -4px;
-  transform: translateY(-100%);
 }
 
 .progressFill {
@@ -96,6 +89,11 @@
   display: none;
 }
 
+/* Hide dismiss button on desktop (avatar section is hidden anyway) */
+.avatarDismissButton {
+  display: none;
+}
+
 @media (max-width: 600px) {
   .avatarSection {
     display: flex;
@@ -103,6 +101,39 @@
     gap: 16px;
     padding: 16px 24px;
     background-color: #f6f3ed;
+    position: relative;
+    max-height: 120px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .avatarSection.avatarSlideOut {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+  }
+
+  .avatarDismissButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #363534;
+    transition: background-color 0.2s ease;
+    padding: 0;
+  }
+
+  .avatarDismissButton:hover {
+    background: rgba(255, 255, 255, 1);
   }
 
   .avatarVideo {

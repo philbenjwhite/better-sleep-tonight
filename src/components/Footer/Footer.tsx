@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
 
@@ -29,28 +30,54 @@ export function Footer({
   avatarText,
   isMuted = true,
 }: FooterProps) {
+  const [isAvatarDismissed, setIsAvatarDismissed] = useState(false);
+  const [isSliding, setIsSliding] = useState(false);
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+
+  const handleDismiss = () => {
+    setIsSliding(true);
+    // After animation completes, fully hide the element
+    setTimeout(() => {
+      setIsAvatarDismissed(true);
+    }, 300); // Match CSS transition duration
+  };
+
+  const handleVideoEnded = () => {
+    handleDismiss();
+  };
 
   return (
     <footer className={styles.footer}>
-      {showProgress && (
-        <div className={styles.progressBar}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
-      {showAvatarSection && avatarVideoSrc && (
-        <div className={styles.avatarSection}>
+      {/* Avatar section renders above progress bar (mobile only via CSS) */}
+      {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (
+        <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''}`}>
+          <button
+            type="button"
+            className={styles.avatarDismissButton}
+            onClick={handleDismiss}
+            aria-label="Dismiss"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
           <video
             className={styles.avatarVideo}
             src={avatarVideoSrc}
             autoPlay
             playsInline
             muted={isMuted}
+            onEnded={handleVideoEnded}
           />
           {avatarText && <p className={styles.avatarText}>{avatarText}</p>}
+        </div>
+      )}
+      {showProgress && (
+        <div className={styles.progressBar}>
+          <div
+            className={styles.progressFill}
+            style={{ width: `${progress}%` }}
+          />
         </div>
       )}
       <div className={styles.footerContent}>
