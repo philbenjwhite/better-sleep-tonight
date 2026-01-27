@@ -227,23 +227,25 @@
   align-items: center;
   justify-content: center;
   gap: var(--sds-size-space-200, 8px);
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
   background-color: var(--sds-color-background-brand-default, #f68b29);
-  color: #ffffff;
+  color: #000000;
   border: none;
-  border-radius: var(--sds-size-radius-200, 8px);
+  border-radius: 9999px;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: all 0.2s ease;
   align-self: flex-start;
   margin-top: var(--sds-size-space-400, 16px);
 }
 
 .ctaButton:hover {
   background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .ctaButton:focus {
@@ -252,7 +254,7 @@
 }
 
 .ctaButton:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .ctaButtonOutline {
@@ -260,24 +262,26 @@
   align-items: center;
   justify-content: center;
   gap: var(--sds-size-space-200, 8px);
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
   background-color: transparent;
-  color: var(--sds-color-background-brand-default, #f68b29);
-  border: 2px solid var(--sds-color-background-brand-default, #f68b29);
-  border-radius: var(--sds-size-radius-200, 8px);
+  color: var(--sds-color-text-default-default, #363534);
+  border: 1px solid var(--sds-color-border-brand-default, #f68b29);
+  border-radius: 9999px;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  transition: all 0.2s ease;
   align-self: flex-start;
   margin-top: var(--sds-size-space-400, 16px);
 }
 
 .ctaButtonOutline:hover {
   background-color: var(--sds-color-background-brand-default, #f68b29);
-  color: #ffffff;
+  color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .ctaButtonOutline:focus {
@@ -286,7 +290,7 @@
 }
 
 .ctaButtonOutline:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 /* Mobile responsive - stack vertically */

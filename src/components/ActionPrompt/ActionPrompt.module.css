@@ -30,21 +30,23 @@
   align-items: center;
   justify-content: center;
   gap: var(--sds-size-space-200, 8px);
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
   background-color: var(--sds-color-background-brand-default, #f68b29);
-  color: #ffffff;
+  color: #000000;
   border: none;
-  border-radius: var(--sds-size-radius-200, 8px);
+  border-radius: 9999px;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--sds-typography-body-size-medium, 16px);
-  line-height: 1.5;
+  line-height: 1.4;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .actionButton:hover:not(:disabled) {
   background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .actionButton:focus {
@@ -53,7 +55,7 @@
 }
 
 .actionButton:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .actionButton:disabled {

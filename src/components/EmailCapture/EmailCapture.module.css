@@ -82,24 +82,26 @@
 }
 
 .submitButton {
-  height: 46px;
-  padding: 12px 24px;
+  height: auto;
+  padding: 16px 24px;
   background: #f68b29;
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
   font-family: 'Open Sans', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
   line-height: 1.4;
-  color: #ffffff;
+  color: #000000;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .submitButton:hover:not(:disabled) {
   background: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .submitButton:focus {
@@ -108,7 +110,7 @@
 }
 
 .submitButton:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .submitButton:disabled {
