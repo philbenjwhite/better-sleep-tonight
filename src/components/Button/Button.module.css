@@ -1,6 +1,6 @@
 .button {
   border: none;
-  border-radius: var(--sds-size-radius-200, 8px);
+  border-radius: 9999px;
   cursor: pointer;
   font-weight: 700;
   font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
@@ -48,19 +48,19 @@
   color: #000000;
 }
 
-/* Sizes */
+/* Sizes - ~1.25-1.5x padding */
 .small {
-  padding: var(--sds-size-space-200, 8px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-250, 10px) var(--sds-size-space-500, 20px);
   font-size: var(--sds-typography-body-size-small, 14px);
 }
 
 .medium {
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-500, 20px);
   font-size: var(--sds-typography-body-size-medium, 16px);
 }
 
 .large {
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
   font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
 }
