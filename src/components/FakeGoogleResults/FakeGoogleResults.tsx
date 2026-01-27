@@ -18,7 +18,7 @@ export interface FakeGoogleResultsProps {
 const defaultResults: SearchResult[] = [
   {
     title: 'Better Sleep Tonight - Find Your Perfect Mattress',
-    url: 'https://bettersleeptonight.com',
+    url: '/',
     displayUrl: 'bettersleeptonight.com',
     description: 'Get personalized mattress recommendations based on your sleep style, body type, and preferences. Find Ashley stores near you and book a rest test today.',
     isHighlighted: true,
@@ -123,7 +123,7 @@ export function FakeGoogleResults({
               </div>
             </div>
             <h3 className={styles.resultTitle}>
-              <a href={result.url} onClick={(e) => e.preventDefault()}>
+              <a href={result.url} onClick={result.isHighlighted ? undefined : (e) => e.preventDefault()}>
                 {result.title}
               </a>
             </h3>
