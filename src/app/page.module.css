@@ -122,7 +122,7 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 120%;
+  line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
   text-align: center;
   margin: 0;
@@ -168,8 +168,16 @@
     gap: 32px;
   }
 
+  .avatar {
+    width: 120px;
+  }
+
   .titlePage {
     width: 100%;
+  }
+
+  .subheadline {
+    font-size: 16px;
   }
 
   .heading {
@@ -189,6 +197,14 @@
     padding: 16px;
   }
 
+  .avatar {
+    width: 100px;
+  }
+
+  .subheadline {
+    font-size: 14px;
+  }
+
   .heading {
     font-size: 16px;
   }
@@ -203,6 +219,10 @@
   .avatar {
     width: 140px;
     height: 140px;
+  }
+
+  .subheadline {
+    font-size: 16px;
   }
 
   .heading {
