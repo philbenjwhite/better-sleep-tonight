@@ -91,6 +91,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isVideoEnded, setIsVideoEnded] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(() => {
@@ -124,6 +125,16 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
 
   return (
     <div className={styles.storeLocationsContainer}>
+      {/* Circular Video Avatar */}
+      <div className={`${styles.videoAvatarContainer} ${isVideoEnded ? styles.videoEnded : ''}`}>
+        <video
+          className={styles.videoAvatar}
+          src="/videos/ashley/last-step-avatar.mp4"
+          autoPlay
+          playsInline
+          onEnded={() => setIsVideoEnded(true)}
+        />
+      </div>
       {/* Header */}
       <h2 className={styles.headerText}>
         {content.headerText} {postalCode}

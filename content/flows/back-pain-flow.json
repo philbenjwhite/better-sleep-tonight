@@ -284,8 +284,8 @@
     {
       "stepId": "zipcode-capture-step",
       "internalName": "Zip Code Capture",
-      "headline": "Enter zip code",
-      "placeholderText": "zipcode",
+      "headline": "Enter your Postal Code",
+      "placeholderText": "postal code",
       "buttonText": "Continue",
       "_template": "zipcodeCaptureStep"
     },
