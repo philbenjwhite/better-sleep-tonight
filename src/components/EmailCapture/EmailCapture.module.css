@@ -151,6 +151,11 @@
     flex-direction: column;
     height: auto;
     gap: 12px;
+    padding: 16px;
+  }
+
+  .inputWrapper {
+    width: 100%;
   }
 
   .emailInput {
