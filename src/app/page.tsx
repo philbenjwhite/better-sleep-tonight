@@ -20,6 +20,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SpeechBubbleSequence, SubtitleCue } from "@/components/SpeechBubbleSequence";
 import { parseVtt, getVttPathFromVideo } from "@/lib/subtitles";
+import { geocodeWithFallback, Coordinates } from "@/lib/geocoding";
 import { RecoveryModal } from "@/components/RecoveryModal";
 import {
   MattressRecommendation,
@@ -209,6 +210,7 @@ function HomeContent() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
+  const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(null);
   const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
@@ -959,14 +961,23 @@ function HomeContent() {
 
   // Handle zipcode submission
   const handleZipCodeSubmit = useCallback(
-    (zipCode: string) => {
+    async (zipCode: string) => {
       // Store the zipcode for the store locations step
       setUserZipCode(zipCode);
+
+      // Geocode the postal code to get coordinates
+      const coordinates = await geocodeWithFallback(zipCode);
+      if (coordinates) {
+        setUserCoordinates(coordinates);
+        console.log('Geocoded postal code:', zipCode, 'to coordinates:', coordinates);
+      } else {
+        console.warn('Could not geocode postal code:', zipCode);
+      }
 
       // Store as an answer
       const newAnswer: StoredAnswer = {
         stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-        questionText: "Zip Code",
+        questionText: "Postal Code",
         value: zipCode,
         label: zipCode,
         timestamp: new Date(),
@@ -975,7 +986,7 @@ function HomeContent() {
       setStoredAnswers(updatedAnswers);
 
       // Log flow data after zip code submission
-      logFlowData(updatedAnswers, `Zip Code: ${zipCode}`);
+      logFlowData(updatedAnswers, `Postal Code: ${zipCode}`);
 
       // Save progress
       saveProgress({
@@ -1354,6 +1365,7 @@ function HomeContent() {
                         ctaContactButtonText: currentStep?.ctaContactButtonText,
                       } as StoreLocationsContent}
                       postalCode={userZipCode || currentStep?.defaultPostalCode || ""}
+                      userCoordinates={userCoordinates || undefined}
                     />
                   </div>
                 )}

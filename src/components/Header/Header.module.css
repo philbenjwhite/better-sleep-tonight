@@ -21,6 +21,7 @@
 .logoImage {
   width: 238px;
   height: auto;
+  transform: translateY(-1rem);
 }
 
 /* Volume button - top right */
@@ -55,6 +56,7 @@
 
   .logoImage {
     width: 180px;
+    transform: translateY(-0.5rem);
   }
 }
 
@@ -66,5 +68,6 @@
 
   .logoImage {
     width: 180px;
+    transform: translateY(0);
   }
 }
