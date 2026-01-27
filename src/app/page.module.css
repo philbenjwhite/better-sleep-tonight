@@ -627,6 +627,13 @@
   }
 }
 
+/* Mobile: extra left padding for speech bubble */
+@media (max-width: 600px) {
+  .speechBubbleContainer {
+    left: calc(50% + 8px); /* Shift right by 8px to add effective 16px left padding */
+  }
+}
+
 /* Question Block Wrapper - centered overlay on top of avatar with blur */
 .questionBlockWrapper {
   position: fixed;
