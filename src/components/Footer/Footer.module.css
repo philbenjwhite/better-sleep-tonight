@@ -84,71 +84,147 @@
   }
 }
 
-/* Avatar section - only shows on mobile */
+/* Avatar section - Desktop: fixed bottom-left, Mobile: full-width above footer */
 .avatarSection {
-  display: none;
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f6f3ed;
+  border-radius: var(--sds-size-radius-400, 16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 40;
+  width: clamp(320px, 30vw, 450px);
+  max-height: 140px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
-/* Hide dismiss button on desktop (avatar section is hidden anyway) */
+.avatarSection.avatarSlideOut {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
 .avatarDismissButton {
-  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #363534;
+  transition: background-color 0.2s ease;
+  padding: 0;
 }
 
+.avatarDismissButton:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.avatarVideo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.avatarText {
+  font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #363534;
+  margin: 0;
+  flex: 1;
+}
+
+/* Animated word styles */
+.word {
+  display: inline;
+  opacity: 0;
+  animation: wordFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes wordFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Quote marks - always visible */
+.quoteOpen,
+.quoteClose {
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* Text fade in animation */
+.textFadeIn {
+  animation: textFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Text slide up animation for paragraph transitions */
+.textSlideUp {
+  animation: textSlideUp 0.4s ease-in forwards;
+}
+
+@keyframes textSlideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Mobile: Full-width above footer instead of fixed */
 @media (max-width: 600px) {
   .avatarSection {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 24px;
-    background-color: #f6f3ed;
     position: relative;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 16px 24px;
     max-height: 120px;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
   }
 
   .avatarSection.avatarSlideOut {
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    opacity: 0;
-  }
-
-  .avatarDismissButton {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #363534;
-    transition: background-color 0.2s ease;
-    padding: 0;
-  }
-
-  .avatarDismissButton:hover {
-    background: rgba(255, 255, 255, 1);
+    transform: none;
   }
 
   .avatarVideo {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .avatarText {
-    font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
-    font-size: 14px;
-    line-height: 1.4;
-    color: #363534;
-    margin: 0;
   }
 }

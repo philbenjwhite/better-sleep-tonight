@@ -91,19 +91,9 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   onContactUs,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
-  const [isScrolledDown, setIsScrolledDown] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const locationCardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const hasInitializedRef = useRef(false);
-
-  const handleScroll = useCallback(() => {
-    if (listRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-      setIsScrolledDown(scrollTop > 10);
-      setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 10);
-    }
-  }, []);
 
   // Calculate distances and sort locations
   const sortedLocations = useMemo(() => {
@@ -143,6 +133,24 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
     }
   }, []);
 
+  const handleBookRestTest = () => {
+    console.log('[StoreLocations] Schedule Appointment clicked', {
+      selectedLocationId,
+      selectedLocation: sortedLocations.find((loc) => loc.id === selectedLocationId),
+      timestamp: new Date().toISOString(),
+    });
+    onBookRestTest?.();
+  };
+
+  const handleContactUs = () => {
+    console.log('[StoreLocations] Contact Us clicked', {
+      selectedLocationId,
+      selectedLocation: sortedLocations.find((loc) => loc.id === selectedLocationId),
+      timestamp: new Date().toISOString(),
+    });
+    onContactUs?.();
+  };
+
   return (
     <div className={styles.storeLocationsContainer}>
       {/* Header */}
@@ -150,11 +158,88 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
         {content.headerText} {postalCode}
       </h2>
 
-      {/* Main Content */}
-      <div className={styles.contentWrapper}>
-        {/* Left Column - Locations List */}
-        <div className={`${styles.locationsListWrapper} ${isScrolledDown ? styles.scrolledDown : ''} ${isAtBottom ? styles.atBottom : ''}`}>
-          <div className={styles.locationsList} ref={listRef} onScroll={handleScroll}>
+      {/* CTA Row - Two columns */}
+      <div className={styles.ctaRow}>
+        {/* Schedule Appointment CTA */}
+        <div className={styles.section}>
+          {/* Calendar Icon */}
+          <div className={styles.ctaIcon}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="6" width="24" height="22" rx="3" stroke="#F68B29" strokeWidth="2"/>
+              <path d="M4 12H28" stroke="#F68B29" strokeWidth="2"/>
+              <path d="M10 4V8" stroke="#F68B29" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M22 4V8" stroke="#F68B29" strokeWidth="2" strokeLinecap="round"/>
+              <circle cx="10" cy="18" r="1.5" fill="#F68B29"/>
+              <circle cx="16" cy="18" r="1.5" fill="#F68B29"/>
+              <circle cx="22" cy="18" r="1.5" fill="#F68B29"/>
+              <circle cx="10" cy="23" r="1.5" fill="#F68B29"/>
+              <circle cx="16" cy="23" r="1.5" fill="#F68B29"/>
+            </svg>
+          </div>
+          <div className={styles.ctaContent}>
+            <div className={styles.ctaText}>
+              <p className={styles.ctaTitle}>{content.ctaBookTitle}</p>
+              <p className={styles.ctaDescription}>{content.ctaBookDescription}</p>
+            </div>
+            <button
+              type="button"
+              className={styles.ctaButton}
+              onClick={handleBookRestTest}
+            >
+              {content.ctaBookButtonText}
+            </button>
+          </div>
+        </div>
+
+        {/* Contact Us CTA */}
+        <div className={styles.section}>
+          {/* Chat/Help Icon */}
+          <div className={styles.ctaIcon}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 8C6 6.34315 7.34315 5 9 5H23C24.6569 5 26 6.34315 26 8V18C26 19.6569 24.6569 21 23 21H12L7 26V21H9C7.34315 21 6 19.6569 6 18V8Z" stroke="#F68B29" strokeWidth="2" strokeLinejoin="round"/>
+              <circle cx="11" cy="13" r="1.5" fill="#F68B29"/>
+              <circle cx="16" cy="13" r="1.5" fill="#F68B29"/>
+              <circle cx="21" cy="13" r="1.5" fill="#F68B29"/>
+            </svg>
+          </div>
+          <div className={styles.ctaContent}>
+            <div className={styles.ctaText}>
+              <p className={styles.ctaTitle}>{content.ctaContactTitle}</p>
+              <p className={styles.ctaDescription}>{content.ctaContactDescription}</p>
+            </div>
+            <button
+              type="button"
+              className={styles.ctaButtonOutline}
+              onClick={handleContactUs}
+            >
+              {content.ctaContactButtonText}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Map + Locations List - Full Width */}
+      <div className={styles.section}>
+        {/* Map */}
+        <div className={styles.mapContainer}>
+          <StoreMap
+            locations={sortedLocations}
+            selectedLocationId={selectedLocationId}
+            userCoordinates={userCoordinates}
+            onMarkerClick={(locationId) => {
+              setSelectedLocationId(locationId);
+              scrollToLocation(locationId);
+              const location = sortedLocations.find((loc) => loc.id === locationId);
+              if (location) {
+                onLocationSelect?.(location);
+              }
+            }}
+          />
+        </div>
+
+        {/* Locations List */}
+        <div className={styles.locationsListWrapper}>
+          <div className={styles.locationsList} ref={listRef}>
             {sortedLocations.map((location) => (
               <button
                 key={location.id}
@@ -211,56 +296,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                 </div>
               </button>
             ))}
-          </div>
-        </div>
-
-        {/* Right Column - Sidebar */}
-        <div className={styles.sidebar}>
-          {/* Interactive Map */}
-          <div className={styles.mapContainer}>
-            <StoreMap
-              locations={sortedLocations}
-              selectedLocationId={selectedLocationId}
-              userCoordinates={userCoordinates}
-              onMarkerClick={(locationId) => {
-                setSelectedLocationId(locationId);
-                scrollToLocation(locationId);
-                const location = sortedLocations.find((loc) => loc.id === locationId);
-                if (location) {
-                  onLocationSelect?.(location);
-                }
-              }}
-            />
-          </div>
-
-          {/* CTA Section 1 - Book a Rest Test */}
-          <div className={styles.ctaSection}>
-            <div className={styles.ctaText}>
-              <p className={styles.ctaTitle}>{content.ctaBookTitle}</p>
-              <p className={styles.ctaDescription}>{content.ctaBookDescription}</p>
-            </div>
-            <button
-              type="button"
-              className={styles.ctaButton}
-              onClick={onBookRestTest}
-            >
-              {content.ctaBookButtonText}
-            </button>
-          </div>
-
-          {/* CTA Section 2 - Contact Us */}
-          <div className={styles.ctaSection}>
-            <div className={styles.ctaText}>
-              <p className={styles.ctaTitle}>{content.ctaContactTitle}</p>
-              <p className={styles.ctaDescription}>{content.ctaContactDescription}</p>
-            </div>
-            <button
-              type="button"
-              className={styles.ctaButtonOutline}
-              onClick={onContactUs}
-            >
-              {content.ctaContactButtonText}
-            </button>
           </div>
         </div>
       </div>

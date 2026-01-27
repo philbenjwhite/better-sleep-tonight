@@ -3,49 +3,9 @@
   flex-direction: column;
   gap: var(--sds-size-space-600, 24px);
   width: 100%;
-  max-width: 1024px;
+  max-width: 1200px;
   box-sizing: border-box;
   position: relative;
-}
-
-/* Circular Video Avatar - Loom style */
-.videoAvatarContainer {
-  position: fixed;
-  bottom: 100px;
-  left: 24px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-}
-
-.videoAvatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.videoAvatarContainer.videoEnded {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease-out;
-}
-
-@media (max-width: 900px) {
-  .videoAvatarContainer {
-    width: 150px;
-    height: 150px;
-    bottom: 80px;
-    left: 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .videoAvatarContainer {
-    display: none; /* Hide fixed avatar on mobile, it's now in footer */
-  }
 }
 
 .headerText {
@@ -60,76 +20,70 @@
   color: var(--sds-color-text-default-default, #363534);
   letter-spacing: -0.64px;
   margin: 0;
-  padding: 0 var(--sds-size-space-600, 24px);
 }
 
-.contentWrapper {
+/* CTA Row - Two columns side by side */
+.ctaRow {
   display: flex;
-  gap: var(--sds-size-space-1200, 48px);
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  padding: var(--sds-size-space-600, 24px);
-  border-radius: var(--sds-size-radius-400, 16px);
+  gap: var(--sds-size-space-600, 24px);
 }
 
-/* Left Column - Locations List */
-.locationsListWrapper {
+/* Make CTA sections equal width */
+.ctaRow > .section {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* White section cards */
+.section {
+  background: #ffffff;
+  border-radius: var(--sds-size-radius-400, 16px);
+  padding: var(--sds-size-space-600, 24px);
   position: relative;
 }
 
-.locationsListWrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50px;
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #ffffff 40%,
-    transparent 100%
-  );
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1;
+/* CTA Icon - positioned at top left */
+.ctaIcon {
+  flex-shrink: 0;
+  margin-bottom: var(--sds-size-space-400, 16px);
 }
 
-.locationsListWrapper.scrolledDown::before {
-  opacity: 1;
+.ctaIcon svg {
+  display: block;
 }
 
-.locationsListWrapper::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50px;
-  background: linear-gradient(
-    to top,
-    #ffffff 0%,
-    #ffffff 40%,
-    transparent 100%
-  );
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+/* CTA Content - pushed to bottom */
+.ctaContent {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
 }
 
-.locationsListWrapper.atBottom::after {
-  opacity: 0;
+/* Map Container */
+.mapContainer {
+  width: 100%;
+  height: 300px;
+  border-radius: var(--sds-size-radius-200, 8px);
+  overflow: hidden;
+  background-color: #f0f0f0;
+  margin-bottom: var(--sds-size-space-600, 24px);
+}
+
+/* Locations List Wrapper */
+.locationsListWrapper {
+  min-width: 0;
+  position: relative;
 }
 
 .locationsList {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 641px;
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 8px;
-  background: white;
 }
 
 /* Custom scrollbar */
@@ -153,7 +107,7 @@
   gap: 8px;
   align-items: flex-start;
   padding: var(--sds-size-space-300, 12px);
-  border: 1px solid var(--sds-color-border-default-default, #d9d9d9);
+  border: 1px solid transparent;
   border-radius: var(--sds-size-radius-200, 8px);
   background: transparent;
   cursor: pointer;
@@ -164,7 +118,6 @@
 
 .locationCard:hover {
   border-color: var(--sds-color-border-brand-default, #f68b29);
-  background-color: rgba(246, 139, 41, 0.05);
 }
 
 .locationCard.selected {
@@ -244,69 +197,7 @@
   font-size: 14px;
 }
 
-/* Right Column - Sidebar */
-.sidebar {
-  width: 420px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sds-size-space-800, 32px);
-}
-
-.mapContainer {
-  width: 100%;
-  aspect-ratio: 1252 / 666;
-  border-radius: var(--sds-size-radius-200, 8px);
-  overflow: hidden;
-  background-color: #f0f0f0;
-}
-
-.mapImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.mapPlaceholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  color: #f68b29;
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.storeLogoText {
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 700;
-  font-size: 24px;
-  color: #f68b29;
-  letter-spacing: -0.5px;
-}
-
-.logoContainer {
-  display: flex;
-  align-items: flex-start;
-}
-
-.storeLogo {
-  width: 280px;
-  height: auto;
-}
-
-/* CTA Sections */
-.ctaSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sds-size-space-400, 16px);
-}
-
+/* CTA Text */
 .ctaText {
   display: flex;
   flex-direction: column;
@@ -348,6 +239,7 @@
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.15s ease;
   align-self: flex-start;
+  margin-top: var(--sds-size-space-400, 16px);
 }
 
 .ctaButton:hover {
@@ -380,6 +272,7 @@
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
   align-self: flex-start;
+  margin-top: var(--sds-size-space-400, 16px);
 }
 
 .ctaButtonOutline:hover {
@@ -396,68 +289,35 @@
   transform: scale(0.98);
 }
 
-/* Mobile responsive */
+/* Mobile responsive - stack vertically */
 @media (max-width: 900px) {
-  .contentWrapper {
+  .ctaRow {
     flex-direction: column;
-    gap: var(--sds-size-space-800, 32px);
   }
 
-  .sidebar {
-    width: 100%;
+  /* Reset equal height on mobile - let sections size naturally */
+  .ctaRow > .section {
+    flex: none;
+    justify-content: flex-start;
   }
 
   .locationsList {
-    max-height: 400px;
-  }
-
-  .headerText {
-    padding: 0;
+    max-height: 350px;
   }
 }
 
 @media (max-width: 600px) {
-  /* Flatten nested containers to enable reordering */
   .storeLocationsContainer {
-    display: flex;
-    flex-direction: column;
     gap: var(--sds-size-space-400, 16px);
   }
 
-  .contentWrapper {
-    display: contents;
-  }
-
-  .sidebar {
-    display: contents;
-  }
-
-  /* Reorder elements for mobile layout */
-  /* Use negative/low values to ensure header comes first (default order is 0) */
-  .headerText {
-    order: -10;
-  }
-
-  .ctaSection:first-of-type {
-    order: -5;
-    background: #ffffff;
+  .section {
     padding: var(--sds-size-space-400, 16px);
-    border-radius: var(--sds-size-radius-200, 8px);
   }
 
   .mapContainer {
-    order: 1;
-  }
-
-  .locationsListWrapper {
-    order: 2;
-  }
-
-  .ctaSection:last-of-type {
-    order: 10;
-    background: #ffffff;
-    padding: var(--sds-size-space-400, 16px);
-    border-radius: var(--sds-size-radius-200, 8px);
+    height: 250px;
+    margin-bottom: var(--sds-size-space-400, 16px);
   }
 
   /* Location card adjustments */
@@ -479,7 +339,8 @@
     justify-content: flex-start;
   }
 
-  .ctaButton {
+  .ctaButton,
+  .ctaButtonOutline {
     width: 100%;
   }
 }

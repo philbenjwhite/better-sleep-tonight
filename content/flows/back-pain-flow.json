@@ -300,6 +300,8 @@
       "ctaContactTitle": "Questions? We're here to help",
       "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
       "ctaContactButtonText": "Contact Us",
+      "avatarVideoSrc": "/videos/ashley/last-step-avatar.mp4",
+      "avatarText": "All the Ashley stores that stock your mattress are listed down the left-hand side.\n\nChoose the one that's nearest or most convenient.\n\nNow all you need to do is schedule an appointment so you can try that mattress out for yourself in store.\n\nThanks for visiting Better Sleep Tonight.",
       "_template": "storeLocationsStep"
     }
   ],
