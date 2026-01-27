@@ -28,13 +28,13 @@
 
 .avatarVideo {
   position: absolute;
-  top: -4px; /* Clip 4px from top to hide dark line in video */
+  top: -2px; /* Clip 2px from top to hide dark line in video */
   left: 0;
   display: block;
   width: 100%;
-  height: calc(100% + 4px); /* Compensate for top offset */
-  object-fit: contain; /* Show full video without cropping */
-  object-position: center center;
+  height: calc(100% + 2px); /* Compensate for top offset */
+  object-fit: cover; /* Cover to ensure no black lines at edges */
+  object-position: center top;
   background-color: transparent; /* Transparent so fallback shows through if needed */
   z-index: 2; /* Above fallback image */
 }

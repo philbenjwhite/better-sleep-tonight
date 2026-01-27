@@ -114,6 +114,7 @@
   margin: 0;
   max-width: 640px;
   width: 100%;
+  text-wrap: pretty;
 }
 
 /* Subheadline/paragraph style for intro text */
@@ -627,10 +628,12 @@
   }
 }
 
-/* Mobile: extra left padding for speech bubble */
+/* Mobile: extra padding for speech bubble container */
 @media (max-width: 600px) {
   .speechBubbleContainer {
     left: calc(50% + 8px); /* Shift right by 8px to add effective 16px left padding */
+    width: calc(100vw - 4rem); /* More padding on all sides */
+    padding: 8px;
   }
 }
 
