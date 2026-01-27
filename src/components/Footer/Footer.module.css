@@ -90,3 +90,34 @@
     font-size: 12px;
   }
 }
+
+/* Avatar section - only shows on mobile */
+.avatarSection {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .avatarSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    background-color: #f6f3ed;
+  }
+
+  .avatarVideo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .avatarText {
+    font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
+    font-size: 14px;
+    line-height: 1.4;
+    color: #363534;
+    margin: 0;
+  }
+}

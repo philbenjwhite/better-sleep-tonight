@@ -10,12 +10,21 @@ export interface FooterProps {
   currentStep?: number;
   /** Total number of steps for progress bar */
   totalSteps?: number;
+  /** Show avatar section above footer content (mobile only) */
+  showAvatarSection?: boolean;
+  /** Video source for avatar */
+  avatarVideoSrc?: string;
+  /** Text to display next to avatar */
+  avatarText?: string;
 }
 
 export function Footer({
   showProgress = false,
   currentStep = 0,
   totalSteps = 0,
+  showAvatarSection = false,
+  avatarVideoSrc,
+  avatarText,
 }: FooterProps) {
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
@@ -27,6 +36,18 @@ export function Footer({
             className={styles.progressFill}
             style={{ width: `${progress}%` }}
           />
+        </div>
+      )}
+      {showAvatarSection && avatarVideoSrc && (
+        <div className={styles.avatarSection}>
+          <video
+            className={styles.avatarVideo}
+            src={avatarVideoSrc}
+            autoPlay
+            playsInline
+            muted
+          />
+          {avatarText && <p className={styles.avatarText}>{avatarText}</p>}
         </div>
       )}
       <div className={styles.footerContent}>

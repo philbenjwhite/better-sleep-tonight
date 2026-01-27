@@ -44,10 +44,7 @@
 
 @media (max-width: 600px) {
   .videoAvatarContainer {
-    width: 120px;
-    height: 120px;
-    bottom: 70px;
-    left: 12px;
+    display: none; /* Hide fixed avatar on mobile, it's now in footer */
   }
 }
 

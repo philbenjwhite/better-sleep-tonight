@@ -1379,6 +1379,9 @@ function HomeContent() {
         showProgress={currentView === "question"}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
+        showAvatarSection={isStoreLocationsStep}
+        avatarVideoSrc="/videos/ashley/last-step-avatar.mp4"
+        avatarText="All the Ashley stores that stock your mattress are listed down the left hand side."
       />
 
       {/* Dev Panel - press "/" to toggle */}
