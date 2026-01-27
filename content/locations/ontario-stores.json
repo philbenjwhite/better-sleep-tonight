@@ -10,6 +10,7 @@
       "address": "30 North Village Way, Unit 4",
       "storePhone": "+17057287838",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/barrie/9000092867/",
       "coordinates": {
         "lat": 44.3894,
         "lng": -79.6903
@@ -22,6 +23,7 @@
       "address": "390 N Front St, Unit 10003",
       "storePhone": "+16139021689",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/belleville/9000340859/",
       "coordinates": {
         "lat": 44.1628,
         "lng": -77.3832
@@ -34,6 +36,7 @@
       "address": "70 Great Lakes Dr, Unit 149",
       "storePhone": "+19057993284",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/brampton/7710000520/",
       "coordinates": {
         "lat": 43.7315,
         "lng": -79.7624
@@ -46,6 +49,7 @@
       "address": "184 Lynden Rd",
       "storePhone": "+12262500138",
       "customerServicePhone": "+12262500138",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/brantford/7710000521/",
       "coordinates": {
         "lat": 43.1394,
         "lng": -80.2644
@@ -58,6 +62,7 @@
       "address": "7-3060 Davidson Court",
       "storePhone": "+19053151700",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/burlington/7710000538/",
       "coordinates": {
         "lat": 43.3255,
         "lng": -79.7990
@@ -70,6 +75,7 @@
       "address": "613 Centre St",
       "storePhone": "+17058694771",
       "customerServicePhone": "+18003563605",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/espanola/9000062041/",
       "coordinates": {
         "lat": 46.2567,
         "lng": -81.7656
@@ -82,6 +88,7 @@
       "address": "389 Woodlawn Rd W",
       "storePhone": "+12267801373",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/guelph/9000187972/",
       "coordinates": {
         "lat": 43.5448,
         "lng": -80.2482
@@ -94,6 +101,7 @@
       "address": "2776 Princess St",
       "storePhone": "+16133842444",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/kingston/9000031918/",
       "coordinates": {
         "lat": 44.2312,
         "lng": -76.4860
@@ -106,6 +114,7 @@
       "address": "D2-655 Fairway Rd S",
       "storePhone": "+15198939595",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/kitchener/9000749061/",
       "coordinates": {
         "lat": 43.4168,
         "lng": -80.4883
@@ -118,6 +127,7 @@
       "address": "3325 Wonderland Rd South, Unit 1",
       "storePhone": "+15196521637",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/london/9000185634/",
       "coordinates": {
         "lat": 42.9490,
         "lng": -81.2760
@@ -130,6 +140,7 @@
       "address": "5900 Mavis Rd, Unit 2",
       "storePhone": "+15877602789",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/mississauga/7710000523/",
       "coordinates": {
         "lat": 43.6205,
         "lng": -79.6525
@@ -142,6 +153,7 @@
       "address": "333 Matheson Blvd W",
       "storePhone": "+19057129846",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/mississauga/9000482012/",
       "coordinates": {
         "lat": 43.6629,
         "lng": -79.6127
@@ -154,6 +166,7 @@
       "address": "17700 Yonge Street",
       "storePhone": "+12893192770",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/newmarket/9000200389/",
       "coordinates": {
         "lat": 44.0592,
         "lng": -79.4613
@@ -166,6 +179,7 @@
       "address": "111 Drury St",
       "storePhone": "+17054720123",
       "customerServicePhone": "+18003643605",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/north-bay/9000076148/",
       "coordinates": {
         "lat": 46.3091,
         "lng": -79.4608
@@ -178,6 +192,7 @@
       "address": "530 West Hunt Club Rd",
       "storePhone": "+16132321441",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/ottawa/9000064175/",
       "coordinates": {
         "lat": 45.3476,
         "lng": -75.6903
@@ -190,6 +205,7 @@
       "address": "707 Lawrence St",
       "storePhone": "+16139751160",
       "customerServicePhone": "+16139151160",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/prescott/9000031917/",
       "coordinates": {
         "lat": 44.7142,
         "lng": -75.5178
@@ -202,6 +218,7 @@
       "address": "45 Red Maple Rd",
       "storePhone": "+19057636020",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/richmond-hill/9000117873/",
       "coordinates": {
         "lat": 43.8828,
         "lng": -79.4403
@@ -214,6 +231,7 @@
       "address": "115 Northern Ave E",
       "storePhone": "+17059462538",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/sault-ste-marie/9000035146/",
       "coordinates": {
         "lat": 46.5136,
         "lng": -84.3358
@@ -226,6 +244,7 @@
       "address": "23 William Kitchen Rd, H3",
       "storePhone": "+14162991098",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/scarborough/9000092868/",
       "coordinates": {
         "lat": 43.7764,
         "lng": -79.2318
@@ -238,6 +257,7 @@
       "address": "285 Geneva St",
       "storePhone": "+16474278359",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/st-catharines/9000850197/",
       "coordinates": {
         "lat": 43.1594,
         "lng": -79.2469
@@ -250,6 +270,7 @@
       "address": "1776 Stone Church Rd E, Unit 2",
       "storePhone": "+19056434646",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/stoney-creek/7710000526/",
       "coordinates": {
         "lat": 43.2075,
         "lng": -79.7441
@@ -262,6 +283,7 @@
       "address": "800 Barry Downe Rd",
       "storePhone": "+17055663511",
       "customerServicePhone": "+17055667669",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/sudbury/9000107123/",
       "coordinates": {
         "lat": 46.5107,
         "lng": -81.0050
@@ -274,6 +296,7 @@
       "address": "640 Balmoral Street",
       "storePhone": "+18074761466",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/thunder-bay/9000109139/",
       "coordinates": {
         "lat": 48.4001,
         "lng": -89.2477
@@ -286,6 +309,7 @@
       "address": "1602 The Queensway",
       "storePhone": "+16474263110",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/toronto/9000889922/",
       "coordinates": {
         "lat": 43.6205,
         "lng": -79.5132
@@ -298,6 +322,7 @@
       "address": "1650 Victoria St E, Unit 5A",
       "storePhone": "+19057234786",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/whitby/9000035147/",
       "coordinates": {
         "lat": 43.8971,
         "lng": -78.9091
@@ -310,6 +335,7 @@
       "address": "1-650 Division Rd",
       "storePhone": "+15199695814",
       "customerServicePhone": "+18007373233",
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/windsor/9000170257/",
       "coordinates": {
         "lat": 42.2879,
         "lng": -82.9877
@@ -322,6 +348,7 @@
       "address": "3900 Hwy 7",
       "storePhone": "+16474273900",
       "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/woodbridge/7710000527/",
       "coordinates": {
         "lat": 43.7942,
         "lng": -79.5932
@@ -330,7 +357,7 @@
   ],
   "metadata": {
     "createdAt": "2025-12-15T00:00:00.000Z",
-    "updatedAt": "2025-12-15T00:00:00.000Z",
+    "updatedAt": "2026-01-27T00:00:00.000Z",
     "totalLocations": 27
   }
 }

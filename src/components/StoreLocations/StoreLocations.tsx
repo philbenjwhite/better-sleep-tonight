@@ -13,6 +13,7 @@ export interface StoreLocation {
   address: string;
   storePhone: string;
   customerServicePhone: string | null;
+  websiteUrl: string;
   coordinates: {
     lat: number;
     lng: number;
@@ -166,7 +167,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                   </p>
                   <div className={styles.actionLinks}>
                     <a
-                      href={`https://www.ashleyfurniture.com`}
+                      href={location.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.actionLink}
