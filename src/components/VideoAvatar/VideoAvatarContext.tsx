@@ -34,6 +34,7 @@ interface VideoAvatarContextType {
   duration: number;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   play: (videoId: string) => Promise<void>;
+  preload: (videoIdOrPath: string) => void;
   stop: () => void;
   setVideoRef: (ref: HTMLVideoElement | null) => void;
   onVideoEnded: () => void;
@@ -64,6 +65,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     resolve: () => void;
     reject: (error: Error) => void;
   } | null>(null);
+  const preloadedUrls = useRef<Set<string>>(new Set());
 
   const setVideoRef = useCallback((ref: HTMLVideoElement | null) => {
     videoRef.current = ref;
@@ -121,6 +123,26 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     } catch (error) {
       console.error('[VideoAvatar] Failed to get video element:', error);
     }
+  }, []);
+
+  const preload = useCallback((videoIdOrPath: string) => {
+    const videoSrc = videoIdOrPath.startsWith('/')
+      ? videoIdOrPath
+      : VIDEO_REGISTRY[videoIdOrPath];
+
+    if (!videoSrc || preloadedUrls.current.has(videoSrc)) {
+      return;
+    }
+
+    preloadedUrls.current.add(videoSrc);
+
+    // Use a hidden video element to preload the video data
+    const preloadVideo = document.createElement('video');
+    preloadVideo.preload = 'auto';
+    preloadVideo.muted = true;
+    preloadVideo.src = videoSrc;
+    preloadVideo.load();
+    console.log('[VideoAvatar] Preloading video:', videoSrc);
   }, []);
 
   const stop = useCallback(() => {
@@ -189,6 +211,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         duration,
         videoRef,
         play,
+        preload,
         stop,
         setVideoRef,
         onVideoEnded,

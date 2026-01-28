@@ -217,7 +217,7 @@ function HomeContent() {
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
   // Video avatar hook
-  const { videoState, isPlaying, isNearingEnd, play, currentTime } = useVideoAvatar();
+  const { videoState, isPlaying, isNearingEnd, play, preload, currentTime } = useVideoAvatar();
 
   // Debug: Log video state changes
   useEffect(() => {
@@ -381,6 +381,17 @@ function HomeContent() {
   // Get intro message from the first video step's script (shown in speech bubble during intro)
   const firstVideoStep = questionSteps.find((step) => step._template === "videoStep");
   const introMessage = firstVideoStep?.script || "";
+
+  // Preload video steps while user is on intro screen
+  useEffect(() => {
+    if (currentView === 'intro') {
+      for (const step of flowSteps) {
+        if (step._template === 'videoStep' && step.video) {
+          preload(step.video);
+        }
+      }
+    }
+  }, [currentView, flowSteps, preload]);
 
   // Video is ready when not in error state
   const isAvatarReady = isVideoReady;
