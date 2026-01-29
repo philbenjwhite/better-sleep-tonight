@@ -931,8 +931,9 @@ function HomeContent() {
         answers: updatedAnswers,
       });
 
-      // Hide email capture and advance directly to see-options step
+      // Hide email capture and advance to next step
       setShowQuestionBlock(false);
+      setHasSpokenSummary(false); // Reset for next step (especially video steps)
 
       if (currentStepIndex < questionSteps.length - 1) {
         setCurrentStepIndex((prev) => prev + 1);
@@ -974,8 +975,9 @@ function HomeContent() {
       answers: updatedAnswers,
     });
 
-    // Hide email capture and advance directly to see-options step
+    // Hide email capture and advance to next step
     setShowQuestionBlock(false);
+    setHasSpokenSummary(false); // Reset for next step (especially video steps)
 
     if (currentStepIndex < questionSteps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
