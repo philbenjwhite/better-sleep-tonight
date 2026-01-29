@@ -41,6 +41,59 @@
   margin: 0;
 }
 
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px 24px;
+  background-color: #f68b29;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.2);
+  opacity: 0;
+  animation: ctaFadeIn 0.4s ease-out 0.2s forwards;
+}
+
+.ctaButton:hover:not(:disabled) {
+  background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(246, 139, 41, 0.3);
+}
+
+.ctaButton:focus {
+  outline: 2px solid #f68b29;
+  outline-offset: 2px;
+}
+
+.ctaButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ctaButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes ctaFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .word {
   display: inline;
   opacity: 0;

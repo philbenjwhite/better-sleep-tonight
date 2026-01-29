@@ -31,7 +31,7 @@
   justify-content: center;
   gap: var(--sds-size-space-200, 8px);
   padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
-  background-color: var(--sds-color-background-brand-default, #f68b29);
+  background-color: #f68b29;
   color: #000000;
   border: none;
   border-radius: 9999px;
@@ -41,12 +41,13 @@
   line-height: 1.4;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.2);
 }
 
 .actionButton:hover:not(:disabled) {
   background-color: #ffa54d;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(246, 139, 41, 0.3);
 }
 
 .actionButton:focus {

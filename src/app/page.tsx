@@ -1275,6 +1275,16 @@ function HomeContent() {
                   stayVisible={isVideoPlaying}
                   subtitleCues={isVideoStep && videoSubtitleCues.length > 0 ? videoSubtitleCues : undefined}
                   videoCurrentTime={isVideoStep && videoSubtitleCues.length > 0 ? currentTime : undefined}
+                  ctaButtonText={
+                    isVideoStep && currentStep?.stepId === 'video-step-2' && !isVideoPlaying
+                      ? 'See My Options'
+                      : undefined
+                  }
+                  onCtaClick={
+                    isVideoStep && currentStep?.stepId === 'video-step-2'
+                      ? handleSeeOptionsClick
+                      : undefined
+                  }
                 />
               )}
               </div>

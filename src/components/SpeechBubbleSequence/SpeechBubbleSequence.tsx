@@ -30,6 +30,10 @@ export interface SpeechBubbleSequenceProps {
   subtitleCues?: SubtitleCue[];
   /** Current video playback time in seconds - required when subtitleCues is provided */
   videoCurrentTime?: number;
+  /** Optional CTA button text to show after text animation completes */
+  ctaButtonText?: string;
+  /** Called when CTA button is clicked */
+  onCtaClick?: () => void;
 }
 
 export function SpeechBubbleSequence({
@@ -43,6 +47,8 @@ export function SpeechBubbleSequence({
   stayVisible = false,
   subtitleCues,
   videoCurrentTime,
+  ctaButtonText,
+  onCtaClick,
 }: SpeechBubbleSequenceProps) {
   // Determine if we're in video-synced mode
   const isVideoSyncMode = subtitleCues && subtitleCues.length > 0 && videoCurrentTime !== undefined;
@@ -98,6 +104,7 @@ export function SpeechBubbleSequence({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [lastShownCueIndex, setLastShownCueIndex] = useState(-1);
+  const [showCtaButton, setShowCtaButton] = useState(false);
 
   // In video-sync mode, determine current cue based on video time
   // Find the most recent cue that has started (handles gaps between cues)
@@ -217,6 +224,17 @@ export function SpeechBubbleSequence({
   // Calculate total animation time accounting for punctuation delays
   const totalAnimationTime = words.reduce((total, word) => total + getWordDelay(word), 0) * 1000;
 
+  // Show CTA button after text animation completes (only on last paragraph)
+  useEffect(() => {
+    if (!ctaButtonText || currentParagraphIndex !== paragraphs.length - 1 || isTransitioning) return;
+
+    const timer = setTimeout(() => {
+      setShowCtaButton(true);
+    }, totalAnimationTime + 300); // Small delay after text finishes
+
+    return () => clearTimeout(timer);
+  }, [ctaButtonText, currentParagraphIndex, paragraphs.length, isTransitioning, totalAnimationTime]);
+
   const advanceToNextParagraph = useCallback(() => {
     if (currentParagraphIndex < paragraphs.length - 1) {
       setIsTransitioning(true);
@@ -252,6 +270,7 @@ export function SpeechBubbleSequence({
     setIsTransitioning(false);
     setIsComplete(false);
     setLastShownCueIndex(-1);
+    setShowCtaButton(false);
   }, [message]);
 
   // Hide component when complete (unless stayVisible is true)
@@ -281,6 +300,33 @@ export function SpeechBubbleSequence({
             </span>
           ))}
         </p>
+
+        {/* CTA Button - shown after text animation on last paragraph */}
+        {ctaButtonText && showCtaButton && (
+          <button
+            type="button"
+            className={styles.ctaButton}
+            onClick={onCtaClick}
+          >
+            <span>{ctaButtonText}</span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.16669 10H15.8334M15.8334 10L10 4.16669M15.8334 10L10 15.8334"
+                stroke="currentColor"
+                strokeWidth="1.67"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        )}
+
         <img
           src="/images/chat-bubble-tail.svg"
           alt=""
