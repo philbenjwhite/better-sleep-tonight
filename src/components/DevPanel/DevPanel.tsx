@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AVAILABLE_FLOWS } from '@/config';
 import styles from './DevPanel.module.css';
@@ -32,7 +32,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   onOpenChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isManualNavigation, setIsManualNavigation] = useState(false);
+  const lastSyncedStepRef = useRef<number>(-1);
 
   // Notify parent when open state changes
   useEffect(() => {
@@ -48,17 +48,18 @@ export const DevPanel: React.FC<DevPanelProps> = ({
 
   // Auto-sync URL with current step (only during natural flow progression)
   useEffect(() => {
-    // Skip auto-sync if user manually navigated
-    if (isManualNavigation) {
-      setIsManualNavigation(false);
-      return;
-    }
-
     // Calculate what the step parameter should be
     const expectedStepParam = currentStep > 0 ? String(currentStep) : null;
 
-    // Only update URL if it's out of sync
-    if (currentStepParam !== expectedStepParam) {
+    // Check if currentStep changed due to natural progression (not URL change)
+    // If URL already matches currentStep, this was likely a URL-driven change, so skip sync
+    const urlAlreadyMatches = currentStepParam === expectedStepParam;
+
+    // Only sync if:
+    // 1. URL doesn't match expected (out of sync)
+    // 2. currentStep actually changed (not just re-render)
+    if (!urlAlreadyMatches && lastSyncedStepRef.current !== currentStep) {
+      lastSyncedStepRef.current = currentStep;
       const newParams = new URLSearchParams(searchParams.toString());
       if (expectedStepParam) {
         newParams.set('step', expectedStepParam);
@@ -67,8 +68,11 @@ export const DevPanel: React.FC<DevPanelProps> = ({
       }
       const queryString = newParams.toString();
       router.replace(queryString ? `/?${queryString}` : '/');
+    } else if (urlAlreadyMatches) {
+      // Update ref if URL already matches (sync from URL change)
+      lastSyncedStepRef.current = currentStep;
     }
-  }, [currentStep, currentStepParam, searchParams, router, isManualNavigation]);
+  }, [currentStep, currentStepParam, searchParams, router]);
 
   // Navigate to a URL with updated params
   const navigateWithParams = useCallback((params: Record<string, string | null>) => {
@@ -96,7 +100,6 @@ export const DevPanel: React.FC<DevPanelProps> = ({
 
   // Step navigation handlers
   const handleStepChange = useCallback((step: number | null) => {
-    setIsManualNavigation(true);
     navigateWithParams({
       step: step === null ? null : String(step)
     });
