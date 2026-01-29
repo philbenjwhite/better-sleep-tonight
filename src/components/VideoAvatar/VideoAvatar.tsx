@@ -63,6 +63,17 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Don't show during LOADING/READY to prevent flicker before playback starts
   const showVideo = isPlaying || isEnded;
 
+  console.log('[VideoAvatar] State:', {
+    videoState,
+    showVideo,
+    showFallbackImage,
+    hasPlayedVideo,
+    isPlaying,
+    isEnded,
+    currentTime,
+    duration
+  });
+
   // Calculate video opacity - only fade out near end, no fade in
   const FADE_DURATION = 0.5;
   let videoOpacity = 1;
