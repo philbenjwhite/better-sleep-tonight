@@ -32,6 +32,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   onOpenChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isManualNavigation, setIsManualNavigation] = useState(false);
 
   // Notify parent when open state changes
   useEffect(() => {
@@ -45,8 +46,14 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   const currentFlow = searchParams.get('flow') || 'default';
   const currentStepParam = searchParams.get('step');
 
-  // Auto-sync URL with current step
+  // Auto-sync URL with current step (only during natural flow progression)
   useEffect(() => {
+    // Skip auto-sync if user manually navigated
+    if (isManualNavigation) {
+      setIsManualNavigation(false);
+      return;
+    }
+
     // Calculate what the step parameter should be
     const expectedStepParam = currentStep > 0 ? String(currentStep) : null;
 
@@ -61,7 +68,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
       const queryString = newParams.toString();
       router.replace(queryString ? `/?${queryString}` : '/');
     }
-  }, [currentStep, currentStepParam, searchParams, router]);
+  }, [currentStep, currentStepParam, searchParams, router, isManualNavigation]);
 
   // Navigate to a URL with updated params
   const navigateWithParams = useCallback((params: Record<string, string | null>) => {
@@ -89,6 +96,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
 
   // Step navigation handlers
   const handleStepChange = useCallback((step: number | null) => {
+    setIsManualNavigation(true);
     navigateWithParams({
       step: step === null ? null : String(step)
     });
