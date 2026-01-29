@@ -8,6 +8,13 @@
   max-width: 820px;
 }
 
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
 .promptText {
   font-family: 'Open Sans', sans-serif;
   font-weight: 700;
@@ -17,6 +24,15 @@
   color: #363534;
   margin: 0;
   width: 100%;
+}
+
+.subtext {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #5a5a5a;
+  margin: 0;
 }
 
 .formWrapper {
@@ -32,6 +48,7 @@
   padding: 24px;
   background: #ffffff;
   border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .inputWrapper {
@@ -42,13 +59,28 @@
   min-width: 0;
 }
 
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.emailIcon {
+  position: absolute;
+  left: 16px;
+  color: #999;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
 .emailInput {
   width: 100%;
-  height: 46px;
-  padding: 12px 16px;
-  border: 1px solid #d9d9d9;
+  height: 54px;
+  padding: 12px 16px 12px 44px;
+  border: 1.5px solid #e5e5e5;
   border-radius: 8px;
-  background: #ffffff;
+  background: #fafafa;
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -56,7 +88,11 @@
   color: #363534;
   box-sizing: border-box;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.inputWithIcon:focus-within .emailIcon {
+  color: #f68b29;
 }
 
 .emailInput::placeholder {
@@ -65,10 +101,13 @@
 
 .emailInput:focus {
   border-color: #f68b29;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(246, 139, 41, 0.1);
 }
 
 .emailInput.invalid {
   border-color: #dc3545;
+  background: #fff5f5;
 }
 
 .emailInput.invalid:focus {
@@ -82,8 +121,8 @@
 }
 
 .submitButton {
-  height: auto;
-  padding: 16px 24px;
+  height: 54px;
+  padding: 0 24px;
   background: #f68b29;
   border: none;
   border-radius: 9999px;
@@ -96,12 +135,29 @@
   white-space: nowrap;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.2);
+}
+
+.buttonText {
+  display: inline;
+}
+
+.arrowIcon {
+  display: none;
+  transition: transform 0.2s ease;
 }
 
 .submitButton:hover:not(:disabled) {
   background: #ffa54d;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(246, 139, 41, 0.3);
+}
+
+.submitButton:hover:not(:disabled) .arrowIcon {
+  transform: translateX(2px);
 }
 
 .submitButton:focus {
@@ -114,9 +170,26 @@
 }
 
 .submitButton:disabled {
-  background: #f68b29;
-  opacity: 0.5;
+  background: #d9d9d9;
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
+}
+
+.privacyText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #5a5a5a;
+  margin: -8px 0 0 0;
+}
+
+.lockIcon {
+  color: #999;
+  flex-shrink: 0;
 }
 
 .skipButton {
@@ -147,14 +220,19 @@
   }
 
   .promptText {
-    font-size: 24px;
+    font-size: 28px;
+    letter-spacing: -0.56px;
+  }
+
+  .subtext {
+    font-size: 15px;
   }
 
   .inputRow {
     flex-direction: column;
     height: auto;
     gap: 12px;
-    padding: 16px;
+    padding: 20px 16px;
   }
 
   .inputWrapper {
@@ -163,10 +241,23 @@
 
   .emailInput {
     width: 100%;
-    height: 48px;
+    height: 54px;
+    font-size: 16px;
   }
 
   .submitButton {
     width: 100%;
+    height: 54px;
+    padding: 0 24px;
+    justify-content: center;
+  }
+
+  .arrowIcon {
+    display: block;
+  }
+
+  .privacyText {
+    font-size: 13px;
+    justify-content: center;
   }
 }
