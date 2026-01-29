@@ -511,6 +511,7 @@ function HomeContent() {
       isShowingResponse,
       hasSpokenSummary,
       stepId: currentStep?.stepId,
+      videoPath: currentStep?.video,
     });
 
     if (
@@ -523,6 +524,9 @@ function HomeContent() {
       console.log('[VideoStep] Starting video step:', currentStep.stepId);
       const scriptText = currentStep.script || "";
       const videoPath = currentStep.video;
+
+      // Clear previous subtitle cues before loading new ones
+      setVideoSubtitleCues([]);
 
       // Mark summary as spoken so we don't repeat it
       setHasSpokenSummary(true);
@@ -540,22 +544,30 @@ function HomeContent() {
 
         // Fetch VTT file for subtitle timing
         const vttPath = getVttPathFromVideo(videoPath);
+        console.log('[VideoStep] Fetching VTT from:', vttPath);
         fetch(vttPath)
-          .then(res => res.ok ? res.text() : Promise.reject('VTT not found'))
+          .then(res => {
+            console.log('[VideoStep] VTT fetch response:', { ok: res.ok, status: res.status });
+            return res.ok ? res.text() : Promise.reject('VTT not found');
+          })
           .then(vttContent => {
             const track = parseVtt(vttContent);
-            console.log('[VideoStep] Loaded VTT cues:', track.cues.length);
+            console.log('[VideoStep] Loaded VTT cues:', track.cues.length, 'cues for', videoPath);
+            console.log('[VideoStep] First cue:', track.cues[0]);
             setVideoSubtitleCues(track.cues);
           })
-          .catch(() => {
-            console.log('[VideoStep] No VTT file found, using timer-based display');
+          .catch((err) => {
+            console.log('[VideoStep] No VTT file found or error:', err, 'using timer-based display');
             setVideoSubtitleCues([]); // Fall back to timer-based mode
           });
 
         // Only call play if video isn't already loading/playing
         // (handleBegin may have already started the first video within user gesture)
         if (videoState === VideoState.IDLE || videoState === VideoState.ENDED) {
+          console.log('[VideoStep] Calling play() for video:', videoPath);
           play(videoPath);
+        } else {
+          console.log('[VideoStep] Video state is', videoState, '- not calling play()');
         }
       } else {
         // No video - auto-advance after showing text
