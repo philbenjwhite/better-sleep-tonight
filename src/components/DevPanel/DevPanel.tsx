@@ -45,14 +45,13 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   const currentFlow = searchParams.get('flow') || 'default';
   const currentStepParam = searchParams.get('step');
 
-  // Auto-sync URL with current step (only if not on intro)
+  // Auto-sync URL with current step
   useEffect(() => {
-    // Don't sync if user manually navigated (currentStepParam takes precedence)
-    // Only sync when step changes during normal flow progression
+    // Calculate what the step parameter should be
     const expectedStepParam = currentStep > 0 ? String(currentStep) : null;
 
-    // Only update URL if it's out of sync and we're not on intro
-    if (currentStepParam !== expectedStepParam && currentStep > 0) {
+    // Only update URL if it's out of sync
+    if (currentStepParam !== expectedStepParam) {
       const newParams = new URLSearchParams(searchParams.toString());
       if (expectedStepParam) {
         newParams.set('step', expectedStepParam);
