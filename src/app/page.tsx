@@ -1451,7 +1451,7 @@ function HomeContent() {
       {/* Dev Panel - press "/" to toggle */}
       <DevPanel
         answers={storedAnswers}
-        currentStep={currentStepIndex + 1}
+        currentStep={currentStepIndex}
         totalSteps={questionSteps.length}
         stepNames={questionSteps.map(
           (step) =>
@@ -1460,6 +1460,7 @@ function HomeContent() {
         )}
         stepIds={questionSteps.map((step) => step.stepId)}
         onOpenChange={setIsDevPanelOpen}
+        currentView={currentView}
       />
 
       {/* Recovery Modal - shown when user has saved progress */}

@@ -21,6 +21,8 @@ export interface DevPanelProps {
   stepIds?: string[];
   /** Callback when panel open state changes */
   onOpenChange?: (isOpen: boolean) => void;
+  /** Current view - only auto-sync URL when in 'question' view */
+  currentView?: 'intro' | 'question';
 }
 
 export const DevPanel: React.FC<DevPanelProps> = ({
@@ -30,6 +32,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   stepNames = [],
   stepIds = [],
   onOpenChange,
+  currentView = 'intro',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const lastSyncedStepRef = useRef<number>(-1);
@@ -46,10 +49,16 @@ export const DevPanel: React.FC<DevPanelProps> = ({
   const currentFlow = searchParams.get('flow') || 'default';
   const currentStepParam = searchParams.get('step');
 
-  // Auto-sync URL with current step (only during natural flow progression)
+  // Auto-sync URL with current step (only during natural flow progression in question view)
   useEffect(() => {
-    // Calculate what the step parameter should be
-    const expectedStepParam = currentStep > 0 ? String(currentStep) : null;
+    // Only auto-sync when in question view (not on intro screen)
+    if (currentView !== 'question') {
+      return;
+    }
+
+    // Calculate what the step parameter should be (currentStep is 0-based index)
+    // In question view: currentStep 0 = step 1, currentStep 1 = step 2, etc.
+    const expectedStepParam = String(currentStep + 1);
 
     // Check if currentStep changed due to natural progression (not URL change)
     // If URL already matches currentStep, this was likely a URL-driven change, so skip sync
@@ -61,18 +70,14 @@ export const DevPanel: React.FC<DevPanelProps> = ({
     if (!urlAlreadyMatches && lastSyncedStepRef.current !== currentStep) {
       lastSyncedStepRef.current = currentStep;
       const newParams = new URLSearchParams(searchParams.toString());
-      if (expectedStepParam) {
-        newParams.set('step', expectedStepParam);
-      } else {
-        newParams.delete('step');
-      }
+      newParams.set('step', expectedStepParam);
       const queryString = newParams.toString();
       router.replace(queryString ? `/?${queryString}` : '/');
     } else if (urlAlreadyMatches) {
       // Update ref if URL already matches (sync from URL change)
       lastSyncedStepRef.current = currentStep;
     }
-  }, [currentStep, currentStepParam, searchParams, router]);
+  }, [currentView, currentStep, currentStepParam, searchParams, router]);
 
   // Navigate to a URL with updated params
   const navigateWithParams = useCallback((params: Record<string, string | null>) => {
