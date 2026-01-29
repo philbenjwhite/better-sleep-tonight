@@ -103,6 +103,12 @@ export function SpeechBubbleSequence({
   // Find the most recent cue that has started (handles gaps between cues)
   const videoCueIndex = isVideoSyncMode
     ? (() => {
+        // If video time is very early (< 1 second), always start from first cue
+        // This prevents jumping to a later cue if video loads with non-zero time
+        if (videoCurrentTime! < 1 && subtitleCues!.length > 0) {
+          return 0;
+        }
+
         let lastMatchingIndex = -1;
         for (let i = 0; i < subtitleCues!.length; i++) {
           if (videoCurrentTime! >= subtitleCues![i].startTime) {
