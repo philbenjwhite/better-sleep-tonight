@@ -430,7 +430,25 @@ function HomeContent() {
 
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
-    setIsMuted(false); // Unmute when user clicks "Let's Begin"
+
+    // Check if first step is a video step - if so, start playback immediately
+    // This is CRITICAL for mobile: video.play() must be called synchronously
+    // within the user gesture (click) handler to satisfy autoplay policies
+    const firstStep = questionSteps[0];
+    if (firstStep?._template === "videoStep" && firstStep.video) {
+      // Start video immediately within user gesture context
+      // Keep muted initially for mobile autoplay compliance, unmute after play starts
+      play(firstStep.video);
+
+      // Unmute after a short delay to allow playback to start
+      // This works because mobile browsers allow unmuting after user-initiated play
+      setTimeout(() => {
+        setIsMuted(false);
+      }, 100);
+    } else {
+      // No video step - unmute immediately
+      setIsMuted(false);
+    }
 
     setTimeout(() => {
       setCurrentView("question");
@@ -442,7 +460,7 @@ function HomeContent() {
       setHasShownIntro(true);
       setHasSpokenIntro(true);
     }, 500); // Match CSS transition duration
-  }, []);
+  }, [questionSteps, play]);
 
   const handleVolumeToggle = useCallback(() => {
     setIsMuted((prev) => !prev);
@@ -529,12 +547,16 @@ function HomeContent() {
             console.log('[VideoStep] Loaded VTT cues:', track.cues.length);
             setVideoSubtitleCues(track.cues);
           })
-          .catch(err => {
+          .catch(() => {
             console.log('[VideoStep] No VTT file found, using timer-based display');
             setVideoSubtitleCues([]); // Fall back to timer-based mode
           });
 
-        play(videoPath);
+        // Only call play if video isn't already loading/playing
+        // (handleBegin may have already started the first video within user gesture)
+        if (videoState === VideoState.IDLE || videoState === VideoState.ENDED) {
+          play(videoPath);
+        }
       } else {
         // No video - auto-advance after showing text
         setVideoSubtitleCues([]); // No sync mode
@@ -549,6 +571,7 @@ function HomeContent() {
     showQuestionBlock,
     isShowingResponse,
     hasSpokenSummary,
+    videoState,
     play,
   ]);
 

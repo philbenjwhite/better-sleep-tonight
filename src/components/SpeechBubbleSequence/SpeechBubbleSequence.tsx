@@ -100,22 +100,32 @@ export function SpeechBubbleSequence({
   const [lastShownCueIndex, setLastShownCueIndex] = useState(-1);
 
   // In video-sync mode, determine current cue based on video time
+  // Find the most recent cue that has started (handles gaps between cues)
   const videoCueIndex = isVideoSyncMode
-    ? subtitleCues!.findIndex(
-        (cue, index) =>
-          videoCurrentTime! >= cue.startTime &&
-          (index === subtitleCues!.length - 1 || videoCurrentTime! < subtitleCues![index + 1].startTime)
-      )
+    ? (() => {
+        let lastMatchingIndex = -1;
+        for (let i = 0; i < subtitleCues!.length; i++) {
+          if (videoCurrentTime! >= subtitleCues![i].startTime) {
+            lastMatchingIndex = i;
+          } else {
+            break; // Cues are in order, no need to check further
+          }
+        }
+        return lastMatchingIndex;
+      })()
     : -1;
 
   // Handle cue transitions in video-sync mode
   useEffect(() => {
     if (!isVideoSyncMode || videoCueIndex < 0) return;
 
-    // If we've moved to a new cue
-    if (videoCueIndex !== lastShownCueIndex && videoCueIndex > lastShownCueIndex) {
+    console.log('[SpeechBubble] videoCueIndex:', videoCueIndex, 'lastShownCueIndex:', lastShownCueIndex, 'videoCurrentTime:', videoCurrentTime);
+
+    // If we've moved to a new cue (or showing first cue)
+    if (videoCueIndex !== lastShownCueIndex) {
       // Trigger transition animation if not the first cue
-      if (lastShownCueIndex >= 0) {
+      if (lastShownCueIndex >= 0 && videoCueIndex > lastShownCueIndex) {
+        console.log('[SpeechBubble] Transitioning to cue:', videoCueIndex);
         setIsTransitioning(true);
         setTimeout(() => {
           setCurrentParagraphIndex(videoCueIndex);
@@ -123,7 +133,8 @@ export function SpeechBubbleSequence({
           setIsTransitioning(false);
         }, 400); // Match CSS transition duration
       } else {
-        // First cue - no transition needed
+        // First cue or backward seek - no transition needed
+        console.log('[SpeechBubble] Setting cue without transition:', videoCueIndex);
         setCurrentParagraphIndex(videoCueIndex);
         setLastShownCueIndex(videoCueIndex);
       }

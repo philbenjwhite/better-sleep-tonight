@@ -82,7 +82,41 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       return;
     }
 
-    // Wait for video element to be mounted (with timeout)
+    // CRITICAL FOR MOBILE: If video element exists, start playback synchronously
+    // within the user gesture context. Mobile browsers require play() to be called
+    // synchronously within a user-initiated event (click/tap handler).
+    if (videoRef.current) {
+      const videoElement = videoRef.current;
+
+      return new Promise((resolve, reject) => {
+        playPromiseRef.current = { resolve, reject };
+
+        setVideoState(VideoState.LOADING);
+        setCurrentVideoId(videoIdOrPath);
+        setIsNearingEnd(false);
+
+        // Set source and start playback synchronously within user gesture
+        videoElement.src = videoSrc;
+
+        // Call play() immediately - don't wait for loadeddata event
+        // This is essential for mobile autoplay policy compliance
+        const playPromise = videoElement.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('[VideoAvatar] Playback started successfully');
+            })
+            .catch((error) => {
+              // If autoplay fails, we'll fall back to onVideoLoaded handler
+              console.log('[VideoAvatar] Immediate play failed, will retry on load:', error.message);
+            });
+        }
+      });
+    }
+
+    // Fallback: Wait for video element to be mounted (with timeout)
+    // This path is used when video element isn't mounted yet
     const waitForVideoElement = async (): Promise<HTMLVideoElement> => {
       return new Promise((resolve, reject) => {
         if (videoRef.current) {
@@ -155,8 +189,16 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   }, []);
 
   const onVideoLoaded = useCallback(() => {
+    // Check if video is already playing (started synchronously in play())
+    // If so, just update state - don't call play() again
+    if (videoRef.current && !videoRef.current.paused) {
+      console.log('[VideoAvatar] Video already playing, skipping play() in onVideoLoaded');
+      setVideoState(VideoState.READY);
+      return;
+    }
+
     setVideoState(VideoState.READY);
-    // Auto-play when loaded
+    // Auto-play when loaded (fallback for when immediate play didn't work)
     if (videoRef.current) {
       videoRef.current.play().catch((error) => {
         console.error('[VideoAvatar] Autoplay failed:', error);
