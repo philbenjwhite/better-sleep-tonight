@@ -118,11 +118,21 @@
   gap: var(--sds-size-space-400, 16px);
 }
 
-/* Badge */
+/* Product image container - relative for badge positioning */
+.cardImage {
+  position: relative;
+  flex-shrink: 0;
+  width: 100px;
+  height: 133px;
+  border-radius: var(--sds-size-radius-200, 8px);
+  overflow: visible; /* Allow badge to overflow */
+}
+
+/* Badge - positioned on top of the product image */
 .badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: -8px;
+  left: -8px;
   background-color: #363534;
   color: #ffffff;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
@@ -133,7 +143,16 @@
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  z-index: 1;
+  z-index: 2;
+}
+
+/* Badge text variants for responsive display */
+.badgeFull {
+  display: inline;
+}
+
+.badgeShort {
+  display: none;
 }
 
 /* Main row with image, info, and select button */
@@ -145,14 +164,7 @@
   cursor: pointer;
 }
 
-/* Product image container */
-.cardImage {
-  flex-shrink: 0;
-  width: 100px;
-  height: 133px;
-  border-radius: var(--sds-size-radius-200, 8px);
-  overflow: hidden;
-}
+/* Note: .cardImage styles are defined above with the badge */
 
 .mattressImage {
   width: 100%;
@@ -240,10 +252,9 @@
 .attributeLabel {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 400;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.3;
   color: #363534;
-  min-width: 90px;
   flex-shrink: 0;
 }
 
@@ -423,8 +434,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--sds-size-space-400, 16px);
-  padding-bottom: calc(16px + 62px); /* 16px padding + footer height (~62px) */
+  padding: 12px 16px;
+  padding-bottom: calc(12px + 62px); /* 12px padding + footer height (~62px) */
   background-color: var(--sds-color-background-default-default, #ffffff);
   transform: translateY(100%);
   opacity: 0;
@@ -471,16 +482,62 @@
 }
 
 /* Responsive styles */
-@media (max-width: 600px) {
-  .card {
-    padding-top: 36px; /* Extra space for badge on mobile */
+
+/* Tablet breakpoint - stack the two-column layout */
+@media (max-width: 900px) {
+  .cardInfo {
+    grid-template-columns: 1fr; /* Single column on tablet */
+    grid-template-rows: auto auto auto;
+    gap: var(--sds-size-space-300, 12px);
   }
 
+  .cardInfoPrimary {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .cardInfoSecondary {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .cardOptions {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .attributeBar {
+    max-width: 200px;
+  }
+
+  .badgeFull {
+    display: none;
+  }
+
+  .badgeShort {
+    display: inline;
+  }
+}
+
+@media (max-width: 600px) {
   .badge {
-    top: 8px;
-    left: 8px;
     font-size: 10px;
     padding: 4px 8px;
+  }
+
+  .badgeFull {
+    display: none;
+  }
+
+  .badgeShort {
+    display: inline;
+  }
+}
+
+/* Adjust continue bar for smaller footer at 480px */
+@media (max-width: 480px) {
+  .continueBar {
+    padding-bottom: calc(12px + 48px); /* 12px padding + smaller footer height (~48px) */
   }
 
   .cardMain {

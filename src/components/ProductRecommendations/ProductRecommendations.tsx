@@ -151,15 +151,20 @@ function MattressCard({
 
   return (
     <div className={classNames(styles.card, { [styles.expanded]: isExpanded })}>
-      {/* Badge */}
-      {mattress.badge && (
-        <div className={styles.badge}>{mattress.badge}</div>
-      )}
-
       {/* Main product row - clickable to toggle selection */}
       <div className={styles.cardMain} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}>
-        {/* Product Image */}
+        {/* Product Image with Badge */}
         <div className={styles.cardImage}>
+          {mattress.badge && (
+            <div className={styles.badge}>
+              <span className={styles.badgeFull}>{mattress.badge}</span>
+              <span className={styles.badgeShort}>
+                {mattress.badge === "Most Popular" ? "Popular" :
+                 mattress.badge === "Premium Choice" ? "Premium" :
+                 mattress.badge}
+              </span>
+            </div>
+          )}
           <Image
             src={mattress.productImage}
             alt={mattress.productName}
