@@ -18,6 +18,8 @@
   width: 100%;
   /* Hint browser about animation properties for smoother performance on Safari */
   will-change: opacity, transform;
+  /* Start hidden by default for animation */
+  opacity: 0;
 }
 
 .questionText {
@@ -64,6 +66,8 @@
   width: 100%;
   /* Hint browser about animation properties for smoother performance on Safari */
   will-change: opacity, transform;
+  /* Start hidden by default for animation */
+  opacity: 0;
 }
 
 .answerOption {

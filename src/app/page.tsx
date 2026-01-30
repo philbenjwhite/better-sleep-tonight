@@ -217,7 +217,7 @@ function HomeContent() {
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
   // Video avatar hook
-  const { videoState, isPlaying, isNearingEnd, play, preload, currentTime } = useVideoAvatar();
+  const { videoState, isPlaying, isNearingEnd, play, preload, currentTime, currentVideoId } = useVideoAvatar();
 
   // Debug: Log video state changes
   useEffect(() => {
@@ -561,13 +561,15 @@ function HomeContent() {
             setVideoSubtitleCues([]); // Fall back to timer-based mode
           });
 
-        // Only call play if video isn't already loading/playing
-        // (handleBegin may have already started the first video within user gesture)
-        if (videoState === VideoState.IDLE || videoState === VideoState.ENDED) {
-          console.log('[VideoStep] Calling play() for video:', videoPath);
+        // Always call play() when starting a new video step
+        // This ensures video plays on iOS Safari where state transitions may be delayed
+        // Skip only if video is already playing the same video
+        const isPlayingSameVideo = videoState === VideoState.PLAYING && currentVideoId === videoPath;
+        if (!isPlayingSameVideo) {
+          console.log('[VideoStep] Calling play() for video:', videoPath, 'current state:', videoState);
           play(videoPath);
         } else {
-          console.log('[VideoStep] Video state is', videoState, '- not calling play()');
+          console.log('[VideoStep] Already playing this video, skipping play() call');
         }
       } else {
         // No video - auto-advance after showing text
@@ -584,6 +586,7 @@ function HomeContent() {
     isShowingResponse,
     hasSpokenSummary,
     videoState,
+    currentVideoId,
     play,
   ]);
 
@@ -1155,13 +1158,14 @@ function HomeContent() {
     currentStep?._template,
   ]);
 
-  // Handle tap anywhere on mobile to unmute
+  // Handle tap anywhere on mobile to unmute (only on video steps, not intro)
   const handleScreenTap = useCallback(() => {
-    // Only unmute on mobile and only if currently muted
-    if (isMuted && window.innerWidth <= 768) {
+    // Only unmute on mobile, on video steps, and only if currently muted
+    const isVideoStep = currentStep?._template === 'videoStep';
+    if (isMuted && window.innerWidth <= 768 && isVideoStep) {
       setIsMuted(false);
     }
-  }, [isMuted]);
+  }, [isMuted, currentStep?._template]);
 
   return (
     <main

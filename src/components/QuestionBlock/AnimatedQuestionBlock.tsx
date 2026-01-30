@@ -24,7 +24,6 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
   ...rest
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef<string>('');
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   // Use useLayoutEffect for animations to prevent flicker
@@ -41,10 +40,7 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
       timelineRef.current = null;
     }
 
-    if (isEntering && hasAnimated.current !== questionKey) {
-      // Mark as animated for this question
-      hasAnimated.current = questionKey;
-
+    if (isEntering) {
       // Set initial states immediately using native style manipulation for Safari compatibility
       // Safari sometimes doesn't execute GSAP.set synchronously in useLayoutEffect
       if (questionText instanceof HTMLElement) {
@@ -84,10 +80,6 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
         clearProps: 'transform', // Clear inline transform after animation
       }, '-=0.15'); // Slight overlap with question animation
 
-    } else if (isEntering && hasAnimated.current === questionKey) {
-      // Already animated this question - ensure elements are visible
-      gsap.set(questionText, { opacity: 1, y: 0 });
-      gsap.set(options, { opacity: 1, x: 0 });
     } else if (!isEntering) {
       // Exit animation
       const tl = gsap.timeline({
