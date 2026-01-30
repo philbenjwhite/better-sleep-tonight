@@ -67,6 +67,7 @@ export interface ProductRecommendationsProps {
 interface MattressCardProps {
   mattress: MattressOption;
   isExpanded: boolean;
+  isDimmed: boolean;
   onSelect: () => void;
   selectedSize: MattressSize | null;
   selectedFeel: MattressFeel | null;
@@ -80,6 +81,7 @@ interface MattressCardProps {
 function MattressCard({
   mattress,
   isExpanded,
+  isDimmed,
   onSelect,
   selectedSize,
   selectedFeel,
@@ -150,7 +152,7 @@ function MattressCard({
   }, [isExpanded, mattress.id]);
 
   return (
-    <div className={classNames(styles.card, { [styles.expanded]: isExpanded })}>
+    <div className={classNames(styles.card, { [styles.expanded]: isExpanded, [styles.dimmed]: isDimmed })}>
       {/* Main product row - clickable to toggle selection */}
       <div className={styles.cardMain} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}>
         {/* Product Image with Badge */}
@@ -431,6 +433,7 @@ export function ProductRecommendations({
               key={mattress.id}
               mattress={mattress}
               isExpanded={expandedMattressId === mattress.id}
+              isDimmed={expandedMattressId !== null && expandedMattressId !== mattress.id}
               onSelect={() => handleMattressSelect(mattress.id)}
               selectedSize={expandedMattressId === mattress.id ? selectedSize : null}
               selectedFeel={expandedMattressId === mattress.id ? selectedFeel : null}
