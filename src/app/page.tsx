@@ -375,6 +375,12 @@ function HomeContent() {
     });
   }, [currentStepIndex, currentStep, showQuestionBlock, showBackdrop, isZipCodeCaptureStep, isVideoStep, videoState, isShowingResponse, avatarStartedTalking, hasSpokenSummary]);
 
+  // Reset hasSpokenSummary when step changes to ensure video steps can play
+  useEffect(() => {
+    console.log('[StepChange] Resetting hasSpokenSummary for step:', currentStepIndex);
+    setHasSpokenSummary(false);
+  }, [currentStepIndex]);
+
   // Get intro video from intro screen config (used as background on intro screen)
   const introVideo = introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
 
