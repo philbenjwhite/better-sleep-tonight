@@ -1291,6 +1291,7 @@ function HomeContent() {
               {/* Avatar Response Bubble - shows after answer selection */}
               {isShowingResponse && avatarResponse && (
                 <SpeechBubbleSequence
+                  key={`speech-${currentStepIndex}-${currentStep?.stepId || 'unknown'}`}
                   message={avatarResponse}
                   wordDelay={0.15}
                   paragraphPauseMs={600}
