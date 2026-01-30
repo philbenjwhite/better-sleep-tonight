@@ -633,13 +633,22 @@ function HomeContent() {
         // Advance to next step
         if (currentStepIndex < questionSteps.length - 1) {
           console.log('[VideoStepComplete] Advancing from step', currentStepIndex, 'to', currentStepIndex + 1);
+          const nextStep = questionSteps[currentStepIndex + 1];
+          const isNextStepQuestion = nextStep?._template === 'questionStep';
+
           setCurrentStepIndex((prev) => prev + 1);
-          setTimeout(() => {
-            console.log('[VideoStepComplete] Setting showQuestionBlock to true');
-            setShowBackdrop(true);
-            setBackdropHasAnimated(true);
-            setShowQuestionBlock(true);
-          }, 100);
+
+          // Only show backdrop/question block if next step is a question
+          if (isNextStepQuestion) {
+            setTimeout(() => {
+              console.log('[VideoStepComplete] Next step is question, showing question block');
+              setShowBackdrop(true);
+              setBackdropHasAnimated(true);
+              setShowQuestionBlock(true);
+            }, 100);
+          } else {
+            console.log('[VideoStepComplete] Next step is not a question, keeping backdrop hidden');
+          }
         }
       }, 500); // 500ms delay after video ends before hiding speech bubble
       return () => {
