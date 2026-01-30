@@ -45,18 +45,24 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
       // Mark as animated for this question
       hasAnimated.current = questionKey;
 
-      // Set initial states immediately
-      gsap.set(questionText, {
-        opacity: 0,
-        y: 20
-      });
-      gsap.set(options, {
-        opacity: 0,
-        x: -15
+      // Set initial states immediately using native style manipulation for Safari compatibility
+      // Safari sometimes doesn't execute GSAP.set synchronously in useLayoutEffect
+      if (questionText instanceof HTMLElement) {
+        questionText.style.opacity = '0';
+        questionText.style.transform = 'translateY(20px)';
+      }
+      options.forEach((option) => {
+        if (option instanceof HTMLElement) {
+          option.style.opacity = '0';
+          option.style.transform = 'translateX(-15px)';
+        }
       });
 
-      // Create entrance timeline
-      const tl = gsap.timeline();
+      // Force a reflow to ensure styles are applied before animation starts (Safari fix)
+      void container.offsetHeight;
+
+      // Create entrance timeline with a small delay to ensure initial states are rendered
+      const tl = gsap.timeline({ delay: 0.016 }); // ~1 frame delay
       timelineRef.current = tl;
 
       // Animate question text first
@@ -65,6 +71,7 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
         y: 0,
         duration: 0.4,
         ease: 'power2.out',
+        clearProps: 'transform', // Clear inline transform after animation
       });
 
       // Animate options sequentially with stagger
@@ -74,6 +81,7 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
         duration: 0.35,
         stagger: 0.08,
         ease: 'power2.out',
+        clearProps: 'transform', // Clear inline transform after animation
       }, '-=0.15'); // Slight overlap with question animation
 
     } else if (isEntering && hasAnimated.current === questionKey) {

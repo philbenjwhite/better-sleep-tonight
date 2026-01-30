@@ -16,6 +16,8 @@
   flex-direction: column;
   gap: var(--sds-size-space-200, 8px);
   width: 100%;
+  /* Hint browser about animation properties for smoother performance on Safari */
+  will-change: opacity, transform;
 }
 
 .questionText {
@@ -60,6 +62,8 @@
 
 .optionWrapper {
   width: 100%;
+  /* Hint browser about animation properties for smoother performance on Safari */
+  will-change: opacity, transform;
 }
 
 .answerOption {

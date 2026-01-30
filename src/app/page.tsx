@@ -1155,8 +1155,19 @@ function HomeContent() {
     currentStep?._template,
   ]);
 
+  // Handle tap anywhere on mobile to unmute
+  const handleScreenTap = useCallback(() => {
+    // Only unmute on mobile and only if currently muted
+    if (isMuted && window.innerWidth <= 768) {
+      setIsMuted(false);
+    }
+  }, [isMuted]);
+
   return (
-    <main className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''}`}>
+    <main
+      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''}`}
+      onClick={handleScreenTap}
+    >
       {/* Video Background - only show on intro */}
       {currentView === "intro" && (
         <>
