@@ -1391,7 +1391,7 @@ function HomeContent() {
               {/* Email Capture Step - rendered outside question block for wider layout */}
               {showQuestionBlock &&
                 isEmailCaptureStep && (
-                  <div className={styles.emailCaptureWrapper}>
+                  <div key={`email-capture-${currentStepIndex}`} className={styles.emailCaptureWrapper}>
                     <EmailCapture
                       content={{
                         promptText: currentStep?.promptText,
