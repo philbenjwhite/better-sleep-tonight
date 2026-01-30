@@ -168,8 +168,8 @@ function MattressCard({
           <Image
             src={mattress.productImage}
             alt={mattress.productName}
-            width={100}
-            height={133}
+            width={120}
+            height={160}
             className={styles.mattressImage}
           />
         </div>
