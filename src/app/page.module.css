@@ -170,7 +170,7 @@
   }
 
   .avatar {
-    width: 120px;
+    width: 160px;
   }
 
   .titlePage {
@@ -199,7 +199,7 @@
   }
 
   .avatar {
-    width: 100px;
+    width: 160px;
   }
 
   .subheadline {
@@ -631,7 +631,9 @@
 /* Mobile: extra padding for speech bubble container */
 @media (max-width: 600px) {
   .speechBubbleContainer {
-    left: calc(50% + 8px); /* Shift right by 8px to add effective 16px left padding */
+    left: calc(
+      50% + 8px
+    ); /* Shift right by 8px to add effective 16px left padding */
     width: calc(100vw - 4rem); /* More padding on all sides */
     padding: 8px;
   }
