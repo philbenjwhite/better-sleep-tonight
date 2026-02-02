@@ -26,6 +26,14 @@
   padding-bottom: 120px; /* Space for footer */
 }
 
+/* Product recommendations page - allow full page scrolling */
+.main.productRecommendationsPage {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+  padding-bottom: 120px; /* Space for footer */
+}
+
 /* Video background */
 .videoBackground {
   position: absolute;
@@ -672,6 +680,18 @@
   padding-top: 80px; /* Space for header */
 }
 
+/* Product recommendations page - make wrapper flow naturally instead of fixed overlay */
+.productRecommendationsPage .questionBlockWrapper {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  min-height: auto;
+  align-items: flex-start;
+  padding-top: 80px; /* Space for header */
+}
+
 .questionBlockBackdrop {
   position: fixed;
   top: 0;
@@ -827,14 +847,13 @@
   }
 }
 
-/* Product Recommendations Inner - 3 mattress options with scroll */
+/* Product Recommendations Inner - 3 mattress options */
 .productRecommendationsInner {
   position: relative;
   z-index: 1;
   width: 950px;
   max-width: 95%;
-  max-height: 85vh;
-  overflow: hidden;
+  overflow: visible;
   padding: 24px;
   animation: questionSlideIn 0.6s ease-out forwards;
 }
@@ -850,7 +869,6 @@
 @media (max-width: 600px) {
   .productRecommendationsInner {
     padding: 12px;
-    max-height: 80vh;
   }
 }
 

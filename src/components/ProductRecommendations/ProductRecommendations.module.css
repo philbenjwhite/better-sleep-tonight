@@ -4,49 +4,17 @@
   flex-direction: column;
   gap: var(--sds-size-space-600, 24px);
   width: 100%;
-  max-height: 100%;
-  overflow: hidden;
 }
 
-/* Scrollable list wrapper with gradient fades */
+/* List wrapper - no scroll constraints, let page scroll */
 .listWrapper {
   position: relative;
-  flex: 1;
-  min-height: 0;
 }
-
-.listWrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50px;
-  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, transparent 100%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1;
-}
-
-.listWrapper.scrolledDown::before {
-  opacity: 1;
-}
-
 
 .list {
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
-  max-height: calc(85vh - 120px); /* Account for headline and padding */
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-@media (max-width: 600px) {
-  .list {
-    max-height: calc(80vh - 100px);
-  }
 }
 
 /* Show More / Show Less button */
@@ -422,14 +390,18 @@
 }
 
 .optionButton.selected {
-  border: 1px solid var(--sds-color-border-brand-default, #363534);
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  box-shadow: inset 0 0 0 1px var(--sds-color-border-brand-default, #363534), 0 0 0 2px rgba(54, 53, 52, 0.15);
+  border: 2px solid var(--sds-color-border-brand-default, #f68b29);
+  background-color: var(--sds-color-background-brand-default, #f68b29);
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.3);
+}
+
+.optionButton.selected .optionText {
+  color: #000000;
 }
 
 .optionText {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   line-height: 1.2;
   color: var(--sds-color-text-default-default, #363534);

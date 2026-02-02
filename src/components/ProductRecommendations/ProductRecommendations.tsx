@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react
 import Image from "next/image";
 import classNames from "classnames";
 import gsap from "gsap";
+import { Button } from "@/components/Button";
 import styles from "./ProductRecommendations.module.css";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
@@ -326,17 +327,17 @@ export function ProductRecommendations({
       const cards = listRef.current.querySelectorAll(`.${styles.card}`);
       if (cards.length === 0) return;
 
-      // Set initial state - hidden and slightly below
-      gsap.set(cards, { opacity: 0, y: 20 });
+      // Set initial state - hidden and positioned below
+      gsap.set(cards, { opacity: 0, y: 40 });
 
-      // Create staggered entrance animation
+      // Create staggered entrance animation with more dramatic timing
       gsap.to(cards, {
         opacity: 1,
         y: 0,
-        duration: 0.4,
-        stagger: 0.12,
-        ease: "power2.out",
-        delay: 0.1, // Small delay to ensure DOM is ready
+        duration: 0.5,
+        stagger: 0.15,
+        ease: "power3.out",
+        delay: 0.2, // Slight delay to ensure DOM is ready
         clearProps: "transform",
       });
     }
@@ -474,16 +475,9 @@ export function ProductRecommendations({
 
       {/* Continue Button Bar - slides up when both selections are made */}
       <div className={classNames(styles.continueBar, { [styles.visible]: isSelectionComplete })}>
-        <button
-          type="button"
-          className={styles.continueButton}
-          onClick={handleContinue}
-        >
-          <span>Continue</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+        <Button variant="primary" size="large" onClick={handleContinue}>
+          Continue
+        </Button>
       </div>
     </div>
   );

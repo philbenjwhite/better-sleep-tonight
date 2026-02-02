@@ -1191,7 +1191,7 @@ function HomeContent() {
 
   return (
     <main
-      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''} ${isStoreLocationsStep ? styles.storeLocationsPage : ''}`}
+      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''} ${isStoreLocationsStep ? styles.storeLocationsPage : ''} ${isProductRecommendationsStep ? styles.productRecommendationsPage : ''}`}
       onClick={handleScreenTap}
     >
       {/* Video Background - only show on intro */}
