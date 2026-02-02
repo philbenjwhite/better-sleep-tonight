@@ -18,6 +18,14 @@
   width: calc(100% - 400px); /* Shrink by panel width */
 }
 
+/* Store locations page - allow full page scrolling */
+.main.storeLocationsPage {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+  padding-bottom: 120px; /* Space for footer */
+}
+
 /* Video background */
 .videoBackground {
   position: absolute;
@@ -96,7 +104,7 @@
 .textContent {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   align-items: center;
   flex-shrink: 0;
 }
@@ -652,6 +660,18 @@
   z-index: 20;
 }
 
+/* Store locations page - make wrapper flow naturally instead of fixed overlay */
+.storeLocationsPage .questionBlockWrapper {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  min-height: auto;
+  align-items: flex-start;
+  padding-top: 80px; /* Space for header */
+}
+
 .questionBlockBackdrop {
   position: fixed;
   top: 0;
@@ -802,7 +822,7 @@
 
 @media (max-width: 600px) {
   .mattressRecommendationInner {
-    padding: 12px;
+    padding: 20px;
     max-height: 85vh;
   }
 }
@@ -839,8 +859,7 @@
   z-index: 1;
   width: 1024px;
   max-width: 95%;
-  max-height: 85vh;
-  overflow: hidden;
+  overflow: visible;
   padding: 24px;
   animation: questionSlideIn 0.6s ease-out forwards;
 }
@@ -856,7 +875,6 @@
 @media (max-width: 600px) {
   .storeLocationsInner {
     padding: 12px;
-    max-height: 80vh;
   }
 }
 

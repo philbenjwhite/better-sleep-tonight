@@ -81,9 +81,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 8px;
+  /* Allow list to expand naturally - page scrolls instead */
+  max-height: none;
+  overflow-y: visible;
+  padding-right: 0;
 }
 
 /* Custom scrollbar */
@@ -306,7 +307,7 @@
   }
 
   .locationsList {
-    max-height: 350px;
+    max-height: none;
   }
 }
 

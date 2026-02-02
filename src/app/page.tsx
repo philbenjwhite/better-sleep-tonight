@@ -647,7 +647,14 @@ function HomeContent() {
               setShowQuestionBlock(true);
             }, 100);
           } else {
-            console.log('[VideoStepComplete] Next step is not a question, keeping backdrop hidden');
+            // For non-question steps (video, email capture, etc.), show question block
+            // but hide backdrop - the video step effect will handle video steps
+            console.log('[VideoStepComplete] Next step is not a question, showing question block without backdrop');
+            setTimeout(() => {
+              setShowBackdrop(false);
+              setBackdropHasAnimated(false);
+              setShowQuestionBlock(true);
+            }, 100);
           }
         }
       }, 500); // 500ms delay after video ends before hiding speech bubble
@@ -1184,7 +1191,7 @@ function HomeContent() {
 
   return (
     <main
-      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''}`}
+      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''} ${isStoreLocationsStep ? styles.storeLocationsPage : ''}`}
       onClick={handleScreenTap}
     >
       {/* Video Background - only show on intro */}
@@ -1327,8 +1334,8 @@ function HomeContent() {
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (
             <div className={styles.questionBlockWrapper}>
-              {/* Hide backdrop on store locations step to show full map/list view */}
-              {!isStoreLocationsStep && (
+              {/* Hide backdrop on store locations step and video steps to show full view */}
+              {!isStoreLocationsStep && !isVideoStep && (
                 <div
                   className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
                 />
