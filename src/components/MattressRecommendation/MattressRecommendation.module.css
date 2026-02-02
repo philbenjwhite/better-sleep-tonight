@@ -9,18 +9,25 @@
 /* Individual mattress card */
 .card {
   background-color: var(--sds-color-background-default-default, #ffffff);
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card.expanded {
+  border-color: var(--sds-color-border-brand-default, #363534);
+  box-shadow: 0 0 0 3px rgba(54, 53, 52, 0.1);
 }
 
 /* Main row with image, info, and select button */
 .cardMain {
   display: flex;
   gap: var(--sds-size-space-400, 16px);
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
   cursor: pointer;
 }
@@ -28,10 +35,11 @@
 /* Product image container */
 .cardImage {
   flex-shrink: 0;
-  width: 83px;
-  height: 110px;
+  width: 100px;
+  height: 133px;
   border-radius: var(--sds-size-radius-200, 8px);
   overflow: hidden;
+  background-color: #f9f9f9;
 }
 
 .mattressImage {
@@ -46,15 +54,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-400, 16px);
+  gap: 8px;
   min-width: 0;
 }
 
 .productName {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  line-height: 1.4;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.3;
   color: var(--sds-color-text-default-default, #363534);
   margin: 0;
 }
@@ -62,20 +70,26 @@
 .productDescription {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 400;
-  font-size: var(--sds-typography-body-size-small, 14px);
-  line-height: 1.4;
-  color: #000000;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5a5a5a;
   margin: 0;
 }
 
 .productPrice {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 400;
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  line-height: 1.4;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
   color: var(--sds-color-text-default-default, #363534);
-  text-decoration: underline;
   margin: 0;
+}
+
+.productPrice::before {
+  content: "$";
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 2px;
 }
 
 /* Select button container */
@@ -84,68 +98,72 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 78px;
-  align-self: stretch;
+  margin-left: auto;
 }
 
 .selectButton {
-  background-color: #ffffff;
-  border: 1px solid var(--sds-color-border-neutral-secondary, #767676);
-  border-radius: var(--sds-size-radius-200, 8px);
-  padding: var(--sds-size-space-200, 8px) var(--sds-size-space-400, 16px);
+  background-color: #f68b29;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  line-height: 1.4;
-  color: var(--sds-color-text-default-default, #363534);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #000000;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
-  width: 100%;
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.2);
 }
 
 .selectButton:hover,
 .cardMain:hover .selectButton {
-  background-color: #f5f5f5;
+  background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(246, 139, 41, 0.3);
 }
 
 .selectButton:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
+  outline: 2px solid #f68b29;
+  outline-offset: 2px;
 }
 
 .selectButton.selected {
   background-color: var(--sds-color-text-default-default, #363534);
-  border-color: var(--sds-color-text-default-default, #363534);
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(54, 53, 52, 0.3);
 }
 
 .selectButton.selected:hover,
 .cardMain:hover .selectButton.selected {
   background-color: #4a4948;
+  box-shadow: 0 4px 12px rgba(54, 53, 52, 0.4);
 }
 
 /* Expanded options section */
 .cardOptions {
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-200, 8px);
+  gap: 20px;
   width: 100%;
-  padding-top: var(--sds-size-space-200, 8px);
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 4px;
 }
 
 .selectionGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-200, 8px);
+  gap: 12px;
 }
 
 .selectionLabel {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 15px;
   line-height: 1.4;
-  color: var(--sds-color-text-default-secondary, #5a5a5a);
+  color: var(--sds-color-text-default-default, #363534);
   margin: 0;
 }
 
@@ -193,31 +211,114 @@
 }
 
 /* Responsive styles */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
+  .card {
+    padding: 20px;
+  }
+
+  .cardImage {
+    width: 90px;
+    height: 120px;
+  }
+
+  .productName {
+    font-size: 17px;
+  }
+
+  .productPrice {
+    font-size: 18px;
+  }
+
+  .selectButton {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+}
+
+/* Tablet - keep horizontal layout but optimize sizing */
+@media (max-width: 768px) {
   .cardMain {
-    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .cardImage {
+    width: 110px;
+    height: 146px;
+  }
+
+  .productName {
+    font-size: 18px;
+  }
+
+  .productDescription {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .productPrice {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .cardMain {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .cardImage {
+    width: 100%;
+    height: 200px;
+    align-self: center;
+    max-width: 150px;
   }
 
   .cardInfo {
-    flex: 1 1 calc(100% - 99px);
+    gap: 12px;
+    text-align: center;
+  }
+
+  .productName {
+    font-size: 20px;
+  }
+
+  .productDescription {
+    font-size: 15px;
+  }
+
+  .productPrice {
+    font-size: 22px;
   }
 
   .cardAction {
-    flex: 0 0 auto;
-    width: auto;
-    align-self: flex-start;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .selectButton {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
   }
 
   .selectionLabel {
-    font-size: 13px;
+    font-size: 15px;
+    text-align: left;
   }
 
   .optionButton {
-    padding: var(--sds-size-space-300, 12px);
-    height: 32px;
+    padding: 14px 18px;
+    height: auto;
+    min-height: 44px;
   }
 
   .optionText {
-    font-size: 13px;
+    font-size: 15px;
   }
 }
