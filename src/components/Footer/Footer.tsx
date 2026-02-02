@@ -76,7 +76,7 @@ export function Footer({
   avatarText,
   isMuted = true,
   onUnmute,
-  wordDelay = 0.15,
+  wordDelay = 0.26,
   paragraphPauseMs = 1500,
 }: FooterProps) {
   const [isAvatarDismissed, setIsAvatarDismissed] = useState(false);
