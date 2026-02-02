@@ -54,6 +54,10 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={openSans.className}>
+        {/* Skip to main content link for keyboard users */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
