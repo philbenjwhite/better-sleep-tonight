@@ -115,7 +115,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={disabled || !email.trim()}
+            disabled={disabled || !email.trim() || !validateEmail(email)}
           >
             <span className={styles.buttonText}>{content.submitButtonText}</span>
             <svg
