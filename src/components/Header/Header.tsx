@@ -32,7 +32,7 @@ export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, show
         <button
           className={styles.volumeButton}
           aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-          title={isMuted ? "Sound off" : "Sound on"}
+          data-tooltip={isMuted ? "Sound off" : "Sound on"}
           onClick={onVolumeClick}
         >
           {isMuted ? (
