@@ -153,8 +153,8 @@ function MattressCard({
 
   return (
     <div className={classNames(styles.card, { [styles.expanded]: isExpanded, [styles.dimmed]: isDimmed })}>
-      {/* Main product row - clickable to toggle selection */}
-      <div className={styles.cardMain} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}>
+      {/* Main product row */}
+      <div className={styles.cardMain} onClick={onSelect}>
         {/* Product Image with Badge */}
         <div className={styles.cardImage}>
           {mattress.badge && (
@@ -313,9 +313,34 @@ export function ProductRecommendations({
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const hasAnimatedCards = useRef(false);
 
   // Show only mattresses with badges (the top 3 recommendations)
   const displayedMattresses = content.mattressOptions.filter((m) => m.badge);
+
+  // Animate cards on mount with staggered fade-in
+  useLayoutEffect(() => {
+    if (listRef.current && !hasAnimatedCards.current && displayedMattresses.length > 0) {
+      hasAnimatedCards.current = true;
+
+      const cards = listRef.current.querySelectorAll(`.${styles.card}`);
+      if (cards.length === 0) return;
+
+      // Set initial state - hidden and slightly below
+      gsap.set(cards, { opacity: 0, y: 20 });
+
+      // Create staggered entrance animation
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        stagger: 0.12,
+        ease: "power2.out",
+        delay: 0.1, // Small delay to ensure DOM is ready
+        clearProps: "transform",
+      });
+    }
+  }, [displayedMattresses.length]);
 
   const handleScroll = useCallback(() => {
     if (listRef.current) {

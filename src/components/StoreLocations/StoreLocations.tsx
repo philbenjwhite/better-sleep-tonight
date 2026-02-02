@@ -92,7 +92,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const locationCardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const locationCardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const hasInitializedRef = useRef(false);
 
   // Calculate distances and sort locations
@@ -241,14 +241,13 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
         <div className={styles.locationsListWrapper}>
           <div className={styles.locationsList} ref={listRef}>
             {sortedLocations.map((location) => (
-              <button
+              <article
                 key={location.id}
                 ref={(el) => {
                   if (el) {
                     locationCardRefs.current.set(location.id, el);
                   }
                 }}
-                type="button"
                 className={`${styles.locationCard} ${
                   selectedLocationId === location.id ? styles.selected : ''
                 }`}
@@ -294,7 +293,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                     </a>
                   </div>
                 </div>
-              </button>
+              </article>
             ))}
           </div>
         </div>

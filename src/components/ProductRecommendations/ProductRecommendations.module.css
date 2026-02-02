@@ -117,6 +117,8 @@
   flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
   transition: opacity 0.2s ease, transform 0.2s ease;
+  /* Hint browser about animation properties for smoother entrance animation */
+  will-change: opacity, transform;
 }
 
 /* Dimmed state for unselected cards when another is expanded */
