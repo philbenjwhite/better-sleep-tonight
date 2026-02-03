@@ -227,23 +227,24 @@
   }
 }
 
-/* Tablet landscape */
-@media (max-height: 600px) and (orientation: landscape) {
+/* Tablet/phone landscape - allow scrolling when content overflows */
+@media (max-height: 500px) and (orientation: landscape) {
+  .main {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+    overflow-y: auto !important;
+  }
+
+  .contentWrapper {
+    height: auto;
+    min-height: auto;
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+
   .contentInner {
-    gap: 24px;
-  }
-
-  .avatar {
-    width: 140px;
-    height: 140px;
-  }
-
-  .subheadline {
-    font-size: 16px;
-  }
-
-  .heading {
-    font-size: 16px;
+    height: auto;
   }
 }
 
@@ -787,14 +788,14 @@
   }
 }
 
-/* Mobile: position question block at consistent distance from top */
+/* Mobile: center question block like on desktop */
 @media (max-width: 768px) {
   .questionBlockWrapper {
-    /* Position from top instead of centering */
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding-top: 125px; /* Consistent distance from top (below header) - pushed down 1.5rem */
-    padding-bottom: 80px; /* Space from bottom for footer */
+    /* Center the question block vertically */
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px; /* Space for header */
+    padding-bottom: 80px; /* Space for footer */
   }
 
   .questionBlockBackdrop {
@@ -815,7 +816,7 @@
 
 @media (max-width: 480px) {
   .questionBlockWrapper {
-    padding-top: 115px;
+    padding-top: 70px;
     padding-bottom: 60px;
   }
 }

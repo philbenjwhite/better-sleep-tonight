@@ -278,7 +278,7 @@
       "stepId": "video-step-3",
       "internalName": "Post-Selection Video",
       "video": "/videos/ashley/ashley-4.mp4",
-      "script": "Ok, great choice. I've checked pricing and the best deal I'm seeing right now is through Ashley. They are currently offering your perfect mattress for $2,999 plus 10% discount for the new year. Enter your zip code and I'll find your nearest Ashley store.",
+      "script": "Ok, great choice. I've checked pricing and the best deal I'm seeing right now is through Ashley. They're currently offering a 10% discount for the new year on your selected mattress. Enter your zip code and I'll find your nearest Ashley store.",
       "_template": "videoStep"
     },
     {
