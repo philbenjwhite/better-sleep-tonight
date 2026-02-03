@@ -6,6 +6,15 @@
   z-index: 30;
 }
 
+/* Non-fixed footer for intro screen */
+.footerStatic {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 /* Progress bar positioned above footer content */
 .progressBar {
   height: 4px;

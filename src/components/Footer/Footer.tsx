@@ -171,7 +171,7 @@ export function Footer({
   };
 
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''}`}>
       {/* Avatar section renders above progress bar (mobile only via CSS) */}
       {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (
         <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''}`}>
