@@ -190,10 +190,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
   const onVideoLoaded = useCallback(() => {
     // Check if video is already playing (started synchronously in play())
-    // If so, just update state - don't call play() again
+    // If so, don't change state - keep it as PLAYING
     if (videoRef.current && !videoRef.current.paused) {
-      console.log('[VideoAvatar] Video already playing, skipping play() in onVideoLoaded');
-      setVideoState(VideoState.READY);
       return;
     }
 

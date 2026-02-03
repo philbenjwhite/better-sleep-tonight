@@ -132,13 +132,10 @@ export function SpeechBubbleSequence({
   useEffect(() => {
     if (!isVideoSyncMode || videoCueIndex < 0) return;
 
-    console.log('[SpeechBubble] videoCueIndex:', videoCueIndex, 'lastShownCueIndex:', lastShownCueIndex, 'videoCurrentTime:', videoCurrentTime);
-
     // If we've moved to a new cue (or showing first cue)
     if (videoCueIndex !== lastShownCueIndex) {
       // Trigger transition animation if not the first cue
       if (lastShownCueIndex >= 0 && videoCueIndex > lastShownCueIndex) {
-        console.log('[SpeechBubble] Transitioning to cue:', videoCueIndex);
         setIsTransitioning(true);
         setTimeout(() => {
           setCurrentParagraphIndex(videoCueIndex);
@@ -147,7 +144,6 @@ export function SpeechBubbleSequence({
         }, 400); // Match CSS transition duration
       } else {
         // First cue or backward seek - no transition needed
-        console.log('[SpeechBubble] Setting cue without transition:', videoCueIndex);
         setCurrentParagraphIndex(videoCueIndex);
         setLastShownCueIndex(videoCueIndex);
       }

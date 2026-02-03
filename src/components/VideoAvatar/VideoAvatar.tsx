@@ -64,17 +64,6 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Include READY state to handle cases where onPlay event doesn't fire
   const showVideo = isReady || isPlaying || isEnded;
 
-  console.log('[VideoAvatar] State:', {
-    videoState,
-    showVideo,
-    showFallbackImage,
-    hasPlayedVideo,
-    isPlaying,
-    isEnded,
-    currentTime,
-    duration
-  });
-
   // Calculate video opacity - only fade out near end, no fade in
   const FADE_DURATION = 0.5;
   let videoOpacity = 1;
