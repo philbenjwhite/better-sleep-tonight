@@ -1,0 +1,88 @@
+{
+  "flowId": "back-pain",
+  "timestamp": "2026-02-05T14:32:45.123Z",
+  "sessionData": {
+    "currentStep": 15,
+    "totalSteps": 15,
+    "email": "john.smith@gmail.com",
+    "zipCode": "M5V 3L9",
+    "mattressSelection": {
+      "size": "queen",
+      "feel": "medium"
+    }
+  },
+  "answers": [
+    {
+      "stepId": "q1-trouble-falling-asleep",
+      "question": "How often do you have trouble falling asleep?",
+      "answer": {
+        "value": "frequently",
+        "label": "Frequently"
+      },
+      "answeredAt": "2026-02-05T14:28:12.456Z"
+    },
+    {
+      "stepId": "q2-sleep-position",
+      "question": "Which position do you sleep in the most?",
+      "answer": {
+        "value": "side",
+        "label": "On My Side"
+      },
+      "answeredAt": "2026-02-05T14:28:34.789Z"
+    },
+    {
+      "stepId": "q3-motion-disturbance",
+      "question": "How often does motion or tossing and turning in bed wake you up or prevent you from falling asleep?",
+      "answer": {
+        "value": "regularly",
+        "label": "Regularly"
+      },
+      "answeredAt": "2026-02-05T14:28:58.012Z"
+    },
+    {
+      "stepId": "q4-aches-pains-frequency",
+      "question": "How often do you wake with aches and pains?",
+      "answer": {
+        "value": "frequently",
+        "label": "Frequently"
+      },
+      "answeredAt": "2026-02-05T14:29:22.345Z"
+    },
+    {
+      "stepId": "q5-aches-pains-type",
+      "question": "Which of the following is most true for your aches & pains?",
+      "answer": {
+        "value": "hip-shoulder",
+        "label": "Hip or Shoulder Discomfort"
+      },
+      "answeredAt": "2026-02-05T14:29:45.678Z"
+    },
+    {
+      "stepId": "email-capture",
+      "question": "Enter email address",
+      "answer": {
+        "value": "john.smith@gmail.com",
+        "label": "john.smith@gmail.com"
+      },
+      "answeredAt": "2026-02-05T14:30:15.901Z"
+    },
+    {
+      "stepId": "product-recommendations-step",
+      "question": "Product Selection",
+      "answer": {
+        "value": "sealy-posturepedic-plus",
+        "label": "Sealy Posturepedic Plus"
+      },
+      "answeredAt": "2026-02-05T14:31:42.234Z"
+    },
+    {
+      "stepId": "zipcode-capture-step",
+      "question": "Enter your Postal Code",
+      "answer": {
+        "value": "M5V 3L9",
+        "label": "M5V 3L9"
+      },
+      "answeredAt": "2026-02-05T14:32:08.567Z"
+    }
+  ]
+}
