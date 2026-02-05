@@ -24,17 +24,11 @@ a {
 }
 
 :root {
+  color-scheme: light only;
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 249, 244, 237; /* #F9F4ED */
 }
 
-/* Override dark mode - always use light cream background */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-rgb: 249, 244, 237; /* #F9F4ED */
-  }
-}
 
 /* Screen reader only utility class */
 .sr-only {
