@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import styles from './VideoBackground.module.css';
+import { ConnectionQuality } from '@/hooks/useNetworkStatus';
 
 export interface VideoBackgroundProps {
   /**
@@ -46,6 +47,14 @@ export interface VideoBackgroundProps {
    * Enable lazy loading (start playing when in viewport)
    */
   lazy?: boolean;
+  /**
+   * Current connection quality - used to auto-disable video on slow connections
+   */
+  connectionQuality?: ConnectionQuality;
+  /**
+   * Disable video playback on slow connections (show poster instead)
+   */
+  disableOnSlowConnection?: boolean;
 }
 
 export const VideoBackground: React.FC<VideoBackgroundProps> = ({
@@ -58,6 +67,8 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
   className,
   playbackRate = 1,
   lazy = true,
+  connectionQuality = ConnectionQuality.FAST,
+  disableOnSlowConnection = true,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,6 +77,12 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
   const [shouldPlay, setShouldPlay] = useState(!lazy);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Determine if video should be disabled due to slow connection
+  const isSlowConnection =
+    connectionQuality === ConnectionQuality.SLOW ||
+    connectionQuality === ConnectionQuality.OFFLINE;
+  const shouldDisableVideo = disableOnSlowConnection && isSlowConnection;
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -115,7 +132,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
 
   // Handle video playback
   useEffect(() => {
-    if (!videoRef.current || !shouldPlay || prefersReducedMotion) return;
+    if (!videoRef.current || !shouldPlay || prefersReducedMotion || shouldDisableVideo) return;
 
     const video = videoRef.current;
     video.playbackRate = playbackRate;
@@ -128,7 +145,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
         setHasError(true);
       });
     }
-  }, [shouldPlay, playbackRate, prefersReducedMotion]);
+  }, [shouldPlay, playbackRate, prefersReducedMotion, shouldDisableVideo]);
 
   // Handle video loaded state
   const handleCanPlay = () => {
@@ -146,8 +163,8 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
 
   return (
     <div ref={containerRef} className={classNames(styles.container, className)}>
-      {/* Video Element */}
-      {!prefersReducedMotion && (
+      {/* Video Element - disabled on slow connections or reduced motion preference */}
+      {!prefersReducedMotion && !shouldDisableVideo && (
         <video
           ref={videoRef}
           className={classNames(styles.video, {
@@ -169,8 +186,8 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
         </video>
       )}
 
-      {/* Static poster for reduced motion preference */}
-      {prefersReducedMotion && (
+      {/* Static poster for reduced motion preference or slow connections */}
+      {(prefersReducedMotion || shouldDisableVideo) && (
         <div
           className={styles.staticPoster}
           style={{ backgroundImage: `url(${poster})` }}
@@ -193,7 +210,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
       {children && <div className={styles.content}>{children}</div>}
 
       {/* Loading indicator */}
-      {!isLoaded && !hasError && !prefersReducedMotion && (
+      {!isLoaded && !hasError && !prefersReducedMotion && !shouldDisableVideo && (
         <div className={styles.loading} aria-live="polite" aria-busy="true">
           <div className={styles.spinner} role="status">
             <span className={styles.srOnly}>Loading video...</span>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -67,7 +68,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

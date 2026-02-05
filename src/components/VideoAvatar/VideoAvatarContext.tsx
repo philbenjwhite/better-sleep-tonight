@@ -7,7 +7,10 @@ import React, {
   useRef,
   useCallback,
   ReactNode,
+  useEffect,
 } from 'react';
+import { ConnectionQuality } from '@/hooks/useNetworkStatus';
+import { getPreloadStrategy } from '@/hooks/useAdaptiveVideo';
 
 // Video registry - maps video IDs to file paths
 export const VIDEO_REGISTRY: Record<string, string> = {
@@ -29,19 +32,25 @@ interface VideoAvatarContextType {
   videoState: VideoState;
   isPlaying: boolean;
   isNearingEnd: boolean;
+  isBuffering: boolean;
   currentVideoId: string | null;
   currentTime: number;
   duration: number;
+  connectionQuality: ConnectionQuality;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   play: (videoId: string) => Promise<void>;
   preload: (videoIdOrPath: string) => void;
+  preloadMultiple: (videoIds: string[]) => void;
   stop: () => void;
   setVideoRef: (ref: HTMLVideoElement | null) => void;
+  setConnectionQuality: (quality: ConnectionQuality) => void;
   onVideoEnded: () => void;
   onVideoLoaded: () => void;
   onVideoPlay: () => void;
   onVideoError: () => void;
   onVideoTimeUpdate: () => void;
+  onVideoWaiting: () => void;
+  onVideoCanPlay: () => void;
 }
 
 const VideoAvatarContext = createContext<VideoAvatarContextType | null>(null);
@@ -58,8 +67,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   const [videoState, setVideoState] = useState<VideoState>(VideoState.IDLE);
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
   const [isNearingEnd, setIsNearingEnd] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>(
+    ConnectionQuality.FAST
+  );
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playPromiseRef = useRef<{
     resolve: () => void;
@@ -160,6 +173,14 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   }, []);
 
   const preload = useCallback((videoIdOrPath: string) => {
+    const { preloadAttribute } = getPreloadStrategy(connectionQuality);
+
+    // Skip preloading on slow connections
+    if (preloadAttribute === 'none') {
+      console.log('[VideoAvatar] Skipping preload on slow connection');
+      return;
+    }
+
     const videoSrc = videoIdOrPath.startsWith('/')
       ? videoIdOrPath
       : VIDEO_REGISTRY[videoIdOrPath];
@@ -172,12 +193,29 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
     // Use a hidden video element to preload the video data
     const preloadVideo = document.createElement('video');
-    preloadVideo.preload = 'auto';
+    preloadVideo.preload = preloadAttribute;
     preloadVideo.muted = true;
     preloadVideo.src = videoSrc;
     preloadVideo.load();
-    console.log('[VideoAvatar] Preloading video:', videoSrc);
-  }, []);
+    console.log('[VideoAvatar] Preloading video:', videoSrc, 'with preload:', preloadAttribute);
+  }, [connectionQuality]);
+
+  // Preload multiple videos based on connection quality
+  const preloadMultiple = useCallback(
+    (videoIds: string[]) => {
+      const { preloadCount } = getPreloadStrategy(connectionQuality);
+
+      if (preloadCount === 0) {
+        console.log('[VideoAvatar] Skipping preload - slow connection');
+        return;
+      }
+
+      // Only preload up to preloadCount videos
+      const videosToPreload = videoIds.slice(0, preloadCount);
+      videosToPreload.forEach((videoId) => preload(videoId));
+    },
+    [connectionQuality, preload]
+  );
 
   const stop = useCallback(() => {
     if (videoRef.current) {
@@ -238,6 +276,27 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     }
   }, [isNearingEnd]);
 
+  // Buffering detection - called when video is waiting for data
+  const onVideoWaiting = useCallback(() => {
+    console.log('[VideoAvatar] Video buffering...');
+    setIsBuffering(true);
+  }, []);
+
+  // Called when video can resume playing after buffering
+  const onVideoCanPlay = useCallback(() => {
+    if (isBuffering) {
+      console.log('[VideoAvatar] Video can play again');
+      setIsBuffering(false);
+    }
+  }, [isBuffering]);
+
+  // Reset buffering state when video ends or is stopped
+  useEffect(() => {
+    if (videoState === VideoState.ENDED || videoState === VideoState.IDLE) {
+      setIsBuffering(false);
+    }
+  }, [videoState]);
+
   const isPlaying = videoState === VideoState.PLAYING;
 
   return (
@@ -246,19 +305,25 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         videoState,
         isPlaying,
         isNearingEnd,
+        isBuffering,
         currentVideoId,
         currentTime,
         duration,
+        connectionQuality,
         videoRef,
         play,
         preload,
+        preloadMultiple,
         stop,
         setVideoRef,
+        setConnectionQuality,
         onVideoEnded,
         onVideoLoaded,
         onVideoPlay,
         onVideoError,
         onVideoTimeUpdate,
+        onVideoWaiting,
+        onVideoCanPlay,
       }}
     >
       {children}

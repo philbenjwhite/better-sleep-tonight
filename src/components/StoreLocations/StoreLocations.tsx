@@ -181,13 +181,15 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <p className={styles.ctaTitle}>{content.ctaBookTitle}</p>
               <p className={styles.ctaDescription}>{content.ctaBookDescription}</p>
             </div>
-            <button
-              type="button"
+            <a
+              href="https://ashleyhomestore.ca/pages/book-appointment"
+              target="_blank"
+              rel="noopener noreferrer"
               className={styles.ctaButton}
               onClick={handleBookRestTest}
             >
               {content.ctaBookButtonText}
-            </button>
+            </a>
           </div>
         </div>
 
@@ -207,13 +209,15 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <p className={styles.ctaTitle}>{content.ctaContactTitle}</p>
               <p className={styles.ctaDescription}>{content.ctaContactDescription}</p>
             </div>
-            <button
-              type="button"
+            <a
+              href="https://ashleyhomestore.ca/pages/contact"
+              target="_blank"
+              rel="noopener noreferrer"
               className={styles.ctaButtonOutline}
               onClick={handleContactUs}
             >
               {content.ctaContactButtonText}
-            </button>
+            </a>
           </div>
         </div>
       </div>

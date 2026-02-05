@@ -22,12 +22,15 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
     videoState,
     currentTime,
     duration,
+    isBuffering,
     setVideoRef,
     onVideoEnded,
     onVideoLoaded,
     onVideoPlay,
     onVideoError,
     onVideoTimeUpdate,
+    onVideoWaiting,
+    onVideoCanPlay,
   } = useVideoAvatar();
 
   const videoElementRef = useRef<HTMLVideoElement>(null);
@@ -100,6 +103,8 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         onEnded={onVideoEnded}
         onError={onVideoError}
         onTimeUpdate={onVideoTimeUpdate}
+        onWaiting={onVideoWaiting}
+        onCanPlay={onVideoCanPlay}
         style={{
           display: showVideo ? 'block' : 'none',
           opacity: videoOpacity,
@@ -111,6 +116,13 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
       {isLoading && (
         <div className={styles.loadingOverlay}>
           <div className={styles.loadingSpinner} />
+        </div>
+      )}
+
+      {/* Buffering indicator - shown during video playback when waiting for data */}
+      {isBuffering && isPlaying && (
+        <div className={styles.bufferingOverlay}>
+          <div className={styles.bufferingSpinner} />
         </div>
       )}
 
