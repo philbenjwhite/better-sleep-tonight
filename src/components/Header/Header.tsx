@@ -10,37 +10,56 @@ export interface HeaderProps {
   onVolumeClick?: () => void;
   showVolumeButton?: boolean;
   isMuted?: boolean;
+  centerContent?: React.ReactNode;
+  /** Content rendered below the header row on mobile only */
+  mobileContent?: React.ReactNode;
 }
 
-export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, showVolumeButton = true, isMuted = true }: HeaderProps) {
+export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, showVolumeButton = true, isMuted = true, centerContent, mobileContent }: HeaderProps) {
   return (
     <header className={styles.header}>
-      {/* Logo - Top Left */}
-      <Link href="/" className={styles.logo}>
-        <Image
-          src="/images/bst-logo.svg"
-          alt={brandName}
-          width={238}
-          height={64}
-          className={styles.logoImage}
-          priority
-        />
-      </Link>
+      <div className={styles.headerRow}>
+        {/* Logo - Top Left */}
+        <Link href="/" className={styles.logo}>
+          <Image
+            src="/images/bst-logo.svg"
+            alt={brandName}
+            width={238}
+            height={64}
+            className={styles.logoImage}
+            priority
+          />
+        </Link>
 
-      {/* Volume Icon - Top Right */}
-      {showVolumeButton && (
-        <button
-          className={styles.volumeButton}
-          aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-          data-tooltip={isMuted ? "Sound off" : "Sound on"}
-          onClick={onVolumeClick}
-        >
-          {isMuted ? (
-            <SpeakerSlash size={20} weight="bold" color="#363534" />
-          ) : (
-            <SpeakerHigh size={20} weight="bold" color="#363534" />
-          )}
-        </button>
+        {/* Center Content (e.g., StepIndicator) */}
+        {centerContent && (
+          <div className={styles.centerContent}>
+            {centerContent}
+          </div>
+        )}
+
+        {/* Volume Icon - Top Right */}
+        {showVolumeButton && (
+          <button
+            className={styles.volumeButton}
+            aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+            data-tooltip={isMuted ? "Sound off" : "Sound on"}
+            onClick={onVolumeClick}
+          >
+            {isMuted ? (
+              <SpeakerSlash size={20} weight="bold" color="#363534" />
+            ) : (
+              <SpeakerHigh size={20} weight="bold" color="#363534" />
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Mobile-only content below header row */}
+      {mobileContent && (
+        <div className={styles.mobileContent}>
+          {mobileContent}
+        </div>
       )}
     </header>
   );

@@ -18,7 +18,10 @@ import {
 import { DevPanel, StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SpeechBubbleSequence, SubtitleCue } from "@/components/SpeechBubbleSequence";
+import {
+  SpeechBubbleSequence,
+  SubtitleCue,
+} from "@/components/SpeechBubbleSequence";
 import { parseVtt, getVttPathFromVideo } from "@/lib/subtitles";
 import { geocodeWithFallback, Coordinates } from "@/lib/geocoding";
 import { RecoveryModal } from "@/components/RecoveryModal";
@@ -34,21 +37,70 @@ import {
 } from "@/components/ProductRecommendations";
 import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
 import { ActionPrompt, ActionPromptContent } from "@/components/ActionPrompt";
-import { StoreLocations, StoreLocationsContent } from "@/components/StoreLocations";
-import { ZipCodeCapture, ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
+import {
+  StoreLocations,
+  StoreLocationsContent,
+} from "@/components/StoreLocations";
+import {
+  ZipCodeCapture,
+  ZipCodeCaptureContent,
+} from "@/components/ZipCodeCapture";
+import { StepIndicator, StepIndicatorStep } from "@/components/StepIndicator";
 import { useProgressPersistence } from "@/hooks";
 import { FLOWS } from "@/config";
 import styles from "./page.module.css";
 
+// Step templates that belong to the "Results" phase
+const RESULTS_TEMPLATES = new Set([
+  "emailCaptureStep",
+  "seeOptionsStep",
+  "productRecommendationsStep",
+  "zipcodeCaptureStep",
+  "storeLocationsStep",
+]);
+
+function getProgressSteps(
+  currentView: "intro" | "question",
+  currentStepTemplate: string | undefined,
+): StepIndicatorStep[] {
+  if (currentView === "intro") {
+    return [
+      { label: "Intro", status: "active" },
+      { label: "Sleep Diagnosis", status: "inactive" },
+      { label: "Results", status: "inactive" },
+    ];
+  }
+
+  const isResultsPhase = currentStepTemplate
+    ? RESULTS_TEMPLATES.has(currentStepTemplate)
+    : false;
+
+  if (isResultsPhase) {
+    return [
+      { label: "Intro", status: "completed" },
+      { label: "Sleep Diagnosis", status: "completed" },
+      { label: "Results", status: "active" },
+    ];
+  }
+
+  return [
+    { label: "Intro", status: "completed" },
+    { label: "Sleep Diagnosis", status: "active" },
+    { label: "Results", status: "inactive" },
+  ];
+}
+
 // Default product recommendations content (fallback when CMS content not provided)
 const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
   headline: "Your Perfect Mattress Matches",
-  introParagraph: "Based on your sleep profile, I've found three mattresses that will help you wake up without back pain.",
+  introParagraph:
+    "Based on your sleep profile, I've found three mattresses that will help you wake up without back pain.",
   mattressOptions: [
     {
       id: "tempur-sense",
-      productName: "TEMPUR-SENSE",
-      productDescription: "Adaptive support, pressure relief, and motion absorption\u2014powered by TEMPUR\u00AE Material and finished with a premium cover.",
+      productName: "TEMPUR SENSE\u00AE",
+      productDescription:
+        "Adaptive support, pressure relief, and motion absorption\u2014powered by TEMPUR\u00AE Material and finished with a premium cover.",
       basePrice: 1299,
       productImage: "/images/mattresses/tempur-sense.avif",
       badge: "Best Value",
@@ -60,12 +112,14 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "Fast-adapting foam for pressure relief",
         "Premium fabric cover",
       ],
-      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-sense-medium-10-inch-mattress?variant=43041759428697&queryID=5799338564ac18ac17aab900ad7f7f8c&objectID=43041759428697",
+      buyUrl:
+        "https://ashleyhomestore.ca/products/tempur-pedic-sense-medium-10-inch-mattress?variant=43041759428697&queryID=5799338564ac18ac17aab900ad7f7f8c&objectID=43041759428697",
     },
     {
       id: "tempur-prosense",
-      productName: "TEMPUR-PROSENSE",
-      productDescription: "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 Material\u2014plus adaptive support and motion isolation.",
+      productName: "TEMPUR [PRO]SENSE\u00AE",
+      productDescription:
+        "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 Material\u2014plus adaptive support and motion isolation.",
       basePrice: 1699,
       productImage: "/images/mattresses/tempur-prosense.avif",
       badge: "Most Popular",
@@ -77,12 +131,14 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "TEMPUR-APR+\u2122 for advanced pressure relief",
         "Cool-to-touch removable cover",
       ],
-      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-prosense-soft-12-inch-mattress?variant=43041759101017&queryID=f19b1fddd1ac8d8a7791ab9947eae568&objectID=43041759101017",
+      buyUrl:
+        "https://ashleyhomestore.ca/products/tempur-pedic-prosense-soft-12-inch-mattress?variant=43041759101017&queryID=f19b1fddd1ac8d8a7791ab9947eae568&objectID=43041759101017",
     },
     {
       id: "tempur-luxealign",
-      productName: "TEMPUR-LUXEALIGN",
-      productDescription: "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
+      productName: "TEMPUR [LUXE]ALIGN\u00AE",
+      productDescription:
+        "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
       basePrice: 2199,
       productImage: "/images/mattresses/tempur-luxealign.avif",
       badge: "Most Advanced",
@@ -95,7 +151,8 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "TEMPUR-APR+\u2122 for maximum pressure relief",
         "Cool-to-touch removable cover",
       ],
-      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-luxealign-soft-13-inch-mattress?variant=43041759297625&queryID=6201e3d8e86372538312d8791946cf87&objectID=43041759297625",
+      buyUrl:
+        "https://ashleyhomestore.ca/products/tempur-pedic-luxealign-soft-13-inch-mattress?variant=43041759297625&queryID=6201e3d8e86372538312d8791946cf87&objectID=43041759297625",
     },
   ],
   sizes: [
@@ -110,7 +167,8 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
     { value: "medium", label: "Medium" },
     { value: "firm", label: "Firm" },
   ],
-  avatarResponse: "Great choice! This mattress is perfect for your sleep needs.",
+  avatarResponse:
+    "Great choice! This mattress is perfect for your sleep needs.",
 };
 
 // Type for flow steps - using template-based structure
@@ -181,13 +239,13 @@ function HomeContent() {
   } = useProgressPersistence();
 
   const [currentView, setCurrentView] = useState<"intro" | "question">(
-    skipIntro ? "question" : "intro"
+    skipIntro ? "question" : "intro",
   );
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showQuestionBlock, setShowQuestionBlock] = useState(skipIntro);
   const [currentStepIndex, setCurrentStepIndex] = useState(initialStep);
   const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(
-    null
+    null,
   );
   const [avatarResponse, setAvatarResponse] = useState<string | null>(null);
   const [isShowingResponse, setIsShowingResponse] = useState(false);
@@ -200,7 +258,7 @@ function HomeContent() {
   const [hasHandledRecovery, setHasHandledRecovery] = useState(skipIntro);
   const [isFlowTerminated, setIsFlowTerminated] = useState(false);
   const [terminationMessage, setTerminationMessage] = useState<string | null>(
-    null
+    null,
   );
   const [selectedMattressSize, setSelectedMattressSize] = useState<
     MattressSize | undefined
@@ -212,16 +270,26 @@ function HomeContent() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
-  const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(null);
+  const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(
+    null,
+  );
   const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
   // Video avatar hook
-  const { videoState, isPlaying, isNearingEnd, play, preload, currentTime, currentVideoId } = useVideoAvatar();
+  const {
+    videoState,
+    isPlaying,
+    isNearingEnd,
+    play,
+    preload,
+    currentTime,
+    currentVideoId,
+  } = useVideoAvatar();
 
   // Debug: Log video state changes
   useEffect(() => {
-    console.log('[VideoStateChange] videoState:', videoState);
+    console.log("[VideoStateChange] videoState:", videoState);
   }, [videoState]);
 
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
@@ -231,7 +299,7 @@ function HomeContent() {
   // Dev mode: auto-play intro video when skipping intro
   useEffect(() => {
     if (skipIntro && videoState === VideoState.IDLE) {
-      play('avatar-intro');
+      play("avatar-intro");
     }
   }, [skipIntro, videoState, play]);
 
@@ -335,15 +403,17 @@ function HomeContent() {
 
   // Get flow data from CMS (uses activeFlow based on ?flow= param)
   const flowSteps = activeFlow.steps as FlowStep[];
-  const introScreen = activeFlow.introScreen as {
-    avatarImage?: string;
-    backgroundVideo?: string;
-    headline: string;
-    subheadline: string;
-    secondarySubheadline?: string;
-    primaryButtonText: string;
-    audioNotice?: string;
-  } | undefined;
+  const introScreen = activeFlow.introScreen as
+    | {
+        avatarImage?: string;
+        backgroundVideo?: string;
+        headline: string;
+        subheadline: string;
+        secondarySubheadline?: string;
+        primaryButtonText: string;
+        audioNotice?: string;
+      }
+    | undefined;
   // All steps are now valid flow steps (using templates)
   const questionSteps = flowSteps;
   const currentStep = questionSteps[currentStepIndex];
@@ -360,7 +430,7 @@ function HomeContent() {
 
   // Debug: Log step and render state
   useEffect(() => {
-    console.log('[StepDebug]', {
+    console.log("[StepDebug]", {
       currentStepIndex,
       stepId: currentStep?.stepId,
       template: currentStep?._template,
@@ -373,26 +443,43 @@ function HomeContent() {
       avatarStartedTalking,
       hasSpokenSummary,
     });
-  }, [currentStepIndex, currentStep, showQuestionBlock, showBackdrop, isZipCodeCaptureStep, isVideoStep, videoState, isShowingResponse, avatarStartedTalking, hasSpokenSummary]);
+  }, [
+    currentStepIndex,
+    currentStep,
+    showQuestionBlock,
+    showBackdrop,
+    isZipCodeCaptureStep,
+    isVideoStep,
+    videoState,
+    isShowingResponse,
+    avatarStartedTalking,
+    hasSpokenSummary,
+  ]);
 
   // Reset hasSpokenSummary when step changes to ensure video steps can play
   useEffect(() => {
-    console.log('[StepChange] Resetting hasSpokenSummary for step:', currentStepIndex);
+    console.log(
+      "[StepChange] Resetting hasSpokenSummary for step:",
+      currentStepIndex,
+    );
     setHasSpokenSummary(false);
   }, [currentStepIndex]);
 
   // Get intro video from intro screen config (used as background on intro screen)
-  const introVideo = introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
+  const introVideo =
+    introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
 
   // Get intro message from the first video step's script (shown in speech bubble during intro)
-  const firstVideoStep = questionSteps.find((step) => step._template === "videoStep");
+  const firstVideoStep = questionSteps.find(
+    (step) => step._template === "videoStep",
+  );
   const introMessage = firstVideoStep?.script || "";
 
   // Preload video steps while user is on intro screen
   useEffect(() => {
-    if (currentView === 'intro') {
+    if (currentView === "intro") {
       for (const step of flowSteps) {
-        if (step._template === 'videoStep' && step.video) {
+        if (step._template === "videoStep" && step.video) {
           preload(step.video);
         }
       }
@@ -403,36 +490,53 @@ function HomeContent() {
   const isAvatarReady = isVideoReady;
 
   // Helper function to log flow data in clean JSON format
-  const logFlowData = useCallback((answers: StoredAnswer[], context?: string) => {
-    const flowData = {
-      flowId: flowParam,
-      timestamp: new Date().toISOString(),
-      sessionData: {
-        currentStep: currentStepIndex + 1,
-        totalSteps: questionSteps.length,
-        email: answers.find(a => a.stepId === 'email-capture')?.value || null,
-        zipCode: userZipCode,
-        mattressSelection: selectedMattressSize && selectedMattressFeel ? {
-          size: selectedMattressSize,
-          feel: selectedMattressFeel,
-        } : null,
-      },
-      answers: answers.map(({ stepId, questionText, value, label, timestamp }) => ({
-        stepId,
-        question: questionText,
-        answer: {
-          value,
-          label,
+  const logFlowData = useCallback(
+    (answers: StoredAnswer[], context?: string) => {
+      const flowData = {
+        flowId: flowParam,
+        timestamp: new Date().toISOString(),
+        sessionData: {
+          currentStep: currentStepIndex + 1,
+          totalSteps: questionSteps.length,
+          email:
+            answers.find((a) => a.stepId === "email-capture")?.value || null,
+          zipCode: userZipCode,
+          mattressSelection:
+            selectedMattressSize && selectedMattressFeel
+              ? {
+                  size: selectedMattressSize,
+                  feel: selectedMattressFeel,
+                }
+              : null,
         },
-        answeredAt: timestamp instanceof Date ? timestamp.toISOString() : timestamp,
-      })),
-    };
+        answers: answers.map(
+          ({ stepId, questionText, value, label, timestamp }) => ({
+            stepId,
+            question: questionText,
+            answer: {
+              value,
+              label,
+            },
+            answeredAt:
+              timestamp instanceof Date ? timestamp.toISOString() : timestamp,
+          }),
+        ),
+      };
 
-    console.log(`\n📋 Flow Data${context ? ` (${context})` : ''}:`);
-    console.log(JSON.stringify(flowData, null, 2));
+      console.log(`\n📋 Flow Data${context ? ` (${context})` : ""}:`);
+      console.log(JSON.stringify(flowData, null, 2));
 
-    return flowData;
-  }, [flowParam, currentStepIndex, questionSteps.length, userZipCode, selectedMattressSize, selectedMattressFeel]);
+      return flowData;
+    },
+    [
+      flowParam,
+      currentStepIndex,
+      questionSteps.length,
+      userZipCode,
+      selectedMattressSize,
+      selectedMattressFeel,
+    ],
+  );
 
   const handleBegin = useCallback(async () => {
     setIsTransitioning(true);
@@ -474,11 +578,7 @@ function HomeContent() {
 
   // Mark intro as spoken when video starts playing
   useEffect(() => {
-    if (
-      currentView === "question" &&
-      isVideoPlaying &&
-      !hasSpokenIntro
-    ) {
+    if (currentView === "question" && isVideoPlaying && !hasSpokenIntro) {
       setHasSpokenIntro(true);
     }
   }, [currentView, isVideoPlaying, hasSpokenIntro]);
@@ -510,7 +610,7 @@ function HomeContent() {
   // Handle video step - play video if videoId is specified
   useEffect(() => {
     // Debug logging
-    console.log('[VideoStep] Check:', {
+    console.log("[VideoStep] Check:", {
       isVideoStep,
       hasCurrentStep: !!currentStep,
       showQuestionBlock,
@@ -527,7 +627,7 @@ function HomeContent() {
       !isShowingResponse &&
       !hasSpokenSummary
     ) {
-      console.log('[VideoStep] Starting video step:', currentStep.stepId);
+      console.log("[VideoStep] Starting video step:", currentStep.stepId);
       const scriptText = currentStep.script || "";
       const videoPath = currentStep.video;
 
@@ -539,43 +639,64 @@ function HomeContent() {
 
       // Hide question block and backdrop, show the script in speech bubble
       setShowQuestionBlock(false);
-      setShowBackdrop(false); setBackdropHasAnimated(false);
+      setShowBackdrop(false);
+      setBackdropHasAnimated(false);
       setAvatarResponse(scriptText);
       setIsShowingResponse(true);
       setAvatarStartedTalking(true);
 
       // If video is specified, play it and fetch VTT subtitles
       if (videoPath) {
-        console.log('[VideoStep] Playing video:', videoPath);
+        console.log("[VideoStep] Playing video:", videoPath);
 
         // Fetch VTT file for subtitle timing
         const vttPath = getVttPathFromVideo(videoPath);
-        console.log('[VideoStep] Fetching VTT from:', vttPath);
+        console.log("[VideoStep] Fetching VTT from:", vttPath);
         fetch(vttPath)
-          .then(res => {
-            console.log('[VideoStep] VTT fetch response:', { ok: res.ok, status: res.status });
-            return res.ok ? res.text() : Promise.reject('VTT not found');
+          .then((res) => {
+            console.log("[VideoStep] VTT fetch response:", {
+              ok: res.ok,
+              status: res.status,
+            });
+            return res.ok ? res.text() : Promise.reject("VTT not found");
           })
-          .then(vttContent => {
+          .then((vttContent) => {
             const track = parseVtt(vttContent);
-            console.log('[VideoStep] Loaded VTT cues:', track.cues.length, 'cues for', videoPath);
-            console.log('[VideoStep] First cue:', track.cues[0]);
+            console.log(
+              "[VideoStep] Loaded VTT cues:",
+              track.cues.length,
+              "cues for",
+              videoPath,
+            );
+            console.log("[VideoStep] First cue:", track.cues[0]);
             setVideoSubtitleCues(track.cues);
           })
           .catch((err) => {
-            console.log('[VideoStep] No VTT file found or error:', err, 'using timer-based display');
+            console.log(
+              "[VideoStep] No VTT file found or error:",
+              err,
+              "using timer-based display",
+            );
             setVideoSubtitleCues([]); // Fall back to timer-based mode
           });
 
         // Always call play() when starting a new video step
         // This ensures video plays on iOS Safari where state transitions may be delayed
         // Skip only if video is already playing the same video
-        const isPlayingSameVideo = videoState === VideoState.PLAYING && currentVideoId === videoPath;
+        const isPlayingSameVideo =
+          videoState === VideoState.PLAYING && currentVideoId === videoPath;
         if (!isPlayingSameVideo) {
-          console.log('[VideoStep] Calling play() for video:', videoPath, 'current state:', videoState);
+          console.log(
+            "[VideoStep] Calling play() for video:",
+            videoPath,
+            "current state:",
+            videoState,
+          );
           play(videoPath);
         } else {
-          console.log('[VideoStep] Already playing this video, skipping play() call');
+          console.log(
+            "[VideoStep] Already playing this video, skipping play() call",
+          );
         }
       } else {
         // No video - auto-advance after showing text
@@ -602,7 +723,7 @@ function HomeContent() {
   const isVideoEnded = videoState === VideoState.ENDED;
 
   useEffect(() => {
-    console.log('[VideoStepComplete] Check:', {
+    console.log("[VideoStepComplete] Check:", {
       isVideoStep,
       isShowingResponse,
       isVideoEnded,
@@ -615,16 +736,11 @@ function HomeContent() {
     // 1. hasSpokenSummary indicates we started the video step
     // 2. isVideoEnded (ENDED state) confirms video finished playing
     // 3. avatarStartedTalking can be incorrectly reset by other effects
-    if (
-      isVideoStep &&
-      isShowingResponse &&
-      isVideoEnded &&
-      hasSpokenSummary
-    ) {
-      console.log('[VideoStepComplete] All conditions met, starting timer');
+    if (isVideoStep && isShowingResponse && isVideoEnded && hasSpokenSummary) {
+      console.log("[VideoStepComplete] All conditions met, starting timer");
       // Video finished - brief moment before advancing
       const timer = setTimeout(() => {
-        console.log('[VideoStepComplete] Timer fired, advancing to next step');
+        console.log("[VideoStepComplete] Timer fired, advancing to next step");
         setIsShowingResponse(false);
         setAvatarResponse(null);
         setAvatarStartedTalking(false);
@@ -632,16 +748,23 @@ function HomeContent() {
 
         // Advance to next step
         if (currentStepIndex < questionSteps.length - 1) {
-          console.log('[VideoStepComplete] Advancing from step', currentStepIndex, 'to', currentStepIndex + 1);
+          console.log(
+            "[VideoStepComplete] Advancing from step",
+            currentStepIndex,
+            "to",
+            currentStepIndex + 1,
+          );
           const nextStep = questionSteps[currentStepIndex + 1];
-          const isNextStepQuestion = nextStep?._template === 'questionStep';
+          const isNextStepQuestion = nextStep?._template === "questionStep";
 
           setCurrentStepIndex((prev) => prev + 1);
 
           // Only show backdrop/question block if next step is a question
           if (isNextStepQuestion) {
             setTimeout(() => {
-              console.log('[VideoStepComplete] Next step is question, showing question block');
+              console.log(
+                "[VideoStepComplete] Next step is question, showing question block",
+              );
               setShowBackdrop(true);
               setBackdropHasAnimated(true);
               setShowQuestionBlock(true);
@@ -649,7 +772,9 @@ function HomeContent() {
           } else {
             // For non-question steps (video, email capture, etc.), show question block
             // but hide backdrop - the video step effect will handle video steps
-            console.log('[VideoStepComplete] Next step is not a question, showing question block without backdrop');
+            console.log(
+              "[VideoStepComplete] Next step is not a question, showing question block without backdrop",
+            );
             setTimeout(() => {
               setShowBackdrop(false);
               setBackdropHasAnimated(false);
@@ -659,7 +784,7 @@ function HomeContent() {
         }
       }, 500); // 500ms delay after video ends before hiding speech bubble
       return () => {
-        console.log('[VideoStepComplete] Cleanup - clearing timer');
+        console.log("[VideoStepComplete] Cleanup - clearing timer");
         clearTimeout(timer);
       };
     }
@@ -709,7 +834,8 @@ function HomeContent() {
             "Thank you for your time. Based on your answers, our program may not be the best fit for your needs.";
 
           setShowQuestionBlock(false);
-          setShowBackdrop(false); setBackdropHasAnimated(false);
+          setShowBackdrop(false);
+          setBackdropHasAnimated(false);
           setAvatarResponse(termMessage);
           setIsShowingResponse(true);
           setAvatarStartedTalking(true); // Simulate start for text display
@@ -736,7 +862,8 @@ function HomeContent() {
             }, 100);
           } else {
             // Flow complete - hide backdrop
-            setShowBackdrop(false); setBackdropHasAnimated(false);
+            setShowBackdrop(false);
+            setBackdropHasAnimated(false);
             console.log("Flow complete!");
           }
         }
@@ -751,7 +878,7 @@ function HomeContent() {
       clearProgress,
       questionSteps.length,
       logFlowData,
-    ]
+    ],
   );
 
   const handleMattressSelectionComplete = useCallback(
@@ -777,7 +904,10 @@ function HomeContent() {
       setStoredAnswers(updatedAnswers);
 
       // Log flow data after mattress selection
-      logFlowData(updatedAnswers, `Mattress: ${selection.size} ${selection.feel}`);
+      logFlowData(
+        updatedAnswers,
+        `Mattress: ${selection.size} ${selection.feel}`,
+      );
 
       // Auto-save progress
       saveProgress({
@@ -794,7 +924,8 @@ function HomeContent() {
       // Show avatar response (text only), hide backdrop
       setTimeout(() => {
         setShowQuestionBlock(false);
-        setShowBackdrop(false); setBackdropHasAnimated(false);
+        setShowBackdrop(false);
+        setBackdropHasAnimated(false);
         setAvatarResponse(response);
         setIsShowingResponse(true);
         setAvatarStartedTalking(true); // Simulate start for text display
@@ -810,7 +941,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
-    ]
+    ],
   );
 
   // Handle "Book a Rest Test" button - advances directly to the next step
@@ -881,7 +1012,8 @@ function HomeContent() {
 
       // Hide question block and backdrop, show avatar response (text only)
       setShowQuestionBlock(false);
-      setShowBackdrop(false); setBackdropHasAnimated(false);
+      setShowBackdrop(false);
+      setBackdropHasAnimated(false);
       setAvatarResponse(response);
       setIsShowingResponse(true);
       setAvatarStartedTalking(true); // Simulate start for text display
@@ -896,7 +1028,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
-    ]
+    ],
   );
 
   // Handle email submission
@@ -942,7 +1074,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
-    ]
+    ],
   );
 
   // Handle email skip
@@ -1011,9 +1143,14 @@ function HomeContent() {
       const coordinates = await geocodeWithFallback(zipCode);
       if (coordinates) {
         setUserCoordinates(coordinates);
-        console.log('Geocoded postal code:', zipCode, 'to coordinates:', coordinates);
+        console.log(
+          "Geocoded postal code:",
+          zipCode,
+          "to coordinates:",
+          coordinates,
+        );
       } else {
-        console.warn('Could not geocode postal code:', zipCode);
+        console.warn("Could not geocode postal code:", zipCode);
       }
 
       // Store as an answer
@@ -1055,22 +1192,28 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
-    ]
+    ],
   );
-
 
   // Show next question after avatar response finishes
   // (Skip if in video step - that has its own handler)
   useEffect(() => {
-    console.log('[AvatarResponseComplete] Check:', {
+    console.log("[AvatarResponseComplete] Check:", {
       isShowingResponse,
       avatarStartedTalking,
       isVideoPlaying,
       isVideoStep,
       currentStepTemplate: currentStep?._template,
     });
-    if (isShowingResponse && avatarStartedTalking && !isVideoPlaying && !isVideoStep) {
-      console.log('[AvatarResponseComplete] Conditions met - starting timer to advance');
+    if (
+      isShowingResponse &&
+      avatarStartedTalking &&
+      !isVideoPlaying &&
+      !isVideoStep
+    ) {
+      console.log(
+        "[AvatarResponseComplete] Conditions met - starting timer to advance",
+      );
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -1119,7 +1262,7 @@ function HomeContent() {
   // Handle tap anywhere on mobile to unmute (only on video steps, not intro)
   const handleScreenTap = useCallback(() => {
     // Only unmute on mobile, on video steps, and only if currently muted
-    const isVideoStep = currentStep?._template === 'videoStep';
+    const isVideoStep = currentStep?._template === "videoStep";
     if (isMuted && window.innerWidth <= 768 && isVideoStep) {
       setIsMuted(false);
     }
@@ -1127,7 +1270,11 @@ function HomeContent() {
 
   return (
     <main
-      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ''} ${isStoreLocationsStep ? styles.storeLocationsPage : ''} ${isProductRecommendationsStep ? styles.productRecommendationsPage : ''}`}
+      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ""} ${
+        isStoreLocationsStep ? styles.storeLocationsPage : ""
+      } ${
+        isProductRecommendationsStep ? styles.productRecommendationsPage : ""
+      }`}
       onClick={handleScreenTap}
     >
       {/* Video Background - only show on intro */}
@@ -1155,11 +1302,21 @@ function HomeContent() {
         </>
       )}
 
-      {/* Header with Logo and Volume Button */}
+      {/* Header with Logo, Step Indicator, and Volume Button */}
       <Header
         brandName={activeFlow.globalVariables.brandName}
         isMuted={isMuted}
         onVolumeClick={handleVolumeToggle}
+        centerContent={
+          <StepIndicator
+            steps={getProgressSteps(currentView, currentStep?._template)}
+          />
+        }
+        mobileContent={
+          <StepIndicator
+            steps={getProgressSteps(currentView, currentStep?._template)}
+          />
+        }
       />
 
       {/* Intro View */}
@@ -1174,7 +1331,9 @@ function HomeContent() {
             <div className={styles.avatarContainer}>
               <Image
                 src={introScreen.avatarImage || "/images/avatar-2x.png"}
-                alt={`${activeFlow.globalVariables.avatarName || "Ashley"}, your BetterSleep AI Coach`}
+                alt={`${
+                  activeFlow.globalVariables.avatarName || "Ashley"
+                }, your BetterSleep AI Coach`}
                 width={220}
                 height={220}
                 className={styles.avatar}
@@ -1184,12 +1343,8 @@ function HomeContent() {
 
             {/* Text Content */}
             <div className={styles.textContent}>
-              <h1 className={styles.titlePage}>
-                {introScreen.headline}
-              </h1>
-              <p className={styles.subheadline}>
-                {introScreen.subheadline}
-              </p>
+              <h1 className={styles.titlePage}>{introScreen.headline}</h1>
+              <p className={styles.subheadline}>{introScreen.subheadline}</p>
               {introScreen.secondarySubheadline && (
                 <p className={styles.subheadline}>
                   {introScreen.secondarySubheadline}
@@ -1200,9 +1355,7 @@ function HomeContent() {
             {/* CTA Section */}
             <div className={styles.ctaSection}>
               {introScreen.audioNotice && (
-                <p className={styles.audioNotice}>
-                  {introScreen.audioNotice}
-                </p>
+                <p className={styles.audioNotice}>{introScreen.audioNotice}</p>
               )}
               <Button variant="primary" size="large" onClick={handleBegin}>
                 {introScreen.primaryButtonText}
@@ -1216,7 +1369,9 @@ function HomeContent() {
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
           {/* Full-width Gradient Overlay at Bottom - hide on store locations step */}
-          {!isStoreLocationsStep && <div className={styles.avatarGradientOverlay} />}
+          {!isStoreLocationsStep && (
+            <div className={styles.avatarGradientOverlay} />
+          )}
 
           {/* Video Avatar Wrapper - hide on store locations step */}
           {!isStoreLocationsStep && (
@@ -1227,42 +1382,54 @@ function HomeContent() {
                   isMuted={isMuted}
                 />
 
-              {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
-              {!hasShownIntro &&
-                !showQuestionBlock &&
-                !isShowingResponse &&
-                introMessage && (
+                {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
+                {!hasShownIntro &&
+                  !showQuestionBlock &&
+                  !isShowingResponse &&
+                  introMessage && (
+                    <SpeechBubbleSequence
+                      message={introMessage}
+                      wordDelay={0.12}
+                      paragraphPauseMs={600}
+                      className={styles.speechBubbleContainer}
+                    />
+                  )}
+
+                {/* Avatar Response Bubble - shows after answer selection */}
+                {isShowingResponse && avatarResponse && (
                   <SpeechBubbleSequence
-                    message={introMessage}
-                    wordDelay={0.12}
+                    key={`speech-${currentStepIndex}-${
+                      currentStep?.stepId || "unknown"
+                    }`}
+                    message={avatarResponse}
+                    wordDelay={0.15}
                     paragraphPauseMs={600}
                     className={styles.speechBubbleContainer}
+                    stayVisible={isVideoPlaying}
+                    subtitleCues={
+                      isVideoStep && videoSubtitleCues.length > 0
+                        ? videoSubtitleCues
+                        : undefined
+                    }
+                    videoCurrentTime={
+                      isVideoStep && videoSubtitleCues.length > 0
+                        ? currentTime
+                        : undefined
+                    }
+                    ctaButtonText={
+                      isVideoStep &&
+                      currentStep?.stepId === "video-step-2" &&
+                      !isVideoPlaying
+                        ? "See My Options"
+                        : undefined
+                    }
+                    onCtaClick={
+                      isVideoStep && currentStep?.stepId === "video-step-2"
+                        ? handleSeeOptionsClick
+                        : undefined
+                    }
                   />
                 )}
-
-              {/* Avatar Response Bubble - shows after answer selection */}
-              {isShowingResponse && avatarResponse && (
-                <SpeechBubbleSequence
-                  key={`speech-${currentStepIndex}-${currentStep?.stepId || 'unknown'}`}
-                  message={avatarResponse}
-                  wordDelay={0.15}
-                  paragraphPauseMs={600}
-                  className={styles.speechBubbleContainer}
-                  stayVisible={isVideoPlaying}
-                  subtitleCues={isVideoStep && videoSubtitleCues.length > 0 ? videoSubtitleCues : undefined}
-                  videoCurrentTime={isVideoStep && videoSubtitleCues.length > 0 ? currentTime : undefined}
-                  ctaButtonText={
-                    isVideoStep && currentStep?.stepId === 'video-step-2' && !isVideoPlaying
-                      ? 'See My Options'
-                      : undefined
-                  }
-                  onCtaClick={
-                    isVideoStep && currentStep?.stepId === 'video-step-2'
-                      ? handleSeeOptionsClick
-                      : undefined
-                  }
-                />
-              )}
               </div>
             </div>
           )}
@@ -1273,7 +1440,9 @@ function HomeContent() {
               {/* Hide backdrop on store locations step and video steps to show full view */}
               {!isStoreLocationsStep && !isVideoStep && (
                 <div
-                  className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
+                  className={`${styles.questionBlockBackdrop} ${
+                    backdropHasAnimated || skipIntro ? styles.backdropOnly : ""
+                  }`}
                 />
               )}
 
@@ -1283,13 +1452,15 @@ function HomeContent() {
                 currentStep?.questionText && (
                   <div className={styles.questionBlockInner}>
                     <AnimatedQuestionBlock
-                      questionContent={{
-                        questionText: currentStep.questionText,
-                        inputType: currentStep.inputType,
-                        helperText: currentStep.helperText,
-                        isRequired: currentStep.isRequired,
-                        answerOptions: currentStep.answerOptions,
-                      } as CMSQuestionContent}
+                      questionContent={
+                        {
+                          questionText: currentStep.questionText,
+                          inputType: currentStep.inputType,
+                          helperText: currentStep.helperText,
+                          isRequired: currentStep.isRequired,
+                          answerOptions: currentStep.answerOptions,
+                        } as CMSQuestionContent
+                      }
                       questionKey={currentStep.stepId}
                       onAnswerSelect={handleAnswerSelect}
                       onTextSubmit={handleTextSubmit}
@@ -1315,83 +1486,96 @@ function HomeContent() {
                 )}
 
               {/* Product Recommendations Step - 3 mattress options */}
-              {showQuestionBlock &&
-                isProductRecommendationsStep && (
-                  <div className={styles.productRecommendationsInner}>
-                    <ProductRecommendations
-                      content={currentStep?.productRecommendationsContent || DEFAULT_PRODUCT_RECOMMENDATIONS}
-                      onBookRestTest={handleBookRestTest}
-                    />
-                  </div>
-                )}
+              {showQuestionBlock && isProductRecommendationsStep && (
+                <div className={styles.productRecommendationsInner}>
+                  <ProductRecommendations
+                    content={
+                      currentStep?.productRecommendationsContent ||
+                      DEFAULT_PRODUCT_RECOMMENDATIONS
+                    }
+                    onBookRestTest={handleBookRestTest}
+                  />
+                </div>
+              )}
 
               {/* Email Capture Step - rendered outside question block for wider layout */}
-              {showQuestionBlock &&
-                isEmailCaptureStep && (
-                  <div key={`email-capture-${currentStepIndex}`} className={styles.emailCaptureWrapper}>
-                    <EmailCapture
-                      content={{
+              {showQuestionBlock && isEmailCaptureStep && (
+                <div
+                  key={`email-capture-${currentStepIndex}`}
+                  className={styles.emailCaptureWrapper}
+                >
+                  <EmailCapture
+                    content={
+                      {
                         promptText: currentStep?.promptText,
                         placeholderText: currentStep?.placeholderText,
                         submitButtonText: currentStep?.submitButtonText,
-                        avatarResponseOnSubmit: currentStep?.avatarResponseOnSubmit,
-                      } as EmailCaptureContent}
-                      onSubmit={handleEmailSubmit}
-                      onSkip={handleEmailSkip}
-                    />
-                  </div>
-                )}
+                        avatarResponseOnSubmit:
+                          currentStep?.avatarResponseOnSubmit,
+                      } as EmailCaptureContent
+                    }
+                    onSubmit={handleEmailSubmit}
+                    onSkip={handleEmailSkip}
+                  />
+                </div>
+              )}
 
               {/* Action Prompt Step */}
-              {showQuestionBlock &&
-                isSeeOptionsStep && (
-                  <div className={styles.questionBlockInner}>
-                    <ActionPrompt
-                      content={{
+              {showQuestionBlock && isSeeOptionsStep && (
+                <div className={styles.questionBlockInner}>
+                  <ActionPrompt
+                    content={
+                      {
                         promptText: currentStep?.promptText,
                         buttonText: currentStep?.buttonText,
                         avatarResponseOnClick: currentStep?.avatarMessage,
-                      } as ActionPromptContent}
-                      onContinue={handleSeeOptionsClick}
-                    />
-                  </div>
-                )}
+                      } as ActionPromptContent
+                    }
+                    onContinue={handleSeeOptionsClick}
+                  />
+                </div>
+              )}
 
               {/* Zip Code Capture Step */}
-              {showQuestionBlock &&
-                isZipCodeCaptureStep && (
-                  <div className={styles.questionBlockInner}>
-                    <ZipCodeCapture
-                      content={{
+              {showQuestionBlock && isZipCodeCaptureStep && (
+                <div className={styles.questionBlockInner}>
+                  <ZipCodeCapture
+                    content={
+                      {
                         headline: currentStep?.headline,
                         placeholderText: currentStep?.placeholderText,
                         buttonText: currentStep?.buttonText,
-                      } as ZipCodeCaptureContent}
-                      onSubmit={handleZipCodeSubmit}
-                    />
-                  </div>
-                )}
+                      } as ZipCodeCaptureContent
+                    }
+                    onSubmit={handleZipCodeSubmit}
+                  />
+                </div>
+              )}
 
               {/* Store Locations Step */}
-              {showQuestionBlock &&
-                isStoreLocationsStep && (
-                  <div className={styles.storeLocationsInner}>
-                    <StoreLocations
-                      content={{
+              {showQuestionBlock && isStoreLocationsStep && (
+                <div className={styles.storeLocationsInner}>
+                  <StoreLocations
+                    content={
+                      {
                         headerText: currentStep?.headerText,
                         defaultPostalCode: currentStep?.defaultPostalCode,
                         ctaBookTitle: currentStep?.ctaBookTitle,
                         ctaBookDescription: currentStep?.ctaBookDescription,
                         ctaBookButtonText: currentStep?.ctaBookButtonText,
                         ctaContactTitle: currentStep?.ctaContactTitle,
-                        ctaContactDescription: currentStep?.ctaContactDescription,
+                        ctaContactDescription:
+                          currentStep?.ctaContactDescription,
                         ctaContactButtonText: currentStep?.ctaContactButtonText,
-                      } as StoreLocationsContent}
-                      postalCode={userZipCode || currentStep?.defaultPostalCode || ""}
-                      userCoordinates={userCoordinates || undefined}
-                    />
-                  </div>
-                )}
+                      } as StoreLocationsContent
+                    }
+                    postalCode={
+                      userZipCode || currentStep?.defaultPostalCode || ""
+                    }
+                    userCoordinates={userCoordinates || undefined}
+                  />
+                </div>
+              )}
             </div>
           )}
         </>
@@ -1399,7 +1583,7 @@ function HomeContent() {
 
       {/* Footer with Progress Bar */}
       <Footer
-        showProgress={currentView === "question"}
+        showProgress={false}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
         showAvatarSection={isStoreLocationsStep}
@@ -1416,7 +1600,7 @@ function HomeContent() {
         stepNames={questionSteps.map(
           (step) =>
             (step as FlowStep & { internalName?: string }).internalName ||
-            step.stepId
+            step.stepId,
         )}
         stepIds={questionSteps.map((step) => step.stepId)}
         onOpenChange={setIsDevPanelOpen}

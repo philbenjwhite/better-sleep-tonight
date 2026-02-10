@@ -99,7 +99,21 @@ function MattressCard({ mattress }: MattressCardProps) {
         <div className={styles.cardInfo}>
           <div className={styles.cardInfoPrimary}>
             <div className={styles.productHeader}>
-              <p className={styles.productName}>{mattress.productName}</p>
+              <p className={styles.productName}>
+                {mattress.productName.includes("[") ? (
+                  mattress.productName.split(/(\[.*?\])/).map((part, i) =>
+                    part.startsWith("[") && part.endsWith("]") ? (
+                      <span key={i} className={styles.productNameLight}>
+                        {part.slice(1, -1)}
+                      </span>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )
+                ) : (
+                  mattress.productName
+                )}
+              </p>
               {mattress.profile && (
                 <span className={styles.profile}>{mattress.profile} Profile</span>
               )}

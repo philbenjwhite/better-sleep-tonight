@@ -22,7 +22,7 @@
   /* Typography - Title Page (from Figma) */
   --sds-typography-title-page-font-family: var(--font-open-sans, 'Open Sans', sans-serif);
   --sds-typography-title-page-font-weight: 700;
-  --sds-typography-title-page-size-base: 32px;
+  --sds-typography-title-page-size-base: 30px;
 
   /* Typography - Heading (from Figma) */
   --sds-typography-heading-font-family: var(--font-open-sans, 'Open Sans', sans-serif);

@@ -11,9 +11,9 @@
 .headline {
   font-family: 'Open Sans', sans-serif;
   font-weight: 700;
-  font-size: 32px;
+  font-size: var(--sds-typography-title-page-size-base, 30px);
   line-height: 1.2;
-  letter-spacing: -0.64px;
+  letter-spacing: -0.6px;
   color: #363534;
   margin: 0;
   width: 100%;

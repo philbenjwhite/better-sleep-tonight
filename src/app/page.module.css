@@ -136,7 +136,7 @@
 /* Subheadline/paragraph style for intro text */
 .subheadline {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-size: 20px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 1.4;
@@ -193,10 +193,6 @@
     width: 100%;
   }
 
-  .subheadline {
-    font-size: 16px;
-  }
-
   .heading {
     font-size: 18px;
     width: 100%;
@@ -216,10 +212,6 @@
 
   .avatar {
     width: 160px;
-  }
-
-  .subheadline {
-    font-size: 16px;
   }
 
   .heading {
@@ -816,7 +808,7 @@
 
 @media (max-width: 480px) {
   .questionBlockWrapper {
-    padding-top: 70px;
+    padding-top: 72px;
     padding-bottom: 60px;
   }
 }

@@ -5,12 +5,32 @@
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   z-index: 30;
-  padding: 28px 24px;
   box-sizing: border-box;
   background: linear-gradient(to bottom, rgba(249, 244, 237, 0.95) 0%, rgba(249, 244, 237, 0) 100%);
+}
+
+/* Main header row: logo, center content, volume button */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 28px 24px;
+}
+
+/* Center content slot (e.g., StepIndicator) */
+.centerContent {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Mobile-only content below header row - hidden on desktop */
+.mobileContent {
+  display: none;
 }
 
 /* Logo - top left */
@@ -22,7 +42,6 @@
 .logoImage {
   width: 238px;
   height: auto;
-  transform: translateY(-1rem);
 }
 
 /* Volume button - top right */
@@ -95,23 +114,31 @@
 
 /* Tablet responsive adjustments */
 @media (max-width: 768px) {
-  .header {
+  .headerRow {
     padding: 24px 20px;
   }
 
   .logoImage {
     width: 210px;
-    transform: translateY(-0.5rem);
+  }
+
+  .centerContent {
+    display: none;
+  }
+
+  .mobileContent {
+    display: block;
+    padding: 0 20px 12px;
   }
 }
 
 /* Small mobile adjustments */
 @media (max-width: 480px) {
-  .header {
+  .headerRow {
     padding: 16px;
   }
 
-  .logoImage {
-    transform: translateY(0);
+  .mobileContent {
+    padding: 0 16px 12px;
   }
 }
