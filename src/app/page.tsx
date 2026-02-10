@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import {
@@ -158,7 +158,6 @@ interface FlowStep {
 
 function HomeContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   // Flow selection: ?flow=back-pain, ?flow=sleep, etc.
   const flowParam = searchParams.get("flow") || "default";
@@ -1059,37 +1058,6 @@ function HomeContent() {
     ]
   );
 
-  // Handle going back to previous step
-  const handleGoBack = useCallback(() => {
-    if (currentStepIndex > 0) {
-      const newStepIndex = currentStepIndex - 1;
-
-      // Remove the last stored answer (for the current step we're leaving)
-      const updatedAnswers = storedAnswers.slice(0, -1);
-      setStoredAnswers(updatedAnswers);
-
-      // Go back one step
-      setCurrentStepIndex(newStepIndex);
-
-      // Reset UI state
-      setSelectedAnswer(null);
-      setIsShowingResponse(false);
-      setAvatarResponse(null);
-      setShowQuestionBlock(true);
-
-      // Update the URL to reflect the new step (1-indexed for URL)
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("step", String(newStepIndex + 1));
-      router.push(`/?${newParams.toString()}`);
-
-      // Save the updated progress
-      saveProgress({
-        flowId: flowParam,
-        currentStepIndex: newStepIndex,
-        answers: updatedAnswers,
-      });
-    }
-  }, [currentStepIndex, storedAnswers, saveProgress, flowParam, searchParams, router]);
 
   // Show next question after avatar response finishes
   // (Skip if in video step - that has its own handler)
@@ -1307,21 +1275,6 @@ function HomeContent() {
                 <div
                   className={`${styles.questionBlockBackdrop} ${(backdropHasAnimated || skipIntro) ? styles.backdropOnly : ''}`}
                 />
-              )}
-
-              {/* Back Button - shown on steps after the first, uses showBackdrop to stay persistent during transitions */}
-              {(showQuestionBlock || showBackdrop) && currentStepIndex > 0 && (
-                <button
-                  type="button"
-                  className={styles.backButton}
-                  onClick={handleGoBack}
-                  aria-label="Go back to previous question"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Back
-                </button>
               )}
 
               {/* Question Block Content */}
