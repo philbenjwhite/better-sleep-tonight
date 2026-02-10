@@ -12,50 +12,9 @@
 }
 
 .list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--sds-size-space-400, 16px);
-}
-
-/* Show More / Show Less button */
-.showMoreButton {
-  background-color: transparent;
-  border: 1px solid var(--sds-color-border-neutral-secondary, #767676);
-  border-radius: var(--sds-size-radius-200, 8px);
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: var(--sds-typography-body-size-medium, 16px);
-  line-height: 1.4;
-  color: var(--sds-color-text-default-default, #363534);
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  width: 100%;
-  text-align: center;
-}
-
-.showMoreButton:hover {
-  background-color: rgba(54, 53, 52, 0.05);
-}
-
-.showMoreButton:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
-}
-
-/* Custom scrollbar for the list */
-.list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.list::-webkit-scrollbar-track {
-  background: #d9d9d9;
-  border-radius: 8px;
-}
-
-.list::-webkit-scrollbar-thumb {
-  background: var(--sds-color-text-default-default, #363534);
-  border-radius: 8px;
 }
 
 /* Headline above recommendations */
@@ -69,12 +28,6 @@
   margin: 0 0 8px 0;
 }
 
-@media (max-width: 600px) {
-  .headline {
-    font-size: 24px;
-  }
-}
-
 /* Individual mattress card */
 .card {
   position: relative;
@@ -85,22 +38,14 @@
   flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
   transition: opacity 0.2s ease, transform 0.2s ease;
-  /* Hint browser about animation properties for smoother entrance animation */
   will-change: opacity, transform;
-}
-
-/* Dimmed state for unselected cards when another is expanded */
-.card.dimmed {
-  opacity: 0.5;
-  transform: scale(0.98);
 }
 
 /* Product image container - relative for badge positioning */
 .cardImage {
   position: relative;
-  flex-shrink: 0;
-  width: 120px;
-  height: 160px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   border-radius: var(--sds-size-radius-200, 8px);
   overflow: visible; /* Allow badge to overflow */
 }
@@ -132,16 +77,15 @@
   display: none;
 }
 
-/* Main row with image, info, and select button */
+/* Main column layout with image, info, and select button */
 .cardMain {
   display: flex;
+  flex-direction: column;
   gap: var(--sds-size-space-400, 16px);
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   cursor: pointer;
 }
-
-/* Note: .cardImage styles are defined above with the badge */
 
 .mattressImage {
   width: 100%;
@@ -150,29 +94,24 @@
   border-radius: var(--sds-size-radius-200, 8px);
 }
 
-/* Product info section - two column grid layout */
+/* Product info section - single column stacked layout */
 .cardInfo {
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 12px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   min-width: 0;
 }
 
-/* Column 1: Product info (name, description, price) */
+/* Product info (name, description, price) */
 .cardInfoPrimary {
-  grid-column: 1;
-  grid-row: 1;
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-200, 8px);
 }
 
-/* Column 2: Specs (attribute bars + features) */
+/* Specs (attribute bars + features) */
 .cardInfoSecondary {
-  grid-column: 2;
-  grid-row: 1;
   display: flex;
   flex-direction: column;
   gap: var(--sds-size-space-300, 12px);
@@ -290,15 +229,17 @@
 
 /* Select button container */
 .cardAction {
-  flex-shrink: 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  width: auto;
-  align-self: flex-start;
+  width: 100%;
+  margin-top: auto;
 }
 
 .selectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #ffffff;
   border: 1px solid var(--sds-color-border-neutral-secondary, #767676);
   border-radius: var(--sds-size-radius-200, 8px);
@@ -308,9 +249,12 @@
   font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
   color: var(--sds-color-text-default-default, #363534);
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .selectButton:hover,
@@ -323,170 +267,74 @@
   box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
 }
 
-.selectButton.selected {
-  background-color: var(--sds-color-text-default-default, #363534);
-  border-color: var(--sds-color-text-default-default, #363534);
-  color: #ffffff;
+/* Book a Rest Test CTA */
+.restTestCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #F5F2ED;
+  border-radius: var(--sds-size-radius-200, 8px);
+  padding: 20px 24px;
+  gap: 16px;
 }
 
-.selectButton.selected:hover,
-.cardMain:hover .selectButton.selected {
-  background-color: #4a4948;
-}
-
-/* Expanded options section - spans full width below both columns */
-.cardOptions {
-  grid-column: 1 / -1;
-  grid-row: 2;
+.restTestCtaContent {
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-200, 8px);
-  width: 100%;
-  padding-top: var(--sds-size-space-200, 8px);
-  margin-top: var(--sds-size-space-200, 8px);
+  gap: 2px;
 }
 
-.selectionGroup {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sds-size-space-200, 8px);
-}
-
-.selectionLabel {
+.restTestCtaTitle {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
   line-height: 1.4;
-  color: var(--sds-color-text-default-secondary, #5a5a5a);
+  color: var(--sds-color-text-default-default, #363534);
   margin: 0;
 }
 
-.optionsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sds-size-space-200, 8px);
+.restTestCtaSubtitle {
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #5a5a5a;
+  margin: 0;
 }
 
-.optionButton {
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  border: 1px solid var(--sds-color-border-default-secondary, #5a5a5a);
-  border-radius: 18px;
-  padding: var(--sds-size-space-400, 16px);
-  height: 36px;
+.restTestCtaButton {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.optionButton:hover {
-  background-color: #f5f5f5;
-}
-
-.optionButton:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.2);
-}
-
-.optionButton.selected {
-  border: 2px solid var(--sds-color-border-brand-default, #f68b29);
-  background-color: var(--sds-color-background-brand-default, #f68b29);
-  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.3);
-}
-
-.optionButton.selected .optionText {
-  color: #000000;
-}
-
-.optionText {
+  gap: 8px;
+  background-color: #363534;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--sds-size-radius-200, 8px);
+  padding: 10px 20px;
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 600;
   font-size: 14px;
-  line-height: 1.2;
-  color: var(--sds-color-text-default-default, #363534);
-  white-space: nowrap;
-}
-
-/* Continue Button Bar - fixed at bottom, above footer */
-.continueBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + 62px); /* 12px padding + footer height (~62px) */
-  background-color: var(--sds-color-background-default-default, #ffffff);
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-  pointer-events: none;
-  z-index: 29; /* Just below footer z-index of 30 */
-}
-
-.continueBar.visible {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.continueButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sds-size-space-200, 8px);
-  background-color: var(--sds-color-background-brand-default, #f68b29);
-  border: none;
-  border-radius: var(--sds-size-radius-200, 8px);
-  padding: var(--sds-size-space-300, 12px) var(--sds-size-space-400, 16px);
-  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: var(--sds-typography-body-size-medium, 16px);
   line-height: 1.4;
-  color: #ffffff;
   cursor: pointer;
+  white-space: nowrap;
   transition: background-color 0.2s ease;
 }
 
-.continueButton:hover {
-  background-color: #ffa54d;
+.restTestCtaButton:hover {
+  background-color: #4a4948;
 }
 
-.continueButton:focus {
+.restTestCtaButton:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(246, 139, 41, 0.3);
+  box-shadow: 0 0 0 2px rgba(54, 53, 52, 0.3);
 }
 
-.continueButton svg {
-  flex-shrink: 0;
-}
+/* ========== Responsive ========== */
 
-/* Responsive styles */
-
-/* Tablet breakpoint - stack the two-column layout */
+/* Tablet breakpoint - 2 columns */
 @media (max-width: 900px) {
-  .cardInfo {
-    grid-template-columns: 1fr; /* Single column on tablet */
-    grid-template-rows: auto auto auto;
-    gap: var(--sds-size-space-300, 12px);
-  }
-
-  .cardInfoPrimary {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .cardInfoSecondary {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .cardOptions {
-    grid-column: 1;
-    grid-row: 3;
+  .list {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .attributeBar {
@@ -502,7 +350,31 @@
   }
 }
 
+/* Mobile breakpoint - single column */
 @media (max-width: 600px) {
+  .restTestCta {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px 20px;
+  }
+
+  .restTestCtaContent {
+    align-items: center;
+  }
+
+  .restTestCtaButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .headline {
+    font-size: 24px;
+  }
+
+  .list {
+    grid-template-columns: 1fr;
+  }
+
   .badge {
     font-size: 10px;
     padding: 4px 8px;
@@ -514,39 +386,6 @@
 
   .badgeShort {
     display: inline;
-  }
-}
-
-/* Adjust continue bar for smaller footer at 480px */
-@media (max-width: 480px) {
-  .continueBar {
-    padding-bottom: calc(12px + 48px); /* 12px padding + smaller footer height (~48px) */
-  }
-
-  .cardMain {
-    flex-wrap: wrap;
-  }
-
-  .cardInfo {
-    flex: 1 1 calc(100% - 99px);
-    grid-template-columns: 1fr; /* Single column on mobile */
-    grid-template-rows: auto auto auto; /* Stack: primary, secondary, options */
-    gap: var(--sds-size-space-200, 8px);
-  }
-
-  .cardInfoPrimary {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .cardInfoSecondary {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .cardOptions {
-    grid-column: 1;
-    grid-row: 3;
   }
 
   .productHeader {
@@ -572,29 +411,10 @@
   }
 
   .attributeBar {
-    max-width: 120px;
+    max-width: none;
   }
 
   .featureItem {
     font-size: 12px;
-  }
-
-  .cardAction {
-    flex: 0 0 auto;
-    width: auto;
-    align-self: flex-start;
-  }
-
-  .selectionLabel {
-    font-size: 13px;
-  }
-
-  .optionButton {
-    padding: var(--sds-size-space-300, 12px);
-    height: 32px;
-  }
-
-  .optionText {
-    font-size: 13px;
   }
 }

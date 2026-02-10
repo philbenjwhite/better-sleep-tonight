@@ -46,55 +46,56 @@ const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
   introParagraph: "Based on your sleep profile, I've found three mattresses that will help you wake up without back pain.",
   mattressOptions: [
     {
-      id: "serenity-hybrid",
-      productName: "Serenity Hybrid",
-      productDescription: "Our most advanced sleep technology with cooling gel memory foam and individually wrapped coils for ultimate support.",
+      id: "tempur-sense",
+      productName: "TEMPUR-SENSE",
+      productDescription: "Adaptive support, pressure relief, and motion absorption\u2014powered by TEMPUR\u00AE Material and finished with a premium cover.",
       basePrice: 1299,
       productImage: "/images/mattress-tempurpedic.jpg",
       badge: "Best Value",
-      profile: '12"',
-      coolingLevel: 4,
-      pressureReliefLevel: 5,
+      profile: '10-11"',
+      coolingLevel: 2,
+      pressureReliefLevel: 4,
       features: [
-        "Cooling gel-infused memory foam",
-        "Individually wrapped coils",
-        "Reinforced lumbar support zone",
-        "CertiPUR-US certified foams",
+        "3 layer foam construction",
+        "Fast-adapting foam for pressure relief",
+        "Premium fabric cover",
       ],
+      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-sense-medium-10-inch-mattress?variant=43041759428697&queryID=5799338564ac18ac17aab900ad7f7f8c&objectID=43041759428697",
     },
     {
-      id: "comfort-plus",
-      productName: "ComfortPlus Elite",
-      productDescription: "Premium comfort with enhanced lumbar support, perfect for back and side sleepers.",
+      id: "tempur-prosense",
+      productName: "TEMPUR-PROSENSE",
+      productDescription: "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 Material\u2014plus adaptive support and motion isolation.",
       basePrice: 1699,
       productImage: "/images/mattress-tempurpedic.jpg",
       badge: "Most Popular",
-      profile: '13"',
-      coolingLevel: 5,
-      pressureReliefLevel: 4,
-      features: [
-        "Phase-change cooling cover",
-        "Zoned support system",
-        "High-density base foam",
-        "365-night sleep trial",
-      ],
-    },
-    {
-      id: "dream-supreme",
-      productName: "Dream Supreme",
-      productDescription: "Luxury hotel-quality sleep with advanced pressure relief and motion isolation.",
-      basePrice: 2199,
-      productImage: "/images/mattress-tempurpedic.jpg",
-      badge: "Premium Choice",
-      profile: '14"',
-      coolingLevel: 5,
+      profile: '12"',
+      coolingLevel: 3,
       pressureReliefLevel: 5,
       features: [
-        "Organic cotton cover",
-        "Natural latex comfort layer",
-        "Advanced motion isolation",
-        "Lifetime warranty",
+        "4 layer foam construction",
+        "TEMPUR-APR+\u2122 for advanced pressure relief",
+        "Cool-to-touch removable cover",
       ],
+      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-prosense-soft-12-inch-mattress?variant=43041759101017&queryID=f19b1fddd1ac8d8a7791ab9947eae568&objectID=43041759101017",
+    },
+    {
+      id: "tempur-luxealign",
+      productName: "TEMPUR-LUXEALIGN",
+      productDescription: "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
+      basePrice: 2199,
+      productImage: "/images/mattress-tempurpedic.jpg",
+      badge: "Most Advanced",
+      profile: '13"',
+      coolingLevel: 4,
+      pressureReliefLevel: 5,
+      features: [
+        "5 layer construction",
+        "Zoned ergonomic layer adapts to your body to help support your spine",
+        "TEMPUR-APR+\u2122 for maximum pressure relief",
+        "Cool-to-touch removable cover",
+      ],
+      buyUrl: "https://ashleyhomestore.ca/products/tempur-pedic-luxealign-soft-13-inch-mattress?variant=43041759297625&queryID=6201e3d8e86372538312d8791946cf87&objectID=43041759297625",
     },
   ],
   sizes: [
@@ -813,78 +814,45 @@ function HomeContent() {
     ]
   );
 
-  // Track product selection state (without advancing)
-  const handleProductRecommendationComplete = useCallback(
-    (selection: {
-      mattressId: string;
-      mattressName: string;
-      size: MattressSize;
-      feel: MattressFeel;
-      finalPrice: number;
-    }) => {
-      // Just track the selection - don't advance yet
-      setSelectedMattressSize(selection.size);
-      setSelectedMattressFeel(selection.feel);
-    },
-    []
-  );
+  // Handle "Book a Rest Test" button - advances directly to the next step
+  const handleBookRestTest = useCallback(() => {
+    const newAnswer: StoredAnswer = {
+      stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+      questionText: "Product Recommendation",
+      value: "book-rest-test",
+      label: "Book a Rest Test",
+      timestamp: new Date(),
+    };
+    const updatedAnswers = [...storedAnswers, newAnswer];
+    setStoredAnswers(updatedAnswers);
 
-  // Called when user clicks Continue button
-  const handleProductRecommendationContinue = useCallback(
-    (selection: {
-      mattressId: string;
-      mattressName: string;
-      size: MattressSize;
-      feel: MattressFeel;
-      finalPrice: number;
-    }) => {
-      // Store the product selection as an answer
-      const newAnswer: StoredAnswer = {
-        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-        questionText: "Product Recommendation",
-        value: `${selection.mattressId}-${selection.size}-${selection.feel}`,
-        label: `${selection.mattressName}, Size: ${selection.size}, Feel: ${selection.feel}, Price: $${selection.finalPrice.toFixed(2)}`,
-        timestamp: new Date(),
-      };
-      const updatedAnswers = [...storedAnswers, newAnswer];
-      setStoredAnswers(updatedAnswers);
+    logFlowData(updatedAnswers, "Book a Rest Test");
 
-      // Log flow data after product selection
-      logFlowData(updatedAnswers, `Product: ${selection.mattressName}`);
+    saveProgress({
+      flowId: flowParam,
+      currentStepIndex: currentStepIndex + 1,
+      answers: updatedAnswers,
+    });
 
-      // Auto-save progress
-      saveProgress({
-        flowId: flowParam,
-        currentStepIndex: currentStepIndex + 1,
-        answers: updatedAnswers,
-      });
+    // Advance directly to the next step (like handleSeeOptionsClick)
+    setShowQuestionBlock(false);
+    setHasSpokenSummary(false);
 
-      // Get avatar response from the step content
-      const response =
-        currentStep?.avatarResponse ||
-        "Excellent choice! That mattress is perfect for your sleep needs.";
-
-      // Show avatar response (text only), hide backdrop
+    if (currentStepIndex < questionSteps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
       setTimeout(() => {
-        setShowQuestionBlock(false);
-        setShowBackdrop(false); setBackdropHasAnimated(false);
-        setAvatarResponse(response);
-        setIsShowingResponse(true);
-        setAvatarStartedTalking(true); // Simulate start for text display
-
-        // Auto-advance after showing text (no video for dynamic content)
-        setTimeout(() => setAvatarStartedTalking(false), 3000);
-      }, 800);
-    },
-    [
-      currentStep,
-      currentStepIndex,
-      storedAnswers,
-      saveProgress,
-      flowParam,
-      logFlowData,
-    ]
-  );
+        setShowQuestionBlock(true);
+      }, 100);
+    }
+  }, [
+    currentStep,
+    currentStepIndex,
+    storedAnswers,
+    saveProgress,
+    flowParam,
+    questionSteps.length,
+    logFlowData,
+  ]);
 
   const handleTextSubmit = useCallback(
     (value: string) => {
@@ -1399,8 +1367,7 @@ function HomeContent() {
                   <div className={styles.productRecommendationsInner}>
                     <ProductRecommendations
                       content={currentStep?.productRecommendationsContent || DEFAULT_PRODUCT_RECOMMENDATIONS}
-                      onSelectionComplete={handleProductRecommendationComplete}
-                      onContinue={handleProductRecommendationContinue}
+                      onBookRestTest={handleBookRestTest}
                     />
                   </div>
                 )}

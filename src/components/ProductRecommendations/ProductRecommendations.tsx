@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
-import classNames from "classnames";
 import gsap from "gsap";
-import { Button } from "@/components/Button";
 import styles from "./ProductRecommendations.module.css";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
@@ -16,11 +14,12 @@ export interface MattressOption {
   productDescription: string;
   basePrice: number;
   productImage: string;
-  badge?: string; // e.g., "Best Value", "Most Popular", "Most Advanced"
-  profile?: string; // e.g., "10-11\"", "12\"", "13\""
-  coolingLevel?: number; // 1-5 scale
-  pressureReliefLevel?: number; // 1-5 scale
-  features?: string[]; // Array of feature bullet points
+  badge?: string;
+  profile?: string;
+  coolingLevel?: number;
+  pressureReliefLevel?: number;
+  features?: string[];
+  buyUrl?: string;
 }
 
 export interface ProductRecommendationsContent {
@@ -62,100 +61,18 @@ export interface ProductRecommendationsProps {
     feel: MattressFeel;
     finalPrice: number;
   }) => void;
+  onBookRestTest?: () => void;
 }
 
 // Individual Mattress Card Component
 interface MattressCardProps {
   mattress: MattressOption;
-  isExpanded: boolean;
-  isDimmed: boolean;
-  onSelect: () => void;
-  selectedSize: MattressSize | null;
-  selectedFeel: MattressFeel | null;
-  onSizeSelect: (size: MattressSize) => void;
-  onFeelSelect: (feel: MattressFeel) => void;
-  sizes: ProductRecommendationsContent["sizes"];
-  feels: ProductRecommendationsContent["feels"];
-  calculatePrice: (basePrice: number, size: MattressSize | null) => number;
 }
 
-function MattressCard({
-  mattress,
-  isExpanded,
-  isDimmed,
-  onSelect,
-  selectedSize,
-  selectedFeel,
-  onSizeSelect,
-  onFeelSelect,
-  sizes,
-  feels,
-  calculatePrice,
-}: MattressCardProps) {
-  const displayPrice = calculatePrice(mattress.basePrice, selectedSize);
-  const optionsRef = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef<string | null>(null);
-
-  // Animate options when card expands
-  useLayoutEffect(() => {
-    if (isExpanded && optionsRef.current && hasAnimated.current !== mattress.id) {
-      hasAnimated.current = mattress.id;
-
-      const sizeLabel = optionsRef.current.querySelector(`.${styles.selectionGroup}:first-child .${styles.selectionLabel}`);
-      const sizeButtons = optionsRef.current.querySelectorAll(`.${styles.selectionGroup}:first-child .${styles.optionButton}`);
-      const feelLabel = optionsRef.current.querySelector(`.${styles.selectionGroup}:last-child .${styles.selectionLabel}`);
-      const feelButtons = optionsRef.current.querySelectorAll(`.${styles.selectionGroup}:last-child .${styles.optionButton}`);
-
-      // Set initial states
-      gsap.set([sizeLabel, feelLabel], { opacity: 0, y: -8 });
-      gsap.set([...sizeButtons, ...feelButtons], { opacity: 0, y: 10 });
-
-      // Create timeline for sequential animation
-      const tl = gsap.timeline();
-
-      // Fade in size label
-      tl.to(sizeLabel, {
-        opacity: 1,
-        y: 0,
-        duration: 0.25,
-        ease: "power2.out",
-      });
-
-      // Fade in size buttons sequentially
-      tl.to(sizeButtons, {
-        opacity: 1,
-        y: 0,
-        duration: 0.2,
-        stagger: 0.06,
-        ease: "power2.out",
-      }, "-=0.1");
-
-      // Fade in feel label
-      tl.to(feelLabel, {
-        opacity: 1,
-        y: 0,
-        duration: 0.25,
-        ease: "power2.out",
-      }, "-=0.1");
-
-      // Fade in feel buttons sequentially
-      tl.to(feelButtons, {
-        opacity: 1,
-        y: 0,
-        duration: 0.2,
-        stagger: 0.06,
-        ease: "power2.out",
-      }, "-=0.1");
-    } else if (!isExpanded) {
-      // Reset animation tracker when collapsed
-      hasAnimated.current = null;
-    }
-  }, [isExpanded, mattress.id]);
-
+function MattressCard({ mattress }: MattressCardProps) {
   return (
-    <div className={classNames(styles.card, { [styles.expanded]: isExpanded, [styles.dimmed]: isDimmed })}>
-      {/* Main product row */}
-      <div className={styles.cardMain} onClick={onSelect}>
+    <div className={styles.card}>
+      <div className={styles.cardMain}>
         {/* Product Image with Badge */}
         <div className={styles.cardImage}>
           {mattress.badge && (
@@ -171,15 +88,14 @@ function MattressCard({
           <Image
             src={mattress.productImage}
             alt={mattress.productName}
-            width={120}
-            height={160}
+            fill
+            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
             className={styles.mattressImage}
           />
         </div>
 
-        {/* Product Info - Two Column Layout */}
+        {/* Product Info */}
         <div className={styles.cardInfo}>
-          {/* Column 1: Product info (name, description, price) */}
           <div className={styles.cardInfoPrimary}>
             <div className={styles.productHeader}>
               <p className={styles.productName}>{mattress.productName}</p>
@@ -188,16 +104,8 @@ function MattressCard({
               )}
             </div>
             <p className={styles.productDescription}>{mattress.productDescription}</p>
-            <p className={styles.productPrice}>
-              {displayPrice.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-                minimumFractionDigits: 2,
-              }).replace("$", "")}
-            </p>
           </div>
 
-          {/* Column 2: Specs (attribute bars + features) */}
           <div className={styles.cardInfoSecondary}>
             {/* Attribute Bars */}
             {(mattress.coolingLevel || mattress.pressureReliefLevel) && (
@@ -241,62 +149,22 @@ function MattressCard({
               </ul>
             )}
           </div>
-
-          {/* Expanded options (size and feel) - full width below both columns */}
-          {isExpanded && (
-            <div className={styles.cardOptions} ref={optionsRef}>
-              {/* Size Selection */}
-              <div className={styles.selectionGroup}>
-                <p className={styles.selectionLabel}>Select your preferred size:</p>
-                <div className={styles.optionsRow}>
-                  {sizes.map((sizeOption) => (
-                    <button
-                      key={sizeOption.value}
-                      type="button"
-                      className={classNames(styles.optionButton, {
-                        [styles.selected]: selectedSize === sizeOption.value,
-                      })}
-                      onClick={(e) => { e.stopPropagation(); onSizeSelect(sizeOption.value); }}
-                    >
-                      <span className={styles.optionText}>{sizeOption.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Feel Selection */}
-              <div className={styles.selectionGroup}>
-                <p className={styles.selectionLabel}>Select your preferred feel:</p>
-                <div className={styles.optionsRow}>
-                  {feels.map((feelOption) => (
-                    <button
-                      key={feelOption.value}
-                      type="button"
-                      className={classNames(styles.optionButton, {
-                        [styles.selected]: selectedFeel === feelOption.value,
-                      })}
-                      onClick={(e) => { e.stopPropagation(); onFeelSelect(feelOption.value); }}
-                    >
-                      <span className={styles.optionText}>{feelOption.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Select Button */}
+        {/* Buy Now Button */}
         <div className={styles.cardAction}>
-          <button
-            type="button"
-            className={classNames(styles.selectButton, {
-              [styles.selected]: isExpanded,
-            })}
-            onClick={onSelect}
-          >
-            More Info
-          </button>
+          {mattress.buyUrl ? (
+            <a
+              href={mattress.buyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.selectButton}
+            >
+              Buy Now
+            </a>
+          ) : (
+            <span className={styles.selectButton}>Buy Now</span>
+          )}
         </div>
       </div>
     </div>
@@ -305,14 +173,8 @@ function MattressCard({
 
 export function ProductRecommendations({
   content,
-  onSelectionComplete,
-  onContinue,
+  onBookRestTest,
 }: ProductRecommendationsProps) {
-  const [expandedMattressId, setExpandedMattressId] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<MattressSize | null>(null);
-  const [selectedFeel, setSelectedFeel] = useState<MattressFeel | null>(null);
-  const [isScrolledDown, setIsScrolledDown] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const hasAnimatedCards = useRef(false);
 
@@ -327,158 +189,54 @@ export function ProductRecommendations({
       const cards = listRef.current.querySelectorAll(`.${styles.card}`);
       if (cards.length === 0) return;
 
-      // Set initial state - hidden and positioned below
       gsap.set(cards, { opacity: 0, y: 40 });
-
-      // Create staggered entrance animation with more dramatic timing
       gsap.to(cards, {
         opacity: 1,
         y: 0,
         duration: 0.5,
         stagger: 0.15,
         ease: "power3.out",
-        delay: 0.2, // Slight delay to ensure DOM is ready
+        delay: 0.2,
         clearProps: "transform",
       });
     }
   }, [displayedMattresses.length]);
-
-  const handleScroll = useCallback(() => {
-    if (listRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-      setIsScrolledDown(scrollTop > 10);
-      setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 10);
-    }
-  }, []);
-
-  // Check scroll position on mount and when content changes
-  useEffect(() => {
-    handleScroll();
-  }, [handleScroll, content.mattressOptions]);
-
-  const calculatePrice = useCallback(
-    (basePrice: number, size: MattressSize | null) => {
-      if (!size) return basePrice;
-      const sizeOption = content.sizes.find((s) => s.value === size);
-      return basePrice + (sizeOption?.priceModifier ?? 0);
-    },
-    [content.sizes]
-  );
-
-  const handleMattressSelect = useCallback((mattressId: string) => {
-    if (expandedMattressId === mattressId) {
-      // Already expanded, collapse it
-      setExpandedMattressId(null);
-      setSelectedSize(null);
-      setSelectedFeel(null);
-    } else {
-      // Expand this mattress, reset selections
-      setExpandedMattressId(mattressId);
-      setSelectedSize(null);
-      setSelectedFeel(null);
-    }
-  }, [expandedMattressId]);
-
-  const handleSizeSelect = useCallback(
-    (size: MattressSize) => {
-      setSelectedSize(size);
-      // Check if we can complete the selection
-      if (selectedFeel && expandedMattressId) {
-        const mattress = content.mattressOptions.find(
-          (m) => m.id === expandedMattressId
-        );
-        if (mattress) {
-          onSelectionComplete?.({
-            mattressId: expandedMattressId,
-            mattressName: mattress.productName,
-            size,
-            feel: selectedFeel,
-            finalPrice: calculatePrice(mattress.basePrice, size),
-          });
-        }
-      }
-    },
-    [selectedFeel, expandedMattressId, content.mattressOptions, onSelectionComplete, calculatePrice]
-  );
-
-  const handleFeelSelect = useCallback(
-    (feel: MattressFeel) => {
-      setSelectedFeel(feel);
-      // Check if we can complete the selection
-      if (selectedSize && expandedMattressId) {
-        const mattress = content.mattressOptions.find(
-          (m) => m.id === expandedMattressId
-        );
-        if (mattress) {
-          onSelectionComplete?.({
-            mattressId: expandedMattressId,
-            mattressName: mattress.productName,
-            size: selectedSize,
-            feel,
-            finalPrice: calculatePrice(mattress.basePrice, selectedSize),
-          });
-        }
-      }
-    },
-    [selectedSize, expandedMattressId, content.mattressOptions, onSelectionComplete, calculatePrice]
-  );
-
-  // Check if both selections are made
-  const isSelectionComplete = selectedSize && selectedFeel && expandedMattressId;
-
-  const handleContinue = useCallback(() => {
-    if (isSelectionComplete) {
-      const mattress = content.mattressOptions.find(
-        (m) => m.id === expandedMattressId
-      );
-      if (mattress) {
-        onContinue?.({
-          mattressId: expandedMattressId,
-          mattressName: mattress.productName,
-          size: selectedSize,
-          feel: selectedFeel,
-          finalPrice: calculatePrice(mattress.basePrice, selectedSize),
-        });
-      }
-    }
-  }, [isSelectionComplete, expandedMattressId, selectedSize, selectedFeel, content.mattressOptions, calculatePrice, onContinue]);
 
   return (
     <div className={styles.container}>
       {content.headline && (
         <h2 className={styles.headline}>{content.headline}</h2>
       )}
-      <div className={classNames(
-        styles.listWrapper,
-        { [styles.scrolledDown]: isScrolledDown },
-        { [styles.atBottom]: isAtBottom }
-      )}>
-        <div className={styles.list} ref={listRef} onScroll={handleScroll}>
+      <div className={styles.listWrapper}>
+        <div className={styles.list} ref={listRef}>
           {displayedMattresses.map((mattress) => (
             <MattressCard
               key={mattress.id}
               mattress={mattress}
-              isExpanded={expandedMattressId === mattress.id}
-              isDimmed={expandedMattressId !== null && expandedMattressId !== mattress.id}
-              onSelect={() => handleMattressSelect(mattress.id)}
-              selectedSize={expandedMattressId === mattress.id ? selectedSize : null}
-              selectedFeel={expandedMattressId === mattress.id ? selectedFeel : null}
-              onSizeSelect={handleSizeSelect}
-              onFeelSelect={handleFeelSelect}
-              sizes={content.sizes}
-              feels={content.feels}
-              calculatePrice={calculatePrice}
             />
           ))}
-                  </div>
+        </div>
       </div>
 
-      {/* Continue Button Bar - slides up when both selections are made */}
-      <div className={classNames(styles.continueBar, { [styles.visible]: isSelectionComplete })}>
-        <Button variant="primary" size="large" onClick={handleContinue}>
-          Continue
-        </Button>
-      </div>
+      {/* Book a Rest Test CTA */}
+      {onBookRestTest && (
+        <div className={styles.restTestCta}>
+          <div className={styles.restTestCtaContent}>
+            <p className={styles.restTestCtaTitle}>Try before you buy</p>
+            <p className={styles.restTestCtaSubtitle}>Not sure which one to choose?</p>
+          </div>
+          <button
+            type="button"
+            className={styles.restTestCtaButton}
+            onClick={onBookRestTest}
+          >
+            Book A Rest Test
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.333 8h9.334M8.667 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
