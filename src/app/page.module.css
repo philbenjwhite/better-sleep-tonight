@@ -825,8 +825,7 @@
 .mattressRecommendationInner {
   position: relative;
   z-index: 1;
-  width: 1000px;
-  max-width: 95%;
+  max-width: 1280px;
   max-height: 90vh;
   overflow: auto;
   padding: 24px;
@@ -852,8 +851,7 @@
 .productRecommendationsInner {
   position: relative;
   z-index: 1;
-  width: 950px;
-  max-width: 95%;
+  max-width: 1280px;
   overflow: visible;
   padding: 24px;
   animation: questionSlideIn 0.6s ease-out forwards;
@@ -876,8 +874,7 @@
 .storeLocationsInner {
   position: relative;
   z-index: 1;
-  width: 1024px;
-  max-width: 95%;
+  max-width: 1280px;
   overflow: visible;
   padding: 24px;
   animation: questionSlideIn 0.6s ease-out forwards;

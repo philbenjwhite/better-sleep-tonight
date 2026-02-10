@@ -3,6 +3,7 @@
 import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { Button } from "@/components/Button";
 import styles from "./ProductRecommendations.module.css";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
@@ -153,18 +154,18 @@ function MattressCard({ mattress }: MattressCardProps) {
 
         {/* Buy Now Button */}
         <div className={styles.cardAction}>
-          {mattress.buyUrl ? (
-            <a
-              href={mattress.buyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.selectButton}
-            >
-              Buy Now
-            </a>
-          ) : (
-            <span className={styles.selectButton}>Buy Now</span>
-          )}
+          <Button
+            variant="primary"
+            size="medium"
+            className={styles.buyButton}
+            onClick={
+              mattress.buyUrl
+                ? () => window.open(mattress.buyUrl, "_blank", "noopener,noreferrer")
+                : undefined
+            }
+          >
+            Buy Now
+          </Button>
         </div>
       </div>
     </div>
