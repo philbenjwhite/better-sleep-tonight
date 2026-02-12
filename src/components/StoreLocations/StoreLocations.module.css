@@ -180,9 +180,9 @@
 }
 
 .selectButton {
-  align-self: stretch; /* Stretch to full height of the card row */
+  align-self: center;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-left: 12px;
 }
 
 .actionLink {

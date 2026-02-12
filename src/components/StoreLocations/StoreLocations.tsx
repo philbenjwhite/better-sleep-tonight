@@ -271,19 +271,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                   <p className={styles.cityName}>{location.city}</p>
                   <p className={styles.storeName}>{location.storeName}</p>
                 </div>
-                {selectedLocationId === location.id && onSelectLocation && (
-                  <Button
-                    variant="primary"
-                    size="medium"
-                    className={styles.selectButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectLocation(location);
-                    }}
-                  >
-                    Select
-                  </Button>
-                )}
                 <div className={styles.locationActions}>
                   <p className={styles.distance}>
                     {location.distance < 1
@@ -320,6 +307,19 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                     </a>
                   </div>
                 </div>
+                {onSelectLocation && (
+                  <Button
+                    variant={selectedLocationId === location.id ? 'primary' : 'tertiary'}
+                    size="small"
+                    className={styles.selectButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectLocation(location);
+                    }}
+                  >
+                    Select
+                  </Button>
+                )}
               </article>
             ))}
           </div>

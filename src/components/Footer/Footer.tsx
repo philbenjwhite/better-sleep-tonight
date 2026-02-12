@@ -200,7 +200,6 @@ export function Footer({
               className={`${styles.avatarText} ${isTransitioning ? styles.textSlideUp : styles.textFadeIn}`}
               key={currentParagraphIndex}
             >
-              <span className={styles.quoteOpen}>&ldquo;</span>
               {words.map((word, index) => (
                 <span
                   key={`${currentParagraphIndex}-${index}`}
@@ -210,7 +209,6 @@ export function Footer({
                   {word}{' '}
                 </span>
               ))}
-              <span className={styles.quoteClose}>&rdquo;</span>
             </p>
           )}
         </div>

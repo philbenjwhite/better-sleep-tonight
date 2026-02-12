@@ -21,6 +21,7 @@
 .primary {
   background-color: #f68b29;
   color: #000000;
+  border: 1px solid #f68b29;
 }
 
 .primary:hover:not(.disabled) {
