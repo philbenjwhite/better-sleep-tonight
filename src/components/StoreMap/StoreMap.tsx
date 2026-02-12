@@ -18,6 +18,8 @@ export interface MapLocation {
 export interface StoreMapProps {
   locations: MapLocation[];
   selectedLocationId?: string | null;
+  /** Pan to this location without changing selection styling */
+  panToLocationId?: string | null;
   userCoordinates?: { lat: number; lng: number };
   onMarkerClick?: (locationId: string) => void;
 }
@@ -25,6 +27,7 @@ export interface StoreMapProps {
 export const StoreMap: React.FC<StoreMapProps> = ({
   locations,
   selectedLocationId,
+  panToLocationId,
   userCoordinates,
   onMarkerClick,
 }) => {
@@ -220,6 +223,20 @@ export const StoreMap: React.FC<StoreMapProps> = ({
       duration: 1000,
     });
   }, [selectedLocationId, locations, mapLoaded]);
+
+  // Handle pan-only (Show on Map) — flies to location without changing selection
+  useEffect(() => {
+    if (!map.current || !mapLoaded || !panToLocationId) return;
+
+    const location = locations.find((loc) => loc.id === panToLocationId);
+    if (!location) return;
+
+    map.current.flyTo({
+      center: [location.coordinates.lng, location.coordinates.lat],
+      zoom: 14,
+      duration: 1000,
+    });
+  }, [panToLocationId, locations, mapLoaded]);
 
   return (
     <div className={styles.mapWrapper}>

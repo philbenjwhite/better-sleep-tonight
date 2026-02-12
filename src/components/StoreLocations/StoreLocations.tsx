@@ -101,6 +101,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   hideMap = false,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [panToLocationId, setPanToLocationId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const locationCardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const hasInitializedRef = useRef(false);
@@ -130,11 +131,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       onLocationSelect?.(closestLocation);
     }
   }, [sortedLocations, onLocationSelect]);
-
-  const handleLocationClick = (location: StoreLocation) => {
-    setSelectedLocationId(location.id);
-    onLocationSelect?.(location);
-  };
 
   const scrollToLocation = useCallback((locationId: string) => {
     const cardElement = locationCardRefs.current.get(locationId);
@@ -232,13 +228,14 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
         </div>
       </div>}
 
-      {/* Map + Locations List - Full Width */}
+      {/* Map + Locations Table - Full Width */}
       {!hideMap && <div className={styles.section}>
         {/* Map */}
         <div className={styles.mapContainer}>
           <StoreMap
             locations={sortedLocations}
             selectedLocationId={selectedLocationId}
+            panToLocationId={panToLocationId}
             userCoordinates={userCoordinates}
             onMarkerClick={(locationId) => {
               setSelectedLocationId(locationId);
@@ -251,39 +248,44 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
           />
         </div>
 
-        {/* Locations List */}
+        {/* Locations Table */}
         <div className={styles.locationsListWrapper}>
           <div className={styles.locationsList} ref={listRef}>
-            {sortedLocations.map((location) => (
-              <article
-                key={location.id}
-                ref={(el) => {
-                  if (el) {
-                    locationCardRefs.current.set(location.id, el);
-                  }
-                }}
-                className={`${styles.locationCard} ${
-                  selectedLocationId === location.id ? styles.selected : ''
-                }`}
-                onClick={() => handleLocationClick(location)}
-              >
-                <div className={styles.locationInfo}>
-                  <p className={styles.cityName}>{location.city}</p>
-                  <p className={styles.storeName}>{location.storeName}</p>
-                </div>
-                <div className={styles.locationActions}>
-                  <p className={styles.distance}>
-                    {location.distance < 1
-                      ? `${(location.distance * 1000).toFixed(0)} m away`
-                      : `${location.distance.toFixed(1)} km away`}
-                  </p>
-                  <div className={styles.actionLinks}>
+            {sortedLocations.map((location) => {
+              const isSelected = selectedLocationId === location.id;
+              return (
+                <article
+                  key={location.id}
+                  ref={(el) => {
+                    if (el) {
+                      locationCardRefs.current.set(location.id, el);
+                    }
+                  }}
+                  className={`${styles.locationRow} ${isSelected ? styles.selected : ''}`}
+                >
+                  {/* Column 1: Store Info */}
+                  <div className={styles.colStoreInfo}>
+                    <p className={styles.storeName}>{location.storeName}</p>
+                    <p className={styles.storeAddress}>{location.address}, {location.city}</p>
+                  </div>
+
+                  {/* Column 2: Distance */}
+                  <div className={styles.colDistance}>
+                    <span className={styles.distanceValue}>
+                      {location.distance < 1
+                        ? `${(location.distance * 1000).toFixed(0)} m`
+                        : `${location.distance.toFixed(1)} km`}
+                    </span>
+                    <span className={styles.distanceLabel}>away</span>
+                  </div>
+
+                  {/* Column 3: Links */}
+                  <div className={styles.colLinks}>
                     <a
                       href={location.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.actionLink}
-                      onClick={(e) => e.stopPropagation()}
                     >
                       Website
                     </a>
@@ -293,7 +295,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.actionLink}
-                      onClick={(e) => e.stopPropagation()}
                     >
                       Get Directions
                     </a>
@@ -301,27 +302,38 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                     <a
                       href={getTelLink(location.storePhone)}
                       className={styles.actionLink}
-                      onClick={(e) => e.stopPropagation()}
                     >
                       Call
                     </a>
+                    <span className={styles.linkSeparator}>|</span>
+                    <button
+                      type="button"
+                      className={styles.actionLink}
+                      onClick={() => {
+                        setPanToLocationId(null);
+                        requestAnimationFrame(() => setPanToLocationId(location.id));
+                      }}
+                    >
+                      Show on Map
+                    </button>
                   </div>
-                </div>
-                {onSelectLocation && (
-                  <Button
-                    variant={selectedLocationId === location.id ? 'primary' : 'tertiary'}
-                    size="small"
-                    className={styles.selectButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectLocation(location);
-                    }}
-                  >
-                    Select
-                  </Button>
-                )}
-              </article>
-            ))}
+
+                  {/* Column 4: Actions */}
+                  <div className={styles.colActions}>
+                    {onSelectLocation && (
+                      <Button
+                        variant={isSelected ? 'primary' : 'tertiary'}
+                        size="small"
+                        className={styles.selectButton}
+                        onClick={() => onSelectLocation(location)}
+                      >
+                        {isSelected ? 'Selected' : 'Select'}
+                      </Button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </div>}

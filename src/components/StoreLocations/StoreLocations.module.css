@@ -80,61 +80,43 @@
 .locationsList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  /* Allow list to expand naturally - page scrolls instead */
+  gap: 0;
   max-height: none;
   overflow-y: visible;
-  padding-right: 0;
 }
 
-/* Custom scrollbar */
-.locationsList::-webkit-scrollbar {
-  width: 4px;
+/* Location Row — 4-column table layout */
+.locationRow {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr 1.2fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+  transition: border-color 0.2s ease;
 }
 
-.locationsList::-webkit-scrollbar-track {
-  background: #d9d9d9;
-  border-radius: 8px;
+.locationRow:first-child {
+  border-top: 1px solid #e8e8e8;
 }
 
-.locationsList::-webkit-scrollbar-thumb {
-  background: var(--sds-color-text-default-default, #363534);
-  border-radius: 8px;
+.locationRow.selected {
+  border-bottom-color: rgba(246, 139, 41, 0.3);
 }
 
-/* Location Card */
-.locationCard {
-  display: flex;
-  gap: 8px;
-  align-items: stretch;
-  padding: var(--sds-size-space-300, 12px);
-  border: 1px solid transparent;
-  border-radius: var(--sds-size-radius-200, 8px);
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+.locationRow.selected + .locationRow {
+  border-top-color: rgba(246, 139, 41, 0.3);
 }
 
-.locationCard:hover {
-  border-color: var(--sds-color-border-brand-default, #f68b29);
-}
-
-.locationCard.selected {
-  border-color: var(--sds-color-border-brand-default, #f68b29);
-  background-color: rgba(246, 139, 41, 0.08);
-}
-
-.locationInfo {
-  flex: 1;
+/* Column 1: Store Info */
+.colStoreInfo {
   display: flex;
   flex-direction: column;
-  gap: var(--sds-size-space-100, 4px);
+  gap: 2px;
   min-width: 0;
 }
 
-.cityName {
+.storeName {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: var(--sds-typography-body-font-weight-strong, 600);
   font-size: var(--sds-typography-body-size-medium, 16px);
@@ -143,46 +125,45 @@
   margin: 0;
 }
 
-.storeName {
+.storeAddress {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: var(--sds-typography-body-font-weight-regular, 400);
-  font-size: var(--sds-typography-body-size-small, 14px);
+  font-size: 13px;
   line-height: 1.3;
-  color: #000000;
+  color: #6b6b6b;
   margin: 0;
 }
 
-.locationActions {
-  flex: 1;
+/* Column 2: Distance */
+.colDistance {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
-  min-width: 0;
+  align-items: center;
+  gap: 0;
 }
 
-.distance {
+.distanceValue {
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: var(--sds-typography-body-font-weight-strong, 600);
+  font-size: 18px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.distanceLabel {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: var(--sds-typography-body-font-weight-regular, 400);
   font-size: 12px;
   line-height: 1.3;
-  color: #000000;
-  margin: 0;
-  text-align: right;
+  color: #6b6b6b;
 }
 
-.actionLinks {
+/* Column 3: Links */
+.colLinks {
   display: flex;
   gap: 8px;
   align-items: center;
-  justify-content: flex-end;
   white-space: nowrap;
-}
-
-.selectButton {
-  align-self: center;
-  flex-shrink: 0;
-  margin-left: 12px;
 }
 
 .actionLink {
@@ -200,8 +181,29 @@
 }
 
 .linkSeparator {
-  color: #5a5a5a;
-  font-size: 14px;
+  color: #c0c0c0;
+  font-size: 13px;
+}
+
+/* Column 4: Actions */
+.colActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 100px;
+}
+
+.selectButton {
+  width: 100%;
+}
+
+/* Ensure button-based action links match anchor styling */
+button.actionLink {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 /* CTA Text */
@@ -300,23 +302,55 @@
   transform: translateY(0);
 }
 
-/* Mobile responsive - stack vertically */
+/* Tablet — collapse to 2-row layout per card */
 @media (max-width: 900px) {
   .ctaRow {
     flex-direction: column;
   }
 
-  /* Reset equal height on mobile - let sections size naturally */
   .ctaRow > .section {
     flex: none;
     justify-content: flex-start;
   }
 
-  .locationsList {
-    max-height: none;
+  .locationRow {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 16px;
+  }
+
+  /* Store info spans left, distance goes right */
+  .colStoreInfo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .colDistance {
+    grid-column: 2;
+    grid-row: 1;
+    align-items: flex-end;
+  }
+
+  /* Links left, actions right on second row */
+  .colLinks {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .colActions {
+    grid-column: 2;
+    grid-row: 2;
+    flex-direction: row;
+    gap: 12px;
+    min-width: auto;
+  }
+
+  .selectButton {
+    width: auto;
   }
 }
 
+/* Mobile — full stack */
 @media (max-width: 600px) {
   .storeLocationsContainer {
     gap: var(--sds-size-space-400, 16px);
@@ -331,23 +365,43 @@
     margin-bottom: var(--sds-size-space-400, 16px);
   }
 
-  /* Location card adjustments */
-  .locationCard {
-    flex-direction: column;
-    gap: var(--sds-size-space-300, 12px);
+  .locationRow {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 8px;
+    padding: 14px 16px;
   }
 
-  .locationActions {
-    align-items: flex-start;
-    width: 100%;
+  .colStoreInfo {
+    grid-column: 1;
+    grid-row: 1;
   }
 
-  .distance {
-    text-align: left;
+  .colDistance {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 4px;
   }
 
-  .actionLinks {
-    justify-content: flex-start;
+  .colLinks {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .colActions {
+    grid-column: 1;
+    grid-row: 4;
+    flex-direction: row;
+    gap: 12px;
+    min-width: auto;
+    align-items: center;
+  }
+
+  .selectButton {
+    width: auto;
+    flex: 1;
   }
 
   .ctaButton,
