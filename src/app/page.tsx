@@ -27,192 +27,26 @@ import { geocodeWithFallback, Coordinates } from "@/lib/geocoding";
 import { RecoveryModal } from "@/components/RecoveryModal";
 import {
   MattressRecommendation,
-  MattressRecommendationContent,
   MattressSize,
   MattressFeel,
 } from "@/components/MattressRecommendation";
-import {
-  ProductRecommendations,
-  ProductRecommendationsContent,
-} from "@/components/ProductRecommendations";
+import { ProductRecommendations } from "@/components/ProductRecommendations";
 import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
 import { ActionPrompt, ActionPromptContent } from "@/components/ActionPrompt";
 import {
   StoreLocations,
   StoreLocationsContent,
+  StoreLocation,
 } from "@/components/StoreLocations";
 import {
   ZipCodeCapture,
   ZipCodeCaptureContent,
 } from "@/components/ZipCodeCapture";
-import { StepIndicator, StepIndicatorStep } from "@/components/StepIndicator";
+import { StepIndicator } from "@/components/StepIndicator";
 import { useProgressPersistence } from "@/hooks";
-import { FLOWS } from "@/config";
+import { FLOWS, MANUAL_CTA_LABELS, DEFAULT_PRODUCT_RECOMMENDATIONS, getProgressSteps, logFlowData as logFlowDataUtil, type FlowStep } from "@/config";
+
 import styles from "./page.module.css";
-
-// Step templates that belong to the "Results" phase
-const RESULTS_TEMPLATES = new Set([
-  "emailCaptureStep",
-  "seeOptionsStep",
-  "productRecommendationsStep",
-  "zipcodeCaptureStep",
-  "storeLocationsStep",
-]);
-
-function getProgressSteps(
-  currentView: "intro" | "question",
-  currentStepTemplate: string | undefined,
-): StepIndicatorStep[] {
-  if (currentView === "intro") {
-    return [
-      { label: "Intro", status: "active" },
-      { label: "Sleep Diagnosis", status: "inactive" },
-      { label: "Results", status: "inactive" },
-    ];
-  }
-
-  const isResultsPhase = currentStepTemplate
-    ? RESULTS_TEMPLATES.has(currentStepTemplate)
-    : false;
-
-  if (isResultsPhase) {
-    return [
-      { label: "Intro", status: "completed" },
-      { label: "Sleep Diagnosis", status: "completed" },
-      { label: "Results", status: "active" },
-    ];
-  }
-
-  return [
-    { label: "Intro", status: "completed" },
-    { label: "Sleep Diagnosis", status: "active" },
-    { label: "Results", status: "inactive" },
-  ];
-}
-
-// Default product recommendations content (fallback when CMS content not provided)
-const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
-  headline: "Your Perfect Mattress Matches",
-  introParagraph:
-    "Based on your sleep profile, I've found three mattresses that will help you wake up without back pain.",
-  mattressOptions: [
-    {
-      id: "tempur-sense",
-      productName: "TEMPUR SENSE\u00AE",
-      productDescription:
-        "Adaptive support, pressure relief, and motion absorption\u2014powered by TEMPUR\u00AE Material and finished with a premium cover.",
-      basePrice: 1299,
-      productImage: "/images/mattresses/tempur-sense.avif",
-      badge: "Best Value",
-      profile: '10-11"',
-      coolingLevel: 2,
-      pressureReliefLevel: 4,
-      features: [
-        "3 layer foam construction",
-        "Fast-adapting foam for pressure relief",
-        "Premium fabric cover",
-      ],
-      buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-sense-medium-10-inch-mattress?variant=43041759428697&queryID=5799338564ac18ac17aab900ad7f7f8c&objectID=43041759428697",
-    },
-    {
-      id: "tempur-prosense",
-      productName: "TEMPUR [PRO]SENSE\u00AE",
-      productDescription:
-        "Up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 Material\u2014plus adaptive support and motion isolation.",
-      basePrice: 1699,
-      productImage: "/images/mattresses/tempur-prosense.avif",
-      badge: "Most Popular",
-      profile: '12"',
-      coolingLevel: 3,
-      pressureReliefLevel: 5,
-      features: [
-        "4 layer foam construction",
-        "TEMPUR-APR+\u2122 for advanced pressure relief",
-        "Cool-to-touch removable cover",
-      ],
-      buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-prosense-soft-12-inch-mattress?variant=43041759101017&queryID=f19b1fddd1ac8d8a7791ab9947eae568&objectID=43041759101017",
-    },
-    {
-      id: "tempur-luxealign",
-      productName: "TEMPUR [LUXE]ALIGN\u00AE",
-      productDescription:
-        "Delivers up to 28% cooler comfort and 20% more pressure relief with TEMPUR APR+\u2122 elevated by an ergonomic layer that adapts to every curve for personalized spinal alignment.",
-      basePrice: 2199,
-      productImage: "/images/mattresses/tempur-luxealign.avif",
-      badge: "Most Advanced",
-      profile: '13"',
-      coolingLevel: 4,
-      pressureReliefLevel: 5,
-      features: [
-        "5 layer construction",
-        "Zoned ergonomic layer adapts to your body to help support your spine",
-        "TEMPUR-APR+\u2122 for maximum pressure relief",
-        "Cool-to-touch removable cover",
-      ],
-      buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-luxealign-soft-13-inch-mattress?variant=43041759297625&queryID=6201e3d8e86372538312d8791946cf87&objectID=43041759297625",
-    },
-  ],
-  sizes: [
-    { value: "twin", label: "Twin", priceModifier: -300 },
-    { value: "twin-xl", label: "Twin XL", priceModifier: -200 },
-    { value: "full", label: "Full", priceModifier: -100 },
-    { value: "queen", label: "Queen", priceModifier: 0 },
-    { value: "king", label: "King", priceModifier: 200 },
-  ],
-  feels: [
-    { value: "soft", label: "Soft" },
-    { value: "medium", label: "Medium" },
-    { value: "firm", label: "Firm" },
-  ],
-  avatarResponse:
-    "Great choice! This mattress is perfect for your sleep needs.",
-};
-
-// Type for flow steps - using template-based structure
-// Each step has _template to identify its type, and fields are at the top level
-interface FlowStep {
-  _template: string;
-  stepId: string;
-  internalName?: string;
-  // Video step fields
-  video?: string;
-  script?: string;
-  // Question step fields
-  questionText?: string;
-  inputType?: string;
-  helperText?: string;
-  isRequired?: boolean;
-  answerOptions?: CMSAnswerOption[];
-  // Email capture fields
-  promptText?: string;
-  placeholderText?: string;
-  submitButtonText?: string;
-  avatarResponseOnSubmit?: string;
-  // See options fields
-  buttonText?: string;
-  avatarMessage?: string;
-  // Product recommendations fields
-  headline?: string;
-  avatarResponse?: string;
-  // Zipcode capture fields (uses headline, placeholderText, buttonText)
-  // Store locations fields
-  headerText?: string;
-  defaultPostalCode?: string;
-  ctaBookTitle?: string;
-  ctaBookDescription?: string;
-  ctaBookButtonText?: string;
-  ctaContactTitle?: string;
-  ctaContactDescription?: string;
-  ctaContactButtonText?: string;
-  avatarVideoSrc?: string;
-  avatarText?: string;
-  // Mattress recommendation (if still used)
-  mattressRecommendationContent?: MattressRecommendationContent;
-  productRecommendationsContent?: ProductRecommendationsContent;
-}
 
 function HomeContent() {
   const searchParams = useSearchParams();
@@ -282,6 +116,7 @@ function HomeContent() {
     isPlaying,
     isNearingEnd,
     play,
+    pause,
     preload,
     currentTime,
     currentVideoId,
@@ -426,7 +261,21 @@ function HomeContent() {
   const isSeeOptionsStep = currentStep?._template === "seeOptionsStep";
   const isZipCodeCaptureStep = currentStep?._template === "zipcodeCaptureStep";
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
+  const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
+
+  // Pause video at last subtitle cue end for steps with manual CTA
+  // This prevents the fade-to-black at the end of the video
+  useEffect(() => {
+    const stepId = currentStep?.stepId;
+    const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
+    if (!hasManualCta || !isVideoPlaying || videoSubtitleCues.length === 0) return;
+
+    const lastCue = videoSubtitleCues[videoSubtitleCues.length - 1];
+    if (currentTime >= lastCue.endTime) {
+      pause();
+    }
+  }, [currentStep?.stepId, isVideoPlaying, videoSubtitleCues, currentTime, pause]);
 
   // Debug: Log step and render state
   useEffect(() => {
@@ -489,44 +338,20 @@ function HomeContent() {
   // Video is ready when not in error state
   const isAvatarReady = isVideoReady;
 
-  // Helper function to log flow data in clean JSON format
   const logFlowData = useCallback(
     (answers: StoredAnswer[], context?: string) => {
-      const flowData = {
-        flowId: flowParam,
-        timestamp: new Date().toISOString(),
-        sessionData: {
-          currentStep: currentStepIndex + 1,
+      return logFlowDataUtil(
+        {
+          flowId: flowParam,
+          currentStepIndex,
           totalSteps: questionSteps.length,
-          email:
-            answers.find((a) => a.stepId === "email-capture")?.value || null,
-          zipCode: userZipCode,
-          mattressSelection:
-            selectedMattressSize && selectedMattressFeel
-              ? {
-                  size: selectedMattressSize,
-                  feel: selectedMattressFeel,
-                }
-              : null,
+          userZipCode,
+          selectedMattressSize,
+          selectedMattressFeel,
+          answers,
         },
-        answers: answers.map(
-          ({ stepId, questionText, value, label, timestamp }) => ({
-            stepId,
-            question: questionText,
-            answer: {
-              value,
-              label,
-            },
-            answeredAt:
-              timestamp instanceof Date ? timestamp.toISOString() : timestamp,
-          }),
-        ),
-      };
-
-      console.log(`\n📋 Flow Data${context ? ` (${context})` : ""}:`);
-      console.log(JSON.stringify(flowData, null, 2));
-
-      return flowData;
+        context,
+      );
     },
     [
       flowParam,
@@ -737,6 +562,14 @@ function HomeContent() {
     // 2. isVideoEnded (ENDED state) confirms video finished playing
     // 3. avatarStartedTalking can be incorrectly reset by other effects
     if (isVideoStep && isShowingResponse && isVideoEnded && hasSpokenSummary) {
+      // Skip auto-advance for steps that use a manual CTA button
+      const stepId = currentStep?.stepId;
+      const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
+      if (hasManualCta) {
+        console.log("[VideoStepComplete] Step has manual CTA, skipping auto-advance:", stepId);
+        return;
+      }
+
       console.log("[VideoStepComplete] All conditions met, starting timer");
       // Video finished - brief moment before advancing
       const timer = setTimeout(() => {
@@ -796,6 +629,7 @@ function HomeContent() {
     currentStepIndex,
     questionSteps.length,
     videoState, // For logging only
+    currentStep?.stepId,
   ]);
 
   const handleAnswerSelect = useCallback(
@@ -867,7 +701,7 @@ function HomeContent() {
             console.log("Flow complete!");
           }
         }
-      }, 400); // Brief pause after selection before moving on
+      }, 1000); // Pause after selection so user sees their choice before moving on
     },
     [
       currentStep,
@@ -1118,11 +952,15 @@ function HomeContent() {
     questionSteps.length,
   ]);
 
-  // Handle see options button click
+  // Handle see options button click (CTA at end of summary video)
   const handleSeeOptionsClick = useCallback(() => {
-    console.log("See options clicked");
+    console.log("See options clicked — advancing to product recommendations");
 
-    // Simply advance to the next step (product recommendations)
+    // Clear video/speech state so we transition cleanly
+    setIsShowingResponse(false);
+    setAvatarResponse(null);
+    setAvatarStartedTalking(false);
+    setHasSpokenSummary(false);
     setShowQuestionBlock(false);
 
     if (currentStepIndex < questionSteps.length - 1) {
@@ -1176,6 +1014,48 @@ function HomeContent() {
 
       // Advance to next step (store locations)
       setShowQuestionBlock(false);
+
+      if (currentStepIndex < questionSteps.length - 1) {
+        setCurrentStepIndex((prev) => prev + 1);
+        setTimeout(() => {
+          setShowQuestionBlock(true);
+        }, 100);
+      }
+    },
+    [
+      currentStep,
+      currentStepIndex,
+      storedAnswers,
+      saveProgress,
+      flowParam,
+      questionSteps.length,
+      logFlowData,
+    ],
+  );
+
+  // Handle selecting a store location — advances to the next step
+  const handleSelectLocation = useCallback(
+    (location: StoreLocation) => {
+      const newAnswer: StoredAnswer = {
+        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
+        questionText: "Store Location",
+        value: location.id,
+        label: `${location.city} - ${location.storeName}`,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+
+      logFlowData(updatedAnswers, `Store: ${location.storeName}`);
+
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex: currentStepIndex + 1,
+        answers: updatedAnswers,
+      });
+
+      setShowQuestionBlock(false);
+      setHasSpokenSummary(false);
 
       if (currentStepIndex < questionSteps.length - 1) {
         setCurrentStepIndex((prev) => prev + 1);
@@ -1271,7 +1151,7 @@ function HomeContent() {
   return (
     <main
       className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ""} ${
-        isStoreLocationsStep ? styles.storeLocationsPage : ""
+        isStoreLocationsStep || isBookingCtaStep ? styles.storeLocationsPage : ""
       } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
       }`}
@@ -1368,13 +1248,13 @@ function HomeContent() {
       {/* Question View */}
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
-          {/* Full-width Gradient Overlay at Bottom - hide on store locations step */}
-          {!isStoreLocationsStep && (
+          {/* Full-width Gradient Overlay at Bottom - hide on store locations / booking CTA step */}
+          {!isStoreLocationsStep && !isBookingCtaStep && (
             <div className={styles.avatarGradientOverlay} />
           )}
 
-          {/* Video Avatar Wrapper - hide on store locations step */}
-          {!isStoreLocationsStep && (
+          {/* Video Avatar Wrapper - hide on store locations / booking CTA step */}
+          {!isStoreLocationsStep && !isBookingCtaStep && (
             <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
               <div className={styles.avatarWrapper}>
                 <VideoAvatar
@@ -1405,7 +1285,7 @@ function HomeContent() {
                     wordDelay={0.15}
                     paragraphPauseMs={600}
                     className={styles.speechBubbleContainer}
-                    stayVisible={isVideoPlaying}
+                    stayVisible={isVideoPlaying || (isVideoStep && currentStep?.stepId != null && currentStep.stepId in MANUAL_CTA_LABELS)}
                     subtitleCues={
                       isVideoStep && videoSubtitleCues.length > 0
                         ? videoSubtitleCues
@@ -1417,14 +1297,12 @@ function HomeContent() {
                         : undefined
                     }
                     ctaButtonText={
-                      isVideoStep &&
-                      currentStep?.stepId === "video-step-2" &&
-                      !isVideoPlaying
-                        ? "See My Options"
+                      isVideoStep && !isVideoPlaying
+                        ? MANUAL_CTA_LABELS[currentStep?.stepId ?? ""]
                         : undefined
                     }
                     onCtaClick={
-                      isVideoStep && currentStep?.stepId === "video-step-2"
+                      isVideoStep && currentStep?.stepId != null && currentStep.stepId in MANUAL_CTA_LABELS
                         ? handleSeeOptionsClick
                         : undefined
                     }
@@ -1437,8 +1315,8 @@ function HomeContent() {
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (
             <div className={styles.questionBlockWrapper}>
-              {/* Hide backdrop on store locations step and video steps to show full view */}
-              {!isStoreLocationsStep && !isVideoStep && (
+              {/* Hide backdrop on store locations, booking CTA, and video steps to show full view */}
+              {!isStoreLocationsStep && !isBookingCtaStep && !isVideoStep && (
                 <div
                   className={`${styles.questionBlockBackdrop} ${
                     backdropHasAnimated || skipIntro ? styles.backdropOnly : ""
@@ -1573,6 +1451,30 @@ function HomeContent() {
                       userZipCode || currentStep?.defaultPostalCode || ""
                     }
                     userCoordinates={userCoordinates || undefined}
+                    hideCtas
+                    onSelectLocation={handleSelectLocation}
+                  />
+                </div>
+              )}
+
+              {/* Booking CTA Step */}
+              {showQuestionBlock && isBookingCtaStep && (
+                <div className={styles.storeLocationsInner}>
+                  <StoreLocations
+                    content={
+                      {
+                        headerText: "",
+                        ctaBookTitle: currentStep?.ctaBookTitle,
+                        ctaBookDescription: currentStep?.ctaBookDescription,
+                        ctaBookButtonText: currentStep?.ctaBookButtonText,
+                        ctaContactTitle: currentStep?.ctaContactTitle,
+                        ctaContactDescription:
+                          currentStep?.ctaContactDescription,
+                        ctaContactButtonText: currentStep?.ctaContactButtonText,
+                      } as StoreLocationsContent
+                    }
+                    postalCode=""
+                    hideMap
                   />
                 </div>
               )}

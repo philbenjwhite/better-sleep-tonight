@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import styles from './StoreLocations.module.css';
 import { StoreMap } from '@/components/StoreMap';
+import { Button } from '@/components/Button';
 
 // Import locations data
 import locationsData from '../../../content/locations/ontario-stores.json';
@@ -39,6 +40,12 @@ export interface StoreLocationsProps {
   onLocationSelect?: (location: StoreLocation) => void;
   onBookRestTest?: () => void;
   onContactUs?: () => void;
+  /** When true, hides the CTA row (Schedule Appointment / Contact Us) */
+  hideCtas?: boolean;
+  /** Called when user clicks "Select" on a location card */
+  onSelectLocation?: (location: StoreLocation) => void;
+  /** When true, hides the map and locations list (shows only CTAs) */
+  hideMap?: boolean;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -89,6 +96,9 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   onLocationSelect,
   onBookRestTest,
   onContactUs,
+  hideCtas = false,
+  onSelectLocation,
+  hideMap = false,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -159,7 +169,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       </h2>
 
       {/* CTA Row - Two columns */}
-      <div className={styles.ctaRow}>
+      {!hideCtas && <div className={styles.ctaRow}>
         {/* Schedule Appointment CTA */}
         <div className={styles.section}>
           {/* Calendar Icon */}
@@ -220,10 +230,10 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             </a>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* Map + Locations List - Full Width */}
-      <div className={styles.section}>
+      {!hideMap && <div className={styles.section}>
         {/* Map */}
         <div className={styles.mapContainer}>
           <StoreMap
@@ -261,6 +271,19 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                   <p className={styles.cityName}>{location.city}</p>
                   <p className={styles.storeName}>{location.storeName}</p>
                 </div>
+                {selectedLocationId === location.id && onSelectLocation && (
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    className={styles.selectButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectLocation(location);
+                    }}
+                  >
+                    Select
+                  </Button>
+                )}
                 <div className={styles.locationActions}>
                   <p className={styles.distance}>
                     {location.distance < 1
@@ -301,7 +324,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             ))}
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };

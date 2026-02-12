@@ -57,15 +57,13 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   const isPlaying = videoState === VideoState.PLAYING;
   const isReady = videoState === VideoState.READY;
 
-  // Show fallback image only when:
-  // 1. Before first video plays (idle and never played)
-  // 2. On error
-  // Don't show fallback when ended - keep showing the video's last frame
-  const showFallbackImage = (isIdle && !hasPlayedVideo) || hasError;
+  // Always show fallback image underneath video to prevent flicker during transitions
+  const showFallbackImage = true;
 
-  // Video is visible when ready, playing, or ended
+  // Video is visible when ready, playing, paused, or ended
   // Include READY state to handle cases where onPlay event doesn't fire
-  const showVideo = isReady || isPlaying || isEnded;
+  const isPaused = videoState === VideoState.PAUSED;
+  const showVideo = isReady || isPlaying || isPaused || isEnded;
 
   // Calculate video opacity - only fade out near end, no fade in
   const FADE_DURATION = 0.5;

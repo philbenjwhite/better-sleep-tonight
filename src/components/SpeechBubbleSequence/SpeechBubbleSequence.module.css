@@ -59,8 +59,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
+  margin-top: 12px;
   gap: 8px;
-  margin-top: 16px;
   padding: 16px 24px;
   background-color: #f68b29;
   color: #000000;

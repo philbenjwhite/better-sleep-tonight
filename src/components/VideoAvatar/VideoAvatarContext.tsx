@@ -24,6 +24,7 @@ export enum VideoState {
   LOADING = 'LOADING',
   READY = 'READY',
   PLAYING = 'PLAYING',
+  PAUSED = 'PAUSED',
   ENDED = 'ENDED',
   ERROR = 'ERROR',
 }
@@ -39,6 +40,7 @@ interface VideoAvatarContextType {
   connectionQuality: ConnectionQuality;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   play: (videoId: string) => Promise<void>;
+  pause: () => void;
   preload: (videoIdOrPath: string) => void;
   preloadMultiple: (videoIds: string[]) => void;
   stop: () => void;
@@ -154,7 +156,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     };
 
     try {
-      const videoElement = await waitForVideoElement();
+      const videoElement = await waitForVideoElement().catch(() => {
+        // Video element was unmounted (e.g., navigated away from video step)
+        console.log('[VideoAvatar] Video element not available, skipping play');
+        return null;
+      });
+      if (!videoElement) return;
 
       return new Promise((resolve, reject) => {
         playPromiseRef.current = { resolve, reject };
@@ -169,6 +176,13 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       });
     } catch (error) {
       console.error('[VideoAvatar] Failed to get video element:', error);
+    }
+  }, []);
+
+  const pause = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setVideoState(VideoState.PAUSED);
     }
   }, []);
 
@@ -312,6 +326,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         connectionQuality,
         videoRef,
         play,
+        pause,
         preload,
         preloadMultiple,
         stop,

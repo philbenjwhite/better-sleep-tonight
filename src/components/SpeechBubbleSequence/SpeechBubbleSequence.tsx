@@ -164,7 +164,9 @@ export function SpeechBubbleSequence({
 
   // In video-sync mode, calculate dynamic word delay based on cue duration
   // This ensures all words animate within the time the cue is displayed
-  const currentCue = isVideoSyncMode && videoCueIndex >= 0 ? subtitleCues![videoCueIndex] : null;
+  // Use currentParagraphIndex (stable state) instead of videoCueIndex (volatile computed value)
+  // to prevent animation restarts when videoCurrentTime crosses a cue boundary mid-transition
+  const currentCue = isVideoSyncMode && currentParagraphIndex >= 0 ? subtitleCues![currentParagraphIndex] : null;
   const cueDuration = currentCue ? currentCue.endTime - currentCue.startTime : 0;
 
   // Calculate effective word delay for video-sync mode
@@ -224,12 +226,19 @@ export function SpeechBubbleSequence({
   useEffect(() => {
     if (!ctaButtonText || currentParagraphIndex !== paragraphs.length - 1 || isTransitioning) return;
 
+    // If text is already fully visible (e.g. video paused/ended on last cue), show immediately
+    const textAlreadyVisible = isComplete || isVideoSyncMode;
+    if (textAlreadyVisible) {
+      setShowCtaButton(true);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setShowCtaButton(true);
-    }, totalAnimationTime + 300); // Small delay after text finishes
+    }, totalAnimationTime + 300);
 
     return () => clearTimeout(timer);
-  }, [ctaButtonText, currentParagraphIndex, paragraphs.length, isTransitioning, totalAnimationTime]);
+  }, [ctaButtonText, currentParagraphIndex, paragraphs.length, isTransitioning, totalAnimationTime, isComplete, isVideoSyncMode]);
 
   const advanceToNextParagraph = useCallback(() => {
     if (currentParagraphIndex < paragraphs.length - 1) {
@@ -297,38 +306,38 @@ export function SpeechBubbleSequence({
           ))}
         </p>
 
-        {/* CTA Button - shown after text animation on last paragraph */}
-        {ctaButtonText && showCtaButton && (
-          <button
-            type="button"
-            className={styles.ctaButton}
-            onClick={onCtaClick}
-          >
-            <span>{ctaButtonText}</span>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4.16669 10H15.8334M15.8334 10L10 4.16669M15.8334 10L10 15.8334"
-                stroke="currentColor"
-                strokeWidth="1.67"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        )}
-
         <img
           src="/images/chat-bubble-tail.svg"
           alt=""
           className={styles.tail}
         />
       </div>
+
+      {/* CTA Button - shown beneath speech bubble after text animation on last paragraph */}
+      {ctaButtonText && showCtaButton && (
+        <button
+          type="button"
+          className={styles.ctaButton}
+          onClick={onCtaClick}
+        >
+          <span>{ctaButtonText}</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.16669 10H15.8334M15.8334 10L10 4.16669M15.8334 10L10 15.8334"
+              stroke="currentColor"
+              strokeWidth="1.67"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      )}
 
     </div>
   );

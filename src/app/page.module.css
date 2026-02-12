@@ -9,7 +9,7 @@
   justify-content: center;
   padding: 48px;
   box-sizing: border-box;
-  background-color: #f9f4ed;
+  background-color: #FFFBF8;
   transition: width 0.3s ease-out;
 }
 
@@ -331,7 +331,7 @@
   justify-content: center;
   gap: 24px;
   z-index: 5;
-  background-color: #f9f4ed;
+  background-color: #FFFBF8;
 }
 
 .loadingSpinner {
@@ -659,6 +659,7 @@
   align-items: center;
   justify-content: center;
   z-index: 20;
+  pointer-events: none; /* Let clicks pass through to elements underneath (e.g. CTA buttons) */
 }
 
 /* Store locations page - make wrapper flow naturally instead of fixed overlay */
@@ -668,9 +669,11 @@
   left: auto;
   right: auto;
   bottom: auto;
+  width: 100%;
   min-height: auto;
   align-items: flex-start;
   padding-top: 80px; /* Space for header */
+  pointer-events: auto; /* Re-enable since this is now a layout container, not an overlay */
 }
 
 /* Product recommendations page - make wrapper flow naturally instead of fixed overlay */
@@ -680,9 +683,11 @@
   left: auto;
   right: auto;
   bottom: auto;
+  width: 100%;
   min-height: auto;
   align-items: flex-start;
   padding-top: 80px; /* Space for header */
+  pointer-events: auto; /* Re-enable since this is now a layout container, not an overlay */
 }
 
 .questionBlockBackdrop {
@@ -696,6 +701,7 @@
   background-color: rgba(249, 244, 237, 0.7);
   z-index: -1;
   animation: backdropFadeIn 0.4s ease-out forwards;
+  pointer-events: auto; /* Backdrop itself should capture clicks */
 }
 
 /* When backdrop is shown without content (during transitions), don't re-animate */
@@ -735,6 +741,7 @@
   max-height: 80vh;
   overflow: visible;
   padding: 12px;
+  pointer-events: auto; /* Re-enable clicks for interactive content */
   /* GSAP handles animations now */
 }
 
@@ -821,6 +828,7 @@
   max-height: 90vh;
   overflow: auto;
   padding: 24px;
+  pointer-events: auto;
   animation: questionSlideIn 0.6s ease-out forwards;
 }
 
@@ -846,6 +854,7 @@
   max-width: 1280px;
   overflow: visible;
   padding: 24px;
+  pointer-events: auto;
   animation: questionSlideIn 0.6s ease-out forwards;
 }
 
@@ -866,9 +875,11 @@
 .storeLocationsInner {
   position: relative;
   z-index: 1;
+  width: 100%;
   max-width: 1280px;
   overflow: visible;
   padding: 24px;
+  pointer-events: auto;
   animation: questionSlideIn 0.6s ease-out forwards;
 }
 
@@ -896,6 +907,7 @@
   max-height: 80vh;
   overflow: visible;
   padding: 12px;
+  pointer-events: auto;
 }
 
 @media (max-width: 768px) {

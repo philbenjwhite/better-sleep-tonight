@@ -240,34 +240,37 @@
       "_template": "questionStep"
     },
     {
+      "stepId": "q6-sleep-alone-or-partner",
+      "internalName": "Sleep Alone or Partner",
+      "questionText": "Do you typically sleep alone or with a partner?",
+      "inputType": "radio",
+      "isRequired": true,
+      "answerOptions": [
+        {
+          "optionId": "q6-opt1",
+          "label": "Just me",
+          "value": "alone",
+          "order": 1,
+          "avatarResponse": "Got it — we'll focus on finding the perfect mattress just for you.",
+          "tags": ["solo-sleeper"]
+        },
+        {
+          "optionId": "q6-opt2",
+          "label": "Me and my partner",
+          "value": "with-partner",
+          "order": 2,
+          "avatarResponse": "Great to know — we'll make sure to factor in comfort for both of you.",
+          "tags": ["partner-sleeper"]
+        }
+      ],
+      "_template": "questionStep"
+    },
+    {
       "stepId": "video-step-1",
       "internalName": "Summary Video",
       "video": "/videos/ashley/ashley-2.mp4",
       "script": "From what you've told me, sounds like these factors are your biggest sleep disruptors. You'd be surprised how common these issues are, especially waking up sore, tossing and turning, or never quite feeling rested.\n\nResearch finds that 70% of us struggle to fall asleep. Nearly everyone who struggles to fall asleep wakes up at least once during the night. That means we can often wake up feeling tired, groggy, and grumpy.\n\nIf you leave your email, I can prepare a personalized sleep report for you. It will be in your inbox in less than five minutes.",
       "_template": "videoStep"
-    },
-    {
-      "stepId": "email-capture",
-      "internalName": "Email Capture",
-      "promptText": "Enter email address",
-      "placeholderText": "email address",
-      "submitButtonText": "Email My Report",
-      "avatarResponseOnSubmit": "Perfect! I'll send that right over. Check your inbox for your personalized sleep report.",
-      "_template": "emailCaptureStep"
-    },
-    {
-      "stepId": "video-step-2",
-      "internalName": "Post-Email Video",
-      "video": "/videos/ashley/ashley-3.mp4",
-      "script": "Great! You should receive your email soon and be sure to check your spam folder as well.\n\nDid you know that many sleep problems start with an aging or unsupportive mattress? Our bodies change over the years, but our mattress usually doesn't. If it's been 7 to 10 years since you changed your mattress or you wake up stiff and tired, your mattress may well be a factor that's stopping you from getting a better night's sleep.\n\nI've found three mattress options that are perfect for you based on your responses.",
-      "_template": "videoStep"
-    },
-    {
-      "stepId": "see-options-step",
-      "internalName": "See Options Prompt",
-      "promptText": "Ready to see your personalized recommendations?",
-      "buttonText": "See My Options",
-      "_template": "seeOptionsStep"
     },
     {
       "stepId": "product-recommendations-step",
@@ -277,8 +280,8 @@
     {
       "stepId": "video-step-3",
       "internalName": "Post-Selection Video",
-      "video": "/videos/ashley/ashley-4.mp4",
-      "script": "Ok, great choice. I've checked pricing and the best deal I'm seeing right now is through Ashley. They're currently offering a 10% discount for the new year on your selected mattress. Enter your zip code and I'll find your nearest Ashley store.",
+      "video": "/videos/ashley/ashley-3.mp4",
+      "script": "Okay, great! I can book a rest test for you at your nearest Ashley home store. Enter your zip code and I'll find the nearest one.",
       "_template": "videoStep"
     },
     {
@@ -300,9 +303,20 @@
       "ctaContactTitle": "Questions? We're here to help",
       "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
       "ctaContactButtonText": "Contact Us",
-      "avatarVideoSrc": "/videos/ashley/last-step-avatar.mp4",
+      "avatarVideoSrc": "/videos/ashley/ashley-4-avatar.mp4",
       "avatarText": "All the Ashley stores that stock your mattress are listed down the left-hand side.\n\nChoose the one that's nearest or most convenient.\n\nNow all you need to do is schedule an appointment so you can try that mattress out for yourself in store.\n\nThanks for visiting Better Sleep Tonight.",
       "_template": "storeLocationsStep"
+    },
+    {
+      "stepId": "booking-cta-step",
+      "internalName": "Booking CTAs",
+      "ctaBookTitle": "Book a Rest Test",
+      "ctaBookDescription": "Experience the mattress in-store before you buy. Our sleep experts will help you find the perfect fit.",
+      "ctaBookButtonText": "Schedule Appointment",
+      "ctaContactTitle": "Questions? We're here to help",
+      "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
+      "ctaContactButtonText": "Contact Us",
+      "_template": "bookingCtaStep"
     }
   ],
   "metadata": {

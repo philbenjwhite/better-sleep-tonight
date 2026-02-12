@@ -72,7 +72,7 @@
 
 .answerOption {
   background-color: var(--sds-color-background-default-default, #ffffff);
-  padding: var(--sds-size-space-600, 24px);
+  padding: var(--sds-size-space-400, 16px);
   border-radius: 16px;
   border: 2px solid transparent;
   width: 100%;
