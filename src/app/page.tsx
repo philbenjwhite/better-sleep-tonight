@@ -632,6 +632,50 @@ function HomeContent() {
     currentStep?.stepId,
   ]);
 
+  // Handle booking CTA step - play video and load subtitles
+  useEffect(() => {
+    if (
+      isBookingCtaStep &&
+      currentStep &&
+      showQuestionBlock &&
+      !isShowingResponse
+    ) {
+      const scriptText = currentStep.script || "";
+      const videoPath = currentStep.video;
+
+      setVideoSubtitleCues([]);
+      setAvatarResponse(scriptText);
+      setIsShowingResponse(true);
+
+      if (videoPath) {
+        const vttPath = getVttPathFromVideo(videoPath);
+        fetch(vttPath)
+          .then((res) => (res.ok ? res.text() : Promise.reject("VTT not found")))
+          .then((vttContent) => {
+            const track = parseVtt(vttContent);
+            setVideoSubtitleCues(track.cues);
+          })
+          .catch(() => {
+            setVideoSubtitleCues([]);
+          });
+
+        const isPlayingSameVideo =
+          videoState === VideoState.PLAYING && currentVideoId === videoPath;
+        if (!isPlayingSameVideo) {
+          play(videoPath);
+        }
+      }
+    }
+  }, [
+    isBookingCtaStep,
+    currentStep,
+    showQuestionBlock,
+    isShowingResponse,
+    videoState,
+    currentVideoId,
+    play,
+  ]);
+
   const handleAnswerSelect = useCallback(
     (option: CMSAnswerOption) => {
       setSelectedAnswer(option);
@@ -1076,20 +1120,22 @@ function HomeContent() {
   );
 
   // Show next question after avatar response finishes
-  // (Skip if in video step - that has its own handler)
+  // (Skip if in video step or booking CTA step - those have their own handlers)
   useEffect(() => {
     console.log("[AvatarResponseComplete] Check:", {
       isShowingResponse,
       avatarStartedTalking,
       isVideoPlaying,
       isVideoStep,
+      isBookingCtaStep,
       currentStepTemplate: currentStep?._template,
     });
     if (
       isShowingResponse &&
       avatarStartedTalking &&
       !isVideoPlaying &&
-      !isVideoStep
+      !isVideoStep &&
+      !isBookingCtaStep
     ) {
       console.log(
         "[AvatarResponseComplete] Conditions met - starting timer to advance",
@@ -1133,6 +1179,7 @@ function HomeContent() {
     avatarStartedTalking,
     isVideoPlaying,
     isVideoStep,
+    isBookingCtaStep,
     currentStepIndex,
     questionSteps.length,
     isFlowTerminated,
@@ -1151,9 +1198,11 @@ function HomeContent() {
   return (
     <main
       className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ""} ${
-        isStoreLocationsStep || isBookingCtaStep ? styles.storeLocationsPage : ""
+        isStoreLocationsStep ? styles.storeLocationsPage : ""
       } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
+      } ${
+        isBookingCtaStep ? styles.bookingCtaPage : ""
       }`}
       onClick={handleScreenTap}
     >
@@ -1253,8 +1302,8 @@ function HomeContent() {
             <div className={styles.avatarGradientOverlay} />
           )}
 
-          {/* Video Avatar Wrapper - hide on store locations / booking CTA / product recommendations step */}
-          {!isStoreLocationsStep && !isBookingCtaStep && !isProductRecommendationsStep && (
+          {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
+          {!isStoreLocationsStep && !isProductRecommendationsStep && (
             <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
               <div className={styles.avatarWrapper}>
                 <VideoAvatar
@@ -1275,8 +1324,8 @@ function HomeContent() {
                     />
                   )}
 
-                {/* Avatar Response Bubble - shows after answer selection */}
-                {isShowingResponse && avatarResponse && (
+                {/* Avatar Response Bubble - shows after answer selection (not on booking CTA step) */}
+                {isShowingResponse && avatarResponse && !isBookingCtaStep && (
                   <SpeechBubbleSequence
                     key={`speech-${currentStepIndex}-${
                       currentStep?.stepId || "unknown"
@@ -1304,6 +1353,29 @@ function HomeContent() {
                     onCtaClick={
                       isVideoStep && currentStep?.stepId != null && currentStep.stepId in MANUAL_CTA_LABELS
                         ? handleSeeOptionsClick
+                        : undefined
+                    }
+                  />
+                )}
+
+                {/* Booking CTA Speech Bubble - bottom-aligned over avatar, no tail */}
+                {isBookingCtaStep && showQuestionBlock && avatarResponse && (
+                  <SpeechBubbleSequence
+                    key="booking-cta-speech"
+                    message={avatarResponse}
+                    wordDelay={0.15}
+                    paragraphPauseMs={600}
+                    className={styles.bookingCtaBubbleContainer}
+                    stayVisible
+                    hideTail
+                    subtitleCues={
+                      videoSubtitleCues.length > 0
+                        ? videoSubtitleCues
+                        : undefined
+                    }
+                    videoCurrentTime={
+                      videoSubtitleCues.length > 0
+                        ? currentTime
                         : undefined
                     }
                   />
@@ -1457,9 +1529,9 @@ function HomeContent() {
                 </div>
               )}
 
-              {/* Booking CTA Step */}
+              {/* Booking CTA Step - right column */}
               {showQuestionBlock && isBookingCtaStep && (
-                <div className={styles.storeLocationsInner}>
+                <div className={styles.bookingCtaInner}>
                   <StoreLocations
                     content={
                       {
@@ -1475,6 +1547,7 @@ function HomeContent() {
                     }
                     postalCode=""
                     hideMap
+                    stackCtas
                   />
                 </div>
               )}

@@ -310,6 +310,8 @@
     {
       "stepId": "booking-cta-step",
       "internalName": "Booking CTAs",
+      "video": "/videos/ashley/ashley-5.mp4",
+      "script": "Now, all you need to do is schedule an appointment so you can try that mattress out for yourself in store.\n\nThanks for visiting. Better sleep tonight.",
       "ctaBookTitle": "Book a Rest Test",
       "ctaBookDescription": "Experience the mattress in-store before you buy. Our sleep experts will help you find the perfect fit.",
       "ctaBookButtonText": "Schedule Appointment",

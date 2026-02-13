@@ -46,6 +46,8 @@ export interface StoreLocationsProps {
   onSelectLocation?: (location: StoreLocation) => void;
   /** When true, hides the map and locations list (shows only CTAs) */
   hideMap?: boolean;
+  /** When true, stacks CTA cards vertically instead of side by side */
+  stackCtas?: boolean;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -99,6 +101,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   hideCtas = false,
   onSelectLocation,
   hideMap = false,
+  stackCtas = false,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [panToLocationId, setPanToLocationId] = useState<string | null>(null);
@@ -165,7 +168,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       </h2>
 
       {/* CTA Row - Two columns */}
-      {!hideCtas && <div className={styles.ctaRow}>
+      {!hideCtas && <div className={`${styles.ctaRow} ${stackCtas ? styles.ctaRowStacked : ""}`}>
         {/* Schedule Appointment CTA */}
         <div className={styles.section}>
           {/* Calendar Icon */}

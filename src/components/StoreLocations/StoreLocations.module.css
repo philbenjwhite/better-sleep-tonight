@@ -28,6 +28,11 @@
   gap: var(--sds-size-space-600, 24px);
 }
 
+/* Stacked variant - vertical layout */
+.ctaRowStacked {
+  flex-direction: column;
+}
+
 /* Make CTA sections equal width */
 .ctaRow > .section {
   flex: 1;

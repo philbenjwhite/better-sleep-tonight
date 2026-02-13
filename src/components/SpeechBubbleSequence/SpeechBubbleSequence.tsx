@@ -34,6 +34,8 @@ export interface SpeechBubbleSequenceProps {
   ctaButtonText?: string;
   /** Called when CTA button is clicked */
   onCtaClick?: () => void;
+  /** Hide the chat bubble tail pointer */
+  hideTail?: boolean;
 }
 
 export function SpeechBubbleSequence({
@@ -49,6 +51,7 @@ export function SpeechBubbleSequence({
   videoCurrentTime,
   ctaButtonText,
   onCtaClick,
+  hideTail = false,
 }: SpeechBubbleSequenceProps) {
   // Determine if we're in video-synced mode
   const isVideoSyncMode = subtitleCues && subtitleCues.length > 0 && videoCurrentTime !== undefined;
@@ -306,11 +309,13 @@ export function SpeechBubbleSequence({
           ))}
         </p>
 
-        <img
-          src="/images/chat-bubble-tail.svg"
-          alt=""
-          className={styles.tail}
-        />
+        {!hideTail && (
+          <img
+            src="/images/chat-bubble-tail.svg"
+            alt=""
+            className={styles.tail}
+          />
+        )}
       </div>
 
       {/* CTA Button - shown beneath speech bubble after text animation on last paragraph */}

@@ -918,3 +918,80 @@
     margin: 0 auto;
   }
 }
+
+/* Booking CTA page - shift avatar left so avatar + CTA column are centered together */
+.bookingCtaPage .questionWrapper {
+  --booking-cta-offset: 260px;
+}
+
+.bookingCtaPage .avatarWrapper {
+  transform: translateX(calc(var(--booking-cta-offset) / -2));
+}
+
+/* Booking CTA Speech Bubble - centered over avatar, no tail */
+.bookingCtaBubbleContainer {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 400px;
+  width: calc(100vw - 3rem);
+  z-index: 15;
+  padding: 0;
+}
+
+/* Booking CTA Inner - right column, vertically centered */
+.bookingCtaInner {
+  position: absolute;
+  left: calc(50% + min(225px, calc((100vh - 108px) * 9 / 32)) + 24px - var(--booking-cta-offset, 200px) / 2);
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 440px;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .bookingCtaPage .questionWrapper {
+    --booking-cta-offset: 200px;
+  }
+
+  .bookingCtaInner {
+    max-width: 400px;
+    left: calc(50% + min(200px, calc((100vh - 108px) * 9 / 32)) + 16px - var(--booking-cta-offset, 160px) / 2);
+  }
+}
+
+@media (max-width: 1200px) {
+  .bookingCtaPage .questionWrapper {
+    --booking-cta-offset: 0px;
+  }
+
+  .bookingCtaPage .avatarWrapper {
+    transform: none;
+  }
+
+  .bookingCtaBubbleContainer {
+    position: fixed;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    top: auto;
+    max-width: 400px;
+    width: calc(100vw - 3rem);
+  }
+
+  .bookingCtaInner {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    margin: 0 auto;
+  }
+}

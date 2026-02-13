@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
-import styles from './Header.module.css';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
+import styles from "./Header.module.css";
 
 export interface HeaderProps {
   brandName?: string;
@@ -15,14 +16,31 @@ export interface HeaderProps {
   mobileContent?: React.ReactNode;
 }
 
-export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, showVolumeButton = true, isMuted = true, centerContent, mobileContent }: HeaderProps) {
+export function Header({
+  brandName = "Better Sleep Tonight",
+  onVolumeClick,
+  showVolumeButton = true,
+  isMuted = true,
+  centerContent,
+  mobileContent,
+}: HeaderProps) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.headerRow}>
         {/* Logo - Top Left */}
         <Link href="/" className={styles.logo}>
           <Image
-            src="/images/bst-logo.svg"
+            src="/images/bst-logo.png"
             alt={brandName}
             width={238}
             height={64}
@@ -33,9 +51,7 @@ export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, show
 
         {/* Center Content (e.g., StepIndicator) */}
         {centerContent && (
-          <div className={styles.centerContent}>
-            {centerContent}
-          </div>
+          <div className={styles.centerContent}>{centerContent}</div>
         )}
 
         {/* Volume Icon - Top Right */}
@@ -57,9 +73,7 @@ export function Header({ brandName = 'Better Sleep Tonight', onVolumeClick, show
 
       {/* Mobile-only content below header row */}
       {mobileContent && (
-        <div className={styles.mobileContent}>
-          {mobileContent}
-        </div>
+        <div className={styles.mobileContent}>{mobileContent}</div>
       )}
     </header>
   );
