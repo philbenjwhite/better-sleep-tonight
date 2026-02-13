@@ -46,6 +46,8 @@ export interface ProductRecommendationsContent {
 
 export interface ProductRecommendationsProps {
   content: ProductRecommendationsContent;
+  /** Maximum number of mattress cards to display */
+  maxItems?: number;
   onSelectionComplete?: (selection: {
     mattressId: string;
     mattressName: string;
@@ -191,10 +193,12 @@ function MattressCard({ mattress }: MattressCardProps) {
 
 export function ProductRecommendations({
   content,
+  maxItems,
   onBookRestTest,
 }: ProductRecommendationsProps) {
-  // Show only mattresses with badges (the top 3 recommendations)
-  const displayedMattresses = content.mattressOptions.filter((m) => m.badge);
+  // Show only mattresses with badges (the top recommendations)
+  const badgedMattresses = content.mattressOptions.filter((m) => m.badge);
+  const displayedMattresses = maxItems ? badgedMattresses.slice(0, maxItems) : badgedMattresses;
 
   return (
     <div className={styles.container}>

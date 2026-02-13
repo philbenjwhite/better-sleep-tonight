@@ -9,7 +9,7 @@
   justify-content: center;
   padding: 48px;
   box-sizing: border-box;
-  background-color: #FFFBF8;
+  background-color: #fffbf8;
   transition: width 0.3s ease-out;
 }
 
@@ -92,10 +92,9 @@
 
 .avatar {
   display: block;
-  width: 176px;
   height: auto;
-  aspect-ratio: 562 / 490;
   animation: gentleFloat 4s ease-in-out infinite 1s;
+  max-width: 140px;
 }
 
 @keyframes gentleFloat {
@@ -331,7 +330,7 @@
   justify-content: center;
   gap: 24px;
   z-index: 5;
-  background-color: #FFFBF8;
+  background-color: #fffbf8;
 }
 
 .loadingSpinner {
@@ -943,7 +942,10 @@
 /* Booking CTA Inner - right column, vertically centered */
 .bookingCtaInner {
   position: absolute;
-  left: calc(50% + min(225px, calc((100vh - 108px) * 9 / 32)) + 24px - var(--booking-cta-offset, 200px) / 2);
+  left: calc(
+    50% + min(225px, calc((100vh - 108px) * 9 / 32)) + 24px -
+      var(--booking-cta-offset, 200px) / 2
+  );
   right: 24px;
   top: 50%;
   transform: translateY(-50%);
@@ -959,7 +961,10 @@
 
   .bookingCtaInner {
     max-width: 400px;
-    left: calc(50% + min(200px, calc((100vh - 108px) * 9 / 32)) + 16px - var(--booking-cta-offset, 160px) / 2);
+    left: calc(
+      50% + min(200px, calc((100vh - 108px) * 9 / 32)) + 16px -
+        var(--booking-cta-offset, 160px) / 2
+    );
   }
 }
 

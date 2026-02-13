@@ -44,7 +44,14 @@ import {
 } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
 import { useProgressPersistence } from "@/hooks";
-import { FLOWS, MANUAL_CTA_LABELS, DEFAULT_PRODUCT_RECOMMENDATIONS, getProgressSteps, logFlowData as logFlowDataUtil, type FlowStep } from "@/config";
+import {
+  FLOWS,
+  MANUAL_CTA_LABELS,
+  DEFAULT_PRODUCT_RECOMMENDATIONS,
+  getProgressSteps,
+  logFlowData as logFlowDataUtil,
+  type FlowStep,
+} from "@/config";
 
 import styles from "./page.module.css";
 
@@ -269,13 +276,20 @@ function HomeContent() {
   useEffect(() => {
     const stepId = currentStep?.stepId;
     const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
-    if (!hasManualCta || !isVideoPlaying || videoSubtitleCues.length === 0) return;
+    if (!hasManualCta || !isVideoPlaying || videoSubtitleCues.length === 0)
+      return;
 
     const lastCue = videoSubtitleCues[videoSubtitleCues.length - 1];
     if (currentTime >= lastCue.endTime) {
       pause();
     }
-  }, [currentStep?.stepId, isVideoPlaying, videoSubtitleCues, currentTime, pause]);
+  }, [
+    currentStep?.stepId,
+    isVideoPlaying,
+    videoSubtitleCues,
+    currentTime,
+    pause,
+  ]);
 
   // Debug: Log step and render state
   useEffect(() => {
@@ -566,7 +580,10 @@ function HomeContent() {
       const stepId = currentStep?.stepId;
       const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
       if (hasManualCta) {
-        console.log("[VideoStepComplete] Step has manual CTA, skipping auto-advance:", stepId);
+        console.log(
+          "[VideoStepComplete] Step has manual CTA, skipping auto-advance:",
+          stepId,
+        );
         return;
       }
 
@@ -650,7 +667,9 @@ function HomeContent() {
       if (videoPath) {
         const vttPath = getVttPathFromVideo(videoPath);
         fetch(vttPath)
-          .then((res) => (res.ok ? res.text() : Promise.reject("VTT not found")))
+          .then((res) =>
+            res.ok ? res.text() : Promise.reject("VTT not found"),
+          )
           .then((vttContent) => {
             const track = parseVtt(vttContent);
             setVideoSubtitleCues(track.cues);
@@ -1201,9 +1220,7 @@ function HomeContent() {
         isStoreLocationsStep ? styles.storeLocationsPage : ""
       } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
-      } ${
-        isBookingCtaStep ? styles.bookingCtaPage : ""
-      }`}
+      } ${isBookingCtaStep ? styles.bookingCtaPage : ""}`}
       onClick={handleScreenTap}
     >
       {/* Video Background - only show on intro */}
@@ -1263,8 +1280,8 @@ function HomeContent() {
                 alt={`${
                   activeFlow.globalVariables.avatarName || "Ashley"
                 }, your BetterSleep AI Coach`}
-                width={220}
-                height={220}
+                width={256}
+                height={245}
                 className={styles.avatar}
                 priority
               />
@@ -1298,9 +1315,11 @@ function HomeContent() {
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
           {/* Full-width Gradient Overlay at Bottom - hide on store locations / booking CTA / product recommendations step */}
-          {!isStoreLocationsStep && !isBookingCtaStep && !isProductRecommendationsStep && (
-            <div className={styles.avatarGradientOverlay} />
-          )}
+          {!isStoreLocationsStep &&
+            !isBookingCtaStep &&
+            !isProductRecommendationsStep && (
+              <div className={styles.avatarGradientOverlay} />
+            )}
 
           {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
           {!isStoreLocationsStep && !isProductRecommendationsStep && (
@@ -1334,7 +1353,12 @@ function HomeContent() {
                     wordDelay={0.15}
                     paragraphPauseMs={600}
                     className={styles.speechBubbleContainer}
-                    stayVisible={isVideoPlaying || (isVideoStep && currentStep?.stepId != null && currentStep.stepId in MANUAL_CTA_LABELS)}
+                    stayVisible={
+                      isVideoPlaying ||
+                      (isVideoStep &&
+                        currentStep?.stepId != null &&
+                        currentStep.stepId in MANUAL_CTA_LABELS)
+                    }
                     subtitleCues={
                       isVideoStep && videoSubtitleCues.length > 0
                         ? videoSubtitleCues
@@ -1351,7 +1375,9 @@ function HomeContent() {
                         : undefined
                     }
                     onCtaClick={
-                      isVideoStep && currentStep?.stepId != null && currentStep.stepId in MANUAL_CTA_LABELS
+                      isVideoStep &&
+                      currentStep?.stepId != null &&
+                      currentStep.stepId in MANUAL_CTA_LABELS
                         ? handleSeeOptionsClick
                         : undefined
                     }
@@ -1374,9 +1400,7 @@ function HomeContent() {
                         : undefined
                     }
                     videoCurrentTime={
-                      videoSubtitleCues.length > 0
-                        ? currentTime
-                        : undefined
+                      videoSubtitleCues.length > 0 ? currentTime : undefined
                     }
                   />
                 )}
@@ -1442,6 +1466,13 @@ function HomeContent() {
                     content={
                       currentStep?.productRecommendationsContent ||
                       DEFAULT_PRODUCT_RECOMMENDATIONS
+                    }
+                    maxItems={
+                      storedAnswers.find(
+                        (a) => a.stepId === "q6-sleep-alone-or-partner",
+                      )?.value === "alone"
+                        ? 2
+                        : undefined
                     }
                     onBookRestTest={handleBookRestTest}
                   />
