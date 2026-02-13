@@ -86,7 +86,7 @@ export const StoreMap: React.FC<StoreMapProps> = ({
         // Don't set inline width/height - let CSS handle it to avoid offset accumulation issues
         el.innerHTML = `
           <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#363534"/>
+            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#f68b29"/>
           </svg>
         `;
 
@@ -184,7 +184,7 @@ export const StoreMap: React.FC<StoreMapProps> = ({
       } else {
         el.innerHTML = `
           <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#363534"/>
+            <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 15 10 15s10-7.5 10-15c0-5.52-4.48-10-10-10zm0 13.75c-2.07 0-3.75-1.68-3.75-3.75S7.93 6.25 10 6.25s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z" fill="#f68b29"/>
           </svg>
         `;
       }

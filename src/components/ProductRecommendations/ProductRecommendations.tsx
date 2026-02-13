@@ -1,8 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
-import gsap from "gsap";
 import { Button } from "@/components/Button";
 import styles from "./ProductRecommendations.module.css";
 
@@ -166,8 +164,13 @@ function MattressCard({ mattress }: MattressCardProps) {
           </div>
         </div>
 
-        {/* Buy Now Button */}
+        {/* Price & Buy Now Button */}
         <div className={styles.cardAction}>
+          {mattress.basePrice > 0 && (
+            <p className={styles.productPrice}>
+              Starting at ${mattress.basePrice.toLocaleString()}
+            </p>
+          )}
           <Button
             variant="primary"
             size="medium"
@@ -190,32 +193,8 @@ export function ProductRecommendations({
   content,
   onBookRestTest,
 }: ProductRecommendationsProps) {
-  const listRef = useRef<HTMLDivElement>(null);
-  const hasAnimatedCards = useRef(false);
-
   // Show only mattresses with badges (the top 3 recommendations)
   const displayedMattresses = content.mattressOptions.filter((m) => m.badge);
-
-  // Animate cards on mount with staggered fade-in
-  useLayoutEffect(() => {
-    if (listRef.current && !hasAnimatedCards.current && displayedMattresses.length > 0) {
-      hasAnimatedCards.current = true;
-
-      const cards = listRef.current.querySelectorAll(`.${styles.card}`);
-      if (cards.length === 0) return;
-
-      gsap.set(cards, { opacity: 0, y: 40 });
-      gsap.to(cards, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: "power3.out",
-        delay: 0.2,
-        clearProps: "transform",
-      });
-    }
-  }, [displayedMattresses.length]);
 
   return (
     <div className={styles.container}>
@@ -223,7 +202,7 @@ export function ProductRecommendations({
         <h2 className={styles.headline}>{content.headline}</h2>
       )}
       <div className={styles.listWrapper}>
-        <div className={styles.list} ref={listRef}>
+        <div className={styles.list}>
           {displayedMattresses.map((mattress) => (
             <MattressCard
               key={mattress.id}
@@ -237,19 +216,16 @@ export function ProductRecommendations({
       {onBookRestTest && (
         <div className={styles.restTestCta}>
           <div className={styles.restTestCtaContent}>
-            <p className={styles.restTestCtaTitle}>Try before you buy</p>
-            <p className={styles.restTestCtaSubtitle}>Not sure which one to choose?</p>
+            <p className={styles.restTestCtaTitle}>Not sure which one to choose?</p>
+            <p className={styles.restTestCtaSubtitle}>Try before you buy</p>
           </div>
-          <button
-            type="button"
-            className={styles.restTestCtaButton}
+          <Button
+            variant="secondary"
+            size="medium"
             onClick={onBookRestTest}
           >
             Book A Rest Test
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3.333 8h9.334M8.667 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          </Button>
         </div>
       )}
     </div>

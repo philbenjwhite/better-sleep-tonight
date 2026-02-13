@@ -88,7 +88,7 @@
 /* Location Row — 4-column table layout */
 .locationRow {
   display: grid;
-  grid-template-columns: 1.4fr 0.6fr 1.2fr auto;
+  grid-template-columns: 1fr 0.6fr 1.2fr auto;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
@@ -302,6 +302,13 @@ button.actionLink {
   transform: translateY(0);
 }
 
+/* Remove side padding on narrower screens to match parent container */
+@media (max-width: 1100px) {
+  .section {
+    padding: var(--sds-size-space-600, 24px) 0;
+  }
+}
+
 /* Tablet — collapse to 2-row layout per card */
 @media (max-width: 900px) {
   .ctaRow {
@@ -357,7 +364,7 @@ button.actionLink {
   }
 
   .section {
-    padding: var(--sds-size-space-400, 16px);
+    padding: var(--sds-size-space-400, 16px) 0;
   }
 
   .mapContainer {

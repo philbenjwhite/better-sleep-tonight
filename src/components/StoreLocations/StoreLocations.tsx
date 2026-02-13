@@ -322,7 +322,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                   <div className={styles.colActions}>
                     {onSelectLocation && (
                       <Button
-                        variant={isSelected ? 'primary' : 'tertiary'}
+                        variant="primary"
                         size="small"
                         className={styles.selectButton}
                         onClick={() => onSelectLocation(location)}

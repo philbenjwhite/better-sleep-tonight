@@ -1248,13 +1248,13 @@ function HomeContent() {
       {/* Question View */}
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
-          {/* Full-width Gradient Overlay at Bottom - hide on store locations / booking CTA step */}
-          {!isStoreLocationsStep && !isBookingCtaStep && (
+          {/* Full-width Gradient Overlay at Bottom - hide on store locations / booking CTA / product recommendations step */}
+          {!isStoreLocationsStep && !isBookingCtaStep && !isProductRecommendationsStep && (
             <div className={styles.avatarGradientOverlay} />
           )}
 
-          {/* Video Avatar Wrapper - hide on store locations / booking CTA step */}
-          {!isStoreLocationsStep && !isBookingCtaStep && (
+          {/* Video Avatar Wrapper - hide on store locations / booking CTA / product recommendations step */}
+          {!isStoreLocationsStep && !isBookingCtaStep && !isProductRecommendationsStep && (
             <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
               <div className={styles.avatarWrapper}>
                 <VideoAvatar
