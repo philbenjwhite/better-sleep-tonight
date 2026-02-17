@@ -48,6 +48,8 @@ export interface StoreLocationsProps {
   hideMap?: boolean;
   /** When true, stacks CTA cards vertically instead of side by side */
   stackCtas?: boolean;
+  /** When provided, gates the Schedule Appointment button behind email capture */
+  onEmailSubmit?: (email: string) => Promise<void>;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -102,9 +104,16 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   onSelectLocation,
   hideMap = false,
   stackCtas = false,
+  onEmailSubmit,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [panToLocationId, setPanToLocationId] = useState<string | null>(null);
+
+  // Email gate state
+  const [gateEmail, setGateEmail] = useState('');
+  const [gateEmailValid, setGateEmailValid] = useState(true);
+  const [gateSubmitting, setGateSubmitting] = useState(false);
+  const [gateSubmitted, setGateSubmitted] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const locationCardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const hasInitializedRef = useRef(false);
@@ -141,6 +150,26 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, []);
+
+  const validateEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleGateEmailSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateEmail(gateEmail)) {
+      setGateEmailValid(false);
+      return;
+    }
+    setGateEmailValid(true);
+    setGateSubmitting(true);
+    try {
+      await onEmailSubmit?.(gateEmail);
+      setGateSubmitted(true);
+    } finally {
+      setGateSubmitting(false);
+    }
+  }, [gateEmail, onEmailSubmit]);
 
   const handleBookRestTest = () => {
     console.log('[StoreLocations] Schedule Appointment clicked', {
@@ -190,15 +219,47 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <p className={styles.ctaTitle}>{content.ctaBookTitle}</p>
               <p className={styles.ctaDescription}>{content.ctaBookDescription}</p>
             </div>
-            <a
-              href="https://ashleyhomestore.ca/pages/book-appointment"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.ctaButton}
-              onClick={handleBookRestTest}
-            >
-              {content.ctaBookButtonText}
-            </a>
+
+            {/* Email gate: require email before showing appointment button */}
+            {onEmailSubmit && !gateSubmitted ? (
+              <form onSubmit={handleGateEmailSubmit} className={styles.emailGateForm}>
+                <div className={styles.emailGateInputWrapper}>
+                  <input
+                    type="email"
+                    value={gateEmail}
+                    onChange={(e) => {
+                      setGateEmail(e.target.value);
+                      if (!gateEmailValid) setGateEmailValid(true);
+                    }}
+                    placeholder="Enter your email"
+                    className={`${styles.emailGateInput} ${!gateEmailValid ? styles.emailGateInputInvalid : ''}`}
+                    disabled={gateSubmitting}
+                    aria-label="Email address"
+                    aria-invalid={!gateEmailValid}
+                  />
+                  {!gateEmailValid && (
+                    <span className={styles.emailGateError}>Please enter a valid email</span>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className={styles.ctaButton}
+                  disabled={gateSubmitting || !gateEmail.trim()}
+                >
+                  {gateSubmitting ? 'Submitting...' : content.ctaBookButtonText}
+                </button>
+              </form>
+            ) : (
+              <a
+                href="https://ashleyhomestore.ca/pages/book-appointment"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.ctaButton}
+                onClick={handleBookRestTest}
+              >
+                {content.ctaBookButtonText}
+              </a>
+            )}
           </div>
         </div>
 

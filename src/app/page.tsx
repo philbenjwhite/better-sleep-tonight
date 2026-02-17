@@ -1140,6 +1140,32 @@ function HomeContent() {
     ],
   );
 
+  // Handle email submission on the booking CTA step (gates the Schedule Appointment button)
+  const handleBookingEmailSubmit = useCallback(
+    async (email: string) => {
+      const newAnswer: StoredAnswer = {
+        stepId: "booking-cta-step",
+        questionText: "Booking Email",
+        value: email,
+        label: email,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+      logFlowData(updatedAnswers, `Booking Email: ${email}`);
+
+      // Mock API call — will be replaced with real endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Redirect to appointment page
+      window.open(
+        "https://ashleyhomestore.ca/pages/book-appointment",
+        "_blank",
+      );
+    },
+    [storedAnswers, logFlowData],
+  );
+
   // Show next question after avatar response finishes
   // (Skip if in video step or booking CTA step - those have their own handlers)
   useEffect(() => {
@@ -1581,6 +1607,7 @@ function HomeContent() {
                     postalCode=""
                     hideMap
                     stackCtas
+                    onEmailSubmit={handleBookingEmailSubmit}
                   />
                 </div>
               )}
