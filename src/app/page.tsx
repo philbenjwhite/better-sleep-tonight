@@ -49,6 +49,8 @@ import {
   MANUAL_CTA_LABELS,
   DEFAULT_PRODUCT_RECOMMENDATIONS,
   getProgressSteps,
+  getFlowHeadline,
+  getFlowSubheadline,
   logFlowData as logFlowDataUtil,
   type FlowStep,
 } from "@/config";
@@ -1289,8 +1291,8 @@ function HomeContent() {
 
             {/* Text Content */}
             <div className={styles.textContent}>
-              <h1 className={styles.titlePage}>{introScreen.headline}</h1>
-              <p className={styles.subheadline}>{introScreen.subheadline}</p>
+              <h1 className={styles.titlePage}>{getFlowHeadline(flowParam)}</h1>
+              <p className={styles.subheadline}>{getFlowSubheadline(flowParam, introScreen.subheadline)}</p>
               {introScreen.secondarySubheadline && (
                 <p className={styles.subheadline}>
                   {introScreen.secondarySubheadline}

@@ -1,7 +1,7 @@
 {
-  "flowId": "back-pain",
-  "displayName": "Back Pain Relief Journey",
-  "description": "A targeted flow for users experiencing back pain, focusing on mattress support and spinal alignment.",
+  "flowId": "primary",
+  "displayName": "Better Sleep Tonight",
+  "description": "The primary sleep diagnosis flow. Heading text is swapped via URL parameter.",
   "isActive": true,
   "introScreen": {
     "avatarImage": "/images/avatar-2x.png",
