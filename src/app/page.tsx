@@ -366,7 +366,7 @@ function HomeContent() {
 
   // Get intro video from intro screen config (used as background on intro screen)
   const introVideo =
-    introScreen?.backgroundVideo || "/videos/Mattress_Shopping.mp4";
+    introScreen?.backgroundVideo || "/uploads/Mattress_Shopping.mp4";
 
   // Get intro message from the first video step's script (shown in speech bubble during intro)
   const firstVideoStep = questionSteps.find(
