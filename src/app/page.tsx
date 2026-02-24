@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/Button";
@@ -118,6 +118,40 @@ function HomeContent() {
   );
   const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
+
+  // Stable session ID for Epsilon event tracking (persists across re-renders, new per page load)
+  const sessionId = useMemo(
+    () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // Fire-and-forget event tracker — pushes each step to Epsilon
+  const trackEvent = useCallback(
+    (answer: {
+      stepId: string;
+      questionText: string;
+      value: string;
+      label: string;
+    }) => {
+      fetch("/api/epsilon/event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          flowId: flowParam,
+          stepId: answer.stepId,
+          stepIndex: currentStepIndex,
+          questionText: answer.questionText,
+          value: answer.value,
+          label: answer.label,
+          postalCode: userZipCode || undefined,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch((err) => console.error("[Epsilon] Event track failed:", err));
+    },
+    [sessionId, flowParam, currentStepIndex, userZipCode],
+  );
 
   // Video avatar hook
   const {
@@ -711,6 +745,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       // Log flow data after each answer
       logFlowData(updatedAnswers, `Answer: ${option.label}`);
@@ -777,6 +812,7 @@ function HomeContent() {
       clearProgress,
       questionSteps.length,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -801,6 +837,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       // Log flow data after mattress selection
       logFlowData(
@@ -840,6 +877,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -854,6 +892,7 @@ function HomeContent() {
     };
     const updatedAnswers = [...storedAnswers, newAnswer];
     setStoredAnswers(updatedAnswers);
+    trackEvent(newAnswer);
 
     logFlowData(updatedAnswers, "Book a Rest Test");
 
@@ -881,6 +920,7 @@ function HomeContent() {
     flowParam,
     questionSteps.length,
     logFlowData,
+    trackEvent,
   ]);
 
   const handleTextSubmit = useCallback(
@@ -895,6 +935,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       // Log flow data after text submission
       logFlowData(updatedAnswers, `Text: ${value}`);
@@ -927,6 +968,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -943,6 +985,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       // Log flow data after email submission
       logFlowData(updatedAnswers, `Email: ${email}`);
@@ -973,6 +1016,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -990,6 +1034,7 @@ function HomeContent() {
     };
     const updatedAnswers = [...storedAnswers, newAnswer];
     setStoredAnswers(updatedAnswers);
+    trackEvent(newAnswer);
 
     // Save progress
     saveProgress({
@@ -1015,6 +1060,7 @@ function HomeContent() {
     saveProgress,
     flowParam,
     questionSteps.length,
+    trackEvent,
   ]);
 
   // Handle see options button click (CTA at end of summary video)
@@ -1066,6 +1112,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       // Log flow data after zip code submission
       logFlowData(updatedAnswers, `Postal Code: ${zipCode}`);
@@ -1095,6 +1142,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -1110,6 +1158,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
 
       logFlowData(updatedAnswers, `Store: ${location.storeName}`);
 
@@ -1137,6 +1186,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
+      trackEvent,
     ],
   );
 
@@ -1152,10 +1202,31 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
+      trackEvent(newAnswer);
       logFlowData(updatedAnswers, `Booking Email: ${email}`);
 
-      // Mock API call — will be replaced with real endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Push full contact record to Epsilon CRM via API route
+      try {
+        await fetch("/api/epsilon/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            email,
+            postalCode: userZipCode || undefined,
+            flowId: flowParam,
+            answers: updatedAnswers.map((a) => ({
+              stepId: a.stepId,
+              questionText: a.questionText,
+              value: a.value,
+              label: a.label,
+            })),
+          }),
+        });
+      } catch (err) {
+        // Log but don't block the redirect
+        console.error("[Epsilon] Submit failed:", err);
+      }
 
       // Redirect to appointment page
       window.open(
@@ -1163,7 +1234,7 @@ function HomeContent() {
         "_blank",
       );
     },
-    [storedAnswers, logFlowData],
+    [storedAnswers, logFlowData, trackEvent, sessionId, userZipCode, flowParam],
   );
 
   // Show next question after avatar response finishes
