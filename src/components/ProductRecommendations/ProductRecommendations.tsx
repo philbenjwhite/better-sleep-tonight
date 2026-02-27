@@ -44,10 +44,14 @@ export interface ProductRecommendationsContent {
   avatarResponse?: string;
 }
 
+export type PurchaseIntent = "ready-to-buy" | "not-ready-to-buy";
+
 export interface ProductRecommendationsProps {
   content: ProductRecommendationsContent;
   /** Maximum number of mattress cards to display */
   maxItems?: number;
+  /** Purchase intent from the preceding question step */
+  purchaseIntent?: PurchaseIntent;
   onSelectionComplete?: (selection: {
     mattressId: string;
     mattressName: string;
@@ -68,9 +72,12 @@ export interface ProductRecommendationsProps {
 // Individual Mattress Card Component
 interface MattressCardProps {
   mattress: MattressOption;
+  purchaseIntent?: PurchaseIntent;
 }
 
-function MattressCard({ mattress }: MattressCardProps) {
+function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
+  const isReadyToBuy = purchaseIntent === "ready-to-buy";
+  const isNotReadyToBuy = purchaseIntent === "not-ready-to-buy";
   return (
     <div className={styles.card}>
       <div className={styles.cardMain}>
@@ -168,13 +175,18 @@ function MattressCard({ mattress }: MattressCardProps) {
 
         {/* Price & Buy Now Button */}
         <div className={styles.cardAction}>
+          {isReadyToBuy && (
+            <p className={styles.promoText}>
+              $300 promo code will be automatically applied at checkout
+            </p>
+          )}
           {mattress.basePrice > 0 && (
             <p className={styles.productPrice}>
               Starting at ${mattress.basePrice.toLocaleString()}
             </p>
           )}
           <Button
-            variant="primary"
+            variant={isNotReadyToBuy ? "secondary" : "primary"}
             size="medium"
             className={styles.buyButton}
             onClick={
@@ -183,7 +195,7 @@ function MattressCard({ mattress }: MattressCardProps) {
                 : undefined
             }
           >
-            Buy Now
+            {isNotReadyToBuy ? "Learn More" : "Buy Now"}
           </Button>
         </div>
       </div>
@@ -194,6 +206,7 @@ function MattressCard({ mattress }: MattressCardProps) {
 export function ProductRecommendations({
   content,
   maxItems,
+  purchaseIntent,
   onBookRestTest,
 }: ProductRecommendationsProps) {
   // Show only mattresses with badges (the top recommendations)
@@ -211,6 +224,7 @@ export function ProductRecommendations({
             <MattressCard
               key={mattress.id}
               mattress={mattress}
+              purchaseIntent={purchaseIntent}
             />
           ))}
         </div>
@@ -224,7 +238,7 @@ export function ProductRecommendations({
             <p className={styles.restTestCtaSubtitle}>Try before you buy</p>
           </div>
           <Button
-            variant="secondary"
+            variant={purchaseIntent === "not-ready-to-buy" ? "primary" : "secondary"}
             size="medium"
             onClick={onBookRestTest}
           >

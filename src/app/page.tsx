@@ -1573,6 +1573,14 @@ function HomeContent() {
                         ? 2
                         : undefined
                     }
+                    purchaseIntent={
+                      storedAnswers.find(
+                        (a) => a.stepId === "q7-purchase-intent",
+                      )?.value as
+                        | "ready-to-buy"
+                        | "not-ready-to-buy"
+                        | undefined
+                    }
                     onBookRestTest={handleBookRestTest}
                   />
                 </div>

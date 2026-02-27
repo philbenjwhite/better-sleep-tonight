@@ -265,6 +265,32 @@
       "_template": "questionStep"
     },
     {
+      "stepId": "q7-purchase-intent",
+      "internalName": "Purchase Intent",
+      "questionText": "Question will go here?",
+      "inputType": "radio",
+      "isRequired": true,
+      "answerOptions": [
+        {
+          "optionId": "q7-opt1",
+          "label": "Ready to buy",
+          "value": "ready-to-buy",
+          "order": 1,
+          "avatarResponse": "",
+          "tags": ["ready-to-buy"]
+        },
+        {
+          "optionId": "q7-opt2",
+          "label": "Not ready to buy",
+          "value": "not-ready-to-buy",
+          "order": 2,
+          "avatarResponse": "",
+          "tags": ["not-ready-to-buy"]
+        }
+      ],
+      "_template": "questionStep"
+    },
+    {
       "stepId": "video-step-1",
       "internalName": "Summary Video",
       "video": "/videos/ashley/ashley-2.mp4",
