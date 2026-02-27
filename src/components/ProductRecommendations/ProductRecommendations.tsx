@@ -213,13 +213,15 @@ export function ProductRecommendations({
   const badgedMattresses = content.mattressOptions.filter((m) => m.badge);
   const displayedMattresses = maxItems ? badgedMattresses.slice(0, maxItems) : badgedMattresses;
 
+  const isTwoUp = displayedMattresses.length === 2;
+
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isTwoUp ? styles.containerTwoUp : ""}`}>
       {content.headline && (
         <h2 className={styles.headline}>{content.headline}</h2>
       )}
       <div className={styles.listWrapper}>
-        <div className={styles.list}>
+        <div className={`${styles.list} ${isTwoUp ? styles.listTwoUp : ""}`}>
           {displayedMattresses.map((mattress) => (
             <MattressCard
               key={mattress.id}

@@ -17,6 +17,17 @@
   gap: var(--sds-size-space-400, 16px);
 }
 
+/* Two-card layout: center the grid and constrain width */
+.containerTwoUp {
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.listTwoUp {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 /* Headline above recommendations */
 .headline {
   font-family: 'Open Sans', sans-serif;
