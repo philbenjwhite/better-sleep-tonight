@@ -3,7 +3,7 @@ import { ProductRecommendationsContent } from "@/components/ProductRecommendatio
 // Video steps that pause at end and show a manual CTA button instead of auto-advancing
 export const MANUAL_CTA_LABELS: Record<string, string> = {
   "intro-video": "Let\u2019s Go",
-  "video-step-1": "See My Options",
+  "video-step-1": "Final Question",
 };
 
 // Step templates that belong to the "Results" phase

@@ -175,14 +175,14 @@ function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
 
         {/* Price & Buy Now Button */}
         <div className={styles.cardAction}>
-          {isReadyToBuy && (
-            <p className={styles.promoText}>
-              $300 promo code will be automatically applied at checkout
-            </p>
-          )}
           {mattress.basePrice > 0 && (
             <p className={styles.productPrice}>
               Starting at ${mattress.basePrice.toLocaleString()}
+            </p>
+          )}
+          {isReadyToBuy && (
+            <p className={styles.promoText}>
+              You are eligible for a $300 discount! Code automatically applied at checkout.
             </p>
           )}
           <Button

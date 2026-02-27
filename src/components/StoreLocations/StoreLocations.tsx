@@ -223,7 +223,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             {/* Email gate: require email before showing appointment button */}
             {onEmailSubmit && !gateSubmitted ? (
               <form onSubmit={handleGateEmailSubmit} className={styles.emailGateForm}>
-                <p className={styles.voucherText}>We&apos;ll include a $300 in-store voucher</p>
                 <div className={styles.emailGateInputWrapper}>
                   <input
                     type="email"

@@ -265,37 +265,37 @@
       "_template": "questionStep"
     },
     {
-      "stepId": "q7-purchase-intent",
-      "internalName": "Purchase Intent",
-      "questionText": "Question will go here?",
-      "inputType": "radio",
-      "isRequired": true,
-      "answerOptions": [
-        {
-          "optionId": "q7-opt1",
-          "label": "Ready to buy",
-          "value": "ready-to-buy",
-          "order": 1,
-          "avatarResponse": "",
-          "tags": ["ready-to-buy"]
-        },
-        {
-          "optionId": "q7-opt2",
-          "label": "Not ready to buy",
-          "value": "not-ready-to-buy",
-          "order": 2,
-          "avatarResponse": "",
-          "tags": ["not-ready-to-buy"]
-        }
-      ],
-      "_template": "questionStep"
-    },
-    {
       "stepId": "video-step-1",
       "internalName": "Summary Video",
       "video": "/videos/ashley/ashley-2.mp4",
       "script": "From what you've told me, sounds like these factors are your biggest sleep disruptors. You'd be surprised how common these issues are, especially waking up sore, tossing and turning, or never quite feeling rested.\n\nResearch finds that 70% of us struggle to fall asleep. Nearly everyone who struggles to fall asleep wakes up at least once during the night. That means we can often wake up feeling tired, groggy, and grumpy.\n\nIf you leave your email, I can prepare a personalized sleep report for you. It will be in your inbox in less than five minutes.",
       "_template": "videoStep"
+    },
+    {
+      "stepId": "q7-purchase-intent",
+      "internalName": "Purchase Intent",
+      "questionText": "Are you ready to buy a mattress and sleep better tonight?",
+      "inputType": "radio",
+      "isRequired": true,
+      "answerOptions": [
+        {
+          "optionId": "q7-opt1",
+          "label": "Yes, I'm ready to buy",
+          "value": "ready-to-buy",
+          "order": 1,
+          "avatarResponse": "Great — let's find the right one for you. I'll make sure you get a special offer too.",
+          "tags": ["ready-to-buy"]
+        },
+        {
+          "optionId": "q7-opt2",
+          "label": "No, I'd like to try out a few options",
+          "value": "not-ready-to-buy",
+          "order": 2,
+          "avatarResponse": "No rush at all — let me show you what I'd recommend so you know what to look for.",
+          "tags": ["not-ready-to-buy"]
+        }
+      ],
+      "_template": "questionStep"
     },
     {
       "stepId": "product-recommendations-step",
