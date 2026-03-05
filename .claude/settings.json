@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew list ffmpeg)",
+      "Bash(/opt/homebrew/bin/ffmpeg -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -c:v libx264 -crf 23 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mp4)",
+      "Bash(git status -u)"
+    ]
+  }
+}
