@@ -31,7 +31,7 @@ When a user starts the flow, a unique **session ID** (UUID) is generated. This I
 
 | Step | Step ID | Data Captured | Example Values |
 |------|---------|---------------|----------------|
-| 1. Intro Video | `intro-video` | Video viewed | (video step, no direct answer) |
+| 1. Intro Video | `intro-video` | Video watched | "Y" |
 | 2. Trouble Falling Asleep | `q1-trouble-falling-asleep` | Frequency selection | "Every Night", "Frequently", "On Occasion", "Never" |
 | 3. Sleep Position | `q2-sleep-position` | Position selection | "Side", "Back", "Stomach", "Varies" |
 | 4. Motion Disturbance | `q3-motion-disturbance` | Disturbance frequency | "Never", "Occasionally", "Regularly", "I'm Not Sure" |
@@ -39,9 +39,9 @@ When a user starts the flow, a unique **session ID** (UUID) is generated. This I
 | 6. Aches & Pains Type | `q5-aches-pains-type` | Pain description | "Chronic condition", "Stiffness", "Hip or Shoulder", "None" |
 | 7. Sleep Alone or Partner | `q6-sleep-alone-or-partner` | Sleep arrangement | "Just me", "Me and my partner" |
 | 8. Purchase Intent | `q7-purchase-intent` | Buy readiness | "Ready to buy", "Not ready to buy" |
-| 9. Summary Video | `video-step-1` | Video viewed | (video step) |
+| 9. Summary Video | `video-step-1` | Video watched | "Y" |
 | 10. Product Recommendations | `product-recommendations-step` | Mattress selection | Size + Feel + Price (e.g., "Queen-Medium, $1,299") |
-| 11. Post-Selection Video | `video-step-3` | Video viewed | (video step) |
+| 11. Post-Selection Video | `video-step-3` | Video watched | "Y" |
 | 12. Postal Code | `zipcode-capture-step` | User's postal code | "L7M 1A1" |
 | 13. Store Locations | `store-locations-step` | Selected store | Store name + city (e.g., "Burlington - Ashley HomeStore") |
 | 14. Booking Email | `booking-cta-step` | Email address | "user@example.com" |

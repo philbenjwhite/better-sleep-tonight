@@ -188,7 +188,7 @@ export const DevPanel: React.FC<DevPanelProps> = ({
             ) : (
               <div className={styles.answersList}>
                 {answers.map((answer, index) => (
-                  <div key={answer.stepId} className={styles.answerItem}>
+                  <div key={`${answer.stepId}-${index}`} className={styles.answerItem}>
                     <div className={styles.answerNumber}>{index + 1}</div>
                     <div className={styles.answerContent}>
                       <p className={styles.answerQuestion}>{answer.questionText}</p>

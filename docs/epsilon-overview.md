@@ -28,6 +28,7 @@ Every time a user interacts with the Better Sleep Tonight quiz, their responses 
 
 | Step | What's Recorded |
 |------|-----------------|
+| Intro video | "Y" (watched) |
 | Trouble falling asleep | Every Night / Frequently / On Occasion / Never |
 | Sleep position | Side / Back / Stomach / Varies |
 | Motion disturbance | Never / Occasionally / Regularly / Not Sure |
@@ -35,7 +36,9 @@ Every time a user interacts with the Better Sleep Tonight quiz, their responses 
 | Aches & pains type | Chronic condition / Stiffness / Hip-Shoulder / None |
 | Solo or partner | Just me / With partner |
 | Purchase intent | Ready to buy / Not ready to buy |
+| Summary video | "Y" (watched) |
 | Mattress selected | Product name, size, price |
+| Post-selection video | "Y" (watched) |
 | Postal code | User-entered |
 | Nearest store | Store name + city |
 | Email | User-entered at booking step |

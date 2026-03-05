@@ -384,7 +384,7 @@ function HomeContent() {
         }
       }
       // Preload idle loop video for booking CTA step
-      preload("/videos/ashley/ashley-idle.mp4");
+      preload("/videos/ashley/ashley-idle-crf28.mp4");
     }
   }, [currentView, flowSteps, preload]);
 
@@ -754,7 +754,7 @@ function HomeContent() {
       videoState === VideoState.ENDED &&
       currentVideoId === currentStep?.video
     ) {
-      play("/videos/ashley/ashley-idle.mp4", { loop: true });
+      play("/videos/ashley/ashley-idle-crf28.mp4", { loop: true });
     }
   }, [isBookingCtaStep, videoState, currentVideoId, currentStep?.video, play]);
 
@@ -1539,12 +1539,16 @@ function HomeContent() {
                     stayVisible
                     hideTail
                     subtitleCues={
-                      videoSubtitleCues.length > 0
+                      videoSubtitleCues.length > 0 &&
+                      currentVideoId === currentStep?.video
                         ? videoSubtitleCues
                         : undefined
                     }
                     videoCurrentTime={
-                      videoSubtitleCues.length > 0 ? currentTime : undefined
+                      videoSubtitleCues.length > 0 &&
+                      currentVideoId === currentStep?.video
+                        ? currentTime
+                        : undefined
                     }
                   />
                 )}
