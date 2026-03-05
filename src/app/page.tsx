@@ -113,6 +113,7 @@ function HomeContent() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
   const [userZipCode, setUserZipCode] = useState<string | null>(null);
+  const [selectedStore, setSelectedStore] = useState<StoreLocation | null>(null);
   const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(
     null,
   );
@@ -382,6 +383,8 @@ function HomeContent() {
           preload(step.video);
         }
       }
+      // Preload idle loop video for booking CTA step
+      preload("/videos/ashley/ashley-idle.mp4");
     }
   }, [currentView, flowSteps, preload]);
 
@@ -624,6 +627,17 @@ function HomeContent() {
       }
 
       console.log("[VideoStepComplete] All conditions met, starting timer");
+
+      // Track video watched event to Epsilon
+      if (currentStep?.stepId) {
+        trackEvent({
+          stepId: currentStep.stepId,
+          questionText: currentStep.internalName || "Video",
+          value: "Y",
+          label: "Y",
+        });
+      }
+
       // Video finished - brief moment before advancing
       const timer = setTimeout(() => {
         console.log("[VideoStepComplete] Timer fired, advancing to next step");
@@ -683,6 +697,8 @@ function HomeContent() {
     questionSteps.length,
     videoState, // For logging only
     currentStep?.stepId,
+    currentStep?.internalName,
+    trackEvent,
   ]);
 
   // Handle booking CTA step - play video and load subtitles
@@ -730,6 +746,17 @@ function HomeContent() {
     currentVideoId,
     play,
   ]);
+
+  // When booking CTA video ends, switch to looping idle video
+  useEffect(() => {
+    if (
+      isBookingCtaStep &&
+      videoState === VideoState.ENDED &&
+      currentVideoId === currentStep?.video
+    ) {
+      play("/videos/ashley/ashley-idle.mp4", { loop: true });
+    }
+  }, [isBookingCtaStep, videoState, currentVideoId, currentStep?.video, play]);
 
   const handleAnswerSelect = useCallback(
     (option: CMSAnswerOption) => {
@@ -1067,6 +1094,16 @@ function HomeContent() {
   const handleSeeOptionsClick = useCallback(() => {
     console.log("See options clicked — advancing to product recommendations");
 
+    // Track video watched event to Epsilon
+    if (currentStep?.stepId) {
+      trackEvent({
+        stepId: currentStep.stepId,
+        questionText: currentStep.internalName || "Video",
+        value: "Y",
+        label: "Y",
+      });
+    }
+
     // Clear video/speech state so we transition cleanly
     setIsShowingResponse(false);
     setAvatarResponse(null);
@@ -1080,7 +1117,7 @@ function HomeContent() {
         setShowQuestionBlock(true);
       }, 100);
     }
-  }, [currentStepIndex, questionSteps.length]);
+  }, [currentStepIndex, questionSteps.length, currentStep, trackEvent]);
 
   // Handle zipcode submission
   const handleZipCodeSubmit = useCallback(
@@ -1149,6 +1186,7 @@ function HomeContent() {
   // Handle selecting a store location — advances to the next step
   const handleSelectLocation = useCallback(
     (location: StoreLocation) => {
+      setSelectedStore(location);
       const newAnswer: StoredAnswer = {
         stepId: currentStep?.stepId || `step-${currentStepIndex}`,
         questionText: "Store Location",
@@ -1215,6 +1253,13 @@ function HomeContent() {
             email,
             postalCode: userZipCode || undefined,
             flowId: flowParam,
+            selectedStore: selectedStore
+              ? {
+                  id: selectedStore.id,
+                  storeName: selectedStore.storeName,
+                  city: selectedStore.city,
+                }
+              : undefined,
             answers: updatedAnswers.map((a) => ({
               stepId: a.stepId,
               questionText: a.questionText,
@@ -1234,7 +1279,7 @@ function HomeContent() {
         "_blank",
       );
     },
-    [storedAnswers, logFlowData, trackEvent, sessionId, userZipCode, flowParam],
+    [storedAnswers, logFlowData, trackEvent, sessionId, userZipCode, flowParam, selectedStore],
   );
 
   // Show next question after avatar response finishes

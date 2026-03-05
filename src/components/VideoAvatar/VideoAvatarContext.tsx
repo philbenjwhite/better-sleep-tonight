@@ -39,7 +39,7 @@ interface VideoAvatarContextType {
   duration: number;
   connectionQuality: ConnectionQuality;
   videoRef: React.RefObject<HTMLVideoElement | null>;
-  play: (videoId: string) => Promise<void>;
+  play: (videoId: string, options?: { loop?: boolean }) => Promise<void>;
   pause: () => void;
   preload: (videoIdOrPath: string) => void;
   preloadMultiple: (videoIds: string[]) => void;
@@ -86,7 +86,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     videoRef.current = ref;
   }, []);
 
-  const play = useCallback(async (videoIdOrPath: string): Promise<void> => {
+  const play = useCallback(async (videoIdOrPath: string, options?: { loop?: boolean }): Promise<void> => {
     // Accept either a registry ID or a direct path (starting with /)
     const videoSrc = videoIdOrPath.startsWith('/')
       ? videoIdOrPath
@@ -109,6 +109,9 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false);
+
+        // Set loop attribute based on options
+        videoElement.loop = options?.loop ?? false;
 
         // Set source and start playback synchronously within user gesture
         videoElement.src = videoSrc;
@@ -169,6 +172,9 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false); // Reset for new video
+
+        // Set loop attribute based on options
+        videoElement.loop = options?.loop ?? false;
 
         // Update video source and load
         videoElement.src = videoSrc;
