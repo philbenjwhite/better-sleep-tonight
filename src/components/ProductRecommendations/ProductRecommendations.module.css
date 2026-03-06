@@ -311,8 +311,8 @@
 
 .restTestCtaContent {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .restTestCtaTitle {
