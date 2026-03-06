@@ -1458,16 +1458,15 @@ function HomeContent() {
       {/* Question View */}
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
-          {/* Full-width Gradient Overlay at Bottom - hide on store locations / booking CTA / product recommendations step */}
-          {!isStoreLocationsStep &&
-            !isBookingCtaStep &&
-            !isProductRecommendationsStep && (
-              <div className={styles.avatarGradientOverlay} />
-            )}
-
           {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
           {!isStoreLocationsStep && !isProductRecommendationsStep && (
             <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
+              {/* Full-width Gradient Overlay at Bottom - above avatar, below chat bubbles */}
+              {!isStoreLocationsStep &&
+                !isBookingCtaStep &&
+                !isProductRecommendationsStep && (
+                  <div className={styles.avatarGradientOverlay} />
+                )}
               <div className={styles.avatarWrapper}>
                 <VideoAvatar
                   className={styles.heygenAvatar}
@@ -1749,10 +1748,17 @@ function HomeContent() {
         showProgress={false}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
-        showAvatarSection={isStoreLocationsStep}
-        avatarVideoSrc={currentStep?.avatarVideoSrc}
-        avatarText={currentStep?.avatarText}
+        showAvatarSection={isStoreLocationsStep || isBookingCtaStep}
+        avatarVideoSrc={
+          isBookingCtaStep
+            ? "/videos/ashley/ashley-idle-crf28.mp4"
+            : currentStep?.avatarVideoSrc
+        }
+        avatarText={
+          isBookingCtaStep ? avatarResponse ?? undefined : currentStep?.avatarText
+        }
         isMuted={isMuted}
+        avatarMobileOnly={isBookingCtaStep || isStoreLocationsStep}
       />
 
       {/* Recovery Modal - shown when user has saved progress */}

@@ -8,11 +8,11 @@
   overflow: hidden;
 }
 
-/* Mobile: adjust for mobile UI */
+/* Mobile to tablet: 10% smaller */
 @media (max-width: 768px) {
   .avatarContainer {
-    max-width: calc((100vh - 72px) * (9 / 16));
-    height: calc(100vh - 72px);
+    max-width: calc((100vh - 72px) * (9 / 16) * 0.9);
+    height: calc((100vh - 72px) * 0.9);
   }
 }
 

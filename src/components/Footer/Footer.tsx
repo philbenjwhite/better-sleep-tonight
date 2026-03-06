@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import styles from './Footer.module.css';
 
 export interface FooterProps {
@@ -25,6 +24,8 @@ export interface FooterProps {
   wordDelay?: number;
   /** Delay after paragraph completes before transitioning (ms, default 1500) */
   paragraphPauseMs?: number;
+  /** Only show avatar section on mobile (hide on desktop) */
+  avatarMobileOnly?: boolean;
 }
 
 // Split text into paragraphs, preserving double newlines inside quotes
@@ -78,6 +79,7 @@ export function Footer({
   onUnmute,
   wordDelay = 0.26,
   paragraphPauseMs = 1500,
+  avatarMobileOnly = false,
 }: FooterProps) {
   const [isAvatarDismissed, setIsAvatarDismissed] = useState(false);
   const [isSliding, setIsSliding] = useState(false);
@@ -174,7 +176,7 @@ export function Footer({
     <footer className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''}`}>
       {/* Avatar section renders above progress bar (mobile only via CSS) */}
       {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (
-        <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''}`}>
+        <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''} ${avatarMobileOnly ? styles.avatarMobileOnly : ''}`}>
           <button
             type="button"
             className={styles.avatarDismissButton}
@@ -225,9 +227,6 @@ export function Footer({
         <p className={styles.copyright}>
           © 2025 BetterSleep Tonight. All rights reserved.
         </p>
-        <Link href="/privacy-policy" className={styles.privacyPolicy}>
-          Privacy Policy
-        </Link>
       </div>
     </footer>
   );

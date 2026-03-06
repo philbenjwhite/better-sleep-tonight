@@ -130,7 +130,7 @@ export function ZipCodeCapture({ content, onSubmit }: ZipCodeCaptureProps) {
               type="text"
               value={zipCode}
               onChange={handleChange}
-              placeholder="A1A 1A1"
+              placeholder="K2G 7B5"
               className={styles.input}
               maxLength={7}
               autoComplete="postal-code"
