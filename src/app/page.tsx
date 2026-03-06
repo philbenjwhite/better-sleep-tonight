@@ -15,7 +15,7 @@ import {
   useVideoAvatar,
   VideoState,
 } from "@/components/VideoAvatar";
-import { DevPanel, StoredAnswer } from "@/components/DevPanel";
+import { StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -117,7 +117,7 @@ function HomeContent() {
   const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(
     null,
   );
-  const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
+
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
   // Stable session ID for Epsilon event tracking (persists across re-renders, new per page load)
@@ -1360,7 +1360,7 @@ function HomeContent() {
 
   return (
     <main
-      className={`${styles.main} ${isDevPanelOpen ? styles.devPanelOpen : ""} ${
+      className={`${styles.main} ${
         isStoreLocationsStep ? styles.storeLocationsPage : ""
       } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
@@ -1753,21 +1753,6 @@ function HomeContent() {
         avatarVideoSrc={currentStep?.avatarVideoSrc}
         avatarText={currentStep?.avatarText}
         isMuted={isMuted}
-      />
-
-      {/* Dev Panel - press "/" to toggle */}
-      <DevPanel
-        answers={storedAnswers}
-        currentStep={currentStepIndex}
-        totalSteps={questionSteps.length}
-        stepNames={questionSteps.map(
-          (step) =>
-            (step as FlowStep & { internalName?: string }).internalName ||
-            step.stepId,
-        )}
-        stepIds={questionSteps.map((step) => step.stepId)}
-        onOpenChange={setIsDevPanelOpen}
-        currentView={currentView}
       />
 
       {/* Recovery Modal - shown when user has saved progress */}
