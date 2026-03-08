@@ -4,141 +4,111 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Better Sleep Tonight is a Next.js 15 application using TypeScript, CSS Modules, and Storybook for component development. The project integrates with Figma Code Connect for design-to-code workflows and includes HeyGen streaming avatar functionality.
+Better Sleep Tonight is a Tempur-Pedic interactive sleep quiz built with Next.js 15, React 19, and TypeScript. Users watch video avatar segments, answer sleep-related questions, receive mattress recommendations, find nearby stores via Mapbox, and optionally provide their email. All funnel data is tracked in Epsilon PeopleCloud.
 
 ## Key Commands
 
-### Development
 ```bash
-npm run dev            # Start Next.js development server (http://localhost:3000)
-npm run storybook      # Start Storybook dev server (http://localhost:6006)
+npm run dev              # Next.js dev server (localhost:3000)
+npm run dev:tina         # Dev with TinaCMS local content API
+npm run build            # Production build
+npm run lint             # ESLint
+npm run storybook        # Storybook (localhost:6006)
+npm run figma:connect    # Validate Figma Code Connect mappings
+npm run figma:publish    # Publish component connections to Figma
 ```
 
-### Build & Production
-```bash
-npm run build                # Build Next.js for production
-npm run start                # Start production server
-npm run build-storybook      # Build Storybook static site
-```
-
-### Code Quality
-```bash
-npm run lint           # Run ESLint
-```
-
-### Figma Integration
-```bash
-npm run figma:connect  # Validate Figma Code Connect mappings
-npm run figma:publish  # Publish component connections to Figma
-```
+No test framework is configured. Use Storybook for visual component review and `?step=N` query param for jumping to specific flow steps during development.
 
 ## Architecture
 
-### Component Structure
+### Flow Engine (the core of the app)
 
-All components follow a consistent directory pattern:
+`src/app/page.tsx` is the main orchestrator — a large single-page component that manages the entire quiz flow. It controls:
+
+- **View states**: `currentView` toggles between "intro" and "question" phases
+- **Step progression**: `currentStepIndex` walks through steps defined in the flow JSON
+- **Answer collection**: `storedAnswers[]` accumulates all user responses with timestamps
+- **Video playback**: coordinates with `VideoAvatarProvider` context for avatar videos
+- **Session tracking**: `crypto.randomUUID()` per page load, used as Epsilon CustomerKey
+
+**Flow variants**: The `?flow=back-pain` (etc.) query param swaps intro headline/subheadline via `FLOW_CONDITIONS` in page.tsx. All variants use the same underlying flow data from `content/flows/primary-flow.json`.
+
+### Content & Flow Definitions
+
+Flow content lives in `content/` managed by TinaCMS:
+
+- `content/flows/primary-flow.json` — the main flow with all steps
+- `content/stepTypes/` — step template schemas
+- `content/inputTypes/` — input widget configurations
+- `content/locations/` — store location data
+
+Flow steps are typed in `src/config/types.ts` as `FlowStep` with a `_template` discriminator (`questionStep`, `videoStep`, `emailCaptureStep`, `storeLocationsStep`, etc.).
+
+`src/config/flows.ts` loads and registers flows. `src/config/utils.ts` provides `buildFlowData()` and `getProgressSteps()`. `src/config/constants.ts` holds product recommendation data and CTA labels.
+
+### Video Avatar System
+
+The app uses pre-recorded videos (not live HeyGen streaming) stored in `public/videos/ashley/`:
+
+- `VideoAvatarContext` (`src/components/VideoAvatar/VideoAvatarContext.tsx`) manages a playback state machine: IDLE → LOADING → READY → PLAYING → ENDED
+- Video registry maps IDs like `'avatar-intro'` to file paths
+- Adaptive preloading based on network quality via `useNetworkStatus` hook
+- VTT subtitle files parsed by `src/lib/subtitles/` and synced via `useSubtitleSync`
+
+### API Routes — Epsilon PeopleCloud
+
+Two endpoints in `src/app/api/epsilon/`:
+
+| Route | Purpose |
+|-------|---------|
+| `/api/epsilon/event` | Per-step tracking — POST creates record (step 0), PUT updates subsequent steps |
+| `/api/epsilon/submit` | Final email submission — POST with fallback to PUT on duplicate |
+
+Shared auth logic in `_shared.ts`: OAuth token caching, step-to-field mapping (`STEP_TO_EPSILON_FIELD`), list endpoint URL. Records are keyed by `CustomerKey` (sessionId for events, email for submit).
+
+Epsilon calls are fire-and-forget — failures are logged but don't block the user flow. The `EPSILON_OUID` env var gates whether tracking is active.
+
+### Analytics
+
+Three tracking layers:
+1. **GTM/GA4** — configured in `src/app/layout.tsx`
+2. **Epsilon PeopleCloud** — per-step + final submission (see API routes above)
+3. **Custom analytics** in `src/lib/analytics/` — video engagement, scroll depth, conversions
+
+### Key Hooks
+
+| Hook | Location | Purpose |
+|------|----------|---------|
+| `useProgressPersistence` | `src/hooks/` | localStorage save/load with 7-day expiration |
+| `useNetworkStatus` | `src/hooks/` | Connection quality detection (FAST/4G/3G/SLOW) |
+| `useAdaptiveVideo` | `src/hooks/` | Video preload strategy based on network |
+| `useSubtitleSync` | `src/hooks/` | Sync VTT captions to video playback |
+| `useVideoAvatar` | `src/components/VideoAvatar/` | Context consumer for video state |
+
+### Store Locator
+
+Uses Mapbox GL for map rendering and geocoding (`src/lib/geocoding.ts`). The `StoreLocations` component accepts a postal code, geocodes it, and displays nearby stores from CMS data.
+
+## Conventions
+
+- **Path alias**: `@/*` maps to `src/*`
+- **Styling**: CSS Modules with `classnames` for conditional composition
+- **Icons**: `@phosphor-icons/react`
+- **Animations**: GSAP
+- **Component structure**: `ComponentName/` directory with `.tsx`, `.module.css`, `.stories.tsx`, `.figma.tsx`, `index.ts`
+- **Props pattern**: TypeScript interface exported as `ComponentNameProps`
+
+## Environment Variables
 
 ```
-src/components/ComponentName/
-├── ComponentName.tsx           # Component implementation
-├── ComponentName.module.css    # CSS Modules styles
-├── ComponentName.stories.tsx   # Storybook stories
-├── ComponentName.figma.tsx     # Figma Code Connect mapping
-└── index.ts                    # Barrel export
+NEXT_PUBLIC_MAPBOX_TOKEN       # Mapbox (store locator + geocoding)
+NEXT_PUBLIC_TINA_CLIENT_ID     # TinaCMS client ID
+TINA_TOKEN                     # TinaCMS read-only token
+NEXT_PUBLIC_APP_URL            # App URL
+EPSILON_CLIENT_ID              # Epsilon OAuth
+EPSILON_CLIENT_SECRET
+EPSILON_API_USERNAME
+EPSILON_API_PASSWORD
+EPSILON_OUID                   # Epsilon org unit ID (omit to disable tracking)
 ```
-
-**Key Patterns:**
-- Components use TypeScript interfaces exported as `ComponentNameProps`
-- CSS Modules for scoped styling (imported as `styles`)
-- `classnames` library for conditional class composition
-- Props typically include variants, size, and callbacks
-
-### App Router Structure
-
-Uses Next.js 15 App Router:
-- `src/app/layout.tsx` - Root layout with metadata
-- `src/app/page.tsx` - Home page
-- `src/app/globals.css` - Global styles
-
-### Path Aliases
-
-TypeScript is configured with `@/*` alias mapping to `src/*`:
-```tsx
-import { Button } from '@/components/Button';
-```
-
-### Styling Approach
-
-- **CSS Modules** for component-scoped styles
-- Global styles in `src/app/globals.css`
-- `classnames` utility for combining CSS classes conditionally
-
-Example pattern:
-```tsx
-import classNames from 'classnames';
-import styles from './Component.module.css';
-
-className={classNames(
-  styles.baseClass,
-  styles[variant],
-  { [styles.modifier]: condition }
-)}
-```
-
-### Storybook Integration
-
-- Stories located alongside components in `*.stories.tsx` files
-- Storybook configured for Next.js framework (@storybook/nextjs)
-- All `src/**/*.stories.tsx` files automatically discovered
-- Uses addon-essentials, addon-interactions, and addon-links
-
-### Figma Code Connect
-
-Components are mapped to Figma designs using `*.figma.tsx` files:
-- Pattern: `figma.connect(Component, 'FIGMA_NODE_URL', { props, example })`
-- Props map Figma component properties to React props
-- Config: `figma.config.json` specifies included/excluded patterns
-- Update Figma node URLs before using `figma:connect` or `figma:publish`
-
-### Component Examples
-
-**Button Component** - Reference implementation showing:
-- TypeScript props with variants (`primary`, `secondary`, `tertiary`)
-- Size variants (`small`, `medium`, `large`)
-- CSS Modules with conditional classNames
-- Complete Storybook stories
-- Figma Code Connect mapping
-
-**Card Component** - Demonstrates:
-- Default props pattern
-- Optional button rendering
-- Variant system (`default`, `no-border`)
-- Image placeholder handling
-
-**CardGrid Component** - Shows:
-- Children-based composition
-- Grid layout with CSS Modules
-
-## Key Dependencies
-
-- `@heygen/streaming-avatar` - HeyGen avatar streaming integration
-- `classnames` - CSS class composition utility
-- `date-fns` - Date manipulation (prefer over moment.js)
-- React 19 and Next.js 15.1.4
-
-## Development Guidelines
-
-### Creating New Components
-
-1. Create component directory in `src/components/`
-2. Add `.tsx`, `.module.css`, `.stories.tsx`, and `.figma.tsx` files
-3. Export via `index.ts` barrel file
-4. Follow existing naming and typing conventions
-
-### Working with Figma
-
-1. Create `*.figma.tsx` file alongside component
-2. Use `figma.connect()` to map Figma properties to React props
-3. Replace `FIGMA_NODE_URL` placeholder with actual Figma component URL
-4. Validate with `npm run figma:connect`
-5. Publish with `npm run figma:publish`
