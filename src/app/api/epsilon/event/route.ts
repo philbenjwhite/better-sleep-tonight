@@ -6,13 +6,18 @@ import { NextRequest, NextResponse } from "next/server";
 // so we capture the full funnel — even for users who drop off
 // before providing an email.
 //
-// Events are keyed by a client-generated sessionId (UUID).
-// When the user later submits their email via /api/epsilon/submit,
-// that route includes the same sessionId so Epsilon can tie
-// anonymous events to a real contact record.
+// Each event upserts a single record keyed by CustomerKey (sessionId)
+// into the Tempurpedic_Better_Sleep list, progressively filling in
+// columns as the user moves through the flow.
+//
+// Strategy: POST to create the record on first step, then PUT to
+// .../records/{CustomerKey} for all subsequent steps.
 
-// Re-use the same OAuth token logic from the submit route
-import { getAccessToken, getBaseUrl } from "../_shared";
+import {
+  getAccessToken,
+  EPSILON_RECORDS_URL,
+  STEP_TO_EPSILON_FIELD,
+} from "../_shared";
 
 interface EventPayload {
   sessionId: string;
@@ -46,43 +51,57 @@ export async function POST(request: NextRequest) {
     }
 
     const token = await getAccessToken();
-    const baseUrl = getBaseUrl();
 
-    // Push as an interaction/event record.
-    // Field names should match your Epsilon schema — update as needed.
-    const record: Record<string, string | number> = {
-      session_id: payload.sessionId,
-      flow_id: payload.flowId,
-      step_id: payload.stepId,
-      step_index: payload.stepIndex,
-      question_text: payload.questionText,
-      answer_value: payload.value,
-      answer_label: payload.label,
-      event_timestamp: payload.timestamp || new Date().toISOString(),
+    // Map stepId to the Epsilon field name
+    const epsilonField = STEP_TO_EPSILON_FIELD[payload.stepId];
+
+    // Build the record — CustomerKey is the session ID for anonymous tracking
+    const record: Record<string, string> = {
+      CustomerKey: payload.sessionId,
     };
 
-    if (payload.postalCode) {
-      record.postal_code = payload.postalCode;
+    if (epsilonField) {
+      record[epsilonField] = payload.label;
     }
 
-    const res = await fetch(`${baseUrl}/v2.0/people/records`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "X-OUID": ouid,
-      },
-      body: JSON.stringify({ records: [record] }),
+    const body = JSON.stringify(record);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-OUID": ouid,
+    };
+
+    // First step (index 0) creates the record via POST,
+    // all subsequent steps update via PUT .../records/{CustomerKey}
+    const isFirstStep = payload.stepIndex === 0;
+    const method = isFirstStep ? "POST" : "PUT";
+    const url = isFirstStep
+      ? EPSILON_RECORDS_URL
+      : `${EPSILON_RECORDS_URL}/${encodeURIComponent(payload.sessionId)}`;
+
+    console.log(`\n🟡 ━━━ EPSILON EVENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    console.log(`   Step: ${payload.stepId} → ${epsilonField || "(unmapped)"}`);
+    console.log(`   Value: ${payload.label}`);
+    console.log(`   ${method} ${url}`);
+
+    const res = await fetch(url, {
+      method,
+      headers,
+      body,
     });
 
+    const text = await res.text();
+
     if (!res.ok) {
-      const text = await res.text();
-      console.error(`[Epsilon] Event track error (${res.status}):`, text);
+      console.log(`   ❌ FAILED (${res.status}):`, text);
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
       // Don't fail the user's flow — just log the error
       return NextResponse.json({ success: false, detail: text }, { status: 202 });
     }
 
-    const result = await res.json();
+    const result = JSON.parse(text);
+    console.log(`   ✅ OK (${res.status}):`, text.substring(0, 200));
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
     return NextResponse.json({ success: true, result });
   } catch (error) {
     console.error("[Epsilon] Event track error:", error);

@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken, getBaseUrl } from "../_shared";
+import {
+  getAccessToken,
+  EPSILON_RECORDS_URL,
+  STEP_TO_EPSILON_FIELD,
+} from "../_shared";
 
-// ─── Epsilon PeopleCloud – Single Record Management API ───
+// ─── Epsilon PeopleCloud – Final Email + Full Record ──────
 //
-// This route accepts flow data from the frontend and pushes it to
-// Epsilon's Single Record Management API for CRM / follow-up marketing.
-//
-// This is called at the END of the flow when the user provides their
-// email. It includes the sessionId so Epsilon can tie previously
-// tracked anonymous events to this contact record.
+// Called at the END of the flow when the user provides their email.
+// Upserts the full record into the Tempurpedic_Better_Sleep list,
+// keyed by CustomerKey (email address), with all flow answers.
 //
 // Required env vars (see .env):
 //   EPSILON_CLIENT_ID, EPSILON_CLIENT_SECRET,
 //   EPSILON_API_USERNAME, EPSILON_API_PASSWORD,
-//   EPSILON_OUID, EPSILON_REGION (US | EU)
+//   EPSILON_OUID
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -40,31 +41,36 @@ interface SubmitPayload {
 // ── Build Epsilon record payload ───────────────────────────
 
 function buildRecordPayload(payload: SubmitPayload) {
-  // Map flow data to Epsilon record fields.
-  // Field names will need to match your Epsilon schema — update as needed.
-  const record: Record<string, string | undefined> = {
-    session_id: payload.sessionId,
-    email_address: payload.email,
-    postal_code: payload.postalCode,
-    flow_id: payload.flowId,
-    store_id: payload.selectedStore?.id,
-    store_name: payload.selectedStore?.storeName,
-    store_city: payload.selectedStore?.city,
+  // CustomerKey is the email address (primary key in Epsilon)
+  const record: Record<string, string> = {
+    CustomerKey: payload.email,
+    EmailAddress: payload.email,
   };
 
-  // Flatten flow answers into key-value pairs
+  if (payload.postalCode) {
+    record.Postal_Code = payload.postalCode;
+  }
+
+  if (payload.selectedStore) {
+    record.Store_Locations = [
+      payload.selectedStore.storeName,
+      payload.selectedStore.city,
+    ]
+      .filter(Boolean)
+      .join(" - ");
+  }
+
+  // Map flow answers to Epsilon field names
   if (payload.answers) {
     for (const answer of payload.answers) {
-      // Normalise stepId to a safe field name
-      const key = `flow_${answer.stepId.replace(/[^a-zA-Z0-9]/g, "_")}`;
-      record[key] = answer.value;
+      const field = STEP_TO_EPSILON_FIELD[answer.stepId];
+      if (field) {
+        record[field] = answer.label;
+      }
     }
   }
 
-  // Remove undefined values
-  return Object.fromEntries(
-    Object.entries(record).filter(([, v]) => v !== undefined),
-  );
+  return record;
 }
 
 // ── POST handler ───────────────────────────────────────────
@@ -90,31 +96,55 @@ export async function POST(request: NextRequest) {
     }
 
     const token = await getAccessToken();
-    const baseUrl = getBaseUrl();
     const record = buildRecordPayload(payload);
 
-    const res = await fetch(`${baseUrl}/v2.0/people/records`, {
+    const body = JSON.stringify(record);
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-OUID": ouid,
+    };
+
+    console.log(`\n🔵 ━━━ EPSILON SUBMIT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    console.log(`   Email: ${payload.email}`);
+    console.log(`   Session: ${payload.sessionId}`);
+    console.log(`   Payload:`, body);
+
+    // Try POST first (creates record), fall back to PUT (updates) on duplicate
+    console.log(`   POST ${EPSILON_RECORDS_URL}`);
+    let res = await fetch(EPSILON_RECORDS_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "X-OUID": ouid,
-      },
-      body: JSON.stringify({
-        records: [record],
-      }),
+      headers,
+      body,
     });
 
+    let text = await res.text();
+
+    // If duplicate, retry with PUT to the record-specific endpoint
+    if (!res.ok && text.includes("DUPLICATE_ITEM")) {
+      const putUrl = `${EPSILON_RECORDS_URL}/${encodeURIComponent(payload.email)}`;
+      console.log(`   ↳ Record exists, retrying PUT ${putUrl}`);
+      res = await fetch(putUrl, {
+        method: "PUT",
+        headers,
+        body,
+      });
+      text = await res.text();
+    }
+
     if (!res.ok) {
-      const text = await res.text();
-      console.error(`[Epsilon] API error (${res.status}):`, text);
+      console.log(`   ❌ FAILED (${res.status}):`, text);
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
       return NextResponse.json(
         { error: "Failed to submit to Epsilon", detail: text },
         { status: 502 },
       );
     }
 
-    const result = await res.json();
+    const result = JSON.parse(text);
+    console.log(`   ✅ OK (${res.status}):`, text.substring(0, 200));
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
     return NextResponse.json({ success: true, result });
   } catch (error) {
     console.error("[Epsilon] Submit error:", error);

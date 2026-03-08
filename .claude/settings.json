@@ -9,7 +9,8 @@
       "Bash(/opt/homebrew/bin/ffmpeg -y -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -c:v libx264 -crf 23 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mp4)",
       "Bash(/opt/homebrew/bin/ffmpeg -y -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -c:v libx264 -crf 28 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle-crf28.mp4)",
       "Bash(/opt/homebrew/bin/ffmpeg -y -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -vf scale=1080:1920 -c:v libx264 -crf 26 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle-1080.mp4)",
-      "Read(//Users/mark/www/active/work/better-sleep-tonight/**)"
+      "Read(//Users/mark/www/active/work/better-sleep-tonight/**)",
+      "Bash(export PATH=\"/usr/local/bin:/opt/homebrew/bin:$PATH\")"
     ]
   }
 }
