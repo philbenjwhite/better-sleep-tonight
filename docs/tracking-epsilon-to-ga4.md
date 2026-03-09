@@ -40,7 +40,7 @@ Once a user submits their email, we want to trigger a follow-up email via Epsilo
 The RTM endpoint (confirmed by Troy at Epsilon) is:
 
 ```
-PUT https://api.harmony.epsilon.com/v5/messages/{messageId}/send
+PUT https://api.harmony.epsilon.com/v5/messages/0c06bb71-0c46-419b-8f6f-cea94a0f12ef/send
 ```
 
 Since all personalization is handled from the PeopleCloud table, the payload is minimal:
@@ -60,5 +60,5 @@ This uses the same Epsilon OAuth credentials and org unit ID that the data submi
 
 ### Action Items
 
-- [ ] **Get the RTM message ID** from Epsilon — this is the `{messageId}` in the endpoint above (the PCM message/deployment ID)
+- [x] **Get the RTM message ID** from Epsilon — `0c06bb71-0c46-419b-8f6f-cea94a0f12ef`
 - [ ] **Confirm product ID format** — the `Product_Recommendations` field now contains comma-separated product IDs (e.g. `tempur-sense,tempur-prosense,tempur-luxealign`). Confirm this format works for Epsilon's template personalization and reporting needs
