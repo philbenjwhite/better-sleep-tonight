@@ -255,6 +255,21 @@ type FlowsStepsStoreLocationsStep {
   ctaContactTitle: String
   ctaContactDescription: String
   ctaContactButtonText: String
+  avatarVideoSrc: String
+  avatarText: String
+}
+
+type FlowsStepsBookingCtaStep {
+  stepId: String!
+  internalName: String
+  video: String
+  script: String
+  ctaBookTitle: String
+  ctaBookDescription: String
+  ctaBookButtonText: String
+  ctaContactTitle: String
+  ctaContactDescription: String
+  ctaContactButtonText: String
 }
 
 type FlowsStepsCtaStep {
@@ -275,7 +290,7 @@ type FlowsStepsResultsStep {
   bodyText: String
 }
 
-union FlowsSteps = FlowsStepsVideoStep | FlowsStepsQuestionStep | FlowsStepsEmailCaptureStep | FlowsStepsSeeOptionsStep | FlowsStepsProductRecommendationsStep | FlowsStepsZipcodeCaptureStep | FlowsStepsStoreLocationsStep | FlowsStepsCtaStep | FlowsStepsResultsStep
+union FlowsSteps = FlowsStepsVideoStep | FlowsStepsQuestionStep | FlowsStepsEmailCaptureStep | FlowsStepsSeeOptionsStep | FlowsStepsProductRecommendationsStep | FlowsStepsZipcodeCaptureStep | FlowsStepsStoreLocationsStep | FlowsStepsBookingCtaStep | FlowsStepsCtaStep | FlowsStepsResultsStep
 
 type FlowsMetadata {
   createdAt: String
@@ -401,6 +416,21 @@ input FlowsStepsStoreLocationsStepFilter {
   ctaContactTitle: StringFilter
   ctaContactDescription: StringFilter
   ctaContactButtonText: StringFilter
+  avatarVideoSrc: ImageFilter
+  avatarText: StringFilter
+}
+
+input FlowsStepsBookingCtaStepFilter {
+  stepId: StringFilter
+  internalName: StringFilter
+  video: ImageFilter
+  script: StringFilter
+  ctaBookTitle: StringFilter
+  ctaBookDescription: StringFilter
+  ctaBookButtonText: StringFilter
+  ctaContactTitle: StringFilter
+  ctaContactDescription: StringFilter
+  ctaContactButtonText: StringFilter
 }
 
 input FlowsStepsCtaStepFilter {
@@ -429,6 +459,7 @@ input FlowsStepsFilter {
   productRecommendationsStep: FlowsStepsProductRecommendationsStepFilter
   zipcodeCaptureStep: FlowsStepsZipcodeCaptureStepFilter
   storeLocationsStep: FlowsStepsStoreLocationsStepFilter
+  bookingCtaStep: FlowsStepsBookingCtaStepFilter
   ctaStep: FlowsStepsCtaStepFilter
   resultsStep: FlowsStepsResultsStepFilter
 }
@@ -601,6 +632,21 @@ input FlowsStepsStoreLocationsStepMutation {
   ctaContactTitle: String
   ctaContactDescription: String
   ctaContactButtonText: String
+  avatarVideoSrc: String
+  avatarText: String
+}
+
+input FlowsStepsBookingCtaStepMutation {
+  stepId: String
+  internalName: String
+  video: String
+  script: String
+  ctaBookTitle: String
+  ctaBookDescription: String
+  ctaBookButtonText: String
+  ctaContactTitle: String
+  ctaContactDescription: String
+  ctaContactButtonText: String
 }
 
 input FlowsStepsCtaStepMutation {
@@ -629,6 +675,7 @@ input FlowsStepsMutation {
   productRecommendationsStep: FlowsStepsProductRecommendationsStepMutation
   zipcodeCaptureStep: FlowsStepsZipcodeCaptureStepMutation
   storeLocationsStep: FlowsStepsStoreLocationsStepMutation
+  bookingCtaStep: FlowsStepsBookingCtaStepMutation
   ctaStep: FlowsStepsCtaStepMutation
   resultsStep: FlowsStepsResultsStepMutation
 }

@@ -105,6 +105,20 @@ fragment FlowsParts on Flows {
       ctaContactTitle
       ctaContactDescription
       ctaContactButtonText
+      avatarVideoSrc
+      avatarText
+    }
+    ... on FlowsStepsBookingCtaStep {
+      stepId
+      internalName
+      video
+      script
+      ctaBookTitle
+      ctaBookDescription
+      ctaBookButtonText
+      ctaContactTitle
+      ctaContactDescription
+      ctaContactButtonText
     }
     ... on FlowsStepsCtaStep {
       stepId

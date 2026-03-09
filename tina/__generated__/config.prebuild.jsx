@@ -421,6 +421,71 @@ var storeLocationsStepTemplate = {
       name: "ctaContactButtonText",
       label: "Contact CTA Button Text",
       type: "string"
+    },
+    {
+      name: "avatarVideoSrc",
+      label: "Avatar Video",
+      type: "image",
+      description: "Small avatar video shown alongside the store list"
+    },
+    {
+      name: "avatarText",
+      label: "Avatar Text",
+      type: "string",
+      ui: { component: "textarea" },
+      description: "Text the avatar displays on this step"
+    }
+  ]
+};
+var bookingCtaStepTemplate = {
+  name: "bookingCtaStep",
+  label: "Booking CTA",
+  fields: [
+    ...commonStepFields,
+    {
+      name: "video",
+      label: "Video",
+      type: "image",
+      description: "Video file to play during this step"
+    },
+    {
+      name: "script",
+      label: "Script",
+      type: "string",
+      ui: { component: "textarea" },
+      description: "Text displayed in the speech bubble"
+    },
+    {
+      name: "ctaBookTitle",
+      label: "Book CTA Title",
+      type: "string"
+    },
+    {
+      name: "ctaBookDescription",
+      label: "Book CTA Description",
+      type: "string",
+      ui: { component: "textarea" }
+    },
+    {
+      name: "ctaBookButtonText",
+      label: "Book CTA Button Text",
+      type: "string"
+    },
+    {
+      name: "ctaContactTitle",
+      label: "Contact CTA Title",
+      type: "string"
+    },
+    {
+      name: "ctaContactDescription",
+      label: "Contact CTA Description",
+      type: "string",
+      ui: { component: "textarea" }
+    },
+    {
+      name: "ctaContactButtonText",
+      label: "Contact CTA Button Text",
+      type: "string"
     }
   ]
 };
@@ -542,6 +607,7 @@ var flowsCollection = {
         productRecommendationsStepTemplate,
         zipcodeCaptureStepTemplate,
         storeLocationsStepTemplate,
+        bookingCtaStepTemplate,
         ctaStepTemplate,
         resultsStepTemplate
       ]
