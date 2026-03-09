@@ -41,13 +41,13 @@
 
 .avatarImage {
   position: absolute;
-  top: 0;
+  top: -2px;
   left: 0;
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: contain; /* Match video behavior */
-  object-position: center center;
+  height: calc(100% + 2px);
+  object-fit: cover; /* Match video element */
+  object-position: center top; /* Match video element */
   z-index: 1; /* Below video */
 }
 
