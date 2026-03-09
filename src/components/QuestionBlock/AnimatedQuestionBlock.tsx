@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useLayoutEffect, useEffect, useCallback } from 'react';
+import { useRef, useLayoutEffect, useEffect, useCallback, useMemo } from 'react';
 import gsap from 'gsap';
 import { QuestionBlockProps, CMSQuestionContent } from './QuestionBlock';
 import styles from './AnimatedQuestionBlock.module.css';
@@ -133,9 +133,12 @@ const QuestionBlockAnimated: React.FC<QuestionBlockProps> = ({
   disabled = false,
 }) => {
   // Sort options by order if available
-  const sortedOptions = questionContent.answerOptions
-    ? [...questionContent.answerOptions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    : [];
+  const sortedOptions = useMemo(
+    () => questionContent.answerOptions
+      ? [...questionContent.answerOptions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      : [],
+    [questionContent.answerOptions]
+  );
 
   const indexToLetter = (index: number): string => {
     return String.fromCharCode(65 + index);

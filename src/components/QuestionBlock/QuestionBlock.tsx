@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import styles from './QuestionBlock.module.css';
 import { AnswerOption } from '../AnswerOption';
@@ -79,9 +79,12 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const currentTextValue = internalTextValue;
 
   // Sort options by order if available (only if we have answerOptions)
-  const sortedOptions = questionContent.answerOptions
-    ? [...questionContent.answerOptions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    : [];
+  const sortedOptions = useMemo(
+    () => questionContent.answerOptions
+      ? [...questionContent.answerOptions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      : [],
+    [questionContent.answerOptions]
+  );
 
   const handleSelect = useCallback((value: string) => {
     if (disabled) return;

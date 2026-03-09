@@ -30,9 +30,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={openSans.variable}>
       <head>
-        {/* Preload critical intro assets for faster LCP */}
-        <link rel="preload" as="video" href="/uploads/Mattress_Shopping.mp4" type="video/mp4" />
-
         {/* Google Tag Manager */}
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`

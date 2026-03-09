@@ -182,7 +182,7 @@ function HomeContent() {
     isNearingEnd,
     play,
     pause,
-    preload,
+    preloadMultiple,
     currentTime,
     currentVideoId,
   } = useVideoAvatar();
@@ -396,18 +396,30 @@ function HomeContent() {
   );
   const introMessage = firstVideoStep?.script || "";
 
-  // Preload video steps while user is on intro screen
+  // Preload only the next upcoming video(s) based on connection quality
+  // Runs on intro screen (preloads first video) and on each step change (preloads next videos)
   useEffect(() => {
-    if (currentView === "intro") {
-      for (const step of flowSteps) {
-        if (step._template === "videoStep" && step.video) {
-          preload(step.video);
-        }
+    const startIndex = currentView === "intro" ? 0 : currentStepIndex + 1;
+    const upcomingVideos: string[] = [];
+
+    for (let i = startIndex; i < flowSteps.length; i++) {
+      const step = flowSteps[i];
+      if (step._template === "videoStep" && step.video) {
+        upcomingVideos.push(step.video);
       }
-      // Preload idle loop video for booking CTA step
-      preload("/videos/ashley/ashley-idle-crf28.mp4");
+      // Also preload idle loop when approaching booking CTA
+      if (step._template === "bookingCtaStep") {
+        upcomingVideos.push("/videos/ashley/ashley-idle-crf28.mp4");
+      }
+      // Stop collecting once we have enough candidates — preloadMultiple
+      // will limit based on connection quality
+      if (upcomingVideos.length >= 3) break;
     }
-  }, [currentView, flowSteps, preload]);
+
+    if (upcomingVideos.length > 0) {
+      preloadMultiple(upcomingVideos);
+    }
+  }, [currentView, currentStepIndex, flowSteps, preloadMultiple]);
 
   // Video is ready when not in error state
   const isAvatarReady = isVideoReady;
