@@ -30,10 +30,12 @@
       "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && node -e \"\"const d=require\\(\\\\\"\"./tina/tina-lock.json\\\\\"\"\\); console.log\\(JSON.stringify\\(Object.keys\\(d\\), null, 2\\)\\)\"\"')",
       "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tsc --noEmit 2>&1 | tail -10')",
       "Read(//tmp/**)",
-      "Read(//private/tmp/**)"
+      "Read(//private/tmp/**)",
+      "Bash(pip3 show openai-whisper)"
     ],
     "additionalDirectories": [
-      "/Users/mark/www/active/work/better-sleep-tonight/src/app/api/epsilon/event"
+      "/Users/mark/www/active/work/better-sleep-tonight/src/app/api/epsilon/event",
+      "/private/tmp/whisper-ashley3-small"
     ]
   }
 }
