@@ -164,7 +164,10 @@ export function Footer({
   };
 
   const handleVideoEnded = () => {
-    handleDismiss();
+    // Delay dismiss so the final paragraph text has time to be read
+    setTimeout(() => {
+      handleDismiss();
+    }, 3000);
   };
 
   const handleAvatarTap = () => {

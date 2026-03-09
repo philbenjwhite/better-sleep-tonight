@@ -831,6 +831,8 @@ function HomeContent() {
           // Normal flow - skip avatar response and go directly to next question
           // (Avatar responses are disabled but CMS fields remain for future use)
           // Keep backdrop visible during transition between questions
+          setShowBackdrop(true);
+          setBackdropHasAnimated(true);
           setShowQuestionBlock(false);
           setSelectedAnswer(null);
 
@@ -960,7 +962,9 @@ function HomeContent() {
       answers: updatedAnswers,
     });
 
-    // Advance directly to the next step (like handleSeeOptionsClick)
+    // Advance directly to the next step — keep backdrop visible during transition
+    setShowBackdrop(true);
+    setBackdropHasAnimated(true);
     setShowQuestionBlock(false);
     setHasSpokenSummary(false);
 
@@ -1139,6 +1143,8 @@ function HomeContent() {
     setAvatarResponse(null);
     setAvatarStartedTalking(false);
     setHasSpokenSummary(false);
+    setShowBackdrop(true);
+    setBackdropHasAnimated(true);
     setShowQuestionBlock(false);
 
     if (currentStepIndex < questionSteps.length - 1) {
