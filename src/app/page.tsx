@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Button } from "@/components/Button";
 import {
@@ -15,7 +16,7 @@ import {
   useVideoAvatar,
   VideoState,
 } from "@/components/VideoAvatar";
-import { StoredAnswer } from "@/components/DevPanel";
+import type { StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -24,25 +25,45 @@ import {
 } from "@/components/SpeechBubbleSequence";
 import { parseVtt, getVttPathFromVideo } from "@/lib/subtitles";
 import { geocodeWithFallback, Coordinates } from "@/lib/geocoding";
-import { RecoveryModal } from "@/components/RecoveryModal";
-import {
-  MattressRecommendation,
+import type {
   MattressSize,
   MattressFeel,
 } from "@/components/MattressRecommendation";
-import { ProductRecommendations } from "@/components/ProductRecommendations";
-import { EmailCapture, EmailCaptureContent } from "@/components/EmailCapture";
-import { ActionPrompt, ActionPromptContent } from "@/components/ActionPrompt";
-import {
-  StoreLocations,
+import type { EmailCaptureContent } from "@/components/EmailCapture";
+import type { ActionPromptContent } from "@/components/ActionPrompt";
+import type {
   StoreLocationsContent,
   StoreLocation,
 } from "@/components/StoreLocations";
-import {
-  ZipCodeCapture,
-  ZipCodeCaptureContent,
-} from "@/components/ZipCodeCapture";
+import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
+
+// Lazy-load late-stage step components (not needed until user progresses)
+const RecoveryModal = dynamic(() =>
+  import("@/components/RecoveryModal").then((m) => m.RecoveryModal)
+);
+const MattressRecommendation = dynamic(() =>
+  import("@/components/MattressRecommendation").then(
+    (m) => m.MattressRecommendation
+  )
+);
+const ProductRecommendations = dynamic(() =>
+  import("@/components/ProductRecommendations").then(
+    (m) => m.ProductRecommendations
+  )
+);
+const EmailCapture = dynamic(() =>
+  import("@/components/EmailCapture").then((m) => m.EmailCapture)
+);
+const ActionPrompt = dynamic(() =>
+  import("@/components/ActionPrompt").then((m) => m.ActionPrompt)
+);
+const StoreLocations = dynamic(() =>
+  import("@/components/StoreLocations").then((m) => m.StoreLocations)
+);
+const ZipCodeCapture = dynamic(() =>
+  import("@/components/ZipCodeCapture").then((m) => m.ZipCodeCapture)
+);
 import { useProgressPersistence } from "@/hooks";
 import {
   FLOWS,

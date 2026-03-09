@@ -2,7 +2,12 @@
 
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import styles from './StoreLocations.module.css';
-import { StoreMap } from '@/components/StoreMap';
+import dynamic from 'next/dynamic';
+
+const StoreMap = dynamic(
+  () => import('@/components/StoreMap').then((m) => m.StoreMap),
+  { ssr: false }
+);
 import { Button } from '@/components/Button';
 
 // Import locations data
