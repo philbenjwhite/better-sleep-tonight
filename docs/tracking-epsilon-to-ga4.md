@@ -37,15 +37,28 @@ To build funnel/dropoff reports in GA4:
 
 Once a user submits their email, we want to trigger a follow-up email via Epsilon's RTM API. The submit call already populates the Customer Profile Table with all quiz data — so the email template can pull personalization directly from PeopleCloud. The RTM call itself just needs to send the email address to trigger the message.
 
-The RTM endpoint is:
+The RTM endpoint (confirmed by Troy at Epsilon) is:
 
 ```
-PUT /v3/messages/{messageId}/send
+PUT https://api.harmony.epsilon.com/v5/messages/{messageId}/send
+```
+
+Since all personalization is handled from the PeopleCloud table, the payload is minimal:
+
+```json
+{
+    "recipients": [
+        {
+            "customerKey": "user@email.com",
+            "emailAddress": "user@email.com"
+        }
+    ]
+}
 ```
 
 This uses the same Epsilon OAuth credentials and org unit ID that the data submission uses. The call fires after the profile record is created, so the template can reference all quiz data for personalization.
 
 ### Action Items
 
-- [ ] **Get the RTM message ID** from Epsilon — this is the `{messageId}` in the endpoint above, corresponding to the email template/deployment configured in Epsilon
+- [ ] **Get the RTM message ID** from Epsilon — this is the `{messageId}` in the endpoint above (the PCM message/deployment ID)
 - [ ] **Confirm product ID format** — the `Product_Recommendations` field now contains comma-separated product IDs (e.g. `tempur-sense,tempur-prosense,tempur-luxealign`). Confirm this format works for Epsilon's template personalization and reporting needs
