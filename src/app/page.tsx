@@ -261,18 +261,24 @@ function HomeContent() {
       setIsTransitioning(true);
       setIsMuted(false);
 
+      const steps = activeFlow.steps as FlowStep[];
+      const recoveredStep = steps[savedProgress.currentStepIndex];
+
       setTimeout(() => {
         setCurrentView("question");
         setIsTransitioning(false);
-        // Show question block immediately since we're restoring
+        // Show question block and play video at the same time so audio/subtitles stay in sync
         setTimeout(() => {
           setShowBackdrop(true);
           setBackdropHasAnimated(true);
           setShowQuestionBlock(true);
+          if (recoveredStep?.video) {
+            play(recoveredStep.video);
+          }
         }, 500);
       }, 500);
     }
-  }, [savedProgress]);
+  }, [savedProgress, activeFlow, play]);
 
   // Handle starting fresh
   const handleStartFresh = useCallback(() => {
