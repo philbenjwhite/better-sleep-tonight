@@ -37,6 +37,7 @@ import type {
 } from "@/components/StoreLocations";
 import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
+import { trackQuizEvent } from "@/lib/analytics/conversionTracking";
 
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
@@ -148,31 +149,17 @@ function HomeContent() {
     [],
   );
 
-  // Fire-and-forget event tracker — pushes each step to Epsilon
-  const trackEvent = useCallback(
-    (answer: {
-      stepId: string;
-      questionText: string;
-      value: string;
-      label: string;
-    }) => {
-      fetch("/api/epsilon/event", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          flowId: flowParam,
-          stepId: answer.stepId,
-          stepIndex: currentStepIndex,
-          questionText: answer.questionText,
-          value: answer.value,
-          label: answer.label,
-          postalCode: userZipCode || undefined,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch((err) => console.error("[Epsilon] Event track failed:", err));
+  // GA4 step progression tracker — replaces per-step Epsilon tracking
+  const trackStepGA4 = useCallback(
+    (answer: { stepId: string; value: string; label: string }) => {
+      trackQuizEvent("quiz_step", currentStepIndex, {
+        step_id: answer.stepId,
+        flow_id: flowParam,
+        answer_value: answer.value,
+        answer_label: answer.label,
+      });
     },
-    [sessionId, flowParam, currentStepIndex, userZipCode],
+    [currentStepIndex, flowParam],
   );
 
   // Video avatar hook
@@ -661,11 +648,10 @@ function HomeContent() {
 
       console.log("[VideoStepComplete] All conditions met, starting timer");
 
-      // Track video watched event to Epsilon
+      // Track video watched event via GA4
       if (currentStep?.stepId) {
-        trackEvent({
+        trackStepGA4({
           stepId: currentStep.stepId,
-          questionText: currentStep.internalName || "Video",
           value: "Y",
           label: "Y",
         });
@@ -731,7 +717,7 @@ function HomeContent() {
     videoState, // For logging only
     currentStep?.stepId,
     currentStep?.internalName,
-    trackEvent,
+    trackStepGA4,
   ]);
 
   // Handle booking CTA step - play video and load subtitles
@@ -805,7 +791,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       // Log flow data after each answer
       logFlowData(updatedAnswers, `Answer: ${option.label}`);
@@ -872,7 +858,7 @@ function HomeContent() {
       clearProgress,
       questionSteps.length,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
@@ -897,7 +883,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       // Log flow data after mattress selection
       logFlowData(
@@ -937,22 +923,34 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
   // Handle "Book a Rest Test" button - advances directly to the next step
   const handleBookRestTest = useCallback(() => {
+    // Determine which product IDs were shown based on sleep-alone answer
+    const sleepAlone =
+      storedAnswers.find((a) => a.stepId === "q6-sleep-alone-or-partner")
+        ?.value === "alone";
+    const recommendations =
+      currentStep?.productRecommendationsContent?.mattressOptions ||
+      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
+    const shownProducts = sleepAlone
+      ? recommendations.slice(0, 2)
+      : recommendations;
+    const productIds = shownProducts.map((p) => p.id).join(",");
+
     const newAnswer: StoredAnswer = {
       stepId: currentStep?.stepId || `step-${currentStepIndex}`,
       questionText: "Product Recommendation",
-      value: "book-rest-test",
-      label: "Book a Rest Test",
+      value: productIds,
+      label: `Book a Rest Test (${productIds})`,
       timestamp: new Date(),
     };
     const updatedAnswers = [...storedAnswers, newAnswer];
     setStoredAnswers(updatedAnswers);
-    trackEvent(newAnswer);
+    trackStepGA4(newAnswer);
 
     logFlowData(updatedAnswers, "Book a Rest Test");
 
@@ -980,7 +978,7 @@ function HomeContent() {
     flowParam,
     questionSteps.length,
     logFlowData,
-    trackEvent,
+    trackStepGA4,
   ]);
 
   const handleTextSubmit = useCallback(
@@ -995,7 +993,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       // Log flow data after text submission
       logFlowData(updatedAnswers, `Text: ${value}`);
@@ -1028,7 +1026,7 @@ function HomeContent() {
       saveProgress,
       flowParam,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
@@ -1045,7 +1043,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       // Log flow data after email submission
       logFlowData(updatedAnswers, `Email: ${email}`);
@@ -1076,7 +1074,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
@@ -1094,7 +1092,7 @@ function HomeContent() {
     };
     const updatedAnswers = [...storedAnswers, newAnswer];
     setStoredAnswers(updatedAnswers);
-    trackEvent(newAnswer);
+    trackStepGA4(newAnswer);
 
     // Save progress
     saveProgress({
@@ -1120,18 +1118,17 @@ function HomeContent() {
     saveProgress,
     flowParam,
     questionSteps.length,
-    trackEvent,
+    trackStepGA4,
   ]);
 
   // Handle see options button click (CTA at end of summary video)
   const handleSeeOptionsClick = useCallback(() => {
     console.log("See options clicked — advancing to product recommendations");
 
-    // Track video watched event to Epsilon
+    // Track video watched event via GA4
     if (currentStep?.stepId) {
-      trackEvent({
+      trackStepGA4({
         stepId: currentStep.stepId,
-        questionText: currentStep.internalName || "Video",
         value: "Y",
         label: "Y",
       });
@@ -1150,7 +1147,7 @@ function HomeContent() {
         setShowQuestionBlock(true);
       }, 100);
     }
-  }, [currentStepIndex, questionSteps.length, currentStep, trackEvent]);
+  }, [currentStepIndex, questionSteps.length, currentStep, trackStepGA4]);
 
   // Handle zipcode submission
   const handleZipCodeSubmit = useCallback(
@@ -1182,7 +1179,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       // Log flow data after zip code submission
       logFlowData(updatedAnswers, `Postal Code: ${zipCode}`);
@@ -1212,7 +1209,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
@@ -1229,7 +1226,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
 
       logFlowData(updatedAnswers, `Store: ${location.storeName}`);
 
@@ -1257,7 +1254,7 @@ function HomeContent() {
       flowParam,
       questionSteps.length,
       logFlowData,
-      trackEvent,
+      trackStepGA4,
     ],
   );
 
@@ -1273,7 +1270,7 @@ function HomeContent() {
       };
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
-      trackEvent(newAnswer);
+      trackStepGA4(newAnswer);
       logFlowData(updatedAnswers, `Booking Email: ${email}`);
 
       // Push full contact record to Epsilon CRM via API route
@@ -1312,7 +1309,7 @@ function HomeContent() {
         "_blank",
       );
     },
-    [storedAnswers, logFlowData, trackEvent, sessionId, userZipCode, flowParam, selectedStore],
+    [storedAnswers, logFlowData, trackStepGA4, sessionId, userZipCode, flowParam, selectedStore],
   );
 
   // Show next question after avatar response finishes
@@ -1784,7 +1781,7 @@ function HomeContent() {
         showAvatarSection={isStoreLocationsStep || isBookingCtaStep}
         avatarVideoSrc={
           isBookingCtaStep
-            ? "/videos/ashley/ashley-idle-crf28.mp4"
+            ? "/videos/ashley/ashley-5-square.mp4"
             : currentStep?.avatarVideoSrc
         }
         avatarText={

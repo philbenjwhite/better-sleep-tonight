@@ -147,11 +147,13 @@ export function Footer({
     return () => clearTimeout(timer);
   }, [words.length, totalAnimationTime, paragraphPauseMs, isTransitioning, currentParagraphIndex, paragraphs.length, advanceToNextParagraph]);
 
-  // Reset when avatarText changes
+  // Reset when avatar content changes (new step with avatar bar)
   useEffect(() => {
     setCurrentParagraphIndex(0);
     setIsTransitioning(false);
-  }, [avatarText]);
+    setIsAvatarDismissed(false);
+    setIsSliding(false);
+  }, [avatarText, avatarVideoSrc]);
 
   const handleDismiss = () => {
     setIsSliding(true);

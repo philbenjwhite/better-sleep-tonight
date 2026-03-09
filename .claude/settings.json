@@ -10,7 +10,28 @@
       "Bash(/opt/homebrew/bin/ffmpeg -y -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -c:v libx264 -crf 28 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle-crf28.mp4)",
       "Bash(/opt/homebrew/bin/ffmpeg -y -i /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle.mov -vf scale=1080:1920 -c:v libx264 -crf 26 -c:a aac -movflags +faststart /Users/mark/www/active/work/better-sleep-tonight/public/videos/ashley/ashley-idle-1080.mp4)",
       "Read(//Users/mark/www/active/work/better-sleep-tonight/**)",
-      "Bash(export PATH=\"/usr/local/bin:/opt/homebrew/bin:$PATH\")"
+      "Bash(export PATH=\"/usr/local/bin:/opt/homebrew/bin:$PATH\")",
+      "Bash(grep -E '\"\"\\(mapbox|gsap|@phosphor|framer\\)\"\"')",
+      "Read(//Users/mark/**)",
+      "Read(//Users/mark/.nvm/versions/node/**)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash(source \"$NVM_DIR/nvm.sh\")",
+      "Bash(nvm use 22)",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npm run build 2>&1')",
+      "Bash(npx --yes sharp-cli --help)",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npm run build 2>&1 | tail -20')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npm run build 2>&1 | tail -25')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npm run build 2>&1 | tail -30')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npm run build 2>&1 | tail -35')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tinacms build --verbose 2>&1')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tinacms dev --noWatch --noTelemetry 2>&1 | head -40')",
+      "Bash(kill 4025)",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tinacms build --skip-cloud-checks 2>&1')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && node -e \"\"const d=require\\(\\\\\"\"./tina/tina-lock.json\\\\\"\"\\); console.log\\(JSON.stringify\\(Object.keys\\(d\\), null, 2\\)\\)\"\"')",
+      "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tsc --noEmit 2>&1 | tail -10')"
+    ],
+    "additionalDirectories": [
+      "/Users/mark/www/active/work/better-sleep-tonight/src/app/api/epsilon/event"
     ]
   }
 }
