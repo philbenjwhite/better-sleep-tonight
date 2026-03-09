@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:tina": "npx tinacms dev -c \"next dev\"",
-    "build": "npx tinacms build && next build",
+    "build": "npx tinacms build --skip-cloud-checks && next build",
     "build:tina": "npx tinacms build && next build",
     "start": "next start",
     "lint": "next lint",
