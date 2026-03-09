@@ -1,48 +1,51 @@
-# Tracking Changes: Epsilon to GA4 for Step Progression
+# Epsilon & Analytics Integration
 
-## What Changed
+## How Data Flows to Epsilon
 
-We removed the per-step tracking to Epsilon PeopleCloud. Previously, every time a user answered a question, watched a video, or interacted with a step, we sent that data to Epsilon — creating a record keyed by their anonymous session ID. This meant PeopleCloud was filling up with rows that never had an email attached, since most users drop off before the final step.
+Epsilon PeopleCloud only receives data when a user submits their email at the final booking step. Previously, every quiz interaction was sent to Epsilon — creating anonymous records that never got an email attached. We removed that to keep PeopleCloud clean.
 
-Now, **Epsilon only receives data when the user submits their email** at the final booking step. That submission still includes all their accumulated answers, store selection, and zip code — so we don't lose any CRM data for users who complete the flow.
+When a user completes the flow and enters their email, a single record is created in PeopleCloud containing:
 
-## How We Still Track Dropoff
+- **Email address** (used as the record key)
+- **All quiz answers** (sleep position, pain frequency, purchase intent, etc.)
+- **Mattress selection** (size and feel)
+- **Postal code**
+- **Selected store** (name and city)
+- **Product IDs shown** (which mattresses were recommended based on their answers)
 
-We replaced the Epsilon per-step calls with GA4 events using the `trackQuizEvent` utility that was already built but unused in the main flow:
+### Product Recommendation Field Values
 
-```ts
-trackQuizEvent('quiz_step', currentStepIndex, {
-  step_id: answer.stepId,
-  flow_id: flowParam,
-  answer_value: answer.value,
-  answer_label: answer.label,
-});
-```
+The product recommendations step now sends the actual product IDs instead of a generic label. The value stored in the `Product_Recommendations` field depends on the user's answer to the "sleep alone or with a partner" question:
 
-This fires at every interaction point — video completions, question answers, mattress selections, zip code entry, store selection, etc. All the same touchpoints we were tracking before, just routed to GA4 instead of Epsilon.
+- **"Just Me" (2 products shown):** `tempur-sense,tempur-prosense`
+- **"With a Partner" (3 products shown):** `tempur-sense,tempur-prosense,tempur-luxealign`
 
-## Product ID Tracking
+The label field includes context: `Book a Rest Test (tempur-sense,tempur-prosense)`
 
-Previously, clicking "Book a Rest Test" on the product recommendations page just sent a generic `"book-rest-test"` value. Now it captures the actual product IDs that were shown to the user based on their earlier answer:
+This means every row in PeopleCloud has an email attached and a complete picture of the user's quiz journey.
 
-- **"Just Me"** — `tempur-sense,tempur-prosense`
-- **"With a Partner"** — `tempur-sense,tempur-prosense,tempur-luxealign`
+## How We Track Dropoff (Without Epsilon)
 
-These IDs flow into both the GA4 event and the stored answer that gets sent to Epsilon when the user submits their email.
+Step-by-step progression and dropoff is tracked via GA4 instead. Every interaction point fires a GA4 event — video completions, question answers, mattress selections, zip code entry, store selection, etc.
 
-## What Was Removed
-
-- The `/api/epsilon/event` API route (the one that handled per-step tracking) was deleted entirely
-- The `trackEvent` function in the main page component was replaced with a lighter `trackStepGA4` wrapper
-
-## What Stayed the Same
-
-- The `/api/epsilon/submit` endpoint is untouched — email submissions still create full records in PeopleCloud with all answers attached
-- GTM and GA4 were already configured, so no infrastructure changes needed
-
-## GA4 Setup Needed
-
-The events will flow into GA4 immediately, but to build the funnel/dropoff reports:
+To build funnel/dropoff reports in GA4:
 
 1. Register `step_id`, `flow_id`, `answer_value`, and `answer_label` as **custom dimensions** in GA4 Admin → Custom Definitions
 2. Create a **Funnel Exploration** report using `quiz_step` events filtered by `step_id` to visualize where users drop off
+
+## Next Up: RTM (Real-Time Message) After Email Submission
+
+Once a user submits their email, we want to trigger a follow-up email via Epsilon's RTM API. The submit call already populates the Customer Profile Table with all quiz data — so the email template can pull personalization directly from PeopleCloud. The RTM call itself just needs to send the email address to trigger the message.
+
+The RTM endpoint is:
+
+```
+PUT /v3/messages/{messageId}/send
+```
+
+This uses the same Epsilon OAuth credentials and org unit ID that the data submission uses. The call fires after the profile record is created, so the template can reference all quiz data for personalization.
+
+### Action Items
+
+- [ ] **Get the RTM message ID** from Epsilon — this is the `{messageId}` in the endpoint above, corresponding to the email template/deployment configured in Epsilon
+- [ ] **Confirm product ID format** — the `Product_Recommendations` field now contains comma-separated product IDs (e.g. `tempur-sense,tempur-prosense,tempur-luxealign`). Confirm this format works for Epsilon's template personalization and reporting needs
