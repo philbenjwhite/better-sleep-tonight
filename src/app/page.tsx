@@ -174,11 +174,6 @@ function HomeContent() {
     currentVideoId,
   } = useVideoAvatar();
 
-  // Debug: Log video state changes
-  useEffect(() => {
-    console.log("[VideoStateChange] videoState:", videoState);
-  }, [videoState]);
-
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
   const isVideoReady = videoState !== VideoState.ERROR;
@@ -351,40 +346,8 @@ function HomeContent() {
     pause,
   ]);
 
-  // Debug: Log step and render state
-  useEffect(() => {
-    console.log("[StepDebug]", {
-      currentStepIndex,
-      stepId: currentStep?.stepId,
-      template: currentStep?._template,
-      showQuestionBlock,
-      showBackdrop,
-      isZipCodeCaptureStep,
-      isVideoStep,
-      videoState,
-      isShowingResponse,
-      avatarStartedTalking,
-      hasSpokenSummary,
-    });
-  }, [
-    currentStepIndex,
-    currentStep,
-    showQuestionBlock,
-    showBackdrop,
-    isZipCodeCaptureStep,
-    isVideoStep,
-    videoState,
-    isShowingResponse,
-    avatarStartedTalking,
-    hasSpokenSummary,
-  ]);
-
   // Reset hasSpokenSummary when step changes to ensure video steps can play
   useEffect(() => {
-    console.log(
-      "[StepChange] Resetting hasSpokenSummary for step:",
-      currentStepIndex,
-    );
     setHasSpokenSummary(false);
   }, [currentStepIndex]);
 
@@ -523,17 +486,6 @@ function HomeContent() {
 
   // Handle video step - play video if videoId is specified
   useEffect(() => {
-    // Debug logging
-    console.log("[VideoStep] Check:", {
-      isVideoStep,
-      hasCurrentStep: !!currentStep,
-      showQuestionBlock,
-      isShowingResponse,
-      hasSpokenSummary,
-      stepId: currentStep?.stepId,
-      videoPath: currentStep?.video,
-    });
-
     if (
       isVideoStep &&
       currentStep &&
@@ -541,7 +493,6 @@ function HomeContent() {
       !isShowingResponse &&
       !hasSpokenSummary
     ) {
-      console.log("[VideoStep] Starting video step:", currentStep.stepId);
       const scriptText = currentStep.script || "";
       const videoPath = currentStep.video;
 
@@ -561,36 +512,17 @@ function HomeContent() {
 
       // If video is specified, play it and fetch VTT subtitles
       if (videoPath) {
-        console.log("[VideoStep] Playing video:", videoPath);
-
         // Fetch VTT file for subtitle timing
         const vttPath = getVttPathFromVideo(videoPath);
-        console.log("[VideoStep] Fetching VTT from:", vttPath);
         fetch(vttPath)
-          .then((res) => {
-            console.log("[VideoStep] VTT fetch response:", {
-              ok: res.ok,
-              status: res.status,
-            });
-            return res.ok ? res.text() : Promise.reject("VTT not found");
-          })
+          .then((res) =>
+            res.ok ? res.text() : Promise.reject("VTT not found"),
+          )
           .then((vttContent) => {
             const track = parseVtt(vttContent);
-            console.log(
-              "[VideoStep] Loaded VTT cues:",
-              track.cues.length,
-              "cues for",
-              videoPath,
-            );
-            console.log("[VideoStep] First cue:", track.cues[0]);
             setVideoSubtitleCues(track.cues);
           })
-          .catch((err) => {
-            console.log(
-              "[VideoStep] No VTT file found or error:",
-              err,
-              "using timer-based display",
-            );
+          .catch(() => {
             setVideoSubtitleCues([]); // Fall back to timer-based mode
           });
 
@@ -600,17 +532,7 @@ function HomeContent() {
         const isPlayingSameVideo =
           videoState === VideoState.PLAYING && currentVideoId === videoPath;
         if (!isPlayingSameVideo) {
-          console.log(
-            "[VideoStep] Calling play() for video:",
-            videoPath,
-            "current state:",
-            videoState,
-          );
           play(videoPath);
-        } else {
-          console.log(
-            "[VideoStep] Already playing this video, skipping play() call",
-          );
         }
       } else {
         // No video - auto-advance after showing text
@@ -637,15 +559,6 @@ function HomeContent() {
   const isVideoEnded = videoState === VideoState.ENDED;
 
   useEffect(() => {
-    console.log("[VideoStepComplete] Check:", {
-      isVideoStep,
-      isShowingResponse,
-      isVideoEnded,
-      hasSpokenSummary,
-      currentStepIndex,
-      videoState,
-    });
-
     // Note: We removed avatarStartedTalking from this check because:
     // 1. hasSpokenSummary indicates we started the video step
     // 2. isVideoEnded (ENDED state) confirms video finished playing
@@ -655,14 +568,8 @@ function HomeContent() {
       const stepId = currentStep?.stepId;
       const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
       if (hasManualCta) {
-        console.log(
-          "[VideoStepComplete] Step has manual CTA, skipping auto-advance:",
-          stepId,
-        );
         return;
       }
-
-      console.log("[VideoStepComplete] All conditions met, starting timer");
 
       // Track video watched event via GA4
       if (currentStep?.stepId) {
@@ -675,7 +582,6 @@ function HomeContent() {
 
       // Video finished - brief moment before advancing
       const timer = setTimeout(() => {
-        console.log("[VideoStepComplete] Timer fired, advancing to next step");
         setIsShowingResponse(false);
         setAvatarResponse(null);
         setAvatarStartedTalking(false);
@@ -683,12 +589,6 @@ function HomeContent() {
 
         // Advance to next step
         if (currentStepIndex < questionSteps.length - 1) {
-          console.log(
-            "[VideoStepComplete] Advancing from step",
-            currentStepIndex,
-            "to",
-            currentStepIndex + 1,
-          );
           const nextStep = questionSteps[currentStepIndex + 1];
           const isNextStepQuestion = nextStep?._template === "questionStep";
 
@@ -697,9 +597,6 @@ function HomeContent() {
           // Only show backdrop/question block if next step is a question
           if (isNextStepQuestion) {
             setTimeout(() => {
-              console.log(
-                "[VideoStepComplete] Next step is question, showing question block",
-              );
               setShowBackdrop(true);
               setBackdropHasAnimated(true);
               setShowQuestionBlock(true);
@@ -707,9 +604,6 @@ function HomeContent() {
           } else {
             // For non-question steps (video, email capture, etc.), show question block
             // but hide backdrop - the video step effect will handle video steps
-            console.log(
-              "[VideoStepComplete] Next step is not a question, showing question block without backdrop",
-            );
             setTimeout(() => {
               setShowBackdrop(false);
               setBackdropHasAnimated(false);
@@ -718,10 +612,7 @@ function HomeContent() {
           }
         }
       }, 500); // 500ms delay after video ends before hiding speech bubble
-      return () => {
-        console.log("[VideoStepComplete] Cleanup - clearing timer");
-        clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
   }, [
     isVideoStep,
@@ -730,7 +621,6 @@ function HomeContent() {
     hasSpokenSummary,
     currentStepIndex,
     questionSteps.length,
-    videoState, // For logging only
     currentStep?.stepId,
     currentStep?.internalName,
     trackStepGA4,
@@ -862,7 +752,7 @@ function HomeContent() {
             // Flow complete - hide backdrop
             setShowBackdrop(false);
             setBackdropHasAnimated(false);
-            console.log("Flow complete!");
+            // Flow complete
           }
         }
       }, 1000); // Pause after selection so user sees their choice before moving on
@@ -1057,8 +947,6 @@ function HomeContent() {
 
   // Handle see options button click (CTA at end of summary video)
   const handleSeeOptionsClick = useCallback(() => {
-    console.log("See options clicked — advancing to product recommendations");
-
     // Track video watched event via GA4
     if (currentStep?.stepId) {
       trackStepGA4({
@@ -1098,14 +986,6 @@ function HomeContent() {
       const coordinates = await geocodeWithFallback(zipCode);
       if (coordinates) {
         setUserCoordinates(coordinates);
-        console.log(
-          "Geocoded postal code:",
-          zipCode,
-          "to coordinates:",
-          coordinates,
-        );
-      } else {
-        console.warn("Could not geocode postal code:", zipCode);
       }
 
       // Store as an answer
@@ -1254,14 +1134,6 @@ function HomeContent() {
   // Show next question after avatar response finishes
   // (Skip if in video step or booking CTA step - those have their own handlers)
   useEffect(() => {
-    console.log("[AvatarResponseComplete] Check:", {
-      isShowingResponse,
-      avatarStartedTalking,
-      isVideoPlaying,
-      isVideoStep,
-      isBookingCtaStep,
-      currentStepTemplate: currentStep?._template,
-    });
     if (
       isShowingResponse &&
       avatarStartedTalking &&
@@ -1269,9 +1141,6 @@ function HomeContent() {
       !isVideoStep &&
       !isBookingCtaStep
     ) {
-      console.log(
-        "[AvatarResponseComplete] Conditions met - starting timer to advance",
-      );
       // Avatar finished speaking the response
       const timer = setTimeout(() => {
         // If flow was terminated, don't proceed to next question
@@ -1281,7 +1150,6 @@ function HomeContent() {
           setSelectedAnswer(null);
           setAvatarStartedTalking(false);
           // Flow stays terminated - user can navigate away or contact support
-          console.log("Flow terminated - user did not qualify");
           return;
         }
 
@@ -1301,7 +1169,7 @@ function HomeContent() {
           }, 100);
         } else {
           // End of flow - could navigate to results
-          console.log("Flow complete!");
+          // Flow complete
         }
       }, 200);
       return () => clearTimeout(timer);

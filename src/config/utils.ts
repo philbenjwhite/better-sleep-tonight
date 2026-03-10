@@ -92,7 +92,9 @@ export function logFlowData(
   context?: string,
 ) {
   const flowData = buildFlowData(params);
-  console.log(`\n📋 Flow Data${context ? ` (${context})` : ""}:`);
-  console.log(JSON.stringify(flowData, null, 2));
+  if (process.env.NODE_ENV === "development") {
+    console.log(`\n📋 Flow Data${context ? ` (${context})` : ""}:`);
+    console.log(JSON.stringify(flowData, null, 2));
+  }
   return flowData;
 }

@@ -177,20 +177,10 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   }, [gateEmail, onEmailSubmit]);
 
   const handleBookRestTest = () => {
-    console.log('[StoreLocations] Schedule Appointment clicked', {
-      selectedLocationId,
-      selectedLocation: sortedLocations.find((loc) => loc.id === selectedLocationId),
-      timestamp: new Date().toISOString(),
-    });
     onBookRestTest?.();
   };
 
   const handleContactUs = () => {
-    console.log('[StoreLocations] Contact Us clicked', {
-      selectedLocationId,
-      selectedLocation: sortedLocations.find((loc) => loc.id === selectedLocationId),
-      timestamp: new Date().toISOString(),
-    });
     onContactUs?.();
   };
 

@@ -318,6 +318,5 @@ export async function geocodeWithFallback(postalCode: string): Promise<Coordinat
   }
 
   // Fallback to FSA lookup
-  console.log('Falling back to FSA lookup for:', postalCode);
   return getCoordinatesFromFSA(postalCode);
 }

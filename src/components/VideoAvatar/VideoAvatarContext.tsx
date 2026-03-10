@@ -122,12 +122,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
         if (playPromise !== undefined) {
           playPromise
-            .then(() => {
-              console.log('[VideoAvatar] Playback started successfully');
-            })
-            .catch((error) => {
+            .catch(() => {
               // If autoplay fails, we'll fall back to onVideoLoaded handler
-              console.log('[VideoAvatar] Immediate play failed, will retry on load:', error.message);
             });
         }
       });
@@ -161,7 +157,6 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     try {
       const videoElement = await waitForVideoElement().catch(() => {
         // Video element was unmounted (e.g., navigated away from video step)
-        console.log('[VideoAvatar] Video element not available, skipping play');
         return null;
       });
       if (!videoElement) return;
@@ -197,7 +192,6 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
     // Skip preloading on slow connections
     if (preloadAttribute === 'none') {
-      console.log('[VideoAvatar] Skipping preload on slow connection');
       return;
     }
 
@@ -218,7 +212,6 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     link.as = 'video';
     link.href = videoSrc;
     document.head.appendChild(link);
-    console.log('[VideoAvatar] Preloading video:', videoSrc);
   }, [connectionQuality]);
 
   // Preload multiple videos based on connection quality
@@ -227,7 +220,6 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       const { preloadCount } = getPreloadStrategy(connectionQuality);
 
       if (preloadCount === 0) {
-        console.log('[VideoAvatar] Skipping preload - slow connection');
         return;
       }
 
@@ -266,12 +258,10 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   }, []);
 
   const onVideoPlay = useCallback(() => {
-    console.log('[VideoAvatarContext] onVideoPlay - setting state to PLAYING');
     setVideoState(VideoState.PLAYING);
   }, []);
 
   const onVideoEnded = useCallback(() => {
-    console.log('[VideoAvatarContext] onVideoEnded - setting state to ENDED');
     setVideoState(VideoState.ENDED);
     playPromiseRef.current?.resolve();
     playPromiseRef.current = null;
@@ -299,14 +289,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
   // Buffering detection - called when video is waiting for data
   const onVideoWaiting = useCallback(() => {
-    console.log('[VideoAvatar] Video buffering...');
     setIsBuffering(true);
   }, []);
 
   // Called when video can resume playing after buffering
   const onVideoCanPlay = useCallback(() => {
     if (isBuffering) {
-      console.log('[VideoAvatar] Video can play again');
       setIsBuffering(false);
     }
   }, [isBuffering]);
