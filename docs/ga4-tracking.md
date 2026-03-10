@@ -69,14 +69,14 @@ Ashley's video segments are tracked automatically throughout the flow.
 
 For a conversion funnel report, use this sequence:
 
-| Step | Event | What It Tells You |
-|---|---|---|
-| 1 | `quiz_start` | How many people begin the quiz |
-| 2 | `quiz_step` (filter by `quiz_step` param) | Where people drop off in the questions |
-| 3 | `buy_now_click` or `learn_more_click` | How many engage with a specific product |
-| 4 | `store_search` | How many look for a nearby store |
-| 5 | `book_rest_test_intent` | How many want to try a mattress in-store |
-| 6 | `quiz_complete` | How many reach the final screen |
+| Step | Event                                     | What It Tells You                        |
+| ---- | ----------------------------------------- | ---------------------------------------- |
+| 1    | `quiz_start`                              | How many people begin the quiz           |
+| 2    | `quiz_step` (filter by `quiz_step` param) | Where people drop off in the questions   |
+| 3    | `buy_now_click` or `learn_more_click`     | How many engage with a specific product  |
+| 4    | `store_search`                            | How many look for a nearby store         |
+| 5    | `book_rest_test_intent`                   | How many want to try a mattress in-store |
+| 6    | `quiz_complete`                           | How many reach the final screen          |
 
 Drop-off between steps 1→2 tells you if the intro video is too long. Drop-off between 2→3 tells you if the recommendations resonate. Drop-off between 4→5 tells you if store availability is a blocker.
 

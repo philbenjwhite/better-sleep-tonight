@@ -37,7 +37,7 @@ GTM has built-in video tracking variables (Video Title, Video Duration, Video Pe
 
 ## Quick Summary
 
-The quiz fires **9 custom events**. For each one, you need:
+The quiz fires **7 active custom events** (video events are defined but not yet wired up — skip those for now). For each one, you need:
 
 1. A **GTM Trigger** that listens for the event name
 2. A **GTM Tag** (GA4 Event) that sends it to GA4
@@ -45,120 +45,295 @@ The quiz fires **9 custom events**. For each one, you need:
 
 ---
 
-## Events to Set Up
+## Step 1: Create Data Layer Variables
+
+Do this first — these are reused across multiple tags.
+
+Go to **Variables** > **User-Defined Variables** > **New**. For each row:
+- Variable Type: **Data Layer Variable**
+- Data Layer Version: **2**
+- Default Value: leave unchecked
+
+| Variable Name          | Data Layer Variable Name |
+|------------------------|--------------------------|
+| dlv - quiz_step        | `quiz_step`              |
+| dlv - step_id          | `step_id`                |
+| dlv - flow_id          | `flow_id`                |
+| dlv - answer_value     | `answer_value`           |
+| dlv - answer_label     | `answer_label`           |
+| dlv - item_id          | `item_id`                |
+| dlv - item_name        | `item_name`              |
+| dlv - price            | `price`                  |
+| dlv - zip_code         | `zip_code`               |
+| dlv - results_count    | `results_count`          |
+| dlv - event_category   | `event_category`         |
+| dlv - event_label      | `event_label`            |
+
+---
+
+## Step 2: Create Triggers + Tags (all 7 events)
+
+For each event, create one Trigger and one Tag.
+
+---
 
 ### 1. quiz_start
 
-- **What it means:** User tapped "Begin" to start the quiz
-- **Trigger:** Custom Event, event name = `quiz_start`
-- **Parameters to capture:** `quiz_step`, `flow_id`
-- **Mark as conversion?** Optional — useful for measuring landing page effectiveness
+User tapped "Begin" to start the quiz.
+
+**Trigger:**
+- Name: `CE - quiz_start`
+- Type: Custom Event
+- Event name: `quiz_start`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - quiz_start`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `quiz_start`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| quiz_step      | `{{dlv - quiz_step}}`      |
+| flow_id        | `{{dlv - flow_id}}`        |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - quiz_start`
+- Mark as Key Event? Optional — useful for measuring landing page effectiveness
+
+---
 
 ### 2. quiz_step
 
-- **What it means:** User answered a question (fires once per question, 6 total)
-- **Trigger:** Custom Event, event name = `quiz_step`
-- **Parameters to capture:** `quiz_step`, `step_id`, `answer_value`, `answer_label`, `flow_id`
-- **Mark as conversion?** No — use for funnel analysis, not as a conversion
-- **Note:** `quiz_step` is a number (0-5). You can filter by this to see where people drop off
+User answered a question (fires once per question, 6 total). `quiz_step` is 0-indexed (0-5).
+
+**Trigger:**
+- Name: `CE - quiz_step`
+- Type: Custom Event
+- Event name: `quiz_step`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - quiz_step`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `quiz_step`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| quiz_step      | `{{dlv - quiz_step}}`      |
+| step_id        | `{{dlv - step_id}}`        |
+| flow_id        | `{{dlv - flow_id}}`        |
+| answer_value   | `{{dlv - answer_value}}`   |
+| answer_label   | `{{dlv - answer_label}}`   |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - quiz_step`
+- Mark as Key Event? No — use for funnel analysis, not as a conversion
+
+---
 
 ### 3. quiz_complete
 
-- **What it means:** User reached the final screen of the quiz
-- **Trigger:** Custom Event, event name = `quiz_complete`
-- **Parameters to capture:** `quiz_step`, `flow_id`
-- **Mark as conversion?** Yes — this is the primary completion metric
+User reached the final screen of the quiz.
+
+**Trigger:**
+- Name: `CE - quiz_complete`
+- Type: Custom Event
+- Event name: `quiz_complete`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - quiz_complete`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `quiz_complete`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| quiz_step      | `{{dlv - quiz_step}}`      |
+| flow_id        | `{{dlv - flow_id}}`        |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - quiz_complete`
+- Mark as Key Event? **Yes** — primary completion metric
+
+---
 
 ### 4. buy_now_click
 
-- **What it means:** User tapped "Buy Now" on a product recommendation
-- **Trigger:** Custom Event, event name = `buy_now_click`
-- **Parameters to capture:** `item_id`, `item_name`, `price`
-- **Mark as conversion?** Yes — strongest purchase intent signal
+User tapped "Buy Now" on a product recommendation.
+
+**Trigger:**
+- Name: `CE - buy_now_click`
+- Type: Custom Event
+- Event name: `buy_now_click`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - buy_now_click`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `buy_now_click`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| item_id        | `{{dlv - item_id}}`        |
+| item_name      | `{{dlv - item_name}}`      |
+| price          | `{{dlv - price}}`          |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - buy_now_click`
+- Mark as Key Event? **Yes** — strongest purchase intent signal
+
+---
 
 ### 5. learn_more_click
 
-- **What it means:** User tapped "Learn More" on a product recommendation
-- **Trigger:** Custom Event, event name = `learn_more_click`
-- **Parameters to capture:** `item_id`, `item_name`
-- **Mark as conversion?** Optional — softer intent than Buy Now, but still valuable
+User tapped "Learn More" on a product recommendation.
+
+**Trigger:**
+- Name: `CE - learn_more_click`
+- Type: Custom Event
+- Event name: `learn_more_click`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - learn_more_click`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `learn_more_click`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| item_id        | `{{dlv - item_id}}`        |
+| item_name      | `{{dlv - item_name}}`      |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - learn_more_click`
+- Mark as Key Event? Optional — softer intent than Buy Now, but still valuable
+
+---
 
 ### 6. book_rest_test_intent
 
-- **What it means:** User tapped "Book a Rest Test" (wants to try the mattress in-store)
-- **Trigger:** Custom Event, event name = `book_rest_test_intent`
-- **Parameters to capture:** `item_id`, `item_name`, `price`
-- **Mark as conversion?** Yes — high-intent action
+User tapped "Book a Rest Test" (wants to try the mattress in-store).
+
+**Trigger:**
+- Name: `CE - book_rest_test_intent`
+- Type: Custom Event
+- Event name: `book_rest_test_intent`
+- Fires on: **All Custom Events**
+
+**Tag:**
+- Name: `GA4 - book_rest_test_intent`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `book_rest_test_intent`
+- Event Parameters:
+
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| item_id        | `{{dlv - item_id}}`        |
+| item_name      | `{{dlv - item_name}}`      |
+| price          | `{{dlv - price}}`          |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
+
+- Triggering: `CE - book_rest_test_intent`
+- Mark as Key Event? **Yes** — high in-store intent
+
+---
 
 ### 7. store_search
 
-- **What it means:** User submitted a zip code to find nearby stores
-- **Trigger:** Custom Event, event name = `store_search`
-- **Parameters to capture:** `zip_code`
-- **Mark as conversion?** Optional — indicates interest in visiting a store
+User submitted a zip code to find nearby stores.
 
-### 8. video_start
+**Trigger:**
+- Name: `CE - store_search`
+- Type: Custom Event
+- Event name: `store_search`
+- Fires on: **All Custom Events**
 
-- **What it means:** An Ashley avatar video began playing
-- **Trigger:** Custom Event, event name = `video_start`
-- **Parameters to capture:** `video_title`, `video_duration`
-- **Mark as conversion?** No
+**Tag:**
+- Name: `GA4 - store_search`
+- Type: Google Analytics: GA4 Event
+- Measurement ID: `G-MQ5XK3D94V`
+- Event Name: `store_search`
+- Event Parameters:
 
-### 9. video_complete
+| Parameter Name | Value                      |
+|----------------|----------------------------|
+| zip_code       | `{{dlv - zip_code}}`       |
+| results_count  | `{{dlv - results_count}}`  |
+| event_category | `{{dlv - event_category}}` |
+| event_label    | `{{dlv - event_label}}`    |
 
-- **What it means:** An Ashley avatar video finished playing
-- **Trigger:** Custom Event, event name = `video_complete`
-- **Parameters to capture:** `video_title`, `video_duration`
-- **Mark as conversion?** No
-
----
-
-## How to Create a Trigger + Tag in GTM
-
-For each event above, repeat these steps:
-
-**Create the Trigger:**
-1. Go to GTM > Triggers > New
-2. Trigger Type: **Custom Event**
-3. Event name: enter the exact event name (e.g. `quiz_start`)
-4. Fire on: All Custom Events
-5. Save
-
-**Create the Tag:**
-1. Go to GTM > Tags > New
-2. Tag Type: **Google Analytics: GA4 Event**
-3. Select your GA4 Configuration tag
-4. Event Name: same name (e.g. `quiz_start`)
-5. Under Event Parameters, add each parameter from the list above (Parameter Name = the name, Value = `{{Event Parameter}}` or use a Data Layer Variable)
-6. Triggering: select the trigger you just created
-7. Save
-
-**Publish** when all tags/triggers are configured.
+- Triggering: `CE - store_search`
+- Mark as Key Event? Optional — indicates interest in visiting a store
 
 ---
 
-## Capturing Event Parameters
+### Video events (not yet active)
 
-The parameters (like `item_id`, `price`, `quiz_step`) are sent via gtag() and land in the **Data Layer**. To use them in GTM:
-
-1. Go to Variables > User-Defined Variables > New
-2. Variable Type: **Data Layer Variable**
-3. Data Layer Variable Name: enter the parameter name (e.g. `item_id`)
-4. Save
-
-Then reference this variable in your GA4 Event tag's Event Parameters section.
+`video_start` and `video_complete` are defined in the codebase but not wired up to any component yet. Skip these in GTM for now — they can be added later once the tracking calls are connected.
 
 ---
 
-## Recommended Conversions (Key Events)
+## Step 3: Testing
+
+1. In GTM, click **Preview** to open Tag Assistant
+2. Open the quiz in the connected browser tab
+3. Walk through the quiz — you should see each event fire in Tag Assistant
+4. Verify each tag shows "Tag Fired" with the correct parameters
+5. Once confirmed, go back to GTM and click **Submit** to publish
+
+---
+
+## Step 4: GA4 Custom Dimensions (Recommended)
+
+Without this step, the parameters flow into GA4 but won't appear in reports or funnel explorations. Register them in **GA4 Admin** > **Custom definitions** > **Create custom dimension**:
+
+| Dimension Name | Scope | Event Parameter |
+|----------------|-------|-----------------|
+| Quiz Step      | Event | `quiz_step`     |
+| Step ID        | Event | `step_id`       |
+| Flow ID        | Event | `flow_id`       |
+| Answer Value   | Event | `answer_value`  |
+| Answer Label   | Event | `answer_label`  |
+| Item ID        | Event | `item_id`       |
+| Item Name      | Event | `item_name`     |
+| Zip Code       | Event | `zip_code`      |
+
+And two custom metrics:
+
+| Metric Name   | Scope | Event Parameter | Unit     |
+|---------------|-------|-----------------|----------|
+| Price         | Event | `price`         | Currency |
+| Results Count | Event | `results_count` | Standard |
+
+---
+
+## Recommended Key Events (Conversions)
 
 Mark these as Key Events in GA4 (Admin > Events > mark as Key Event):
 
-| Event | Why |
-|---|---|
-| `quiz_complete` | Primary completion metric |
-| `buy_now_click` | Strongest purchase signal |
-| `book_rest_test_intent` | High in-store intent |
+| Event                   | Why                        |
+|-------------------------|----------------------------|
+| `quiz_complete`         | Primary completion metric  |
+| `buy_now_click`         | Strongest purchase signal  |
+| `book_rest_test_intent` | High in-store intent       |
 
 These can then be used for Google Ads optimization if you're running campaigns.
 
