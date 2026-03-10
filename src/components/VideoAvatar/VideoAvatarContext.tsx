@@ -211,13 +211,14 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
     preloadedUrls.current.add(videoSrc);
 
-    // Use a hidden video element to preload the video data
-    const preloadVideo = document.createElement('video');
-    preloadVideo.preload = preloadAttribute;
-    preloadVideo.muted = true;
-    preloadVideo.src = videoSrc;
-    preloadVideo.load();
-    console.log('[VideoAvatar] Preloading video:', videoSrc, 'with preload:', preloadAttribute);
+    // Use <link rel="preload"> so the browser caches the fetch and reuses it
+    // when the actual <video> element sets its src — avoids double-downloading
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = videoSrc;
+    document.head.appendChild(link);
+    console.log('[VideoAvatar] Preloading video:', videoSrc);
   }, [connectionQuality]);
 
   // Preload multiple videos based on connection quality
