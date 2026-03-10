@@ -37,7 +37,12 @@ import type {
 } from "@/components/StoreLocations";
 import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
-import { trackQuizEvent } from "@/lib/analytics/conversionTracking";
+import {
+  trackQuizEvent,
+  trackEmailCapture,
+  trackProductView,
+  trackAddToCart,
+} from "@/lib/analytics/conversionTracking";
 
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
@@ -322,6 +327,30 @@ function HomeContent() {
   const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
 
+  // GA4: fire view_item for each product when recommendations step is shown
+  useEffect(() => {
+    if (!isProductRecommendationsStep) return;
+    const sleepAlone =
+      storedAnswers.find((a) => a.stepId === "q6-sleep-alone-or-partner")
+        ?.value === "alone";
+    const recommendations =
+      currentStep?.productRecommendationsContent?.mattressOptions ||
+      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
+    const shownProducts = sleepAlone
+      ? recommendations.slice(0, 2)
+      : recommendations;
+    shownProducts.forEach((p) => trackProductView(p.id, p.productName));
+  }, [isProductRecommendationsStep, currentStep, storedAnswers]);
+
+  // GA4: fire quiz_complete when the user reaches the final step
+  useEffect(() => {
+    if (currentStepIndex === questionSteps.length - 1) {
+      trackQuizEvent("quiz_complete", currentStepIndex, {
+        flow_id: flowParam,
+      });
+    }
+  }, [currentStepIndex, questionSteps.length, flowParam]);
+
   // Pause video at last subtitle cue end for steps with manual CTA
   // This prevents the fade-to-black at the end of the video
   useEffect(() => {
@@ -443,6 +472,7 @@ function HomeContent() {
   );
 
   const handleBegin = useCallback(async () => {
+    trackQuizEvent("quiz_start", 0, { flow_id: flowParam });
     setIsTransitioning(true);
 
     // Check if first step is a video step - if so, start playback immediately
@@ -949,6 +979,11 @@ function HomeContent() {
       : recommendations;
     const productIds = shownProducts.map((p) => p.id).join(",");
 
+    // GA4: track each shown product as add_to_cart
+    shownProducts.forEach((p) =>
+      trackAddToCart(p.id, p.productName, p.basePrice)
+    );
+
     const newAnswer: StoredAnswer = {
       stepId: currentStep?.stepId || `step-${currentStepIndex}`,
       questionText: "Product Recommendation",
@@ -1054,6 +1089,7 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
       trackStepGA4(newAnswer);
+      trackEmailCapture("quiz");
 
       // Log flow data after email submission
       logFlowData(updatedAnswers, `Email: ${email}`);
@@ -1421,6 +1457,8 @@ function HomeContent() {
             muted
             playsInline
             controls={false}
+            poster="/uploads/Mattress_Shopping_poster.jpg"
+            preload="auto"
           >
             <source src={introVideo} type="video/mp4" />
           </video>
