@@ -16,7 +16,7 @@ All events flow through Google Tag Manager (GTM-NFXLP675) and GA4 (G-MQ5XK3D94V)
 4. Ashley summarizes their results in a video
 5. User answers a purchase intent question
 6. Product recommendations appear → **we track which products are shown**
-7. User can tap "Buy Now" or "Learn More" on products → **we track these clicks** *(planned)*
+7. User can tap "Buy Now" or "Learn More" on products → **we track these clicks**
 8. Ashley presents a final video
 9. User enters their zip code to find nearby stores
 10. Store locations are displayed on a map
@@ -40,20 +40,20 @@ These track the user's progression through the quiz flow.
 
 These track product engagement on the recommendations step.
 
-| Event Name | When It Fires | Key Parameters | Status |
-|---|---|---|---|
-| `view_item` | Product recommendations step is displayed (fires once per product) | `item_id`, `item_name` | Live |
-| `buy_now_click` | User taps "Buy Now" on a product card | `item_id`, `item_name`, `price` | Planned |
-| `learn_more_click` | User taps "Learn More" on a product card | `item_id`, `item_name` | Planned |
+| Event Name | When It Fires | Key Parameters |
+|---|---|---|
+| `view_item` | Product recommendations step is displayed (fires once per product) | `item_id`, `item_name` |
+| `buy_now_click` | User taps "Buy Now" on a product card | `item_id`, `item_name`, `price` |
+| `learn_more_click` | User taps "Learn More" on a product card | `item_id`, `item_name` |
 
 ### Engagement Events
 
 These track intent signals beyond the quiz itself.
 
-| Event Name | When It Fires | Key Parameters | Status |
-|---|---|---|---|
-| `book_rest_test_intent` | User taps "Book a Rest Test" CTA on the final screen | `item_id`, `item_name`, `price` | Planned |
-| `store_search` | User submits a zip code to find nearby stores | `zip_code`, `results_count` | Planned |
+| Event Name | When It Fires | Key Parameters |
+|---|---|---|
+| `book_rest_test_intent` | User taps "Book a Rest Test" on product recommendations | `item_id`, `item_name`, `price` |
+| `store_search` | User submits a zip code to find nearby stores | `zip_code` |
 
 ### Video Events
 

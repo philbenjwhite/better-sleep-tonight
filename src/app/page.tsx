@@ -39,6 +39,8 @@ import { StepIndicator } from "@/components/StepIndicator";
 import {
   trackQuizEvent,
   trackProductView,
+  trackBookRestTestIntent,
+  trackStoreSearch,
 } from "@/lib/analytics/conversionTracking";
 
 // Lazy-load late-stage step components (not needed until user progresses)
@@ -972,6 +974,11 @@ function HomeContent() {
       : recommendations;
     const productIds = shownProducts.map((p) => p.id).join(",");
 
+    // GA4: track booking intent for each shown product
+    shownProducts.forEach((p) =>
+      trackBookRestTestIntent(p.id, p.productName, p.basePrice)
+    );
+
     const newAnswer: StoredAnswer = {
       stepId: currentStep?.stepId || `step-${currentStepIndex}`,
       questionText: "Product Recommendation",
@@ -1098,6 +1105,9 @@ function HomeContent() {
     async (zipCode: string) => {
       // Store the zipcode for the store locations step
       setUserZipCode(zipCode);
+
+      // GA4: track store search by zip code
+      trackStoreSearch(zipCode);
 
       // Geocode the postal code to get coordinates
       const coordinates = await geocodeWithFallback(zipCode);

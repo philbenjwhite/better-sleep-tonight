@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Button } from "@/components/Button";
+import { trackBuyNowClick, trackLearnMoreClick } from "@/lib/analytics/conversionTracking";
 import styles from "./ProductRecommendations.module.css";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
@@ -191,7 +192,14 @@ function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
             className={styles.buyButton}
             onClick={
               mattress.buyUrl
-                ? () => window.open(mattress.buyUrl, "_blank", "noopener,noreferrer")
+                ? () => {
+                    if (isNotReadyToBuy) {
+                      trackLearnMoreClick(mattress.id, mattress.productName);
+                    } else {
+                      trackBuyNowClick(mattress.id, mattress.productName, mattress.basePrice);
+                    }
+                    window.open(mattress.buyUrl, "_blank", "noopener,noreferrer");
+                  }
                 : undefined
             }
           >
