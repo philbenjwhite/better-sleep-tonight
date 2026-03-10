@@ -59,8 +59,6 @@
           "value": "never",
           "order": 4,
           "avatarResponse": "That's great that falling asleep isn't an issue for you!",
-          "terminateFlow": true,
-          "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": ["no-issues"]
         }
       ],
@@ -187,8 +185,6 @@
           "value": "never",
           "order": 4,
           "avatarResponse": "That's wonderful that you're not experiencing morning pain!",
-          "terminateFlow": true,
-          "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": ["no-pain"]
         }
       ],
@@ -231,8 +227,6 @@
           "value": "none",
           "order": 4,
           "avatarResponse": "Thanks for letting me know.",
-          "terminateFlow": true,
-          "terminationMessage": "Thanks for taking the sleep test. Based on your responses, unfortunately I don't have enough information to make a recommendation. There could be several reasons why you're not getting a better night's sleep. The best source of information that's freely available is probably Chat GPT or Google.",
           "tags": ["other"]
         }
       ],
