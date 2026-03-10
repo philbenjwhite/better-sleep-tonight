@@ -5,5 +5,4 @@
  */
 
 export * from './videoTracking';
-export * from './scrollTracking';
 export * from './conversionTracking';

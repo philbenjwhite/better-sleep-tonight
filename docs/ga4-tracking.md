@@ -42,7 +42,6 @@ These track product engagement on the recommendations step.
 
 | Event Name | When It Fires | Key Parameters |
 |---|---|---|
-| `view_item` | Product recommendations step is displayed (fires once per product) | `item_id`, `item_name` |
 | `buy_now_click` | User taps "Buy Now" on a product card | `item_id`, `item_name`, `price` |
 | `learn_more_click` | User taps "Learn More" on a product card | `item_id`, `item_name` |
 
@@ -61,21 +60,8 @@ Ashley's video segments are tracked automatically throughout the flow.
 
 | Event Name | When It Fires | Key Parameters |
 |---|---|---|
-| `video_start` | Video playback begins | `video_id`, `video_title` |
-| `video_25_percent` | Video reaches 25% | `video_id`, `video_title`, `video_percent` |
-| `video_50_percent` | Video reaches 50% | `video_id`, `video_title`, `video_percent` |
-| `video_75_percent` | Video reaches 75% | `video_id`, `video_title`, `video_percent` |
-| `video_complete` | Video finishes playing | `video_id`, `video_title`, `watch_time` |
-| `video_pause` | User pauses a video | `video_id`, `video_title` |
-| `video_resume` | User resumes a video | `video_id`, `video_title` |
-| `video_replay` | User replays a video | `video_id`, `video_title` |
-| `video_error` | Video fails to load or play | `video_id`, `error_type`, `error_message` |
-
-### Scroll Tracking
-
-| Event Name | When It Fires | Key Parameters |
-|---|---|---|
-| `scroll_depth` | User scrolls past 25%, 50%, 75%, 90%, or 100% of the page | `percent_scrolled`, `event_label` |
+| `video_start` | Video playback begins | `video_title`, `video_duration` |
+| `video_complete` | Video finishes playing | `video_title`, `video_duration` |
 
 ---
 
@@ -87,13 +73,12 @@ For a conversion funnel report, use this sequence:
 |---|---|---|
 | 1 | `quiz_start` | How many people begin the quiz |
 | 2 | `quiz_step` (filter by `quiz_step` param) | Where people drop off in the questions |
-| 3 | `view_item` | How many see product recommendations |
-| 4 | `buy_now_click` or `learn_more_click` | How many engage with a specific product |
-| 5 | `store_search` | How many look for a nearby store |
-| 6 | `book_rest_test_intent` | How many want to try a mattress in-store |
-| 7 | `quiz_complete` | How many reach the final screen |
+| 3 | `buy_now_click` or `learn_more_click` | How many engage with a specific product |
+| 4 | `store_search` | How many look for a nearby store |
+| 5 | `book_rest_test_intent` | How many want to try a mattress in-store |
+| 6 | `quiz_complete` | How many reach the final screen |
 
-Drop-off between steps 1→2 tells you if the intro video is too long. Drop-off between 3→4 tells you if the recommendations resonate. Drop-off between 5→6 tells you if store availability is a blocker.
+Drop-off between steps 1→2 tells you if the intro video is too long. Drop-off between 2→3 tells you if the recommendations resonate. Drop-off between 4→5 tells you if store availability is a blocker.
 
 ---
 
@@ -110,4 +95,4 @@ Server-side API calls to Epsilon PeopleCloud happen independently and are **not 
 - `quiz_step` numbering is 0-indexed (step 0 = first question after intro video)
 - The URL never changes — if a virtual pageview is needed for a GA4 conversion goal, push a synthetic `page_view` with a path like `/quiz/thank-you`
 - All gtag() calls are guarded with `typeof window !== 'undefined'` for SSR safety
-- Video events fire automatically via the `useVideoAnalytics` hook — no manual wiring needed per video
+- Video events use `trackVideoStart` and `trackVideoComplete` from `src/lib/analytics/videoTracking.ts`

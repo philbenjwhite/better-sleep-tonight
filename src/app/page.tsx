@@ -38,7 +38,6 @@ import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
 import {
   trackQuizEvent,
-  trackProductView,
   trackBookRestTestIntent,
   trackStoreSearch,
 } from "@/lib/analytics/conversionTracking";
@@ -323,20 +322,6 @@ function HomeContent() {
   const isQuestionStep = currentStep?._template === "questionStep";
 
   // GA4: fire view_item for each product when recommendations step is shown
-  useEffect(() => {
-    if (!isProductRecommendationsStep) return;
-    const sleepAlone =
-      storedAnswers.find((a) => a.stepId === "q6-sleep-alone-or-partner")
-        ?.value === "alone";
-    const recommendations =
-      currentStep?.productRecommendationsContent?.mattressOptions ||
-      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
-    const shownProducts = sleepAlone
-      ? recommendations.slice(0, 2)
-      : recommendations;
-    shownProducts.forEach((p) => trackProductView(p.id, p.productName));
-  }, [isProductRecommendationsStep, currentStep, storedAnswers]);
-
   // GA4: fire quiz_complete when the user reaches the final step
   useEffect(() => {
     if (currentStepIndex === questionSteps.length - 1) {
