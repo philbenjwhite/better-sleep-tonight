@@ -284,8 +284,17 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       if (dur && time >= dur - 1 && !isNearingEnd) {
         setIsNearingEnd(true);
       }
+      // Pause just before end to freeze on last frame (prevents black frame / flicker)
+      // Skip for looping videos. Manually fire ended state so app logic continues.
+      if (dur && time >= dur - 0.15 && !videoRef.current.paused && !videoRef.current.loop) {
+        videoRef.current.pause();
+        setVideoState(VideoState.ENDED);
+        playPromiseRef.current?.resolve();
+        playPromiseRef.current = null;
+        onVideoEnd?.();
+      }
     }
-  }, [isNearingEnd]);
+  }, [isNearingEnd, onVideoEnd]);
 
   // Buffering detection - called when video is waiting for data
   const onVideoWaiting = useCallback(() => {
