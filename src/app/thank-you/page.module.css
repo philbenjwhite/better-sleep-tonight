@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 140px);
+  padding: var(--sds-size-space-600);
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--sds-typography-title-page-font-family);
+  font-weight: var(--sds-typography-title-page-font-weight);
+  font-size: var(--sds-typography-title-page-size-base);
+  color: var(--sds-color-text-default-default);
+  margin-bottom: var(--sds-size-space-600);
+}
+
+.message {
+  font-family: var(--sds-typography-body-font-family);
+  font-weight: var(--sds-typography-body-font-weight-regular);
+  font-size: var(--sds-typography-body-size-medium);
+  color: var(--sds-color-text-default-secondary);
+  max-width: 520px;
+  line-height: 1.6;
+}

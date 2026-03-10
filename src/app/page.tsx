@@ -1092,41 +1092,33 @@ function HomeContent() {
       trackStepGA4(newAnswer);
       logFlowData(updatedAnswers, `Booking Email: ${email}`);
 
-      // Push full contact record to Epsilon CRM via API route
-      try {
-        await fetch("/api/epsilon/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            email,
-            postalCode: userZipCode || undefined,
-            flowId: flowParam,
-            selectedStore: selectedStore
-              ? {
-                  id: selectedStore.id,
-                  storeName: selectedStore.storeName,
-                  city: selectedStore.city,
-                }
-              : undefined,
-            answers: updatedAnswers.map((a) => ({
-              stepId: a.stepId,
-              questionText: a.questionText,
-              value: a.value,
-              label: a.label,
-            })),
-          }),
-        });
-      } catch (err) {
-        // Log but don't block the redirect
-        console.error("[Epsilon] Submit failed:", err);
-      }
+      // Push full contact record to Epsilon CRM via API route (fire-and-forget)
+      fetch("/api/epsilon/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          email,
+          postalCode: userZipCode || undefined,
+          flowId: flowParam,
+          selectedStore: selectedStore
+            ? {
+                id: selectedStore.id,
+                storeName: selectedStore.storeName,
+                city: selectedStore.city,
+              }
+            : undefined,
+          answers: updatedAnswers.map((a) => ({
+            stepId: a.stepId,
+            questionText: a.questionText,
+            value: a.value,
+            label: a.label,
+          })),
+        }),
+      }).catch((err) => console.error("[Epsilon] Submit failed:", err));
 
-      // Redirect to appointment page
-      window.open(
-        "https://ashleyhomestore.ca/pages/book-appointment",
-        "_blank",
-      );
+      // Redirect to thank-you page
+      window.location.href = "/thank-you";
     },
     [storedAnswers, logFlowData, trackStepGA4, sessionId, userZipCode, flowParam, selectedStore],
   );
