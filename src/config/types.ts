@@ -17,11 +17,10 @@ export interface FlowStep {
   helperText?: string;
   isRequired?: boolean;
   answerOptions?: CMSAnswerOption[];
-  // Email capture fields
+  // Shared fields (used by zipcode capture, etc.)
   promptText?: string;
   placeholderText?: string;
   submitButtonText?: string;
-  avatarResponseOnSubmit?: string;
   // See options fields
   buttonText?: string;
   avatarMessage?: string;

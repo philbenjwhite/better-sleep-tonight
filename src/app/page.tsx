@@ -29,7 +29,6 @@ import type {
   MattressSize,
   MattressFeel,
 } from "@/components/MattressRecommendation";
-import type { EmailCaptureContent } from "@/components/EmailCapture";
 import type { ActionPromptContent } from "@/components/ActionPrompt";
 import type {
   StoreLocationsContent,
@@ -39,9 +38,7 @@ import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
 import {
   trackQuizEvent,
-  trackEmailCapture,
   trackProductView,
-  trackAddToCart,
 } from "@/lib/analytics/conversionTracking";
 
 // Lazy-load late-stage step components (not needed until user progresses)
@@ -57,9 +54,6 @@ const ProductRecommendations = dynamic(() =>
   import("@/components/ProductRecommendations").then(
     (m) => m.ProductRecommendations
   )
-);
-const EmailCapture = dynamic(() =>
-  import("@/components/EmailCapture").then((m) => m.EmailCapture)
 );
 const ActionPrompt = dynamic(() =>
   import("@/components/ActionPrompt").then((m) => m.ActionPrompt)
@@ -320,7 +314,6 @@ function HomeContent() {
   const isVideoStep = currentStep?._template === "videoStep";
   const isProductRecommendationsStep =
     currentStep?._template === "productRecommendationsStep";
-  const isEmailCaptureStep = currentStep?._template === "emailCaptureStep";
   const isSeeOptionsStep = currentStep?._template === "seeOptionsStep";
   const isZipCodeCaptureStep = currentStep?._template === "zipcodeCaptureStep";
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
@@ -979,11 +972,6 @@ function HomeContent() {
       : recommendations;
     const productIds = shownProducts.map((p) => p.id).join(",");
 
-    // GA4: track each shown product as add_to_cart
-    shownProducts.forEach((p) =>
-      trackAddToCart(p.id, p.productName, p.basePrice)
-    );
-
     const newAnswer: StoredAnswer = {
       stepId: currentStep?.stepId || `step-${currentStepIndex}`,
       questionText: "Product Recommendation",
@@ -1074,98 +1062,6 @@ function HomeContent() {
       trackStepGA4,
     ],
   );
-
-  // Handle email submission
-  const handleEmailSubmit = useCallback(
-    async (email: string) => {
-      // Store the email as an answer
-      const newAnswer: StoredAnswer = {
-        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-        questionText: "Email Capture",
-        value: email,
-        label: email,
-        timestamp: new Date(),
-      };
-      const updatedAnswers = [...storedAnswers, newAnswer];
-      setStoredAnswers(updatedAnswers);
-      trackStepGA4(newAnswer);
-      trackEmailCapture("quiz");
-
-      // Log flow data after email submission
-      logFlowData(updatedAnswers, `Email: ${email}`);
-
-      // Save progress (don't clear yet - we're continuing to see-options)
-      saveProgress({
-        flowId: flowParam,
-        currentStepIndex: currentStepIndex + 1,
-        answers: updatedAnswers,
-      });
-
-      // Hide email capture and advance to next step
-      setShowQuestionBlock(false);
-      setHasSpokenSummary(false); // Reset for next step (especially video steps)
-
-      if (currentStepIndex < questionSteps.length - 1) {
-        setCurrentStepIndex((prev) => prev + 1);
-        setTimeout(() => {
-          setShowQuestionBlock(true);
-        }, 100);
-      }
-    },
-    [
-      currentStep,
-      currentStepIndex,
-      storedAnswers,
-      saveProgress,
-      flowParam,
-      questionSteps.length,
-      logFlowData,
-      trackStepGA4,
-    ],
-  );
-
-  // Handle email skip
-  const handleEmailSkip = useCallback(() => {
-    console.log("Email skipped");
-
-    // Store "skipped" as the answer for this step
-    const newAnswer: StoredAnswer = {
-      stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-      questionText: "Email Capture",
-      value: "skipped",
-      label: "Skipped",
-      timestamp: new Date(),
-    };
-    const updatedAnswers = [...storedAnswers, newAnswer];
-    setStoredAnswers(updatedAnswers);
-    trackStepGA4(newAnswer);
-
-    // Save progress
-    saveProgress({
-      flowId: flowParam,
-      currentStepIndex: currentStepIndex + 1,
-      answers: updatedAnswers,
-    });
-
-    // Hide email capture and advance to next step
-    setShowQuestionBlock(false);
-    setHasSpokenSummary(false); // Reset for next step (especially video steps)
-
-    if (currentStepIndex < questionSteps.length - 1) {
-      setCurrentStepIndex((prev) => prev + 1);
-      setTimeout(() => {
-        setShowQuestionBlock(true);
-      }, 100);
-    }
-  }, [
-    currentStep,
-    currentStepIndex,
-    storedAnswers,
-    saveProgress,
-    flowParam,
-    questionSteps.length,
-    trackStepGA4,
-  ]);
 
   // Handle see options button click (CTA at end of summary video)
   const handleSeeOptionsClick = useCallback(() => {
@@ -1710,28 +1606,6 @@ function HomeContent() {
                         | undefined
                     }
                     onBookRestTest={handleBookRestTest}
-                  />
-                </div>
-              )}
-
-              {/* Email Capture Step - rendered outside question block for wider layout */}
-              {showQuestionBlock && isEmailCaptureStep && (
-                <div
-                  key={`email-capture-${currentStepIndex}`}
-                  className={styles.emailCaptureWrapper}
-                >
-                  <EmailCapture
-                    content={
-                      {
-                        promptText: currentStep?.promptText,
-                        placeholderText: currentStep?.placeholderText,
-                        submitButtonText: currentStep?.submitButtonText,
-                        avatarResponseOnSubmit:
-                          currentStep?.avatarResponseOnSubmit,
-                      } as EmailCaptureContent
-                    }
-                    onSubmit={handleEmailSubmit}
-                    onSkip={handleEmailSkip}
                   />
                 </div>
               )}

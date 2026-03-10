@@ -895,28 +895,6 @@
   }
 }
 
-/* Email Capture Wrapper - wider layout for email input */
-.emailCaptureWrapper {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  min-width: 600px;
-  max-width: 700px;
-  max-height: 80vh;
-  overflow: visible;
-  padding: 12px;
-  pointer-events: auto;
-}
-
-@media (max-width: 768px) {
-  .emailCaptureWrapper {
-    min-width: auto;
-    width: calc(100vw - 3rem);
-    max-width: calc(100vw - 3rem);
-    padding: 12px;
-    margin: 0 auto;
-  }
-}
 
 /* Booking CTA page - shift avatar left so avatar + CTA column are centered together */
 .bookingCtaPage .questionWrapper {

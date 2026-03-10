@@ -8,7 +8,6 @@ export const MANUAL_CTA_LABELS: Record<string, string> = {
 
 // Step templates that belong to the "Results" phase
 export const RESULTS_TEMPLATES = new Set([
-  "emailCaptureStep",
   "seeOptionsStep",
   "productRecommendationsStep",
   "zipcodeCaptureStep",
