@@ -1290,7 +1290,7 @@ function HomeContent() {
       {currentView === "question" && (isAvatarReady || skipIntro) && (
         <>
           {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
-          {!isStoreLocationsStep && !isProductRecommendationsStep && (
+          {!isStoreLocationsStep && !isProductRecommendationsStep && !isZipCodeCaptureStep && (
             <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
               {/* Full-width Gradient Overlay at Bottom - above avatar, below chat bubbles */}
               {!isStoreLocationsStep &&
@@ -1483,7 +1483,7 @@ function HomeContent() {
 
               {/* Zip Code Capture Step */}
               {showQuestionBlock && isZipCodeCaptureStep && (
-                <div className={styles.questionBlockInner}>
+                <div className={`${styles.questionBlockInner} ${styles.fadeIn}`}>
                   <ZipCodeCapture
                     content={
                       {
@@ -1567,7 +1567,7 @@ function HomeContent() {
           isBookingCtaStep ? avatarResponse ?? undefined : currentStep?.avatarText
         }
         isMuted={isMuted}
-        avatarMobileOnly={isBookingCtaStep || isStoreLocationsStep}
+        avatarMobileOnly={isBookingCtaStep}
       />
 
       {/* Recovery Modal - shown when user has saved progress */}

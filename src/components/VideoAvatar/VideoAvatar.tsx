@@ -65,8 +65,19 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   const isPaused = videoState === VideoState.PAUSED;
   const showVideo = isReady || isPlaying || isPaused || isEnded;
 
-  // Video opacity - no fade out, just hide on error
-  const videoOpacity = hasError ? 0 : 1;
+  // Calculate video opacity - fade out during last 0.5s of playback,
+  // stay hidden once ended so the black frame never shows
+  const FADE_DURATION = 0.5;
+  let videoOpacity = 1;
+  if (hasError) {
+    videoOpacity = 0;
+  } else if (isEnded) {
+    videoOpacity = 0;
+  } else if (isPlaying && duration > 0) {
+    if (currentTime > duration - FADE_DURATION) {
+      videoOpacity = (duration - currentTime) / FADE_DURATION;
+    }
+  }
 
   return (
     <div className={`${styles.avatarContainer} ${className || ''}`}>
