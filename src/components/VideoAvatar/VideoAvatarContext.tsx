@@ -209,7 +209,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     // when the actual <video> element sets its src — avoids double-downloading
     const link = document.createElement('link');
     link.rel = 'preload';
-    link.as = 'video';
+    link.as = 'fetch';
     link.href = videoSrc;
     document.head.appendChild(link);
   }, [connectionQuality]);
