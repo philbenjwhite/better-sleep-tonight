@@ -18,6 +18,8 @@ npm run figma:connect    # Validate Figma Code Connect mappings
 npm run figma:publish    # Publish component connections to Figma
 ```
 
+Node.js is pinned to 22.x (see `engines` in package.json and `.nvmrc`). Vercel builds fail on Node 24 due to `better-sqlite3` (TinaCMS dependency) lacking prebuilt binaries.
+
 No test framework is configured. Use Storybook for visual component review and `?step=N` query param for jumping to specific flow steps during development.
 
 ## Architecture
@@ -69,12 +71,18 @@ Shared auth logic in `_shared.ts`: OAuth token caching, step-to-field mapping (`
 
 Epsilon calls are fire-and-forget — failures are logged but don't block the user flow. The `EPSILON_OUID` env var gates whether tracking is active.
 
+### Thank-You Page
+
+After email submission on the booking CTA step, users are redirected to `/thank-you`. The Epsilon submit call is fire-and-forget so it never blocks the redirect. The page shares the same Header (no volume button) and Footer (no progress bar) as the main app.
+
 ### Analytics
 
 Three tracking layers:
 1. **GTM/GA4** — configured in `src/app/layout.tsx`
 2. **Epsilon PeopleCloud** — per-step + final submission (see API routes above)
 3. **Custom analytics** in `src/lib/analytics/` — video engagement, scroll depth, conversions
+
+GA4 events are fired programmatically via `gtag()` in `src/lib/analytics/conversionTracking.ts`. Key events: `quiz_start`, `quiz_step` (with `quiz_step` number and `step_id`), `quiz_complete`, `buy_now_click`, `store_search`. Since this is a SPA with no URL changes between steps, GTM triggers must be event-based, not pageview-based.
 
 ### Key Hooks
 
