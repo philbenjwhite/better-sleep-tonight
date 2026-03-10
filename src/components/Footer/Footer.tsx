@@ -230,7 +230,7 @@ export function Footer({
       )}
       <div className={styles.footerContent}>
         <p className={styles.copyright}>
-          © 2025 BetterSleep Tonight. All rights reserved.
+          © {new Date().getFullYear()} BetterSleep Tonight. All rights reserved.
         </p>
       </div>
     </footer>
