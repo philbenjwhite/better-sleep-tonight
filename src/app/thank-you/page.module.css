@@ -123,6 +123,7 @@
   top: 48px;
   width: auto;
   max-width: 437px;
+  z-index: 20;
 }
 
 @media (max-width: 1200px) {

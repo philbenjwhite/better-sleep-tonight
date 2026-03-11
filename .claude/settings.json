@@ -31,7 +31,10 @@
       "Bash(bash -l -c 'source \"\"$HOME/.nvm/nvm.sh\"\" && nvm use 22 && npx tsc --noEmit 2>&1 | tail -10')",
       "Read(//tmp/**)",
       "Read(//private/tmp/**)",
-      "Bash(pip3 show openai-whisper)"
+      "Bash(pip3 show openai-whisper)",
+      "Bash(identify /Users/mark/www/active/work/better-sleep-tonight/public/images/ashley-video-frame.png)",
+      "Bash(sips -g all /Users/mark/www/active/work/better-sleep-tonight/public/images/ashley-video-frame.png)",
+      "Bash(cwebp -q 80 public/uploads/Mattress_Shopping_poster.jpg -o public/uploads/Mattress_Shopping_poster.webp)"
     ],
     "additionalDirectories": [
       "/Users/mark/www/active/work/better-sleep-tonight/src/app/api/epsilon/event",
