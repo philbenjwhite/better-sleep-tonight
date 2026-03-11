@@ -61,6 +61,11 @@ export const trackBookRestTestIntent = (productId: string, productName: string, 
   });
 };
 
+// Track Google Ads form submission conversion (TSI Rest Test)
+export const trackFormSubmissionConversion = (): void => {
+  fireEvent('conversion', { send_to: 'AW-952158342/ZQuYCJ35mYYcEIaRg8YD' });
+};
+
 // Track store search (zip code submission)
 export const trackStoreSearch = (zipCode: string, resultsCount?: number): void => {
   fireEvent('store_search', {

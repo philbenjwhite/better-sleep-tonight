@@ -39,6 +39,7 @@ import { StepIndicator } from "@/components/StepIndicator";
 import {
   trackQuizEvent,
   trackBookRestTestIntent,
+  trackFormSubmissionConversion,
   trackStoreSearch,
 } from "@/lib/analytics/conversionTracking";
 
@@ -1090,6 +1091,7 @@ function HomeContent() {
       const updatedAnswers = [...storedAnswers, newAnswer];
       setStoredAnswers(updatedAnswers);
       trackStepGA4(newAnswer);
+      trackFormSubmissionConversion();
       logFlowData(updatedAnswers, `Booking Email: ${email}`);
 
       // Push full contact record to Epsilon CRM via API route (fire-and-forget)

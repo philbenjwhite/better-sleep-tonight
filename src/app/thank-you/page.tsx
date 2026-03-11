@@ -29,7 +29,7 @@ export default function ThankYouPage() {
             startTime: c.startTime,
             endTime: c.endTime,
             text: c.text,
-          }))
+          })),
         );
       })
       .catch(() => {});
@@ -91,6 +91,10 @@ export default function ThankYouPage() {
         <div className={styles.questionWrapper}>
           <div className={styles.avatarGradientOverlay} />
           <div className={styles.avatarWrapper}>
+            <h1 className={styles.headingMobile}>
+              Thanks, You&apos;re All Set!
+            </h1>
+
             <div className={styles.avatarContainer}>
               <video
                 ref={videoRef}
@@ -104,18 +108,23 @@ export default function ThankYouPage() {
               />
             </div>
 
-            {hasStarted && subtitleCues.length > 0 && (
-              <SpeechBubbleSequence
-                key="thank-you-speech"
-                message={message}
-                wordDelay={0.15}
-                paragraphPauseMs={600}
-                className={styles.speechBubbleContainer}
-                stayVisible
-                subtitleCues={subtitleCues}
-                videoCurrentTime={currentTime}
-              />
-            )}
+            <div className={styles.rightPanel}>
+              <h1 className={styles.headingDesktop}>
+                Thanks, You&apos;re All Set!
+              </h1>
+              {hasStarted && subtitleCues.length > 0 && (
+                <SpeechBubbleSequence
+                  key="thank-you-speech"
+                  message={message}
+                  wordDelay={0.15}
+                  paragraphPauseMs={600}
+                  className={styles.speechBubbleContainer}
+                  stayVisible
+                  subtitleCues={subtitleCues}
+                  videoCurrentTime={currentTime}
+                />
+              )}
+            </div>
           </div>
         </div>
       </main>
