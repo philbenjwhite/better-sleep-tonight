@@ -1189,6 +1189,7 @@ function HomeContent() {
 
   return (
     <main
+      id="main-content"
       className={`${styles.main} ${
         isStoreLocationsStep ? styles.storeLocationsPage : ""
       } ${
@@ -1208,7 +1209,7 @@ function HomeContent() {
             muted
             playsInline
             controls={false}
-            poster="/uploads/Mattress_Shopping_poster.jpg"
+            poster="/uploads/Mattress_Shopping_poster.webp"
             preload="auto"
           >
             <source src={introVideo} type="video/mp4" />

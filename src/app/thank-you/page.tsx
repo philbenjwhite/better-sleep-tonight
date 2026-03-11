@@ -87,7 +87,7 @@ export default function ThankYouPage() {
         isMuted={isMuted}
         onVolumeClick={handleToggleMute}
       />
-      <main className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.questionWrapper}>
           <div className={styles.avatarGradientOverlay} />
           <div className={styles.avatarWrapper}>

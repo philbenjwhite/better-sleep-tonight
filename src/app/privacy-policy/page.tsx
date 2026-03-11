@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
   };
 
   return (
-    <main className={styles.main}>
+    <main id="main-content" className={styles.main}>
       <Header brandName="BetterSleep Tonight" showVolumeButton={false} />
 
       {/* Close button */}

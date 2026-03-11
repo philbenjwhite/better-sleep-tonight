@@ -34,6 +34,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, className }
               [styles.stepGroupActive]: step.status === 'active',
               [styles.stepGroupCompleted]: step.status === 'completed',
             })}
+            role="group"
             aria-current={step.status === 'active' ? 'step' : undefined}
             aria-label={`${step.label}, ${step.status}`}
           >
