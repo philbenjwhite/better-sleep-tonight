@@ -57,9 +57,10 @@
 @media (max-width: 1200px) {
   .avatarWrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
     justify-content: center;
+    gap: 24px;
   }
 }
 
@@ -71,12 +72,20 @@
   height: calc(100vh - 108px);
   margin: 0 auto;
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .avatarContainer {
+    margin: 0;
+  }
 }
 
 @media (max-width: 768px) {
   .avatarContainer {
     max-width: calc((100vh - 160px) * (9 / 16) * 0.9);
     height: calc((100vh - 160px) * 0.9);
+    margin: 0 auto;
   }
 }
 
@@ -168,12 +177,21 @@
 
 @media (max-width: 1200px) {
   .rightPanel {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
     max-width: 360px;
-    left: calc(50% + min(200px, calc((100vh - 108px) * 9 / 32)) + 16px);
+    align-self: flex-start;
+    padding-top: 48px;
   }
 }
 
 @media (max-width: 768px) {
+  .avatarWrapper {
+    flex-direction: column;
+  }
+
   .rightPanel {
     position: fixed;
     bottom: 96px;
