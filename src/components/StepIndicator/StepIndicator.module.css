@@ -65,14 +65,14 @@
 /* Connector line between steps */
 .connector {
   height: 2px;
-  width: 48px;
+  width: 58px;
   background-color: #4a4a4a;
   flex-shrink: 0;
   transition: background-color 0.3s ease;
   /* Vertically align with circle center: (28px circle height / 2) + 2px border - (2px line / 2) */
   margin-top: 14px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 /* Connector turns orange when the step after it is active or completed */
@@ -88,19 +88,19 @@
   transform: translateX(-50%);
   margin-top: 6px;
   font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
-  font-size: 11px;
-  font-weight: 600;
-  color: #4a4a4a;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6b6966;
   white-space: nowrap;
   transition: color 0.3s ease;
 }
 
 .labelActive {
-  color: var(--sds-color-text-default-default, #363534);
+  color: #6b6966;
 }
 
 .labelCompleted {
-  color: var(--sds-color-text-default-default, #363534);
+  color: #6b6966;
 }
 
 /* Status classes on stepGroup (used for mobile segmented bar background) */

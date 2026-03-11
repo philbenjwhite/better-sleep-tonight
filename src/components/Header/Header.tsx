@@ -46,6 +46,7 @@ export function Header({
             height={64}
             className={styles.logoImage}
             priority
+            fetchPriority="high"
           />
         </Link>
 

@@ -13,7 +13,11 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: "Better Sleep Tonight | Personalized Sleep Assessment & Mattress Recommendations",
-  description: "Take our personalized sleep assessment to discover the perfect mattress for your needs. Get expert recommendations from Ashley, your AI sleep guide, and wake up feeling refreshed.",
+  description: "Take our personalized sleep assessment to discover the perfect mattress for your needs. Get expert recommendations from Ashley, your AI sleep guide.",
+  metadataBase: new URL("https://www.bettersleeptonight.com"),
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/favicon_16.png", sizes: "16x16", type: "image/png" },
