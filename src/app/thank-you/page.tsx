@@ -35,6 +35,11 @@ export default function ThankYouPage() {
       .catch(() => {});
   }, []);
 
+  // Clear quiz progress so returning to / won't show the resume modal
+  useEffect(() => {
+    localStorage.removeItem('bettersleep_progress');
+  }, []);
+
   // Auto-play video on mount
   useEffect(() => {
     const video = videoRef.current;
