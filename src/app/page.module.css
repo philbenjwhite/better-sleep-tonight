@@ -984,4 +984,9 @@
   .bookingCtaPage .questionWrapper {
     display: none;
   }
+
+  /* Keep avatar visible while booking CTA video is still playing */
+  .bookingCtaVideoPlaying .questionWrapper {
+    display: flex;
+  }
 }

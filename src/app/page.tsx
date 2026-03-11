@@ -1196,7 +1196,11 @@ function HomeContent() {
         isStoreLocationsStep ? styles.storeLocationsPage : ""
       } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
-      } ${isBookingCtaStep ? styles.bookingCtaPage : ""}`}
+      } ${isBookingCtaStep ? styles.bookingCtaPage : ""} ${
+        isBookingCtaStep && currentVideoId === currentStep?.video
+          ? styles.bookingCtaVideoPlaying
+          : ""
+      }`}
       onClick={handleScreenTap}
     >
       {/* Video Background - only show on intro */}
