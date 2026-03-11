@@ -8,8 +8,15 @@
 const isProduction = process.env.NODE_ENV === 'production';
 
 const fireEvent = (event: string, params: Record<string, any>): void => {
-  if (isProduction && typeof window !== 'undefined' && 'gtag' in window) {
-    (window as any).gtag('event', event, params);
+  if (isProduction && typeof window !== 'undefined') {
+    // Push to dataLayer for GTM triggers and variables
+    const dataLayer = ((window as any).dataLayer = (window as any).dataLayer || []);
+    dataLayer.push({ event, ...params });
+
+    // Also fire via gtag for direct GA4 measurement
+    if ('gtag' in window) {
+      (window as any).gtag('event', event, params);
+    }
   } else if (!isProduction) {
     console.log(`[GA4 Event] ${event}`, params);
   }
