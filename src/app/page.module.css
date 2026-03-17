@@ -979,8 +979,8 @@
   }
 }
 
-/* Mobile booking CTA: hide full-screen avatar, use Footer avatar bar instead */
-@media (max-width: 768px) {
+/* Below 1200px (single-column): hide full-screen avatar, use Footer avatar bar instead */
+@media (max-width: 1200px) {
   .bookingCtaPage .questionWrapper {
     display: none;
   }

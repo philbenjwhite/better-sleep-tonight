@@ -191,8 +191,8 @@
   }
 }
 
-/* Mobile-only avatar: hidden on desktop */
-@media (min-width: 769px) {
+/* Mobile-only avatar: hidden on desktop (above 1200px where 2-column layout kicks in) */
+@media (min-width: 1201px) {
   .avatarMobileOnly {
     display: none;
   }
