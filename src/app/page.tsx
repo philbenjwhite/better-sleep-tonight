@@ -1095,9 +1095,11 @@ function HomeContent() {
       logFlowData(updatedAnswers, `Booking Email: ${email}`);
 
       // Push full contact record to Epsilon CRM via API route (fire-and-forget)
+      // keepalive: true ensures the request survives the page navigation to /thank-you
       fetch("/api/epsilon/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        keepalive: true,
         body: JSON.stringify({
           sessionId,
           email,
