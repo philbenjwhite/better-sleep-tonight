@@ -391,12 +391,9 @@
   }
 }
 
-/* .heygenAvatar {
-  display: block;
-  width: auto;
-  height: auto;
-  max-height: 90vh;
-} */
+.heygenAvatar {
+  /* Styles applied via VideoAvatar component */
+}
 
 .avatarGradientOverlay {
   position: absolute;
@@ -979,14 +976,10 @@
   }
 }
 
-/* Below 1200px (single-column): hide full-screen avatar, use Footer avatar bar instead */
+/* Below 1200px (single-column): hide full-screen avatar + speech bubble, use Footer avatar bar instead */
 @media (max-width: 1200px) {
-  .bookingCtaPage .questionWrapper {
+  .bookingCtaPage .heygenAvatar,
+  .bookingCtaPage .bookingCtaBubbleContainer {
     display: none;
-  }
-
-  /* Keep avatar visible while booking CTA video is still playing */
-  .bookingCtaVideoPlaying .questionWrapper {
-    display: flex;
   }
 }

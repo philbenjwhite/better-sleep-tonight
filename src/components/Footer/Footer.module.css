@@ -75,12 +75,12 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
+  padding: 16px 24px 16px 16px;
   background-color: #f6f3ed;
   border-radius: var(--sds-size-radius-400, 16px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 40;
-  width: clamp(320px, 30vw, 450px);
+  width: clamp(380px, 40vw, 450px);
   max-height: 140px;
   overflow: hidden;
   transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
