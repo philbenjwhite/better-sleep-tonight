@@ -52,12 +52,7 @@ function buildRecordPayload(payload: SubmitPayload) {
   }
 
   if (payload.selectedStore) {
-    record.Store_Locations = [
-      payload.selectedStore.storeName,
-      payload.selectedStore.city,
-    ]
-      .filter(Boolean)
-      .join(" - ");
+    record.Store_Locations = payload.selectedStore.storeName;
   }
 
   // Map flow answers to Epsilon field names
