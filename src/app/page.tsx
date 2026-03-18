@@ -849,6 +849,8 @@ function HomeContent() {
       ? recommendations.slice(0, 2)
       : recommendations;
     const productIds = shownProducts.map((p) => p.id).join(",");
+    // Product names for Epsilon Product_Recommendations field (mattresses only, no CTA text)
+    const productNames = shownProducts.map((p) => p.productName).join(", ");
 
     // GA4: track booking intent for each shown product
     shownProducts.forEach((p) =>
@@ -859,7 +861,7 @@ function HomeContent() {
       stepId: currentStep?.stepId || `step-${currentStepIndex}`,
       questionText: "Product Recommendation",
       value: productIds,
-      label: `Book a Rest Test (${productIds})`,
+      label: productNames,
       timestamp: new Date(),
     };
     const updatedAnswers = [...storedAnswers, newAnswer];
