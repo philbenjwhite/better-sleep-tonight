@@ -60,7 +60,15 @@ function buildRecordPayload(payload: SubmitPayload) {
     for (const answer of payload.answers) {
       const field = STEP_TO_EPSILON_FIELD[answer.stepId];
       if (field) {
-        record[field] = answer.label;
+        // Purchase_Intent: map raw values to email-friendly CTA labels
+        if (answer.stepId === "q7-purchase-intent") {
+          record[field] =
+            answer.value === "ready-to-buy"
+              ? "Complete Purchase"
+              : "Book a Rest Test";
+        } else {
+          record[field] = answer.label;
+        }
       }
     }
   }
