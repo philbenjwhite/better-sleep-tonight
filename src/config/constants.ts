@@ -38,7 +38,7 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "Premium fabric cover",
       ],
       buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-sense-medium-10-inch-mattress?variant=43041759428697&queryID=5799338564ac18ac17aab900ad7f7f8c&objectID=43041759428697",
+        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-sense-medium-10-inch-mattress",
     },
     {
       id: "tempur-prosense",
@@ -57,7 +57,7 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "Cool-to-touch removable cover",
       ],
       buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-prosense-soft-12-inch-mattress?variant=43041759101017&queryID=f19b1fddd1ac8d8a7791ab9947eae568&objectID=43041759101017",
+        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-prosense-soft-12-inch-mattress",
     },
     {
       id: "tempur-luxealign",
@@ -77,7 +77,7 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "Cool-to-touch removable cover",
       ],
       buyUrl:
-        "https://ashleyhomestore.ca/products/tempur-pedic-luxealign-soft-13-inch-mattress?variant=43041759297625&queryID=6201e3d8e86372538312d8791946cf87&objectID=43041759297625",
+        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-luxealign-soft-13-inch-mattress",
     },
   ],
   sizes: [
