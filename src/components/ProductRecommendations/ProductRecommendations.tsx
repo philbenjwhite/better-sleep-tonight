@@ -183,7 +183,7 @@ function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
           )}
           {isReadyToBuy && (
             <p className={styles.promoText}>
-              You are eligible for a $300 discount! Code automatically applied at checkout.
+              You are eligible for a $200 discount! Code automatically applied at checkout.
             </p>
           )}
           <Button
