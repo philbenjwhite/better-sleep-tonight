@@ -1,7 +1,7 @@
 {
   "collectionId": "ontario-stores",
   "displayName": "Ontario Ashley HomeStore Locations",
-  "description": "All Ashley HomeStore locations in Ontario, Canada",
+  "description": "TDG-owned Ashley HomeStore participating locations in Ontario, Canada",
   "locations": [
     {
       "id": "barrie",
@@ -14,19 +14,6 @@
       "coordinates": {
         "lat": 44.3894,
         "lng": -79.6903
-      }
-    },
-    {
-      "id": "belleville",
-      "city": "Belleville",
-      "storeName": "Belleville Ashley HomeStore",
-      "address": "390 N Front St, Unit 10003",
-      "storePhone": "+16139021689",
-      "customerServicePhone": null,
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/belleville/9000340859/",
-      "coordinates": {
-        "lat": 44.1628,
-        "lng": -77.3832
       }
     },
     {
@@ -69,19 +56,6 @@
       }
     },
     {
-      "id": "espanola",
-      "city": "Espanola",
-      "storeName": "Espanola Ashley HomeStore",
-      "address": "613 Centre St",
-      "storePhone": "+17058694771",
-      "customerServicePhone": "+18003563605",
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/espanola/9000062041/",
-      "coordinates": {
-        "lat": 46.2567,
-        "lng": -81.7656
-      }
-    },
-    {
       "id": "guelph",
       "city": "Guelph",
       "storeName": "Guelph Ashley HomeStore",
@@ -92,19 +66,6 @@
       "coordinates": {
         "lat": 43.5448,
         "lng": -80.2482
-      }
-    },
-    {
-      "id": "kingston",
-      "city": "Kingston",
-      "storeName": "Kingston Ashley HomeStore",
-      "address": "2776 Princess St",
-      "storePhone": "+16133842444",
-      "customerServicePhone": null,
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/kingston/9000031918/",
-      "coordinates": {
-        "lat": 44.2312,
-        "lng": -76.4860
       }
     },
     {
@@ -173,19 +134,6 @@
       }
     },
     {
-      "id": "north-bay",
-      "city": "North Bay",
-      "storeName": "North Bay Ashley HomeStore",
-      "address": "111 Drury St",
-      "storePhone": "+17054720123",
-      "customerServicePhone": "+18003643605",
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/north-bay/9000076148/",
-      "coordinates": {
-        "lat": 46.3091,
-        "lng": -79.4608
-      }
-    },
-    {
       "id": "ottawa",
       "city": "Ottawa",
       "storeName": "Ottawa Ashley HomeStore",
@@ -199,19 +147,6 @@
       }
     },
     {
-      "id": "prescott",
-      "city": "Prescott",
-      "storeName": "Prescott Ashley HomeStore",
-      "address": "707 Lawrence St",
-      "storePhone": "+16139751160",
-      "customerServicePhone": "+16139151160",
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/prescott/9000031917/",
-      "coordinates": {
-        "lat": 44.7142,
-        "lng": -75.5178
-      }
-    },
-    {
       "id": "richmond-hill",
       "city": "Richmond Hill",
       "storeName": "Richmond Hill Ashley HomeStore",
@@ -222,19 +157,6 @@
       "coordinates": {
         "lat": 43.8828,
         "lng": -79.4403
-      }
-    },
-    {
-      "id": "sault-ste-marie",
-      "city": "Sault Ste. Marie",
-      "storeName": "Sault Ste. Marie Ashley HomeStore",
-      "address": "115 Northern Ave E",
-      "storePhone": "+17059462538",
-      "customerServicePhone": null,
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/sault-ste-marie/9000035146/",
-      "coordinates": {
-        "lat": 46.5136,
-        "lng": -84.3358
       }
     },
     {
@@ -277,32 +199,6 @@
       }
     },
     {
-      "id": "sudbury",
-      "city": "Sudbury",
-      "storeName": "Sudbury Ashley HomeStore",
-      "address": "800 Barry Downe Rd",
-      "storePhone": "+17055663511",
-      "customerServicePhone": "+17055667669",
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/sudbury/9000107123/",
-      "coordinates": {
-        "lat": 46.5107,
-        "lng": -81.0050
-      }
-    },
-    {
-      "id": "thunder-bay",
-      "city": "Thunder Bay",
-      "storeName": "Thunder Bay Ashley HomeStore",
-      "address": "640 Balmoral Street",
-      "storePhone": "+18074761466",
-      "customerServicePhone": null,
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/thunder-bay/9000109139/",
-      "coordinates": {
-        "lat": 48.4001,
-        "lng": -89.2477
-      }
-    },
-    {
       "id": "toronto",
       "city": "Toronto",
       "storeName": "Toronto Ashley HomeStore",
@@ -313,6 +209,19 @@
       "coordinates": {
         "lat": 43.6205,
         "lng": -79.5132
+      }
+    },
+    {
+      "id": "vaughan",
+      "city": "Vaughan",
+      "storeName": "Vaughan Ashley HomeStore",
+      "address": "7979 Weston Rd",
+      "storePhone": "+16474273900",
+      "customerServicePhone": null,
+      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/woodbridge/7710000527/",
+      "coordinates": {
+        "lat": 43.7942,
+        "lng": -79.5932
       }
     },
     {
@@ -340,24 +249,11 @@
         "lat": 42.2879,
         "lng": -82.9877
       }
-    },
-    {
-      "id": "woodbridge",
-      "city": "Woodbridge",
-      "storeName": "Woodbridge Ashley HomeStore",
-      "address": "3900 Hwy 7",
-      "storePhone": "+16474273900",
-      "customerServicePhone": null,
-      "websiteUrl": "https://www.ashleyfurniture.com/store/ca/ontario/woodbridge/7710000527/",
-      "coordinates": {
-        "lat": 43.7942,
-        "lng": -79.5932
-      }
     }
   ],
   "metadata": {
     "createdAt": "2025-12-15T00:00:00.000Z",
-    "updatedAt": "2026-01-27T00:00:00.000Z",
-    "totalLocations": 27
+    "updatedAt": "2026-04-16T00:00:00.000Z",
+    "totalLocations": 19
   }
 }
