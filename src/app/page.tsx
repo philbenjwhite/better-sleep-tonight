@@ -852,9 +852,13 @@ function HomeContent() {
     // Product names for Epsilon Product_Recommendations field (mattresses only, no CTA text)
     const productNames = shownProducts.map((p) => p.productName).join(", ");
 
-    // GA4: track booking intent for each shown product
-    shownProducts.forEach((p) =>
-      trackBookRestTestIntent(p.id, p.productName, p.basePrice)
+    // GA4: track booking intent — fire once per click with all shown products
+    trackBookRestTestIntent(
+      shownProducts.map((p) => ({
+        id: p.id,
+        productName: p.productName,
+        price: p.basePrice,
+      }))
     );
 
     const newAnswer: StoredAnswer = {

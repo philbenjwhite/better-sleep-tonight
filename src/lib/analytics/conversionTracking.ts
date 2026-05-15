@@ -53,14 +53,21 @@ export const trackLearnMoreClick = (productId: string, productName: string): voi
   });
 };
 
-// Track "Book a Rest Test" CTA click
-export const trackBookRestTestIntent = (productId: string, productName: string, price: number): void => {
+// Track "Book a Rest Test" CTA click — fires once per click, even when
+// multiple mattresses are recommended. Shown products are bundled into
+// the `items` array so per-product data is preserved.
+export const trackBookRestTestIntent = (
+  products: Array<{ id: string; productName: string; price: number }>
+): void => {
   fireEvent('book_rest_test_intent', {
     event_category: 'Engagement',
-    event_label: productName,
-    item_id: productId,
-    item_name: productName,
-    price: price,
+    event_label: products.map((p) => p.productName).join(', '),
+    item_count: products.length,
+    items: products.map((p) => ({
+      item_id: p.id,
+      item_name: p.productName,
+      price: p.price,
+    })),
   });
 };
 
