@@ -57,6 +57,19 @@ export default function RootLayout({
             gtag('config', 'G-MQ5XK3D94V');
           `}
         </Script>
+        {/* Hotjar Tracking Code */}
+        <Script id="hotjar" strategy="afterInteractive">
+          {`
+            (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:6712707,hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+          `}
+        </Script>
       </head>
       <body className={openSans.className}>
         {/* Skip to main content link for keyboard users */}
