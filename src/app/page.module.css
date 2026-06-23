@@ -210,7 +210,11 @@
   }
 
   .avatar {
-    width: 160px;
+    /* 30% smaller than the 160px mobile size; height stays auto so the
+       aspect ratio is preserved. */
+    width: 112px;
+    /* No up/down float on mobile. */
+    animation: none;
   }
 
   .heading {
