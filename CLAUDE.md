@@ -14,13 +14,14 @@ npm run dev:tina         # Dev with TinaCMS local content API
 npm run build            # Production build
 npm run lint             # ESLint
 npm run storybook        # Storybook (localhost:6006)
+npm run test:e2e         # Playwright end-to-end tests (e2e/)
 npm run figma:connect    # Validate Figma Code Connect mappings
 npm run figma:publish    # Publish component connections to Figma
 ```
 
 Node.js is pinned to 22.x (see `engines` in package.json and `.nvmrc`). Vercel builds fail on Node 24 due to `better-sqlite3` (TinaCMS dependency) lacking prebuilt binaries.
 
-No test framework is configured. Use Storybook for visual component review and `?step=N` query param for jumping to specific flow steps during development.
+Playwright drives end-to-end flow tests in `e2e/` (`npm run test:e2e`); they walk the real funnel and speed up avatar videos so video steps advance quickly. There are no unit tests. Use Storybook for visual component review and the `?step=N` query param for jumping to specific flow steps during development. Note: `?step=N` sets `skipIntro`, which bypasses the avatar-readiness render gate, so it cannot reproduce video-gated rendering bugs; walk the full funnel for those.
 
 ## Architecture
 

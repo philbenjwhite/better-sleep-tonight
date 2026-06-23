@@ -316,6 +316,13 @@ function HomeContent() {
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
   const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
+  // Steps that don't render the avatar video (see the wrapper guard below).
+  // These must not be gated behind video readiness, otherwise a video error
+  // on an earlier step hides content that never needed video at all.
+  const isNonVideoStep =
+    isProductRecommendationsStep ||
+    isStoreLocationsStep ||
+    isZipCodeCaptureStep;
 
   // GA4: fire view_item for each product when recommendations step is shown
   // GA4: fire quiz_complete when the user reaches the final step
@@ -1302,7 +1309,8 @@ function HomeContent() {
       )}
 
       {/* Question View */}
-      {currentView === "question" && (isAvatarReady || skipIntro) && (
+      {currentView === "question" &&
+        (isAvatarReady || skipIntro || isNonVideoStep) && (
         <>
           {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
           {!isStoreLocationsStep && !isProductRecommendationsStep && !isZipCodeCaptureStep && (
