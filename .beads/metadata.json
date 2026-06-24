@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "better_sleep_tonight",
+  "project_id": "fb8258a0-2776-4187-aedf-974dab852dd6"
+}
