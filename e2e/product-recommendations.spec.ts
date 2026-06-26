@@ -68,10 +68,12 @@ async function walkToRecommendations(page: Page) {
 
   const cta = page.locator('[class*="ctaButton"]');
   const option = page.locator('button[class*="answerOption"]');
-  const book = bookRestTestButton(page);
+  // Matches either CTA that can appear on the recommendations step, regardless
+  // of which purchase-intent answer the walker happened to select.
+  const recsCta = page.getByRole("button", { name: /Buy Now|Book A Rest Test/i });
 
   for (let i = 0; i < 60; i++) {
-    if (await book.isVisible().catch(() => false)) return;
+    if (await recsCta.first().isVisible().catch(() => false)) return;
     if (await cta.first().isVisible().catch(() => false)) {
       await cta.first().click().catch(() => {});
     } else if (await option.first().isVisible().catch(() => false)) {
@@ -80,6 +82,51 @@ async function walkToRecommendations(page: Page) {
     await page.waitForTimeout(600);
   }
   throw new Error("Never reached the product recommendations step");
+}
+
+/**
+ * Inject saved-progress answers into localStorage so the recovery modal appears
+ * on load, letting us jump straight to the recommendations step with a specific
+ * purchase intent — no funnel walk required.
+ */
+async function goToRecommendationsWithIntent(
+  page: Page,
+  purchaseIntent: "ready-to-buy" | "not-ready-to-buy",
+) {
+  const progress = {
+    flowId: "default",
+    currentStepIndex: 9,
+    answers: [
+      {
+        stepId: "q6-sleep-alone-or-partner",
+        questionText: "Do you typically sleep alone or with a partner?",
+        value: "alone",
+        label: "Just me",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        stepId: "q7-purchase-intent",
+        questionText: "Are you ready to buy a mattress and sleep better tonight?",
+        value: purchaseIntent,
+        label:
+          purchaseIntent === "ready-to-buy"
+            ? "Yes, I'm ready to buy"
+            : "No, I'd like to try out a few options",
+        timestamp: new Date().toISOString(),
+      },
+    ],
+    lastUpdated: new Date().toISOString(),
+  };
+
+  await page.addInitScript((data) => {
+    localStorage.setItem("bettersleep_progress", JSON.stringify(data));
+  }, progress);
+
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: /Continue where I left off/i })
+    .click();
+  await page.locator('[class*="productName"]').first().waitFor({ timeout: 15_000 });
 }
 
 test.beforeEach(async ({ page }) => {
@@ -91,9 +138,14 @@ test("shows the mattress recommendation cards at the end of the funnel", async (
 }) => {
   await walkToRecommendations(page);
 
-  await expect(bookRestTestButton(page)).toBeVisible();
-  // Each mattress card carries a Buy Now / Learn More CTA; expect at least two.
-  const cardCtas = page.getByRole("button", { name: /Buy Now|Learn More/i });
+  // Cards rendered — at least two product names visible.
+  const cards = page.locator('[class*="productName"]');
+  await expect(cards.first()).toBeVisible();
+  expect(await cards.count()).toBeGreaterThanOrEqual(2);
+
+  // Each card has a primary CTA (Buy Now or Book A Rest Test depending on the
+  // answer the funnel walk selected for purchase intent).
+  const cardCtas = page.getByRole("button", { name: /Buy Now|Book A Rest Test/i });
   await expect(cardCtas.first()).toBeVisible();
   expect(await cardCtas.count()).toBeGreaterThanOrEqual(2);
 });
@@ -113,5 +165,38 @@ test("still shows the cards when the pre-recommendations video fails to load", a
 
   await walkToRecommendations(page);
 
-  await expect(bookRestTestButton(page)).toBeVisible();
+  // Cards should still render even with the video error.
+  await expect(page.locator('[class*="productName"]').first()).toBeVisible();
+});
+
+test("ready-to-buy: shows Buy Now buttons, promo badge, and no Book A Rest Test", async ({
+  page,
+}) => {
+  await goToRecommendationsWithIntent(page, "ready-to-buy");
+
+  // Every card should have a Buy Now CTA — expect at least two cards.
+  const buyButtons = page.getByRole("button", { name: /Buy Now/i });
+  await expect(buyButtons.first()).toBeVisible();
+  expect(await buyButtons.count()).toBeGreaterThanOrEqual(2);
+
+  // Discount promo badge should be present on at least one card.
+  await expect(page.getByText(/\$200 discount/i).first()).toBeVisible();
+
+  // No "Book A Rest Test" should appear anywhere — not as a card button or a
+  // bottom bar.
+  await expect(bookRestTestButton(page)).not.toBeVisible();
+});
+
+test("not-ready-to-buy: shows Book A Rest Test buttons and no Buy Now", async ({
+  page,
+}) => {
+  await goToRecommendationsWithIntent(page, "not-ready-to-buy");
+
+  // Every card should have a Book A Rest Test CTA — expect at least two.
+  const bookButtons = page.getByRole("button", { name: /Book A Rest Test/i });
+  await expect(bookButtons.first()).toBeVisible();
+  expect(await bookButtons.count()).toBeGreaterThanOrEqual(2);
+
+  // No Buy Now should appear.
+  await expect(page.getByRole("button", { name: /Buy Now/i })).not.toBeVisible();
 });
