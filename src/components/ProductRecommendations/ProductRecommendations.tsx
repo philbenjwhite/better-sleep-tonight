@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Tag } from "@phosphor-icons/react";
 import { Button } from "@/components/Button";
 import { trackBuyNowClick, trackLearnMoreClick } from "@/lib/analytics/conversionTracking";
 import styles from "./ProductRecommendations.module.css";
@@ -74,9 +75,10 @@ export interface ProductRecommendationsProps {
 interface MattressCardProps {
   mattress: MattressOption;
   purchaseIntent?: PurchaseIntent;
+  onBookRestTest?: () => void;
 }
 
-function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
+function MattressCard({ mattress, purchaseIntent, onBookRestTest }: MattressCardProps) {
   const isReadyToBuy = purchaseIntent === "ready-to-buy";
   const isNotReadyToBuy = purchaseIntent === "not-ready-to-buy";
   return (
@@ -176,34 +178,35 @@ function MattressCard({ mattress, purchaseIntent }: MattressCardProps) {
 
         {/* Price & Buy Now Button */}
         <div className={styles.cardAction}>
-          {mattress.basePrice > 0 && (
+          {mattress.basePrice > 0 && !isReadyToBuy && (
             <p className={styles.productPrice}>
               Starting at ${mattress.basePrice.toLocaleString()}
             </p>
           )}
           {isReadyToBuy && (
-            <p className={styles.promoText}>
-              You are eligible for a $200 discount! Code automatically applied at checkout.
-            </p>
+            <div className={styles.promoBadge}>
+              <Tag size={16} weight="fill" className={styles.promoBadgeIcon} />
+              <p className={styles.promoBadgeText}>
+                You are eligible for a $200 discount! Code automatically applied at checkout.
+              </p>
+            </div>
           )}
           <Button
-            variant={isNotReadyToBuy ? "secondary" : "primary"}
+            variant={isNotReadyToBuy ? "primary" : "primary"}
             size="medium"
             className={styles.buyButton}
             onClick={
-              mattress.buyUrl
-                ? () => {
-                    if (isNotReadyToBuy) {
-                      trackLearnMoreClick(mattress.id, mattress.productName);
-                    } else {
+              isNotReadyToBuy
+                ? onBookRestTest
+                : mattress.buyUrl
+                  ? () => {
                       trackBuyNowClick(mattress.id, mattress.productName, mattress.basePrice);
+                      window.open(mattress.buyUrl, "_blank", "noopener,noreferrer");
                     }
-                    window.open(mattress.buyUrl, "_blank", "noopener,noreferrer");
-                  }
-                : undefined
+                  : undefined
             }
           >
-            {isNotReadyToBuy ? "Learn More" : "Buy Now"}
+            {isNotReadyToBuy ? "Book A Rest Test" : "Buy Now"}
           </Button>
         </div>
       </div>
@@ -235,27 +238,12 @@ export function ProductRecommendations({
               key={mattress.id}
               mattress={mattress}
               purchaseIntent={purchaseIntent}
+              onBookRestTest={onBookRestTest}
             />
           ))}
         </div>
       </div>
 
-      {/* Book a Rest Test CTA */}
-      {onBookRestTest && (
-        <div className={styles.restTestCta}>
-          <div className={styles.restTestCtaContent}>
-            <p className={styles.restTestCtaTitle}>Not sure which one to choose?</p>
-            <p className={styles.restTestCtaSubtitle}>Try before you buy</p>
-          </div>
-          <Button
-            variant={purchaseIntent === "not-ready-to-buy" ? "primary" : "secondary"}
-            size="medium"
-            onClick={onBookRestTest}
-          >
-            Book A Rest Test
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

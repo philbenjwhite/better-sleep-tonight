@@ -261,13 +261,28 @@
   margin-top: 2px;
 }
 
-.promoText {
+.promoBadge {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: #FFF3E0;
+  border: 1.5px solid #D4830A;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.promoBadgeIcon {
+  flex-shrink: 0;
+  color: #D4830A;
+  margin-top: 1px;
+}
+
+.promoBadgeText {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-weight: 600;
   font-size: 13px;
   line-height: 1.3;
   color: #D4830A;
-  text-align: center;
   margin: 0;
 }
 
