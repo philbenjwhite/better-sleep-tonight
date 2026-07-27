@@ -32,26 +32,9 @@ export const trackQuizEvent = (
   });
 };
 
-// Track "Buy Now" click on product card
-export const trackBuyNowClick = (productId: string, productName: string, price: number): void => {
-  fireEvent('buy_now_click', {
-    event_category: 'Ecommerce',
-    event_label: productName,
-    item_id: productId,
-    item_name: productName,
-    price: price,
-  });
-};
-
-// Track "Learn More" click on product card
-export const trackLearnMoreClick = (productId: string, productName: string): void => {
-  fireEvent('learn_more_click', {
-    event_category: 'Engagement',
-    event_label: productName,
-    item_id: productId,
-    item_name: productName,
-  });
-};
+// Note: buy_now_click and learn_more_click were retired when the funnel moved to
+// in-store rest tests only. Their GTM tags should stay paused so reporting is not
+// skewed by dead events.
 
 // Track "Book a Rest Test" CTA click — fires once per click, even when
 // multiple mattresses are recommended. Shown products are bundled into

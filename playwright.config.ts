@@ -13,9 +13,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Every spec walks the whole funnel through real avatar videos served by a
+  // single `next dev`. Too much concurrency starves video decoding and the walks
+  // time out on contention rather than on any real failure, so keep it modest.
+  workers: process.env.CI ? 1 : 2,
   reporter: process.env.CI ? "github" : "list",
-  timeout: 90_000,
+  timeout: 120_000,
   expect: { timeout: 15_000 },
   use: {
     baseURL: BASE_URL,

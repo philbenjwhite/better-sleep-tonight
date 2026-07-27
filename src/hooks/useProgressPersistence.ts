@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { StoredAnswer } from '@/components/DevPanel';
 
-const STORAGE_KEY = 'bettersleep_progress';
+// v2: the purchase-intent question was removed, shifting every later step index
+// by one. Bumping the key retires saved progress written against the old flow so
+// returning users inside the 7-day window do not resume on the wrong step.
+const STORAGE_KEY = 'bettersleep_progress_v2';
 const EXPIRATION_DAYS = 7;
 
 export interface SavedProgress {

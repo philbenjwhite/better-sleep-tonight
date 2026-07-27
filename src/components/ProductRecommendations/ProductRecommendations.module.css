@@ -261,9 +261,13 @@
   margin-top: 2px;
 }
 
+/* Offer flash — a shine sweeps across the badge to draw the eye to the offer */
 .promoBadge {
+  position: relative;
+  overflow: hidden;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   background-color: #FFF3E0;
   border: 1.5px solid #D4830A;
@@ -271,16 +275,46 @@
   padding: 10px 14px;
 }
 
+.promoBadge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  transform: translateX(-120%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .promoBadge::after {
+    animation: promoShine 4.5s ease-in-out 1s infinite;
+  }
+}
+
+@keyframes promoShine {
+  0% {
+    transform: translateX(-120%);
+  }
+  /* Sweep quickly, then hold off-screen so the badge rests most of the time */
+  30%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
 .promoBadgeIcon {
   flex-shrink: 0;
   color: #D4830A;
-  margin-top: 1px;
 }
 
 .promoBadgeText {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 14px;
   line-height: 1.3;
   color: #D4830A;
   margin: 0;

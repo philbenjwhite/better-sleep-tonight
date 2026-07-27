@@ -3,7 +3,7 @@ import { ProductRecommendationsContent } from "@/components/ProductRecommendatio
 // Video steps that pause at end and show a manual CTA button instead of auto-advancing
 export const MANUAL_CTA_LABELS: Record<string, string> = {
   "intro-video": "Let\u2019s Go",
-  "video-step-1": "Final Question",
+  "video-step-1": "See My Results",
 };
 
 // Step templates that belong to the "Results" phase
@@ -37,8 +37,6 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "Fast-adapting foam for pressure relief",
         "Premium fabric cover",
       ],
-      buyUrl:
-        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-sense-medium-10-inch-mattress",
     },
     {
       id: "tempur-prosense",
@@ -56,8 +54,6 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "TEMPUR-APR+\u2122 for advanced pressure relief",
         "Cool-to-touch removable cover",
       ],
-      buyUrl:
-        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-prosense-soft-12-inch-mattress",
     },
     {
       id: "tempur-luxealign",
@@ -76,8 +72,6 @@ export const DEFAULT_PRODUCT_RECOMMENDATIONS: ProductRecommendationsContent = {
         "TEMPUR-APR+\u2122 for maximum pressure relief",
         "Cool-to-touch removable cover",
       ],
-      buyUrl:
-        "https://ashleyhomestore.ca/discount/200offtempur?redirect=/products/tempur-pedic-luxealign-soft-13-inch-mattress",
     },
   ],
   sizes: [

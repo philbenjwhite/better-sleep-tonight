@@ -38,20 +38,23 @@ When a user starts the flow, a unique **session ID** (UUID) is generated. This I
 | 5. Aches & Pains Frequency | `q4-aches-pains-frequency` | Pain frequency | "Every Night", "Frequently", "On Occasion", "Never" |
 | 6. Aches & Pains Type | `q5-aches-pains-type` | Pain description | "Chronic condition", "Stiffness", "Hip or Shoulder", "None" |
 | 7. Sleep Alone or Partner | `q6-sleep-alone-or-partner` | Sleep arrangement | "Just me", "Me and my partner" |
-| 8. Purchase Intent | `q7-purchase-intent` | Buy readiness | "Ready to buy", "Not ready to buy" |
-| 9. Summary Video | `video-step-1` | Video watched | "Y" |
-| 10. Product Recommendations | `product-recommendations-step` | Mattress selection | Size + Feel + Price (e.g., "Queen-Medium, $1,299") |
-| 11. Post-Selection Video | `video-step-3` | Video watched | "Y" |
-| 12. Postal Code | `zipcode-capture-step` | User's postal code | "L7M 1A1" |
-| 13. Store Locations | `store-locations-step` | Selected store | Store name + city (e.g., "Burlington - Ashley HomeStore") |
-| 14. Booking Email | `booking-cta-step` | Email address | "user@example.com" |
+| 8. Summary Video | `video-step-1` | Video watched | "Y" |
+| 9. Product Recommendations | `product-recommendations-step` | Mattress selection | Size + Feel + Price (e.g., "Queen-Medium, $1,299") |
+| 10. Post-Selection Video | `video-step-3` | Video watched | "Y" |
+| 11. Postal Code | `zipcode-capture-step` | User's postal code | "L7M 1A1" |
+| 12. Store Locations | `store-locations-step` | Selected store | Store name + city (e.g., "Burlington - Ashley HomeStore") |
+| 13. Booking Email | `booking-cta-step` | Email address | "user@example.com" |
+
+> **Retired:** the Purchase Intent question (`q7-purchase-intent` → `Purchase_Intent`)
+> was removed in July 2026 when the funnel objective became in-store rest tests
+> only. The Epsilon field still exists on the list but nothing writes to it.
 
 ### Additional Context Sent With Every Event
 
 - **Session ID** - Unique identifier linking all events from a single user session
 - **Flow ID** - Which flow variant the user entered from (e.g., "back-pain", "hippain", "neckpain")
 - **Step Index** - Numeric position in the flow (useful for drop-off analysis)
-- **Postal Code** - Included once captured (step 11 onwards)
+- **Postal Code** - Included once captured (step 10 onwards)
 - **Timestamp** - ISO 8601 timestamp of each interaction
 
 ---

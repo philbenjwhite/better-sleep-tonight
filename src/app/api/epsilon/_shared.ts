@@ -26,7 +26,9 @@ export const STEP_TO_EPSILON_FIELD: Record<string, string> = {
   "q4-aches-pains-frequency": "Aches_Pains_Frequency",
   "q5-aches-pains-type": "Aches_Pains_Type",
   "q6-sleep-alone-or-partner": "Sleep_Alone_Or_Partner",
-  "q7-purchase-intent": "Purchase_Intent",
+  // Note: the Purchase_Intent field still exists on the Epsilon list, but the
+  // question that fed it was removed when the funnel moved to in-store rest
+  // tests only. Nothing writes to it now.
   "video-step-1": "Summary_Video",
   "video-step-3": "Post_Selection_Video",
   "product-recommendations-step": "Product_Recommendations",

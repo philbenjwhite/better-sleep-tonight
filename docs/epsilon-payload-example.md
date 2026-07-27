@@ -20,7 +20,6 @@
     { "stepId": "q4-aches-pains-frequency", "questionText": "How often do you wake with aches and pains?", "value": "...", "label": "..." },
     { "stepId": "q5-aches-pains-type", "questionText": "...", "value": "...", "label": "..." },
     { "stepId": "q6-sleep-alone-or-partner", "questionText": "Do you typically sleep alone or with a partner?", "value": "...", "label": "..." },
-    { "stepId": "q7-purchase-intent", "questionText": "...", "value": "...", "label": "..." },
     { "stepId": "product-recommendations-step", "questionText": "Product Recommendation", "value": "...", "label": "..." },
     { "stepId": "zipcode-capture-step", "questionText": "Postal Code", "value": "A1A 1A1", "label": "A1A 1A1" },
     { "stepId": "store-locations-step", "questionText": "Store Location", "value": "prescott", "label": "..." },
@@ -47,7 +46,6 @@ Note: `sessionId` and `flowId` are not sent to Epsilon — they're only used ser
   "Aches_Pains_Frequency": "...",
   "Aches_Pains_Type": "...",
   "Sleep_Alone_Or_Partner": "...",
-  "Purchase_Intent": "...",
   "Product_Recommendations": "..."
 }
 ```
@@ -65,7 +63,6 @@ Fields only appear if their `stepId` is present in the answers array AND has a m
 | `q4-aches-pains-frequency` | `Aches_Pains_Frequency` |
 | `q5-aches-pains-type` | `Aches_Pains_Type` |
 | `q6-sleep-alone-or-partner` | `Sleep_Alone_Or_Partner` |
-| `q7-purchase-intent` | `Purchase_Intent` |
 | `video-step-1` | `Summary_Video` |
 | `video-step-3` | `Post_Selection_Video` |
 | `product-recommendations-step` | `Product_Recommendations` |

@@ -34,6 +34,8 @@ interface VideoAvatarContextType {
   isPlaying: boolean;
   isNearingEnd: boolean;
   isBuffering: boolean;
+  /** True while the current video is set to loop (e.g. the closing idle loop) */
+  isLooping: boolean;
   currentVideoId: string | null;
   currentTime: number;
   duration: number;
@@ -41,6 +43,7 @@ interface VideoAvatarContextType {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   play: (videoId: string, options?: { loop?: boolean }) => Promise<void>;
   pause: () => void;
+  skip: () => void;
   preload: (videoIdOrPath: string) => void;
   preloadMultiple: (videoIds: string[]) => void;
   stop: () => void;
@@ -70,6 +73,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
   const [isNearingEnd, setIsNearingEnd] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>(
@@ -112,6 +116,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
         // Set loop attribute based on options
         videoElement.loop = options?.loop ?? false;
+        setIsLooping(videoElement.loop);
 
         // Set source and start playback synchronously within user gesture
         videoElement.src = videoSrc;
@@ -170,6 +175,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
         // Set loop attribute based on options
         videoElement.loop = options?.loop ?? false;
+        setIsLooping(videoElement.loop);
 
         // Update video source and load
         videoElement.src = videoSrc;
@@ -186,6 +192,27 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       setVideoState(VideoState.PAUSED);
     }
   }, []);
+
+  // Skip the rest of the current video. Produces exactly the same ENDED
+  // transition a video reaching its natural end produces (see the tail of
+  // onVideoTimeUpdate), so every downstream advance handler works unchanged.
+  const skip = useCallback(() => {
+    const isSkippable =
+      videoState === VideoState.LOADING ||
+      videoState === VideoState.READY ||
+      videoState === VideoState.PLAYING ||
+      videoState === VideoState.PAUSED;
+
+    // Looping videos (e.g. the idle loop on the final step) have nothing to
+    // advance to — skipping them would strand the user.
+    if (!isSkippable || isLooping || videoRef.current?.loop) return;
+
+    videoRef.current?.pause();
+    setVideoState(VideoState.ENDED);
+    playPromiseRef.current?.resolve();
+    playPromiseRef.current = null;
+    onVideoEnd?.();
+  }, [videoState, isLooping, onVideoEnd]);
 
   const preload = useCallback((videoIdOrPath: string) => {
     const { preloadAttribute } = getPreloadStrategy(connectionQuality);
@@ -324,6 +351,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         isPlaying,
         isNearingEnd,
         isBuffering,
+        isLooping,
         currentVideoId,
         currentTime,
         duration,
@@ -331,6 +359,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         videoRef,
         play,
         pause,
+        skip,
         preload,
         preloadMultiple,
         stop,

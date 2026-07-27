@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  Suspense,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -152,12 +159,16 @@ function HomeContent() {
 
   // GA4 step progression tracker — replaces per-step Epsilon tracking
   const trackStepGA4 = useCallback(
-    (answer: { stepId: string; value: string; label: string }) => {
+    (
+      answer: { stepId: string; value: string; label: string },
+      extra?: Record<string, unknown>,
+    ) => {
       trackQuizEvent("quiz_step", currentStepIndex, {
         step_id: answer.stepId,
         flow_id: flowParam,
         answer_value: answer.value,
         answer_label: answer.label,
+        ...extra,
       });
     },
     [currentStepIndex, flowParam],
@@ -170,10 +181,22 @@ function HomeContent() {
     isNearingEnd,
     play,
     pause,
+    skip,
     preloadMultiple,
     currentTime,
     currentVideoId,
   } = useVideoAvatar();
+
+  // Set when the user skips the current video. Two video steps normally pause at
+  // the end and wait for a manual CTA (see MANUAL_CTA_LABELS); a skip should
+  // advance past them straight away rather than reveal that button, so the
+  // advance handler treats this as an override. Reset on every step change.
+  const wasSkippedRef = useRef(false);
+
+  const handleSkipVideo = useCallback(() => {
+    wasSkippedRef.current = true;
+    skip();
+  }, [skip]);
 
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
@@ -357,6 +380,7 @@ function HomeContent() {
   // Reset hasSpokenSummary when step changes to ensure video steps can play
   useEffect(() => {
     setHasSpokenSummary(false);
+    wasSkippedRef.current = false;
   }, [currentStepIndex]);
 
   // Get intro video from intro screen config (used as background on intro screen)
@@ -572,20 +596,26 @@ function HomeContent() {
     // 2. isVideoEnded (ENDED state) confirms video finished playing
     // 3. avatarStartedTalking can be incorrectly reset by other effects
     if (isVideoStep && isShowingResponse && isVideoEnded && hasSpokenSummary) {
-      // Skip auto-advance for steps that use a manual CTA button
+      const wasSkipped = wasSkippedRef.current;
+
+      // Skip auto-advance for steps that use a manual CTA button — unless the
+      // user pressed Skip, which means "move on now".
       const stepId = currentStep?.stepId;
       const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
-      if (hasManualCta) {
+      if (hasManualCta && !wasSkipped) {
         return;
       }
 
       // Track video watched event via GA4
       if (currentStep?.stepId) {
-        trackStepGA4({
-          stepId: currentStep.stepId,
-          value: "Y",
-          label: "Y",
-        });
+        trackStepGA4(
+          {
+            stepId: currentStep.stepId,
+            value: "Y",
+            label: "Y",
+          },
+          { skipped: wasSkipped },
+        );
       }
 
       // Video finished - brief moment before advancing
@@ -963,11 +993,14 @@ function HomeContent() {
   const handleSeeOptionsClick = useCallback(() => {
     // Track video watched event via GA4
     if (currentStep?.stepId) {
-      trackStepGA4({
-        stepId: currentStep.stepId,
-        value: "Y",
-        label: "Y",
-      });
+      trackStepGA4(
+        {
+          stepId: currentStep.stepId,
+          value: "Y",
+          label: "Y",
+        },
+        { skipped: false },
+      );
     }
 
     // Clear video/speech state so we transition cleanly
@@ -1325,6 +1358,7 @@ function HomeContent() {
                 <VideoAvatar
                   className={styles.heygenAvatar}
                   isMuted={isMuted}
+                  onSkip={handleSkipVideo}
                 />
 
                 {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
@@ -1474,14 +1508,6 @@ function HomeContent() {
                       )?.value === "alone"
                         ? 2
                         : undefined
-                    }
-                    purchaseIntent={
-                      storedAnswers.find(
-                        (a) => a.stepId === "q7-purchase-intent",
-                      )?.value as
-                        | "ready-to-buy"
-                        | "not-ready-to-buy"
-                        | undefined
                     }
                     onBookRestTest={handleBookRestTest}
                   />

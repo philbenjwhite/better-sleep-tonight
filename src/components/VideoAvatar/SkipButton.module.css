@@ -1,0 +1,74 @@
+/*
+ * Skip control for avatar videos. Sits inside the 9:16 avatar frame, above the
+ * page's bottom gradient overlay (z-index 5) but below the speech bubbles
+ * (z-index 10 desktop / 20 mobile).
+ *
+ * The avatar frame runs to the bottom of the viewport, so anything anchored near
+ * its bottom edge lands under the fixed footer (z-index 30, ~66px tall). Clear it
+ * by the same margin the response and speech bubbles use.
+ */
+.skipButton {
+  position: absolute;
+  right: 16px;
+  bottom: 96px; /* 32px above footer (~64px) */
+  z-index: 6;
+
+  /* 44px minimum tap target on every axis */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  cursor: pointer;
+
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.skipButton:hover {
+  background-color: rgba(0, 0, 0, 0.75);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.skipButton:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+/*
+ * At or below 1200px the speech and response bubbles stop sitting to the right of
+ * the avatar and become fixed at bottom 96px, which is exactly where the control
+ * would otherwise be. Move it to the top right of the avatar for that whole
+ * range. The volume button lives in the header above, so there is no collision.
+ */
+@media (max-width: 1200px) {
+  .skipButton {
+    top: 16px;
+    right: 12px;
+    bottom: auto;
+    padding: 0 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skipButton {
+    transition: none;
+  }
+}

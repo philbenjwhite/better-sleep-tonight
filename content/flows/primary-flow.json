@@ -266,32 +266,6 @@
       "_template": "videoStep"
     },
     {
-      "stepId": "q7-purchase-intent",
-      "internalName": "Purchase Intent",
-      "questionText": "Are you ready to buy a mattress and sleep better tonight?",
-      "inputType": "radio",
-      "isRequired": true,
-      "answerOptions": [
-        {
-          "optionId": "q7-opt1",
-          "label": "Yes, I'm ready to buy",
-          "value": "ready-to-buy",
-          "order": 1,
-          "avatarResponse": "Great — let's find the right one for you. I'll make sure you get a special offer too.",
-          "tags": ["ready-to-buy"]
-        },
-        {
-          "optionId": "q7-opt2",
-          "label": "No, I'd like to try out a few options",
-          "value": "not-ready-to-buy",
-          "order": 2,
-          "avatarResponse": "No rush at all — let me show you what I'd recommend so you know what to look for.",
-          "tags": ["not-ready-to-buy"]
-        }
-      ],
-      "_template": "questionStep"
-    },
-    {
       "stepId": "product-recommendations-step",
       "internalName": "Product Recommendations",
       "_template": "productRecommendationsStep"

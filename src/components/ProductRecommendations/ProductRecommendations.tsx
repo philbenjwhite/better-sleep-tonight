@@ -3,8 +3,16 @@
 import Image from "next/image";
 import { Tag } from "@phosphor-icons/react";
 import { Button } from "@/components/Button";
-import { trackBuyNowClick, trackLearnMoreClick } from "@/lib/analytics/conversionTracking";
 import styles from "./ProductRecommendations.module.css";
+
+/**
+ * The funnel objective is in-store rest tests, so card prices are hidden.
+ * Flip to `true` to bring "Starting at $X" back on every card.
+ */
+const SHOW_CARD_PRICE = false;
+
+/** Offer flash shown above the CTA on every card. */
+const OFFER_FLASH_TEXT = "Get $300 off in store";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
 export type MattressFeel = "soft" | "medium" | "firm" | "hybrid";
@@ -20,7 +28,6 @@ export interface MattressOption {
   coolingLevel?: number;
   pressureReliefLevel?: number;
   features?: string[];
-  buyUrl?: string;
 }
 
 export interface ProductRecommendationsContent {
@@ -46,14 +53,10 @@ export interface ProductRecommendationsContent {
   avatarResponse?: string;
 }
 
-export type PurchaseIntent = "ready-to-buy" | "not-ready-to-buy";
-
 export interface ProductRecommendationsProps {
   content: ProductRecommendationsContent;
   /** Maximum number of mattress cards to display */
   maxItems?: number;
-  /** Purchase intent from the preceding question step */
-  purchaseIntent?: PurchaseIntent;
   onSelectionComplete?: (selection: {
     mattressId: string;
     mattressName: string;
@@ -74,13 +77,10 @@ export interface ProductRecommendationsProps {
 // Individual Mattress Card Component
 interface MattressCardProps {
   mattress: MattressOption;
-  purchaseIntent?: PurchaseIntent;
   onBookRestTest?: () => void;
 }
 
-function MattressCard({ mattress, purchaseIntent, onBookRestTest }: MattressCardProps) {
-  const isReadyToBuy = purchaseIntent === "ready-to-buy";
-  const isNotReadyToBuy = purchaseIntent === "not-ready-to-buy";
+function MattressCard({ mattress, onBookRestTest }: MattressCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.cardMain}>
@@ -176,37 +176,24 @@ function MattressCard({ mattress, purchaseIntent, onBookRestTest }: MattressCard
           </div>
         </div>
 
-        {/* Price & Buy Now Button */}
+        {/* Offer flash & Book A Rest Test button */}
         <div className={styles.cardAction}>
-          {mattress.basePrice > 0 && !isReadyToBuy && (
+          {SHOW_CARD_PRICE && mattress.basePrice > 0 && (
             <p className={styles.productPrice}>
               Starting at ${mattress.basePrice.toLocaleString()}
             </p>
           )}
-          {isReadyToBuy && (
-            <div className={styles.promoBadge}>
-              <Tag size={16} weight="fill" className={styles.promoBadgeIcon} />
-              <p className={styles.promoBadgeText}>
-                You are eligible for a $200 discount! Code automatically applied at checkout.
-              </p>
-            </div>
-          )}
+          <div className={styles.promoBadge}>
+            <Tag size={16} weight="fill" className={styles.promoBadgeIcon} />
+            <p className={styles.promoBadgeText}>{OFFER_FLASH_TEXT}</p>
+          </div>
           <Button
-            variant={isNotReadyToBuy ? "primary" : "primary"}
+            variant="primary"
             size="medium"
             className={styles.buyButton}
-            onClick={
-              isNotReadyToBuy
-                ? onBookRestTest
-                : mattress.buyUrl
-                  ? () => {
-                      trackBuyNowClick(mattress.id, mattress.productName, mattress.basePrice);
-                      window.open(mattress.buyUrl, "_blank", "noopener,noreferrer");
-                    }
-                  : undefined
-            }
+            onClick={onBookRestTest}
           >
-            {isNotReadyToBuy ? "Book A Rest Test" : "Buy Now"}
+            Book A Rest Test
           </Button>
         </div>
       </div>
@@ -217,7 +204,6 @@ function MattressCard({ mattress, purchaseIntent, onBookRestTest }: MattressCard
 export function ProductRecommendations({
   content,
   maxItems,
-  purchaseIntent,
   onBookRestTest,
 }: ProductRecommendationsProps) {
   // Show only mattresses with badges (the top recommendations)
@@ -237,7 +223,6 @@ export function ProductRecommendations({
             <MattressCard
               key={mattress.id}
               mattress={mattress}
-              purchaseIntent={purchaseIntent}
               onBookRestTest={onBookRestTest}
             />
           ))}
