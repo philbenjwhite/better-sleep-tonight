@@ -5,6 +5,16 @@
   max-width: calc((100vh - 108px) * (9 / 16)); /* Height-based max-width for 9:16 */
   height: calc(100vh - 108px);
   margin: 0 auto; /* Center horizontally */
+}
+
+/*
+ * Clips the media only. The container itself must not clip: when the viewport is
+ * short the 9:16 frame is narrower than the screen, and the skip control aligns
+ * to the viewport edge rather than the frame edge, so it sits outside this box.
+ */
+.videoFrame {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 

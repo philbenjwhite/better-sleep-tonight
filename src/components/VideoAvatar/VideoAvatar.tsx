@@ -85,36 +85,39 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
 
   return (
     <div className={`${styles.avatarContainer} ${className || ''}`}>
-      {/* Fallback image - shown as background when video ends to prevent black frame */}
-      {showFallbackImage && (
-        <Image
-          src={fallbackImage}
-          alt={alt}
-          fill
-          className={styles.avatarImage}
-          priority
-        />
-      )}
+      {/* Media frame - clips the video and fallback to the 9:16 box */}
+      <div className={styles.videoFrame}>
+        {/* Fallback image - shown as background when video ends to prevent black frame */}
+        {showFallbackImage && (
+          <Image
+            src={fallbackImage}
+            alt={alt}
+            fill
+            className={styles.avatarImage}
+            priority
+          />
+        )}
 
-      {/* Video element - overlays fallback image when playing */}
-      <video
-        ref={videoElementRef}
-        className={styles.avatarVideo}
-        playsInline
-        muted={isMuted}
-        onLoadedData={onVideoLoaded}
-        onPlay={onVideoPlay}
-        onEnded={onVideoEnded}
-        onError={onVideoError}
-        onTimeUpdate={onVideoTimeUpdate}
-        onWaiting={onVideoWaiting}
-        onCanPlay={onVideoCanPlay}
-        style={{
-          display: showVideo ? 'block' : 'none',
-          opacity: videoOpacity,
-          transition: 'opacity 0.1s ease-out',
-        }}
-      />
+        {/* Video element - overlays fallback image when playing */}
+        <video
+          ref={videoElementRef}
+          className={styles.avatarVideo}
+          playsInline
+          muted={isMuted}
+          onLoadedData={onVideoLoaded}
+          onPlay={onVideoPlay}
+          onEnded={onVideoEnded}
+          onError={onVideoError}
+          onTimeUpdate={onVideoTimeUpdate}
+          onWaiting={onVideoWaiting}
+          onCanPlay={onVideoCanPlay}
+          style={{
+            display: showVideo ? 'block' : 'none',
+            opacity: videoOpacity,
+            transition: 'opacity 0.1s ease-out',
+          }}
+        />
+      </div>
 
       {/* Loading spinner */}
       {isLoading && (
