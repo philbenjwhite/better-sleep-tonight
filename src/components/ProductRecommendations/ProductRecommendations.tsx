@@ -6,10 +6,10 @@ import { Button } from "@/components/Button";
 import styles from "./ProductRecommendations.module.css";
 
 /**
- * The funnel objective is in-store rest tests, so card prices are hidden.
- * Flip to `true` to bring "Starting at $X" back on every card.
+ * Cards show "Starting at $X" so shoppers can gauge the range before booking.
+ * Flip to `false` to hide pricing on every card.
  */
-const SHOW_CARD_PRICE = false;
+const SHOW_CARD_PRICE = true;
 
 /** Offer flash shown above the CTA on every card. */
 const OFFER_FLASH_TEXT = "Get $300 off in store";
