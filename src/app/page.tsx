@@ -201,6 +201,7 @@ function HomeContent() {
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
   const isVideoReady = videoState !== VideoState.ERROR;
+  const isVideoErrored = videoState === VideoState.ERROR;
 
   // Dev mode: auto-play intro video when skipping intro
   useEffect(() => {
@@ -595,14 +596,24 @@ function HomeContent() {
     // 1. hasSpokenSummary indicates we started the video step
     // 2. isVideoEnded (ENDED state) confirms video finished playing
     // 3. avatarStartedTalking can be incorrectly reset by other effects
-    if (isVideoStep && isShowingResponse && isVideoEnded && hasSpokenSummary) {
+    // A failed video counts as finished: it never reaches ENDED, so without this
+    // the step has no exit at all and the user is stranded (the avatar area is
+    // blank and no CTA is reachable). Advancing is the only honest recovery,
+    // since the segment cannot be played.
+    if (
+      isVideoStep &&
+      isShowingResponse &&
+      hasSpokenSummary &&
+      (isVideoEnded || isVideoErrored)
+    ) {
       const wasSkipped = wasSkippedRef.current;
 
       // Skip auto-advance for steps that use a manual CTA button — unless the
-      // user pressed Skip, which means "move on now".
+      // user pressed Skip, which means "move on now", or the video failed, in
+      // which case the CTA is gated behind an end state that will never arrive.
       const stepId = currentStep?.stepId;
       const hasManualCta = stepId != null && stepId in MANUAL_CTA_LABELS;
-      if (hasManualCta && !wasSkipped) {
+      if (hasManualCta && !wasSkipped && !isVideoErrored) {
         return;
       }
 
@@ -614,7 +625,7 @@ function HomeContent() {
             value: "Y",
             label: "Y",
           },
-          { skipped: wasSkipped },
+          { skipped: wasSkipped, video_error: isVideoErrored },
         );
       }
 
@@ -656,6 +667,7 @@ function HomeContent() {
     isVideoStep,
     isShowingResponse,
     isVideoEnded,
+    isVideoErrored,
     hasSpokenSummary,
     currentStepIndex,
     questionSteps.length,
@@ -1342,8 +1354,16 @@ function HomeContent() {
       )}
 
       {/* Question View */}
+      {/*
+        `isVideoErrored` is included on purpose. Video readiness is the only
+        thing this gate tests, so a failed video used to hide the entire view:
+        no avatar, no speech bubble, no CTA. VideoAvatar already degrades on its
+        own — it falls back to a still frame and shows an error message — and the
+        advance effect above moves past a broken video step, so rendering here is
+        strictly better than a blank screen the user cannot leave.
+      */}
       {currentView === "question" &&
-        (isAvatarReady || skipIntro || isNonVideoStep) && (
+        (isAvatarReady || skipIntro || isNonVideoStep || isVideoErrored) && (
         <>
           {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
           {!isStoreLocationsStep && !isProductRecommendationsStep && !isZipCodeCaptureStep && (
