@@ -4,6 +4,7 @@ import {
   answerOption,
   bookRestTestButton,
   keepVideosSlow,
+  setVideoRateNow,
   skipButton,
   speedUpVideos,
   startFunnel,
@@ -26,6 +27,10 @@ import {
  */
 
 const QUESTION_COUNT = 6; // q1..q6 — the purchase-intent question was removed
+
+/** The avatar's playback state machine, surfaced by VideoAvatar for tests. */
+const videoState = (page: import("@playwright/test").Page) =>
+  page.locator("[data-video-state]").first();
 
 test.beforeEach(async ({ page }) => {
   await stubExternalServices(page);
@@ -97,17 +102,30 @@ test.describe("skipping", () => {
     });
   });
 
-  test("the closing idle loop offers no skip control", async ({ page }) => {
+  test("the booking step offers no skip control", async ({ page }) => {
     await speedUpVideos(page);
     await walkToRecommendations(page);
-    await walkToBookingStep(page);
+    // Slow the closing video right before landing on it. At the walk's
+    // fast-forward it ends and hands off to the idle loop before the assertion
+    // runs, and the idle loop suppresses the control on its own — so the
+    // interesting window, the video actually playing, would go unchecked.
+    await walkToBookingStep(page, {
+      beforeStoreSelect: () => setVideoRateNow(page, 0.25),
+    });
 
     await expect(
       page.getByRole("button", { name: /Schedule Appointment/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
 
-    // The booking video hands off to a looping idle video, which has nothing to
-    // advance to — skipping it would strand the user on the final step.
+    // Nothing advances past the booking step, so a skip has nowhere to go. The
+    // control is suppressed for the whole step: while the closing video plays,
+    // and for the idle loop it hands off to. It was also anchored underneath
+    // this step's speech bubble, which left it half-hidden behind the bubble.
+    await expect(videoState(page)).toHaveAttribute("data-video-state", "PLAYING");
+    await expect(skipButton(page)).toHaveCount(0);
+
+    // ...and still none once it settles into the idle loop.
+    await setVideoRateNow(page, 16);
     await page.waitForTimeout(3000);
     await expect(skipButton(page)).toHaveCount(0);
   });

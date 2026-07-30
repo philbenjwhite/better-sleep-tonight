@@ -33,11 +33,16 @@ export const videoCta = (page: Page) => page.locator('[class*="ctaButton"]');
  * was told to leave. Autoplay does not need the nudge: the Playwright config
  * launches Chromium with --autoplay-policy=no-user-gesture-required.
  */
+/** Where the current rate lives so setVideoRateNow can change it mid-walk. */
+const RATE_KEY = "__e2eVideoRate";
+
 async function setVideoRate(page: Page, rate: number) {
-  await page.addInitScript((r) => {
+  await page.addInitScript(
+    ({ r, key }) => {
+    (window as unknown as Record<string, number>)[key] = r;
     const apply = (v: HTMLVideoElement) => {
       try {
-        v.playbackRate = r;
+        v.playbackRate = (window as unknown as Record<string, number>)[key];
         v.muted = true;
       } catch {
         /* a detached or not-yet-ready element will be caught by a later event */
@@ -66,7 +71,27 @@ async function setVideoRate(page: Page, rate: number) {
       },
       true,
     );
-  }, rate);
+    },
+    { r: rate, key: RATE_KEY },
+  );
+}
+
+/**
+ * Change the playback rate part-way through a walk, for both the video playing
+ * now and every one after it. Lets a test fast-forward the long walk to a step
+ * and then slow the video on that step down enough to assert against it while
+ * it is still playing.
+ */
+export async function setVideoRateNow(page: Page, rate: number) {
+  await page.evaluate(
+    ({ r, key }) => {
+      (window as unknown as Record<string, number>)[key] = r;
+      document
+        .querySelectorAll("video")
+        .forEach((v) => ((v as HTMLVideoElement).playbackRate = r));
+    },
+    { r: rate, key: RATE_KEY },
+  );
 }
 
 /**
@@ -215,7 +240,16 @@ export async function walkToRecommendations(page: Page) {
  * Book A Rest Test, a post-selection video, the postal code, then picking the
  * first store in the list.
  */
-export async function walkToBookingStep(page: Page) {
+export async function walkToBookingStep(
+  page: Page,
+  options: {
+    /**
+     * Runs after the store list is up but before the click that lands on the
+     * booking step, which is the last moment to set up for its closing video.
+     */
+    beforeStoreSelect?: () => Promise<void>;
+  } = {},
+) {
   await bookRestTestButton(page).first().click();
 
   // Postal code capture (a video step plays in between)
@@ -227,5 +261,6 @@ export async function walkToBookingStep(page: Page) {
   // Store locations — select the first store in the list
   const selectButton = page.getByRole("button", { name: /^Select$/ });
   await selectButton.first().waitFor({ timeout: 45_000 });
+  await options.beforeStoreSelect?.();
   await selectButton.first().click();
 }

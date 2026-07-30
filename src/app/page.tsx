@@ -1386,7 +1386,10 @@ function HomeContent() {
                 <VideoAvatar
                   className={styles.heygenAvatar}
                   isMuted={isMuted}
-                  onSkip={handleSkipVideo}
+                  // No skip on the booking CTA step. Its closing line is short
+                  // and wraps up the experience, and the bubble sits over the
+                  // control's anchor point, leaving it half-hidden.
+                  onSkip={isBookingCtaStep ? undefined : handleSkipVideo}
                 />
 
                 {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
