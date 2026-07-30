@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
 import type { SubtitleCue } from "@/components/SpeechBubbleSequence";
 import { parseVtt } from "@/lib/subtitles";
+import { PROGRESS_STORAGE_KEY } from "@/hooks";
 import styles from "./page.module.css";
 
 const VIDEO_SRC = "/videos/ashley/ashley-thank-you.mp4";
@@ -35,9 +36,17 @@ export default function ThankYouPage() {
       .catch(() => {});
   }, []);
 
-  // Clear quiz progress so returning to / won't show the resume modal
+  // Clear quiz progress so returning to / won't show the resume modal.
+  // Must match STORAGE_KEY in useProgressPersistence: this cleared the pre-v2
+  // key, so finishers kept valid progress pointing at the booking step and were
+  // offered "continue where you left off" back onto it. Guarded because Safari
+  // with "Block All Cookies" throws from the localStorage getter itself.
   useEffect(() => {
-    localStorage.removeItem('bettersleep_progress');
+    try {
+      localStorage.removeItem(PROGRESS_STORAGE_KEY);
+    } catch {
+      /* storage unavailable — nothing to clear */
+    }
   }, []);
 
   // Auto-play video on mount
@@ -117,7 +126,15 @@ export default function ThankYouPage() {
               <h1 className={styles.headingDesktop}>
                 Thanks, You&apos;re All Set!
               </h1>
-              {hasStarted && subtitleCues.length > 0 && (
+              {/*
+                Not gated on playback. This required the video to have started,
+                so a device that refuses autoplay (Low Power Mode, Auto-Play:
+                Never) left the page with a heading and nothing else. When
+                playback did start the copy stays synced to the audio; when it
+                did not, it falls back to the untimed reveal so the message is
+                still readable.
+              */}
+              {subtitleCues.length > 0 && (
                 <SpeechBubbleSequence
                   key="thank-you-speech"
                   message={message}
@@ -125,8 +142,8 @@ export default function ThankYouPage() {
                   paragraphPauseMs={600}
                   className={styles.speechBubbleContainer}
                   stayVisible
-                  subtitleCues={subtitleCues}
-                  videoCurrentTime={currentTime}
+                  subtitleCues={hasStarted ? subtitleCues : undefined}
+                  videoCurrentTime={hasStarted ? currentTime : undefined}
                 />
               )}
             </div>

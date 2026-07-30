@@ -987,3 +987,17 @@
     display: none;
   }
 }
+
+/*
+ * Steps that show no avatar (recommendations, zip code, store locations) park
+ * the avatar wrapper offstage instead of unmounting it. iOS grants autoplay
+ * allowance per media element, so destroying the <video> between steps left the
+ * booking step with a fresh element whose segment the policy then refused.
+ *
+ * visibility rather than display: `display: none` makes WebKit drop the media
+ * resource, which would defeat the point of keeping the element around.
+ */
+.avatarOffstage {
+  visibility: hidden;
+  pointer-events: none;
+}

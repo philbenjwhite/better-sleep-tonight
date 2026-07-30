@@ -6,7 +6,7 @@ import { StoredAnswer } from '@/components/DevPanel';
 // v2: the purchase-intent question was removed, shifting every later step index
 // by one. Bumping the key retires saved progress written against the old flow so
 // returning users inside the 7-day window do not resume on the wrong step.
-const STORAGE_KEY = 'bettersleep_progress_v2';
+export const STORAGE_KEY = 'bettersleep_progress_v2';
 const EXPIRATION_DAYS = 7;
 
 export interface SavedProgress {
@@ -59,7 +59,10 @@ export function useProgressPersistence(): UseProgressPersistenceReturn {
       }
     } catch (error) {
       console.error('Error loading saved progress:', error);
-      localStorage.removeItem(STORAGE_KEY);
+      // Deliberately no localStorage call here. When Safari has "Block All
+      // Cookies" set, the window.localStorage getter itself throws, so clearing
+      // from this catch threw a second time — uncaught, with no error boundary
+      // anywhere in the app, which unmounted the whole tree to a blank page.
     } finally {
       setIsLoading(false);
     }

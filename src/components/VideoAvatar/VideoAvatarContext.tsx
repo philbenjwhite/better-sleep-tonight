@@ -26,7 +26,20 @@ export enum VideoState {
   PLAYING = 'PLAYING',
   PAUSED = 'PAUSED',
   ENDED = 'ENDED',
+  /**
+   * Playback was refused by the browser's autoplay policy. The media itself is
+   * fine — it just needs a user gesture. Kept distinct from ERROR because iOS
+   * Safari refuses every unmuted off-gesture play(), and conflating the two
+   * made a routine policy decision look like a corrupt video.
+   */
+  BLOCKED = 'BLOCKED',
+  /** The media genuinely failed to load or decode. */
   ERROR = 'ERROR',
+}
+
+/** True for the autoplay-policy refusal browsers raise from play(). */
+function isAutoplayRefusal(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'NotAllowedError';
 }
 
 interface VideoAvatarContextType {
@@ -36,6 +49,16 @@ interface VideoAvatarContextType {
   isBuffering: boolean;
   /** True while the current video is set to loop (e.g. the closing idle loop) */
   isLooping: boolean;
+  /**
+   * True when the segment is playing only because we had to force-mute it to
+   * satisfy an autoplay policy. The user has not asked for silence, so the UI
+   * should offer a way to turn sound back on.
+   */
+  isAudioBlocked: boolean;
+  /** Start playback from inside a user gesture, after a BLOCKED refusal. */
+  resume: () => void;
+  /** Turn sound on from inside a user gesture, after a forced mute. */
+  enableAudio: () => void;
   currentVideoId: string | null;
   currentTime: number;
   duration: number;
@@ -79,12 +102,46 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>(
     ConnectionQuality.FAST
   );
+  const [isAudioBlocked, setIsAudioBlocked] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playPromiseRef = useRef<{
     resolve: () => void;
     reject: (error: Error) => void;
   } | null>(null);
   const preloadedUrls = useRef<Set<string>>(new Set());
+
+  /**
+   * Start playback, degrading rather than failing.
+   *
+   * iOS Safari refuses play() on an unmuted element outside a user gesture, and
+   * this funnel starts every segment from an effect, so the refusal is the
+   * common path rather than the exception. A refusal on an unmuted element is
+   * retried muted, which iOS always permits inline: the segment still plays and
+   * the caller can offer to turn sound back on. Only when muted playback is
+   * refused too do we report BLOCKED, and a genuine load/decode failure is left
+   * to the element's own error event.
+   */
+  const attemptPlay = useCallback(
+    async (element: HTMLVideoElement): Promise<boolean> => {
+      try {
+        await element.play();
+        return true;
+      } catch (error) {
+        if (!isAutoplayRefusal(error) || element.muted) {
+          return false;
+        }
+        element.muted = true;
+        setIsAudioBlocked(true);
+        try {
+          await element.play();
+          return true;
+        } catch {
+          return false;
+        }
+      }
+    },
+    []
+  );
 
   const setVideoRef = useCallback((ref: HTMLVideoElement | null) => {
     videoRef.current = ref;
@@ -107,12 +164,15 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     if (videoRef.current) {
       const videoElement = videoRef.current;
 
-      return new Promise((resolve, reject) => {
+      const segment = new Promise<void>((resolve, reject) => {
         playPromiseRef.current = { resolve, reject };
 
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false);
+        // Give each segment a fresh chance at sound: if the policy refuses
+        // again, attemptPlay re-mutes it.
+        setIsAudioBlocked(false);
 
         // Set loop attribute based on options
         videoElement.loop = options?.loop ?? false;
@@ -123,15 +183,20 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
         // Call play() immediately - don't wait for loadeddata event
         // This is essential for mobile autoplay policy compliance
-        const playPromise = videoElement.play();
-
-        if (playPromise !== undefined) {
-          playPromise
-            .catch(() => {
-              // If autoplay fails, we'll fall back to onVideoLoaded handler
-            });
-        }
+        void attemptPlay(videoElement).then((started) => {
+          // A refusal here is not fatal: onVideoLoaded retries once the media
+          // is ready, which is the path that succeeds when the element was
+          // still loading. Only that retry decides BLOCKED.
+          if (!started && videoElement.readyState >= 2) {
+            setVideoState(VideoState.BLOCKED);
+          }
+        });
       });
+
+      // Callers treat this as "the segment finished" and never attach a
+      // rejection handler, so hand back a promise that cannot reject. Without
+      // this, every refusal surfaced as an unhandled rejection.
+      return segment.catch(() => {});
     }
 
     // Fallback: Wait for video element to be mounted (with timeout)
@@ -166,12 +231,13 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       });
       if (!videoElement) return;
 
-      return new Promise((resolve, reject) => {
+      const segment = new Promise<void>((resolve, reject) => {
         playPromiseRef.current = { resolve, reject };
 
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false); // Reset for new video
+        setIsAudioBlocked(false);
 
         // Set loop attribute based on options
         videoElement.loop = options?.loop ?? false;
@@ -181,10 +247,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         videoElement.src = videoSrc;
         videoElement.load();
       });
+
+      return segment.catch(() => {});
     } catch (error) {
       console.error('[VideoAvatar] Failed to get video element:', error);
     }
-  }, []);
+  }, [attemptPlay]);
 
   const pause = useCallback(() => {
     if (videoRef.current) {
@@ -196,12 +264,39 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   // Skip the rest of the current video. Produces exactly the same ENDED
   // transition a video reaching its natural end produces (see the tail of
   // onVideoTimeUpdate), so every downstream advance handler works unchanged.
+  /**
+   * Start playback from inside a user gesture. Called by the tap-to-play
+   * control shown on a BLOCKED segment, which is the one context in which the
+   * policy is guaranteed to allow sound.
+   */
+  const resume = useCallback(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    element.muted = false;
+    setIsAudioBlocked(false);
+    void attemptPlay(element).then((started) => {
+      if (!started) setVideoState(VideoState.BLOCKED);
+    });
+  }, [attemptPlay]);
+
+  /** Turn sound on after a forced mute. Must be called from a user gesture. */
+  const enableAudio = useCallback(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    element.muted = false;
+    setIsAudioBlocked(false);
+    if (element.paused) void attemptPlay(element);
+  }, [attemptPlay]);
+
   const skip = useCallback(() => {
     const isSkippable =
       videoState === VideoState.LOADING ||
       videoState === VideoState.READY ||
       videoState === VideoState.PLAYING ||
-      videoState === VideoState.PAUSED;
+      videoState === VideoState.PAUSED ||
+      // A refused segment must stay escapable, otherwise a user whose device
+      // blocks autoplay outright has no way off the step.
+      videoState === VideoState.BLOCKED;
 
     // Looping videos (e.g. the idle loop on the final step) have nothing to
     // advance to — skipping them would strand the user.
@@ -275,14 +370,18 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
     setVideoState(VideoState.READY);
     // Auto-play when loaded (fallback for when immediate play didn't work)
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.error('[VideoAvatar] Autoplay failed:', error);
-        setVideoState(VideoState.ERROR);
-        playPromiseRef.current?.reject(error);
+    const element = videoRef.current;
+    if (element) {
+      void attemptPlay(element).then((started) => {
+        if (started) return;
+        // Refused even muted (iOS Low Power Mode, or Auto-Play set to Never).
+        // The media is loaded and fine, so surface a tap-to-play control rather
+        // than reporting a failure and hiding the step.
+        console.warn('[VideoAvatar] Playback refused by autoplay policy');
+        setVideoState(VideoState.BLOCKED);
       });
     }
-  }, []);
+  }, [attemptPlay]);
 
   const onVideoPlay = useCallback(() => {
     setVideoState(VideoState.PLAYING);
@@ -352,6 +451,9 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         isNearingEnd,
         isBuffering,
         isLooping,
+        isAudioBlocked,
+        resume,
+        enableAudio,
         currentVideoId,
         currentTime,
         duration,

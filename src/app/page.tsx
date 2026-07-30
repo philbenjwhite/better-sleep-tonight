@@ -200,7 +200,8 @@ function HomeContent() {
 
   // Track when video starts/stops playing (replaces avatarStartedTalking/isAvatarTalking)
   const isVideoPlaying = isPlaying;
-  const isVideoReady = videoState !== VideoState.ERROR;
+  // Only a genuine load/decode failure. An autoplay refusal is VideoState.BLOCKED
+  // and is handled by VideoAvatar's tap-to-play control, not by advancing.
   const isVideoErrored = videoState === VideoState.ERROR;
 
   // Dev mode: auto-play intro video when skipping intro
@@ -340,13 +341,6 @@ function HomeContent() {
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
   const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
-  // Steps that don't render the avatar video (see the wrapper guard below).
-  // These must not be gated behind video readiness, otherwise a video error
-  // on an earlier step hides content that never needed video at all.
-  const isNonVideoStep =
-    isProductRecommendationsStep ||
-    isStoreLocationsStep ||
-    isZipCodeCaptureStep;
 
   // GA4: fire view_item for each product when recommendations step is shown
   // GA4: fire quiz_complete when the user reaches the final step
@@ -418,9 +412,6 @@ function HomeContent() {
       preloadMultiple(upcomingVideos);
     }
   }, [currentView, currentStepIndex, flowSteps, preloadMultiple]);
-
-  // Video is ready when not in error state
-  const isAvatarReady = isVideoReady;
 
   const logFlowData = useCallback(
     (answers: StoredAnswer[], context?: string) => {
@@ -1355,19 +1346,36 @@ function HomeContent() {
 
       {/* Question View */}
       {/*
-        `isVideoErrored` is included on purpose. Video readiness is the only
-        thing this gate tests, so a failed video used to hide the entire view:
-        no avatar, no speech bubble, no CTA. VideoAvatar already degrades on its
-        own — it falls back to a still frame and shows an error message — and the
-        advance effect above moves past a broken video step, so rendering here is
-        strictly better than a blank screen the user cannot leave.
+        Deliberately not gated on video state. This gate used to require the
+        avatar to be "ready", which meant any video failure — including a
+        routine iOS autoplay refusal — hid the entire step: no avatar, no speech
+        bubble, no CTA. On the booking step nothing advances past it, so that
+        was a dead end rather than a glitch. No step's content depends on the
+        video, and VideoAvatar degrades on its own (still frame, tap-to-play, or
+        an error message), so the view renders regardless.
       */}
-      {currentView === "question" &&
-        (isAvatarReady || skipIntro || isNonVideoStep || isVideoErrored) && (
+      {currentView === "question" && (
         <>
-          {/* Video Avatar Wrapper - hide on store locations / product recommendations step */}
-          {!isStoreLocationsStep && !isProductRecommendationsStep && !isZipCodeCaptureStep && (
-            <div className={`${styles.questionWrapper} ${styles.fadeIn}`}>
+          {/*
+            Video Avatar Wrapper. Hidden on the store locations, recommendations
+            and zip code steps, but deliberately NOT unmounted: iOS grants its
+            autoplay allowance per media element, so tearing the <video> down
+            between steps meant the booking step always got a fresh element with
+            no allowance and its segment was refused. Keeping one element for the
+            whole funnel is what lets later segments play with sound.
+          */}
+          {(() => {
+            const avatarHidden =
+              isStoreLocationsStep ||
+              isProductRecommendationsStep ||
+              isZipCodeCaptureStep;
+            return (
+            <div
+              className={`${styles.questionWrapper} ${styles.fadeIn} ${
+                avatarHidden ? styles.avatarOffstage : ""
+              }`}
+              aria-hidden={avatarHidden || undefined}
+            >
               {/* Full-width Gradient Overlay at Bottom - above avatar, below chat bubbles */}
               {!isStoreLocationsStep &&
                 !isBookingCtaStep &&
@@ -1461,7 +1469,8 @@ function HomeContent() {
                 )}
               </div>
             </div>
-          )}
+            );
+          })()}
 
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (

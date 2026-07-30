@@ -1,4 +1,4 @@
-export { useProgressPersistence } from './useProgressPersistence';
+export { useProgressPersistence, STORAGE_KEY as PROGRESS_STORAGE_KEY } from './useProgressPersistence';
 export type { SavedProgress } from './useProgressPersistence';
 export { useSubtitleSync } from './useSubtitleSync';
 export { useNetworkStatus, ConnectionQuality } from './useNetworkStatus';

@@ -33,6 +33,9 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
     duration,
     isBuffering,
     isLooping,
+    isAudioBlocked,
+    resume,
+    enableAudio,
     setVideoRef,
     onVideoEnded,
     onVideoLoaded,
@@ -62,6 +65,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
 
   const isLoading = videoState === VideoState.LOADING;
   const hasError = videoState === VideoState.ERROR;
+  const isBlocked = videoState === VideoState.BLOCKED;
   const isIdle = videoState === VideoState.IDLE;
   const isEnded = videoState === VideoState.ENDED;
   const isPlaying = videoState === VideoState.PLAYING;
@@ -73,7 +77,9 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Video is visible when ready, playing, paused, or ended
   // Include READY state to handle cases where onPlay event doesn't fire
   const isPaused = videoState === VideoState.PAUSED;
-  const showVideo = isReady || isPlaying || isPaused || isEnded;
+  // BLOCKED means the media loaded but the policy refused to start it, so the
+  // first frame is available and worth showing behind the tap-to-play control.
+  const showVideo = isReady || isPlaying || isPaused || isEnded || isBlocked;
 
   // Video is paused on last frame when ended, so keep it visible
   const videoOpacity = hasError ? 0 : 1;
@@ -81,10 +87,18 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Skip is offered while a non-looping video still has content left to play.
   // The closing idle loop has nothing to advance to, so it gets no control.
   const canSkip =
-    !!onSkip && !isLooping && (isLoading || isReady || isPlaying || isPaused);
+    !!onSkip &&
+    !isLooping &&
+    (isLoading || isReady || isPlaying || isPaused || isBlocked);
 
   return (
-    <div className={`${styles.avatarContainer} ${className || ''}`}>
+    <div
+      className={`${styles.avatarContainer} ${className || ''}`}
+      // Surfaced for end-to-end tests: the playback state machine drives what
+      // this step shows, and the blank-page regression it once caused is only
+      // observable by asserting on the state itself.
+      data-video-state={videoState}
+    >
       {/* Media frame - clips the video and fallback to the 9:16 box */}
       <div className={styles.videoFrame}>
         {/* Fallback image - shown as background when video ends to prevent black frame */}
@@ -103,7 +117,10 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
           ref={videoElementRef}
           className={styles.avatarVideo}
           playsInline
-          muted={isMuted}
+          // A forced mute is the fallback that kept the segment playing at all;
+          // it has to win over the user's preference until they turn sound back
+          // on, otherwise React would unmute and the policy would stall it.
+          muted={isMuted || isAudioBlocked}
           onLoadedData={onVideoLoaded}
           onPlay={onVideoPlay}
           onEnded={onVideoEnded}
@@ -131,6 +148,37 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         <div className={styles.bufferingOverlay}>
           <div className={styles.bufferingSpinner} />
         </div>
+      )}
+
+      {/* Tap to play - the device refused to start playback on its own */}
+      {isBlocked && (
+        <button
+          type="button"
+          className={styles.tapToPlay}
+          onClick={(event) => {
+            event.stopPropagation();
+            resume();
+          }}
+          aria-label="Play video"
+        >
+          <span className={styles.tapToPlayIcon} aria-hidden="true" />
+          <span className={styles.tapToPlayLabel}>Tap to play</span>
+        </button>
+      )}
+
+      {/* Playing, but the policy forced it silent - offer sound back */}
+      {isAudioBlocked && isPlaying && (
+        <button
+          type="button"
+          className={styles.tapForSound}
+          onClick={(event) => {
+            event.stopPropagation();
+            enableAudio();
+          }}
+          aria-label="Turn on sound"
+        >
+          Tap for sound
+        </button>
       )}
 
       {/* Error message */}
