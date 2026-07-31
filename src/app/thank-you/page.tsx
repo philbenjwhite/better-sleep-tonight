@@ -7,6 +7,8 @@ import { SpeechBubbleSequence } from "@/components/SpeechBubbleSequence";
 import type { SubtitleCue } from "@/components/SpeechBubbleSequence";
 import { parseVtt } from "@/lib/subtitles";
 import { PROGRESS_STORAGE_KEY } from "@/hooks";
+import { BOOK_APPOINTMENT_URL } from "@/config/constants";
+import { trackBookAppointmentClick } from "@/lib/analytics";
 import styles from "./page.module.css";
 
 const VIDEO_SRC = "/videos/ashley/ashley-thank-you.mp4";
@@ -146,6 +148,23 @@ export default function ThankYouPage() {
                   videoCurrentTime={hasStarted ? currentTime : undefined}
                 />
               )}
+
+              {/*
+                The booking hand-off. Deliberately outside the subtitleCues
+                guard above: if the VTT fetch fails there is still a way to
+                book, which is the whole point of this page.
+              */}
+              <div className={styles.ctaGroup}>
+                <a
+                  href={BOOK_APPOINTMENT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.ctaButton}
+                  onClick={() => trackBookAppointmentClick("thank_you_page")}
+                >
+                  Book a Rest Test
+                </a>
+              </div>
             </div>
           </div>
         </div>

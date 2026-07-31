@@ -9,6 +9,7 @@ const StoreMap = dynamic(
   { ssr: false }
 );
 import { Button } from '@/components/Button';
+import { BOOK_APPOINTMENT_URL, CONTACT_URL } from '@/config/constants';
 
 // Import locations data
 import locationsData from '../../../content/locations/ontario-stores.json';
@@ -246,7 +247,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               </form>
             ) : (
               <a
-                href="https://ashleyhomestore.ca/pages/book-appointment"
+                href={BOOK_APPOINTMENT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.ctaButton}
@@ -275,7 +276,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <p className={styles.ctaDescription}>{content.ctaContactDescription}</p>
             </div>
             <a
-              href="https://ashleyhomestore.ca/pages/contact"
+              href={CONTACT_URL}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.ctaButtonOutline}

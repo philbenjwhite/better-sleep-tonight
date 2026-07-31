@@ -239,3 +239,64 @@
 .speechBubbleContainer {
   width: 100%;
 }
+
+/* Booking hand-off, sits under the speech bubble in the right panel */
+.ctaGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Matches .ctaButton in StoreLocations.module.css so the button the user
+   pressed on the previous step looks the same here */
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sds-size-space-200, 8px);
+  padding: var(--sds-size-space-400, 16px) var(--sds-size-space-600, 24px);
+  background-color: var(--sds-color-background-brand-default, #f68b29);
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 700;
+  font-size: var(--sds-typography-body-size-medium, 16px);
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+  background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid var(--sds-color-background-brand-default, #f68b29);
+  outline-offset: 2px;
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+}
+
+/* On phones the right panel is pinned above the footer, so the CTA grows the
+   panel upward over the avatar. Tighten it to keep the face clear. */
+@media (max-width: 768px) {
+  .ctaGroup {
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .ctaButton {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}

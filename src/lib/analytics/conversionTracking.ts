@@ -54,6 +54,16 @@ export const trackBookRestTestIntent = (
   });
 };
 
+// Track the hand-off to Ashley's booking page. This is the funnel's terminal
+// action and is distinct from `book_rest_test_intent`, which fires earlier on
+// the recommendations step. `source` identifies which surface sent them.
+export const trackBookAppointmentClick = (source: string): void => {
+  fireEvent('book_appointment_click', {
+    event_category: 'Conversion',
+    event_label: source,
+  });
+};
+
 // Track Google Ads form submission conversion (TSI Rest Test)
 export const trackFormSubmissionConversion = (): void => {
   fireEvent('conversion', { send_to: 'AW-952158342/ZQuYCJ35mYYcEIaRg8YD' });

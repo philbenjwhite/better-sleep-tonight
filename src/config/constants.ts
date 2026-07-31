@@ -1,5 +1,13 @@
 import { ProductRecommendationsContent } from "@/components/ProductRecommendations";
 
+// Ashley's appointment booking page — the funnel's terminal destination.
+// Referenced from both the booking CTA step and the thank-you page, so it lives
+// here rather than being duplicated as a literal in each component.
+export const BOOK_APPOINTMENT_URL =
+  "https://ashleyhomestore.ca/pages/book-appointment";
+
+export const CONTACT_URL = "https://ashleyhomestore.ca/pages/contact";
+
 // Video steps that pause at end and show a manual CTA button instead of auto-advancing
 export const MANUAL_CTA_LABELS: Record<string, string> = {
   "intro-video": "Let\u2019s Go",
