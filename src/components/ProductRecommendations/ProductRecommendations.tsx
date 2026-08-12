@@ -184,7 +184,7 @@ function MattressCard({ mattress, onBookRestTest }: MattressCardProps) {
             </p>
           )}
           <div className={styles.promoBadge}>
-            <Tag size={16} weight="fill" className={styles.promoBadgeIcon} />
+            <Tag size={14} weight="fill" className={styles.promoBadgeIcon} />
             <p className={styles.promoBadgeText}>{OFFER_FLASH_TEXT}</p>
           </div>
           <Button

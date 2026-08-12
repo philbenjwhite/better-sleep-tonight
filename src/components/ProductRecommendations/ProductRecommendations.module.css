@@ -261,18 +261,25 @@
   margin-top: 2px;
 }
 
-/* Offer flash — a shine sweeps across the badge to draw the eye to the offer */
+/*
+ * Offer flash. Deliberately not a button: it used to stretch the full card
+ * width directly above the CTA, with a solid fill, a 1.5px stroke and centred
+ * bold text, which is the same recipe as a secondary button and read as a
+ * second thing to click. It is now an inline chip — sized to its text, no
+ * stroke, lighter weight — so it registers as a label on the offer while the
+ * tint, the tag icon and the sweep keep it noticeable.
+ */
 .promoBadge {
   position: relative;
   overflow: hidden;
-  display: flex;
+  display: inline-flex;
+  align-self: center;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background-color: #FFF3E0;
-  border: 1.5px solid #D4830A;
-  border-radius: 6px;
-  padding: 10px 14px;
+  gap: 6px;
+  background-color: #FDF0DC;
+  border-radius: 999px;
+  padding: 6px 12px;
 }
 
 .promoBadge::after {
@@ -280,10 +287,11 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Softer than the old sheen: a glint across a label, not a gloss on a control */
   background: linear-gradient(
     115deg,
     rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.55) 50%,
     rgba(255, 255, 255, 0) 65%
   );
   transform: translateX(-120%);
@@ -308,15 +316,16 @@
 
 .promoBadgeIcon {
   flex-shrink: 0;
-  color: #D4830A;
+  color: #B36F06;
 }
 
 .promoBadgeText {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 13px;
   line-height: 1.3;
-  color: #D4830A;
+  letter-spacing: 0.01em;
+  color: #B36F06;
   margin: 0;
 }
 
