@@ -74,6 +74,17 @@
   gap: 12px;
 }
 
+/*
+ * Steps that pair back with skip on the avatar frame hand the control over
+ * below 1200px. display:none rather than visibility so the hidden copy leaves
+ * the accessibility tree and only one back control is ever exposed.
+ */
+@media (max-width: 1200px) {
+  .backButtonWideOnly {
+    display: none;
+  }
+}
+
 /* Volume button - top right */
 .volumeButton {
   position: relative;

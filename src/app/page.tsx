@@ -43,6 +43,7 @@ import type {
 } from "@/components/StoreLocations";
 import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
+import { BackButton } from "@/components/BackButton";
 import {
   trackQuizEvent,
   trackQuizBack,
@@ -342,6 +343,9 @@ function HomeContent() {
   const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
   const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
+  // Steps that push the avatar offstage to give their content the full page.
+  const avatarHidden =
+    isStoreLocationsStep || isProductRecommendationsStep || isZipCodeCaptureStep;
 
   // GA4: fire view_item for each product when recommendations step is shown
   // GA4: fire quiz_complete when the user reaches the final step
@@ -1399,6 +1403,7 @@ function HomeContent() {
         onVolumeClick={handleVolumeToggle}
         showBackButton={currentView === "question" && !isTransitioning}
         onBackClick={handleBack}
+        backButtonWideOnly={!avatarHidden}
         centerContent={
           <StepIndicator
             steps={getProgressSteps(currentView, currentStep?._template)}
@@ -1478,10 +1483,6 @@ function HomeContent() {
             whole funnel is what lets later segments play with sound.
           */}
           {(() => {
-            const avatarHidden =
-              isStoreLocationsStep ||
-              isProductRecommendationsStep ||
-              isZipCodeCaptureStep;
             return (
             <div
               className={`${styles.questionWrapper} ${styles.fadeIn} ${
@@ -1587,6 +1588,18 @@ function HomeContent() {
             </div>
             );
           })()}
+
+          {/*
+            Step-back control, paired with the avatar's skip control on the
+            frame's other edge. Not rendered on the results steps: their content
+            is full-width and scrolls, so a floating control on the leading edge
+            lands on the headline. Those steps keep the header's copy instead.
+          */}
+          {!avatarHidden && (
+            <div className={styles.stepBackControl}>
+              <BackButton onClick={handleBack} />
+            </div>
+          )}
 
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (

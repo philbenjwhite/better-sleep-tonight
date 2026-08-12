@@ -15,6 +15,12 @@ export interface HeaderProps {
   /** Step-back handler. The back control only renders when this is provided. */
   onBackClick?: () => void;
   showBackButton?: boolean;
+  /**
+   * Hide the header's back control below 1200px, for steps where the avatar
+   * frame carries its own back control paired with skip. Kept as a CSS rule
+   * rather than a JS breakpoint so it survives server rendering.
+   */
+  backButtonWideOnly?: boolean;
   centerContent?: React.ReactNode;
   /** Content rendered below the header row on mobile only */
   mobileContent?: React.ReactNode;
@@ -27,6 +33,7 @@ export function Header({
   isMuted = true,
   onBackClick,
   showBackButton = false,
+  backButtonWideOnly = false,
   centerContent,
   mobileContent,
 }: HeaderProps) {
@@ -64,7 +71,10 @@ export function Header({
         {/* Actions - Top Right */}
         <div className={styles.headerActions}>
           {showBackButton && onBackClick && (
-            <BackButton onClick={onBackClick} />
+            <BackButton
+              onClick={onBackClick}
+              className={backButtonWideOnly ? styles.backButtonWideOnly : undefined}
+            />
           )}
 
           {showVolumeButton && (
