@@ -45,6 +45,7 @@ import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
 import { StepIndicator } from "@/components/StepIndicator";
 import {
   trackQuizEvent,
+  trackQuizBack,
   trackBookRestTestIntent,
   trackFormSubmissionConversion,
   trackStoreSearch,
@@ -476,6 +477,116 @@ function HomeContent() {
   const handleVolumeToggle = useCallback(() => {
     setIsMuted((prev) => !prev);
   }, []);
+
+  /**
+   * Step back one step.
+   *
+   * Every step is reachable in reverse, including the intro screen from the
+   * first step. Going back has to undo the step it leaves, not just decrement
+   * the index: answers recorded at or after the target step are dropped so
+   * re-answering appends rather than duplicates, and any state derived from
+   * those answers (postal code, chosen store, mattress selection) is cleared
+   * along with them. Saved progress is rewritten to match, otherwise a reload
+   * would restore the step the user just backed out of.
+   */
+  const handleBack = useCallback(() => {
+    if (isTransitioning) return;
+
+    pause();
+    setVideoSubtitleCues([]);
+    setSelectedAnswer(null);
+    setAvatarResponse(null);
+    setIsShowingResponse(false);
+    setAvatarStartedTalking(false);
+    setHasSpokenSummary(false);
+    setIsFlowTerminated(false);
+    setTerminationMessage(null);
+    wasSkippedRef.current = false;
+
+    // From the first step, back returns to the intro screen.
+    if (currentStepIndex === 0) {
+      trackQuizBack(currentStepIndex, -1, { flow_id: flowParam });
+      setCurrentView("intro");
+      setShowQuestionBlock(false);
+      setShowBackdrop(false);
+      setBackdropHasAnimated(false);
+      setHasShownIntro(false);
+      setHasSpokenIntro(false);
+      setIsMuted(true);
+      // An explicit step back is not a returning visit, so the recovery modal
+      // must not reappear over the intro screen.
+      setHasHandledRecovery(true);
+      return;
+    }
+
+    const targetIndex = currentStepIndex - 1;
+    trackQuizBack(currentStepIndex, targetIndex, {
+      flow_id: flowParam,
+      step_id: questionSteps[targetIndex]?.stepId,
+    });
+
+    const retainedStepIds = new Set(
+      questionSteps
+        .slice(0, targetIndex)
+        .map((step, index) => step.stepId || `step-${index}`),
+    );
+    const updatedAnswers = storedAnswers.filter((answer) =>
+      retainedStepIds.has(answer.stepId),
+    );
+
+    // Re-select whatever the user picked on the step being returned to, so it
+    // reads as a revision rather than a blank question.
+    const targetStep = questionSteps[targetIndex];
+    const targetStepId = targetStep?.stepId || `step-${targetIndex}`;
+    const previousValue = storedAnswers.find(
+      (answer) => answer.stepId === targetStepId,
+    )?.value;
+    setSelectedAnswer(
+      targetStep?.answerOptions?.find(
+        (option) => option.value === previousValue,
+      ) ?? null,
+    );
+
+    // Clear state captured by any step we are returning to or past
+    const revisitedTemplates = new Set(
+      questionSteps.slice(targetIndex).map((step) => step._template),
+    );
+    if (revisitedTemplates.has("zipcodeCaptureStep")) {
+      setUserZipCode(null);
+      setUserCoordinates(null);
+    }
+    if (revisitedTemplates.has("storeLocationsStep")) {
+      setSelectedStore(null);
+    }
+    if (revisitedTemplates.has("mattressRecommendationStep")) {
+      setSelectedMattressSize(undefined);
+      setSelectedMattressFeel(undefined);
+    }
+
+    setStoredAnswers(updatedAnswers);
+    setCurrentStepIndex(targetIndex);
+    saveProgress({
+      flowId: flowParam,
+      currentStepIndex: targetIndex,
+      answers: updatedAnswers,
+    });
+
+    // Show the step wrapper again. Video steps re-run their own effect from
+    // here — it is gated on showQuestionBlock, and hides the block itself once
+    // the segment starts — so the previous segment replays rather than the
+    // step landing on a frozen last frame.
+    setShowBackdrop(true);
+    setBackdropHasAnimated(true);
+    setShowQuestionBlock(true);
+  }, [
+    isTransitioning,
+    currentStepIndex,
+    questionSteps,
+    storedAnswers,
+    saveProgress,
+    flowParam,
+    pause,
+  ]);
 
   // Mark intro as spoken when video starts playing
   useEffect(() => {
@@ -1286,6 +1397,8 @@ function HomeContent() {
         brandName={activeFlow.globalVariables.brandName}
         isMuted={isMuted}
         onVolumeClick={handleVolumeToggle}
+        showBackButton={currentView === "question" && !isTransitioning}
+        onBackClick={handleBack}
         centerContent={
           <StepIndicator
             steps={getProgressSteps(currentView, currentStep?._template)}

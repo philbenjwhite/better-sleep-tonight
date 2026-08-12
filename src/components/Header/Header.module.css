@@ -67,6 +67,13 @@
   height: auto;
 }
 
+/* Right-hand action group: back button + volume button */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Volume button - top right */
 .volumeButton {
   position: relative;
@@ -159,6 +166,10 @@
 @media (max-width: 480px) {
   .headerRow {
     padding: 16px;
+  }
+
+  .headerActions {
+    gap: 8px;
   }
 
   .mobileContent {

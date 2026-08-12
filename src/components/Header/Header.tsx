@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
+import { BackButton } from "@/components/BackButton";
 import styles from "./Header.module.css";
 
 export interface HeaderProps {
@@ -11,6 +12,9 @@ export interface HeaderProps {
   onVolumeClick?: () => void;
   showVolumeButton?: boolean;
   isMuted?: boolean;
+  /** Step-back handler. The back control only renders when this is provided. */
+  onBackClick?: () => void;
+  showBackButton?: boolean;
   centerContent?: React.ReactNode;
   /** Content rendered below the header row on mobile only */
   mobileContent?: React.ReactNode;
@@ -21,6 +25,8 @@ export function Header({
   onVolumeClick,
   showVolumeButton = true,
   isMuted = true,
+  onBackClick,
+  showBackButton = false,
   centerContent,
   mobileContent,
 }: HeaderProps) {
@@ -55,21 +61,27 @@ export function Header({
           <div className={styles.centerContent}>{centerContent}</div>
         )}
 
-        {/* Volume Icon - Top Right */}
-        {showVolumeButton && (
-          <button
-            className={styles.volumeButton}
-            aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-            data-tooltip={isMuted ? "Sound off" : "Sound on"}
-            onClick={onVolumeClick}
-          >
-            {isMuted ? (
-              <SpeakerSlash size={20} weight="bold" color="#363534" />
-            ) : (
-              <SpeakerHigh size={20} weight="bold" color="#363534" />
-            )}
-          </button>
-        )}
+        {/* Actions - Top Right */}
+        <div className={styles.headerActions}>
+          {showBackButton && onBackClick && (
+            <BackButton onClick={onBackClick} />
+          )}
+
+          {showVolumeButton && (
+            <button
+              className={styles.volumeButton}
+              aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              data-tooltip={isMuted ? "Sound off" : "Sound on"}
+              onClick={onVolumeClick}
+            >
+              {isMuted ? (
+                <SpeakerSlash size={20} weight="bold" color="#363534" />
+              ) : (
+                <SpeakerHigh size={20} weight="bold" color="#363534" />
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Mobile-only content below header row */}

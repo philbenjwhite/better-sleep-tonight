@@ -32,6 +32,22 @@ export const trackQuizEvent = (
   });
 };
 
+// Track a step-back. Reported separately from quiz_step so backwards moves do
+// not inflate forward step counts in GA4.
+export const trackQuizBack = (
+  fromStep: number,
+  toStep: number,
+  data?: Record<string, any>
+): void => {
+  fireEvent('quiz_step_back', {
+    event_category: 'Quiz',
+    event_label: 'quiz_step_back',
+    quiz_step: toStep,
+    from_step: fromStep,
+    ...data,
+  });
+};
+
 // Note: buy_now_click and learn_more_click were retired when the funnel moved to
 // in-store rest tests only. Their GTM tags should stay paused so reporting is not
 // skewed by dead events.
