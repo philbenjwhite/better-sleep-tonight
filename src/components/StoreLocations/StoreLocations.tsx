@@ -45,7 +45,7 @@ export interface StoreLocationsProps {
   onLocationSelect?: (location: StoreLocation) => void;
   onBookRestTest?: () => void;
   onContactUs?: () => void;
-  /** When true, hides the CTA row (Schedule Appointment / Contact Us) */
+  /** When true, hides the CTA row (Register Email / Contact Us) */
   hideCtas?: boolean;
   /** Called when user clicks "Select" on a location card */
   onSelectLocation?: (location: StoreLocation) => void;
@@ -53,7 +53,7 @@ export interface StoreLocationsProps {
   hideMap?: boolean;
   /** When true, stacks CTA cards vertically instead of side by side */
   stackCtas?: boolean;
-  /** When provided, gates the Schedule Appointment button behind email capture */
+  /** When provided, gates the rest-test CTA behind email capture */
   onEmailSubmit?: (email: string) => Promise<void>;
 }
 
@@ -193,7 +193,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
 
       {/* CTA Row - Two columns */}
       {!hideCtas && <div className={`${styles.ctaRow} ${stackCtas ? styles.ctaRowStacked : ""}`}>
-        {/* Schedule Appointment CTA */}
+        {/* Rest test CTA, gated behind email capture */}
         <div className={styles.section}>
           {/* Calendar Icon */}
           <div className={styles.ctaIcon}>
@@ -215,8 +215,16 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <p className={styles.ctaDescription}>{content.ctaBookDescription}</p>
             </div>
 
-            {/* Email gate: require email before showing appointment button */}
-            {onEmailSubmit && !gateSubmitted ? (
+            {/*
+              Email gate. Once gated, the form stays put rather than swapping to
+              the booking link on submit: onEmailSubmit redirects to /thank-you,
+              so that swap only ever rendered as a sub-second flash of a button
+              pointing somewhere the user was not going. Harmless while the label
+              read "Schedule Appointment", actively wrong now that it reads
+              "Register Email". Holding the submitted state also stops a second
+              submit landing during the redirect.
+            */}
+            {onEmailSubmit ? (
               <form onSubmit={handleGateEmailSubmit} className={styles.emailGateForm}>
                 <div className={styles.emailGateInputWrapper}>
                   <input
@@ -239,9 +247,11 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
                 <button
                   type="submit"
                   className={styles.ctaButton}
-                  disabled={gateSubmitting || !gateEmail.trim()}
+                  disabled={gateSubmitting || gateSubmitted || !gateEmail.trim()}
                 >
-                  {gateSubmitting ? 'Submitting...' : content.ctaBookButtonText}
+                  {gateSubmitting || gateSubmitted
+                    ? 'Submitting...'
+                    : content.ctaBookButtonText}
                 </button>
               </form>
             ) : (

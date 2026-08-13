@@ -1114,7 +1114,7 @@ function HomeContent() {
     }
   }, [currentStepIndex, questionSteps.length, currentStep, trackStepGA4]);
 
-  // Handle email submission on the booking CTA step (gates the Schedule Appointment button)
+  // Handle email submission on the booking CTA step (gates the Register Email button)
   const handleBookingEmailSubmit = useCallback(
     async (email: string) => {
       const newAnswer: StoredAnswer = {

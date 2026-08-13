@@ -124,7 +124,7 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
   await emailInput.waitFor({ timeout: 45_000 });
   await emailInput.fill("e2e-test@visualboston.com");
   await page
-    .getByRole("button", { name: /Schedule Appointment/i })
+    .getByRole("button", { name: /Register Email/i })
     .first()
     .click();
 

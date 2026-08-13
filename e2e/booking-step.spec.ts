@@ -38,7 +38,7 @@ async function expectBookingStepUsable(page: import("@playwright/test").Page) {
     timeout: 30_000,
   });
   await expect(
-    page.getByRole("button", { name: /Schedule Appointment/i }),
+    page.getByRole("button", { name: /Register Email/i }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: /Contact Us/i }).first(),
@@ -51,6 +51,29 @@ test("reaches the booking step with its email gate and CTAs", async ({
   await walkToRecommendations(page);
   await walkToBookingStep(page);
   await expectBookingStepUsable(page);
+});
+
+/**
+ * The closing steps promise a follow-up email rather than booking on the spot,
+ * so the card copy is the change rather than decoration around it. Worth
+ * pinning: the wording lives in the flow JSON and the caption file, both of
+ * which are edited by hand.
+ */
+test("the booking card is framed around the follow-up email", async ({
+  page,
+}) => {
+  await walkToRecommendations(page);
+  await walkToBookingStep(page);
+
+  await expect(
+    page.getByText(/we'll send you a link to book a rest test/i),
+  ).toBeVisible({ timeout: 30_000 });
+
+  // Nothing should still offer to book on the spot.
+  await expect(page.getByText(/before you buy/i)).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /Schedule Appointment/i }),
+  ).toHaveCount(0);
 });
 
 /** The avatar's playback state machine, surfaced by VideoAvatar for tests. */

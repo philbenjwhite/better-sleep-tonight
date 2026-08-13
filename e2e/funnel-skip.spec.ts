@@ -59,7 +59,7 @@ test.describe("no skipping", () => {
 
     // The booking step gates its CTA behind an email field.
     await expect(
-      page.getByRole("button", { name: /Schedule Appointment/i }).first(),
+      page.getByRole("button", { name: /Register Email/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
   });
 });
@@ -114,7 +114,7 @@ test.describe("skipping", () => {
     });
 
     await expect(
-      page.getByRole("button", { name: /Schedule Appointment/i }).first(),
+      page.getByRole("button", { name: /Register Email/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
 
     // Nothing advances past the booking step, so a skip has nowhere to go. The

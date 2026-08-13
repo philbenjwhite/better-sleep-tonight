@@ -62,16 +62,14 @@ Cross items off as they ship. Add new items if new measurement gaps surface.
 
 The product flow, in order, is:
 
-1. **Intro page**: visitor lands, sees hero copy and a "Begin" CTA.
+1. **Intro page**: visitor lands, sees hero copy and a "Get Better Sleep" CTA.
 2. **Intro avatar video**: plays the introduction; user clicks "Let's Go" to advance (this step does not auto-advance).
 3. **Q1 to Q6**: six question steps about sleep habits.
-4. **Mid-flow video**: short transition video.
-5. **Q7**: purchase intent question.
-6. **Recommendations**: shows 2 or 3 mattress recommendations with a "Book a Rest Test" CTA.
-7. **Post-recommendations video**: short transition video.
-8. **Zipcode capture**: user enters their zip.
-9. **Store locations**: nearby Tempur-Pedic / Ashley stores from the zip.
-10. **Booking CTA / email capture**: final screen with email field and "Schedule Appointment" CTA.
+4. **Summary video**: short transition video; user clicks "See My Results" to advance.
+5. **Recommendations**: shows 2 or 3 mattress recommendations with a "Book A Rest Test" CTA.
+6. **Booking CTA / email capture**: final screen with email field and a "Register Email" CTA, then a redirect to the thank-you page.
+
+Retired stages, still named in older reports: the purchase intent question (removed July 2026), and the post-recommendations video, zipcode capture and store locations steps (removed August 2026). The funnel is 10 steps as of August 2026, down from 13. See `docs/tracking-changelog.md`.
 
 Knowing the order matters because some events fire later than their name implies. See caveats in the report template.
 

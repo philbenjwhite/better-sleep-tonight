@@ -1,8 +1,14 @@
 WEBVTT
 
-00:00.000 --> 00:05.880
-Now, all you need to do is schedule an appointment so you can try that mattress out for yourself in store.
+NOTE
+PROVISIONAL TIMING. This cue carries the approved August 2026 copy, but it was
+written before the re-recorded ashley-5.mp4 existed, so the timing is estimated
+at roughly three words per second rather than measured against real audio.
+Re-time against the new recording before release, and consider splitting the
+line into two cues if it runs long on screen. Note that the cue text is also
+what the speech bubble displays, so any wording change here changes the page,
+and the booking step's script field in the CMS must be kept identical or the
+mobile footer will disagree with the desktop bubble.
 
-00:05.880 --> 00:07.880
-Thanks for visiting Better Sleep Tonight.
-
+00:00.000 --> 00:08.400
+Just leave me your email address and I'll send you an email in the next five minutes, so you can book your rest test.
