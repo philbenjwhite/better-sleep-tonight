@@ -26,6 +26,8 @@ import {
 import type { StoredAnswer } from "@/components/DevPanel";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BackButton } from "@/components/BackButton";
+import { NextButton } from "@/components/NextButton";
 import {
   SpeechBubbleSequence,
   SubtitleCue,
@@ -114,6 +116,9 @@ function HomeContent() {
   const [selectedAnswer, setSelectedAnswer] = useState<CMSAnswerOption | null>(
     null,
   );
+  // True only between committing a choice and leaving the step. A selection
+  // restored by Back is editable, so it leaves this false.
+  const [isSelectionLocked, setIsSelectionLocked] = useState(false);
   const [avatarResponse, setAvatarResponse] = useState<string | null>(null);
   const [isShowingResponse, setIsShowingResponse] = useState(false);
   const [hasShownIntro, setHasShownIntro] = useState(skipIntro);
@@ -333,18 +338,24 @@ function HomeContent() {
   const avatarHidden = isProductRecommendationsStep;
 
   /**
-   * Whether the header's Next control has anything to advance past.
+   * Whether there is a segment left to skip past.
    *
    * Offered while a non-looping segment still has content left to play. The
    * closing idle loop has nothing after it, and nothing follows the booking
    * step at all. This rule used to live inside VideoAvatar, next to the skip
    * control it gated; it moved out with the control itself.
+   *
+   * Restricted to video steps. On a question step the avatar is holding, but
+   * the next segment is often preloaded and sitting in READY, which used to
+   * offer a Skip that forced an already-finished clip to its end and changed
+   * nothing the user could see.
    */
   const canAdvanceVideo =
+    isVideoStep &&
     !isLooping &&
     !isBookingCtaStep &&
     // Results steps push the avatar offstage. The old skip control went with it
-    // and was hidden by that same class; this one lives in the header, so it has
+    // and was hidden by that same class; this one lives in the footer, so it has
     // to opt out itself rather than inherit the frame's visibility.
     !avatarHidden &&
     (videoState === VideoState.LOADING ||
@@ -503,6 +514,7 @@ function HomeContent() {
     pause();
     setVideoSubtitleCues([]);
     setSelectedAnswer(null);
+    setIsSelectionLocked(false);
     setAvatarResponse(null);
     setIsShowingResponse(false);
     setAvatarStartedTalking(false);
@@ -839,6 +851,7 @@ function HomeContent() {
   const handleAnswerSelect = useCallback(
     (option: CMSAnswerOption) => {
       setSelectedAnswer(option);
+      setIsSelectionLocked(true);
 
       // Store the answer
       const newAnswer: StoredAnswer = {
@@ -894,6 +907,7 @@ function HomeContent() {
           setBackdropHasAnimated(true);
           setShowQuestionBlock(false);
           setSelectedAnswer(null);
+          setIsSelectionLocked(false);
 
           // Advance to next step after brief pause (backdrop stays visible)
           if (currentStepIndex < questionSteps.length - 1) {
@@ -922,6 +936,22 @@ function HomeContent() {
       trackStepGA4,
     ],
   );
+
+  /**
+   * Carry a revisited question forward on the answer it already has.
+   *
+   * Stepping back drops the answer for the step it returns to and re-selects
+   * the option, so the question is editable rather than settled. Someone who
+   * only wanted to check what they had said should not have to click the same
+   * option again to get out, so the forward control re-commits it.
+   *
+   * It goes through the same path a fresh pick takes: tracking, saved progress
+   * and the ordering of the stored answers are then identical whether the user
+   * kept the answer or re-picked it.
+   */
+  const handleKeepAnswer = useCallback(() => {
+    if (selectedAnswer) handleAnswerSelect(selectedAnswer);
+  }, [selectedAnswer, handleAnswerSelect]);
 
   const handleMattressSelectionComplete = useCallback(
     (selection: {
@@ -1231,6 +1261,31 @@ function HomeContent() {
     currentStep?._template,
   ]);
 
+  /**
+   * The footer's navigation row.
+   *
+   * Back is always there once the funnel has started. The forward control has
+   * two jobs and says which one it is doing: it skips a segment that is still
+   * playing, or it carries a question that already has an answer forward. On a
+   * question waiting to be answered there is nothing to go forward past — the
+   * answer itself advances the step — so no forward control is offered.
+   */
+  const showFunnelNav = currentView === "question" && !isTransitioning;
+  const canKeepAnswer =
+    isQuestionStep && selectedAnswer !== null && !isSelectionLocked;
+  const funnelNav = (
+    <>
+      <BackButton onClick={handleBack} />
+      {canKeepAnswer ? (
+        <NextButton variant="primary" onClick={handleKeepAnswer} />
+      ) : (
+        canAdvanceVideo && (
+          <NextButton label="Skip" onClick={handleSkipVideo} />
+        )
+      )}
+    </>
+  );
+
   // Handle tap anywhere on mobile to unmute (only on video steps, not intro)
   const handleScreenTap = useCallback(() => {
     // Only unmute on mobile, on video steps, and only if currently muted
@@ -1284,13 +1339,6 @@ function HomeContent() {
         brandName={activeFlow.globalVariables.brandName}
         isMuted={isMuted}
         onVolumeClick={handleVolumeToggle}
-        showBackButton={currentView === "question" && !isTransitioning}
-        onBackClick={handleBack}
-        showNextButton={
-          currentView === "question" && !isTransitioning && canAdvanceVideo
-        }
-        onNextClick={handleSkipVideo}
-        edgeNavOnNarrow={!avatarHidden}
         centerContent={
           <StepIndicator
             steps={getProgressSteps(currentView, currentStep?._template)}
@@ -1501,6 +1549,7 @@ function HomeContent() {
                       onAnswerSelect={handleAnswerSelect}
                       onTextSubmit={handleTextSubmit}
                       selectedValue={selectedAnswer?.value}
+                      selectionLocked={isSelectionLocked}
                     />
                   </div>
                 )}
@@ -1587,6 +1636,7 @@ function HomeContent() {
 
       {/* Footer with Progress Bar */}
       <Footer
+        nav={showFunnelNav ? funnelNav : undefined}
         showProgress={false}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}

@@ -10,6 +10,16 @@ export interface AnimatedQuestionBlockProps extends Omit<QuestionBlockProps, 'qu
   questionContent: CMSQuestionContent;
   /** Unique key to trigger re-animation when question changes */
   questionKey: string;
+  /**
+   * Dim and lock the options the user did not pick. Set once a choice is
+   * committed and the step is on its way out, so the choice reads as final
+   * during the pause before the next question.
+   *
+   * A selection shown for any other reason — most of all one restored by Back —
+   * leaves this false, otherwise returning to a question would show the old
+   * answer with every alternative unclickable.
+   */
+  selectionLocked?: boolean;
   /** Whether the component is entering (true) or exiting (false) */
   isEntering?: boolean;
   /** Callback when exit animation completes */
@@ -126,10 +136,16 @@ export const AnimatedQuestionBlock: React.FC<AnimatedQuestionBlockProps> = ({
 };
 
 // Internal component that adds data attributes for GSAP targeting
-const QuestionBlockAnimated: React.FC<QuestionBlockProps> = ({
+type QuestionBlockAnimatedProps = Omit<
+  AnimatedQuestionBlockProps,
+  'questionKey' | 'isEntering' | 'onExitComplete'
+>;
+
+const QuestionBlockAnimated: React.FC<QuestionBlockAnimatedProps> = ({
   questionContent,
   onAnswerSelect,
   selectedValue,
+  selectionLocked = false,
   disabled = false,
 }) => {
   // Sort options by order if available
@@ -210,7 +226,7 @@ const QuestionBlockAnimated: React.FC<QuestionBlockProps> = ({
             >
               <button
                 type="button"
-                className={`${styles.answerOption} ${selectedValue === option.value ? styles.selected : ''} ${selectedValue && selectedValue !== option.value ? styles.notSelected : ''}`}
+                className={`${styles.answerOption} ${selectedValue === option.value ? styles.selected : ''} ${selectionLocked && selectedValue && selectedValue !== option.value ? styles.notSelected : ''}`}
                 onClick={() => handleSelect(option.value)}
                 disabled={disabled}
               >

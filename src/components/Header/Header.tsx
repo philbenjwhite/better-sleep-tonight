@@ -4,31 +4,20 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
-import { BackButton } from "@/components/BackButton";
-import { NextButton } from "@/components/NextButton";
 import styles from "./Header.module.css";
 
+/**
+ * Brand, progress and sound.
+ *
+ * Back and Next used to live here too, pinned to the viewport edges below
+ * 1024px, where they landed on the answer options. They are now a row in the
+ * footer, in the layout instead of over it — see FooterProps.nav.
+ */
 export interface HeaderProps {
   brandName?: string;
   onVolumeClick?: () => void;
   showVolumeButton?: boolean;
   isMuted?: boolean;
-  /** Step-back handler. The back control only renders when this is provided. */
-  onBackClick?: () => void;
-  showBackButton?: boolean;
-  /**
-   * Step-forward handler. This is the old skip control: it advances past the
-   * avatar segment currently playing. Only renders when provided, and the
-   * caller decides when there is anything to advance to.
-   */
-  onNextClick?: () => void;
-  showNextButton?: boolean;
-  /**
-   * Below 1024px, move Back and Next out of the header to the viewport's left
-   * and right edges. Off for steps whose content runs full width and scrolls,
-   * where an edge-pinned control would sit on top of that content.
-   */
-  edgeNavOnNarrow?: boolean;
   centerContent?: React.ReactNode;
   /** Content rendered below the header row on mobile only */
   mobileContent?: React.ReactNode;
@@ -39,11 +28,6 @@ export function Header({
   onVolumeClick,
   showVolumeButton = true,
   isMuted = true,
-  onBackClick,
-  showBackButton = false,
-  onNextClick,
-  showNextButton = false,
-  edgeNavOnNarrow = true,
   centerContent,
   mobileContent,
 }: HeaderProps) {
@@ -79,15 +63,7 @@ export function Header({
         )}
 
         {/* Actions - Top Right */}
-        <div
-          className={`${styles.headerActions} ${
-            edgeNavOnNarrow ? styles.edgeNav : ""
-          }`}
-        >
-          {showBackButton && onBackClick && <BackButton onClick={onBackClick} />}
-
-          {showNextButton && onNextClick && <NextButton onClick={onNextClick} />}
-
+        <div className={styles.headerActions}>
           {showVolumeButton && (
             <button
               className={styles.volumeButton}

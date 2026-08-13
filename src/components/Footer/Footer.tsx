@@ -1,9 +1,19 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react';
 import styles from './Footer.module.css';
 
 export interface FooterProps {
+  /**
+   * Funnel navigation, rendered as its own row above the footer line.
+   *
+   * The controls sit in the layout rather than over it, which is the whole
+   * point of putting them here: a control pinned to the middle of the viewport
+   * lands on the answer options, and one in the header is a long way from the
+   * thumb on a phone. Pass Back first and the forward control second; the row
+   * pushes them to opposite ends of the content measure.
+   */
+  nav?: ReactNode;
   /** Show progress bar above footer */
   showProgress?: boolean;
   /** Current step (1-indexed) for progress bar */
@@ -69,6 +79,7 @@ function splitIntoParagraphs(text: string): string[] {
 }
 
 export function Footer({
+  nav,
   showProgress = false,
   currentStep = 0,
   totalSteps = 0,
@@ -178,7 +189,9 @@ export function Footer({
   };
 
   return (
-    <footer className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''}`}>
+    <footer
+      className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''} ${nav ? styles.withNav : ''}`}
+    >
       {/* Avatar section renders above progress bar (mobile only via CSS) */}
       {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (
         <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''} ${avatarMobileOnly ? styles.avatarMobileOnly : ''}`}>
@@ -226,6 +239,11 @@ export function Footer({
             className={styles.progressFill}
             style={{ width: `${progress}%` }}
           />
+        </div>
+      )}
+      {nav && (
+        <div className={styles.nav}>
+          <div className={styles.navInner}>{nav}</div>
         </div>
       )}
       <div className={styles.footerContent}>

@@ -9,11 +9,18 @@ export const bookRestTestButton = (page: Page) =>
   page.getByRole("button", { name: /Book A Rest Test/i });
 
 /**
- * Forward control. This was a "Skip" button floating over the avatar video; it
- * is now "Next" in the header beside Back, and collapses to a bare arrow at
- * 1024px, so match on the accessible name rather than visible text.
+ * The forward control while a segment is playing.
+ *
+ * It floated over the avatar video, then moved to the header, and now sits in
+ * the footer nav row opposite Back. There it says what it does rather than
+ * carrying one label for two jobs: "Skip" gets past a segment, "Next" carries
+ * an answered question forward.
  */
 export const skipButton = (page: Page) =>
+  page.getByRole("button", { name: "Skip", exact: true });
+
+/** The forward control on a question that already has an answer. */
+export const nextButton = (page: Page) =>
   page.getByRole("button", { name: "Next", exact: true });
 
 /** The heading of the question currently on screen. */

@@ -67,67 +67,11 @@
   height: auto;
 }
 
-/* Right-hand action group: back, next, volume */
+/* Right-hand action group: volume */
 .headerActions {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-/*
- * Back and Next collapse to their arrows together at tablet widths.
- *
- * The rule lives here, on the row that owns both controls, rather than in each
- * button's own stylesheet. They sit side by side and are read as a pair, so a
- * width where one still has its label and the other does not looks like a bug.
- * Owning it in one place makes that state unreachable.
- *
- * The label is hidden rather than removed: aria-label carries the accessible
- * name either way, so the buttons keep their names when only the arrow shows.
- */
-@media (max-width: 1024px) {
-  .headerActions [data-nav-label] {
-    display: none;
-  }
-
-  /*
-   * ...and leave the header for the left and right edges of the viewport,
-   * centred vertically. Fixed rather than parented to the frame: the avatar's
-   * wrapper sits under the question backdrop, so a control inside it is blurred
-   * out on every question step.
-   *
-   * Centring on the viewport rather than on the avatar deliberately keeps this
-   * independent of the frame's height, which is computed from vh in
-   * VideoAvatar.module.css and changes at three breakpoints. Nothing here has to
-   * track it.
-   */
-  .headerActions [data-nav-button] {
-    padding: 12px;
-  }
-
-  /*
-   * The move to the edges is opt-in per step. Results steps keep their controls
-   * in the header: their content is full width and scrolls, so an edge-pinned
-   * control lands on top of the recommendation cards.
-   */
-  .edgeNav [data-nav-button] {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  /* Re-state the lift so it composes with the centring rather than dropping it. */
-  .edgeNav [data-nav-button]:hover:not(:disabled) {
-    transform: translateY(-50%) scale(1.05);
-  }
-
-  .edgeNav [data-nav-button="back"] {
-    left: 16px;
-  }
-
-  .edgeNav [data-nav-button="next"] {
-    right: 16px;
-  }
 }
 
 /* Volume button - top right */

@@ -6,26 +6,34 @@ import styles from "./NextButton.module.css";
 
 export interface NextButtonProps {
   onClick?: () => void;
-  /** Visible label; hidden at tablet widths, always kept as the accessible name */
+  /** Visible label, and the accessible name */
   label?: string;
+  /**
+   * Ghost is for getting past something the user has not acted on — a segment
+   * still playing. Primary is for carrying a decision forward, and is styled to
+   * be the obvious thing to press.
+   */
+  variant?: "ghost" | "primary";
   disabled?: boolean;
   className?: string;
 }
 
 /**
- * Forward control for the funnel, paired with BackButton in the header.
+ * Forward control for the funnel, paired with BackButton in the footer bar.
  *
- * This is the old skip control. It used to float over the avatar video with a
- * "Skip" label, which read as a way out of the video rather than a way through
- * the funnel, and it covered the video it sat on.
+ * It used to float over the avatar video, which read as a way out of the video
+ * rather than a way through the funnel, and it covered the video it sat on.
+ * Then it moved to the header, where at narrow widths it pinned to the edge of
+ * the viewport and landed on the answer options.
  *
- * The label is mirrored against BackButton, arrow trailing rather than leading,
- * and both drop to their arrows at the same width. That rule lives in
- * Header.module.css, on the row that owns both, so the two cannot drift apart.
+ * In the footer it is in the layout rather than over it, and it can afford to
+ * say what it does: "Skip" while a segment plays, "Next" once there is an
+ * answer to carry forward.
  */
 export function NextButton({
   onClick,
   label = "Next",
+  variant = "ghost",
   disabled = false,
   className,
 }: NextButtonProps) {
@@ -40,16 +48,21 @@ export function NextButton({
   return (
     <button
       type="button"
-      className={classNames(styles.nextButton, className)}
+      className={classNames(
+        styles.nextButton,
+        variant === "primary" && styles.primary,
+        className,
+      )}
       aria-label={label}
       onClick={handleClick}
       disabled={disabled}
       data-nav-button="next"
+      data-nav-variant={variant}
     >
       <span className={styles.label} data-nav-label>
         {label}
       </span>
-      <ArrowRight size={20} weight="bold" color="#363534" aria-hidden="true" />
+      <ArrowRight size={20} weight="bold" color="currentColor" aria-hidden="true" />
     </button>
   );
 }

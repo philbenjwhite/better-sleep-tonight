@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import {
   answerOption,
   bookRestTestButton,
+  nextButton,
   questionHeading,
   skipButton,
   speedUpVideos,
@@ -83,79 +84,199 @@ test("returns to the previous question with the earlier answer re-selected", asy
   expect(await savedAnswerIds(page)).toHaveLength(1);
 });
 
+test("lets a different answer be chosen after stepping back", async ({
+  page,
+}) => {
+  await walkToFirstQuestion(page);
+
+  // The option's own text starts with its keyboard letter, so read the label
+  // span to compare against what is recorded.
+  const optionLabel = (index: number) =>
+    answerOption(page).nth(index).locator('[class*="label"]');
+
+  const firstQuestion = (await questionHeading(page).textContent())?.trim();
+  const chosen = (await optionLabel(0).textContent())?.trim();
+  await answerOption(page).first().click();
+  await expect(questionHeading(page)).not.toHaveText(firstQuestion!, {
+    timeout: 30_000,
+  });
+
+  await backButton(page).click();
+  await expect(questionHeading(page)).toHaveText(firstQuestion!, {
+    timeout: 30_000,
+  });
+
+  // The options the user passed over stay live. They are dimmed and made
+  // unclickable while a committed choice plays out its pause, and returning to
+  // a question is not that: a revision that could only re-pick the same answer
+  // is not a revision.
+  const second = answerOption(page).nth(1);
+  await expect(second).not.toHaveClass(/notSelected/);
+  const revised = (await optionLabel(1).textContent())?.trim();
+  expect(revised).not.toBe(chosen);
+
+  await second.click();
+  await expect(questionHeading(page)).not.toHaveText(firstQuestion!, {
+    timeout: 30_000,
+  });
+
+  // One answer for the question, and it is the revised one.
+  const saved = await page.evaluate((key) => {
+    const raw = localStorage.getItem(key);
+    return JSON.parse(raw!).answers as Array<{ stepId: string; label: string }>;
+  }, STORAGE_KEY);
+  expect(saved).toHaveLength(1);
+  expect(saved[0].label).toBe(revised);
+});
+
 /**
- * Back and Next both live in the header now. Next replaced the skip control
- * that used to float over the avatar video, so the two read as a pair and are
- * asserted as one: they sit on the same row, in that order, and drop their
- * labels together at 1024px. A width where one still has its label and the
- * other does not is the regression this guards.
+ * Back and the forward control sit together in the footer nav row.
+ *
+ * They were in the header, and below 1024px they pinned to the left and right
+ * edges of the viewport, vertically centred — level with the middle of the
+ * answer list, which is where they landed. In the footer they are part of the
+ * layout rather than laid over it, so they cannot cover the question at any
+ * width, and they are within reach of a thumb on a phone.
  */
-test.describe("header navigation pair", () => {
-  test("sit together in the header row, back before next", async ({ page }) => {
+test.describe("footer navigation row", () => {
+  test("sits at the bottom of the page, back before next", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
     await startFunnel(page);
     await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
 
     const backBox = (await backButton(page).boundingBox())!;
     const nextBox = (await skipButton(page).boundingBox())!;
 
-    // Same row, and Next to the right of Back.
+    // Same row, forward control to the right of Back.
     expect(backBox.y).toBeCloseTo(nextBox.y, 0);
     expect(nextBox.x).toBeGreaterThan(backBox.x);
-    // Both in the header rather than floating over the video.
-    expect(backBox.y).toBeLessThan(100);
-    expect(nextBox.y).toBeLessThan(100);
+    // In the footer rather than the header they used to share with the logo.
+    expect(backBox.y).toBeGreaterThan(900 - 200);
+    expect(nextBox.y).toBeGreaterThan(900 - 200);
   });
 
-  test("show their labels above 1024px and only arrows below", async ({
-    page,
-  }) => {
+  test("keeps both labels at every width", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await startFunnel(page);
     await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
 
-    // The labels are hidden with display:none, which textContent still reports,
-    // so count the ones actually rendered rather than reading the buttons' text.
-    const labels = page.locator("header [data-nav-label]:visible");
-    await expect(labels).toHaveCount(2);
-    await expect(labels).toHaveText(["Back", "Next"]);
+    // Nothing overlaps in the footer, so neither control has to collapse to a
+    // bare arrow the way the edge-pinned pair did.
+    const labels = page.locator("footer [data-nav-label]:visible");
+    await expect(labels).toHaveText(["Back", "Skip"]);
 
-    // Below the breakpoint neither label survives. Counting both in one
-    // assertion is the point: a width where only one collapses fails here.
-    await page.setViewportSize({ width: 900, height: 900 });
-    await expect(labels).toHaveCount(0);
-
-    // ...and both buttons are still there, still named, just down to arrows.
-    await expect(backButton(page)).toBeVisible();
-    await expect(skipButton(page)).toBeVisible();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(labels).toHaveText(["Back", "Skip"]);
   });
 
-  test("pins to opposite viewport edges below the breakpoint", async ({
+  test("names the forward control for the job it is doing", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 820, height: 1180 });
-    await startFunnel(page);
-    await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
+    await walkToFirstQuestion(page);
 
-    const back = (await backButton(page).boundingBox())!;
-    const next = (await skipButton(page).boundingBox())!;
+    // A question waiting to be answered has nothing to go forward past: the
+    // answer advances the step itself.
+    await expect(skipButton(page)).toBeHidden();
+    await expect(nextButton(page)).toBeHidden();
 
-    // Hugging each edge rather than sitting in the header row.
-    expect(back.x).toBeLessThan(24);
-    expect(820 - (next.x + next.width)).toBeLessThan(24);
-    expect(back.y).toBeGreaterThan(150);
+    const firstQuestion = (await questionHeading(page).textContent())?.trim();
+    await answerOption(page).first().click();
+    await expect(questionHeading(page)).not.toHaveText(firstQuestion!, {
+      timeout: 30_000,
+    });
+    await backButton(page).click();
+    await expect(questionHeading(page)).toHaveText(firstQuestion!, {
+      timeout: 30_000,
+    });
 
-    // Level with each other, and centred on the viewport. Centring is on the
-    // viewport rather than the avatar frame on purpose, so it does not have to
-    // track the frame's vh-derived height across breakpoints.
-    expect(back.y).toBeCloseTo(next.y, 0);
-    expect(back.y + back.height / 2).toBeCloseTo(1180 / 2, -1);
+    // Back leaves an answer on the step, so there is something to carry
+    // forward, and the control offers to do exactly that.
+    await expect(nextButton(page)).toBeVisible();
+    await expect(nextButton(page)).toHaveAttribute("data-nav-variant", "primary");
   });
+
+  test("carries a revisited question forward on its existing answer", async ({
+    page,
+  }) => {
+    await walkToFirstQuestion(page);
+
+    const firstQuestion = (await questionHeading(page).textContent())?.trim();
+    const kept = (
+      await answerOption(page).first().locator('[class*="label"]').textContent()
+    )?.trim();
+    await answerOption(page).first().click();
+    await expect(questionHeading(page)).not.toHaveText(firstQuestion!, {
+      timeout: 30_000,
+    });
+
+    await backButton(page).click();
+    await expect(questionHeading(page)).toHaveText(firstQuestion!, {
+      timeout: 30_000,
+    });
+
+    await nextButton(page).click();
+    await expect(questionHeading(page)).not.toHaveText(firstQuestion!, {
+      timeout: 30_000,
+    });
+
+    // Recorded exactly as if the option had been clicked again.
+    const saved = await page.evaluate((key) => {
+      const raw = localStorage.getItem(key);
+      return JSON.parse(raw!).answers as Array<{ label: string }>;
+    }, STORAGE_KEY);
+    expect(saved).toHaveLength(1);
+    expect(saved[0].label).toBe(kept);
+  });
+
+  /**
+   * The regression the move was made for. Kept as geometry rather than as a
+   * width: what matters is that no control lands on an option, at any width.
+   */
+  for (const width of [390, 500, 820]) {
+    test(`keeps clear of the answer options at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await walkToFirstQuestion(page);
+      // The options slide in from 15px to the left of where they settle, so
+      // measure once GSAP has cleared its transform rather than mid-entrance.
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('[data-animate="option"]')].every(
+          (el) => getComputedStyle(el).transform === "none",
+        ),
+      );
+
+      const navBoxes = [];
+      for (const control of [backButton(page), skipButton(page)]) {
+        if (await control.isVisible()) navBoxes.push((await control.boundingBox())!);
+      }
+      expect(navBoxes.length).toBeGreaterThan(0);
+
+      const options = await answerOption(page).all();
+      expect(options.length).toBeGreaterThan(0);
+
+      for (const option of options) {
+        const box = (await option.boundingBox())!;
+        for (const nav of navBoxes) {
+          const overlaps =
+            box.x < nav.x + nav.width &&
+            nav.x < box.x + box.width &&
+            box.y < nav.y + nav.height &&
+            nav.y < box.y + box.height;
+          expect(
+            overlaps,
+            `option ${JSON.stringify(box)} overlaps nav ${JSON.stringify(nav)}`,
+          ).toBe(false);
+        }
+      }
+    });
+  }
 });
 
 test.describe("narrow viewport", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("steps back through the funnel from the header", async ({ page }) => {
+  test("steps back through the funnel from the footer", async ({ page }) => {
     await startFunnel(page);
     await videoCta(page).first().waitFor({ state: "visible", timeout: 45_000 });
     await videoCta(page).first().click();
@@ -178,8 +299,13 @@ test.describe("narrow viewport", () => {
 
     // Nothing is playing here, so there is nothing to advance past.
     await expect(skipButton(page)).toBeHidden();
+    await expect(nextButton(page)).toBeHidden();
+
+    // Back stays in the same place it occupies everywhere else. The footer is
+    // fixed, so it holds over the scrolling cards rather than being scrolled
+    // past — which is why the results steps used to need their own exemption.
     const backBox = await backButton(page).boundingBox();
-    expect(backBox!.y).toBeLessThan(80); // in the header row
+    expect(backBox!.y).toBeGreaterThan(844 - 200);
 
     await backButton(page).click();
     await expect(bookRestTestButton(page).first()).toBeHidden();

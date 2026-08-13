@@ -1,10 +1,7 @@
 /*
  * Pill button matching BackButton and the header volume control. Kept in step
- * with src/components/BackButton/BackButton.module.css: the two sit side by
- * side in the header row and any difference between them is visible.
- *
- * The collapse to icon-only is deliberately NOT here. Header.module.css owns it
- * for both buttons at once, so they can never flip at different widths.
+ * with src/components/BackButton/BackButton.module.css: the two sit at opposite
+ * ends of the footer nav row and any difference between them is visible.
  */
 .nextButton {
   background-color: #ffffff;
@@ -17,7 +14,9 @@
   gap: 8px;
   cursor: pointer;
   box-sizing: border-box;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  color: #363534;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, transform 0.15s ease;
 }
 
 .nextButton:hover:not(:disabled) {
@@ -35,12 +34,28 @@
   cursor: not-allowed;
 }
 
+/*
+ * Filled, for when there is an answer to carry forward rather than something to
+ * get past. Same pill, inverted: the control the user is meant to press should
+ * not look like the one that skips.
+ */
+.primary {
+  background-color: var(--sds-color-border-brand-default, #f68b29);
+  border-color: var(--sds-color-border-brand-default, #f68b29);
+  color: #ffffff;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: #e07d1c;
+  border-color: #e07d1c;
+}
+
 .label {
   font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
-  color: #363534;
+  color: inherit;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -12,6 +12,10 @@ const meta = {
     label: {
       control: 'text',
     },
+    variant: {
+      control: 'inline-radio',
+      options: ['ghost', 'primary'],
+    },
     disabled: {
       control: 'boolean',
     },
@@ -21,9 +25,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+/** Getting past a segment that is still playing. */
+export const Skip: Story = {
+  args: {
+    label: 'Skip',
+    variant: 'ghost',
+    disabled: false,
+  },
+};
+
+/** Carrying an answered question forward, the state a step back leaves. */
+export const Next: Story = {
   args: {
     label: 'Next',
+    variant: 'primary',
     disabled: false,
   },
 };

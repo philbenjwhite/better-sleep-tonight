@@ -15,6 +15,17 @@
   right: 0;
 }
 
+/*
+ * The nav row has to stay reachable, so it overrides that: the results and
+ * booking steps scroll, and an absolutely positioned footer sits at the bottom
+ * of the document, which on those steps is a long way below the fold.
+ */
+.withNav {
+  --footer-height: 100px;
+
+  position: fixed;
+}
+
 /* Progress bar positioned above footer content */
 .progressBar {
   height: 4px;
@@ -27,6 +38,33 @@
   transition: width 0.4s ease-out;
 }
 
+/*
+ * Navigation row: Back at one end, the forward control at the other.
+ *
+ * Capped to the same measure the question block uses so the two controls frame
+ * the content rather than hugging the far corners of a wide screen, and pushed
+ * clear of the home indicator on phones.
+ */
+.nav {
+  background-color: #f6f3ed;
+  /* The footer is within a shade of the page behind it, so the bar needs a line
+     to read as a bar rather than as controls loose at the bottom of the page. */
+  border-top: 1px solid rgba(54, 53, 52, 0.09);
+  padding: 12px 24px 0;
+}
+
+/* 520px is the question block's width, so Back and Next line up with the edges
+   of the options above them rather than sitting at some other measure. */
+.navInner {
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .footerContent {
   display: flex;
   justify-content: center;
@@ -35,6 +73,17 @@
   padding: 24px;
   min-height: 62px;
   box-sizing: border-box;
+}
+
+/* The nav row carries the footer's height once it is there, so the line below
+   it tightens to a footnote rather than stacking two full-height rows. */
+.withNav .footerContent {
+  padding: 10px 24px calc(12px + env(safe-area-inset-bottom));
+  min-height: 0;
+}
+
+.withNav .copyright {
+  font-size: 12px;
 }
 
 .copyright {
@@ -65,6 +114,11 @@
   .footerContent {
     padding: 12px 16px;
   }
+
+  /* Matches the question block's gutter at this width (page.module.css). */
+  .nav {
+    padding-inline: 20px;
+  }
 }
 
 /* Avatar section - Desktop: fixed bottom-left, Mobile: full-width above footer */
@@ -84,6 +138,12 @@
   max-height: 140px;
   overflow: hidden;
   transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* Clear of the nav row rather than on top of it: the booking step is where the
+   avatar bar appears, and Back has to stay clickable underneath it. */
+.withNav .avatarSection {
+  bottom: calc(1rem + var(--footer-height));
 }
 
 .avatarSection.avatarSlideOut {
@@ -200,6 +260,10 @@
 
 /* Mobile: Full-width fixed to bottom */
 @media (max-width: 600px) {
+  .withNav .avatarSection {
+    bottom: var(--footer-height);
+  }
+
   .avatarSection {
     position: fixed;
     bottom: 0;
