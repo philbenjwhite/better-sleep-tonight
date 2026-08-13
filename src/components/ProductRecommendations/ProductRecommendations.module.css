@@ -286,16 +286,22 @@
 }
 
 /*
- * The price and its offer, bound by proximity and closed off by a hairline.
- * They sit a third of the distance from each other that either sits from the
- * CTA, and the rule under them draws the line between what the card is telling
- * you and what it is asking you to do.
+ * The price and its offer, ruled off top and bottom.
+ *
+ * The pair is a band across the card rather than two more items in the stack:
+ * the rule above separates it from the feature list, which is the product's
+ * description, and the rule below from the CTA, which is what the card asks
+ * you to do. The two lines are what make it read as one statement.
+ *
+ * Spacing is owned here rather than by the children, so the band stays
+ * symmetrical: 12px inside each rule, 8px between the price and its offer.
  */
 .priceGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-bottom: 12px;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(54, 53, 52, 0.12);
   border-bottom: 1px solid rgba(54, 53, 52, 0.12);
 }
 
@@ -320,7 +326,8 @@
   font-size: 18px;
   line-height: 1.3;
   color: var(--sds-color-text-default-default, #363534);
-  margin: -4px 0 4px;
+  /* Spacing belongs to .priceGroup, which keeps the band even. */
+  margin: 0;
   text-align: center;
 }
 
