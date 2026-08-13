@@ -286,22 +286,22 @@
 }
 
 /*
- * The price and its offer, ruled off top and bottom.
+ * The price and its offer, closed off by a hairline.
  *
- * The pair is a band across the card rather than two more items in the stack:
- * the rule above separates it from the feature list, which is the product's
- * description, and the rule below from the CTA, which is what the card asks
- * you to do. The two lines are what make it read as one statement.
+ * One rule, under the pair, drawing the line between what the card is telling
+ * you and what it is asking you to do. A matching rule above it was tried and
+ * dropped: the feature list is already separated by its own white space, so the
+ * second line boxed the price in without adding a distinction.
  *
- * Spacing is owned here rather than by the children, so the band stays
- * symmetrical: 12px inside each rule, 8px between the price and its offer.
+ * Spacing is owned here rather than by the children, so the pair holds together
+ * regardless of what the price element carries: 8px between the price and its
+ * offer, 12px from the offer down to the rule.
  */
 .priceGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 0;
-  border-top: 1px solid rgba(54, 53, 52, 0.12);
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(54, 53, 52, 0.12);
 }
 
@@ -331,12 +331,16 @@
   text-align: center;
 }
 
-/* Price & button container */
+/*
+ * Price band & button container. The gap is the space under the band's lower
+ * rule, and is twice what sits inside the rules: the band closes, then the card
+ * asks for something, and the pause between the two belongs to the asking.
+ */
 .cardAction {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 12px;
+  gap: 24px;
   width: 100%;
   margin-top: auto;
 }
