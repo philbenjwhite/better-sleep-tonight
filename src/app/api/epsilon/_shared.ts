@@ -1,6 +1,8 @@
 // ─── Shared Epsilon OAuth + config ─────────────────────────
 //
-// Used by both /api/epsilon/submit and /api/epsilon/event
+// Used by /api/epsilon/submit, the only Epsilon route left. Per-step event
+// tracking was replaced by GA4 in March 2026 and its route removed, so Epsilon
+// now receives exactly one record per person, written on email submission.
 
 interface EpsilonTokenResponse {
   access_token: string;

@@ -61,14 +61,17 @@ The app uses pre-recorded videos (not live HeyGen streaming) stored in `public/v
 
 ### API Routes — Epsilon PeopleCloud
 
-Two endpoints in `src/app/api/epsilon/`:
+One endpoint in `src/app/api/epsilon/`:
 
 | Route | Purpose |
 |-------|---------|
-| `/api/epsilon/event` | Per-step tracking — POST creates record (step 0), PUT updates subsequent steps |
-| `/api/epsilon/submit` | Final email submission — POST with fallback to PUT on duplicate |
+| `/api/epsilon/submit` | Final email submission: POST with fallback to PUT on duplicate, then an RTM follow-up email |
 
-Shared auth logic in `_shared.ts`: OAuth token caching, step-to-field mapping (`STEP_TO_EPSILON_FIELD`), list endpoint URL. Records are keyed by `CustomerKey` (sessionId for events, email for submit).
+Per-step Epsilon tracking was replaced by GA4 in March 2026 and its route removed, so Epsilon receives exactly one record per person, written on email submission. Nothing is recorded for people who abandon the funnel.
+
+Shared auth logic in `_shared.ts`: OAuth token caching, step-to-field mapping (`STEP_TO_EPSILON_FIELD`), list endpoint URL. Records are keyed by `CustomerKey` (the email address).
+
+Note that `STEP_TO_EPSILON_FIELD` maps `intro-video` and `video-step-1` to `Intro_Video` and `Summary_Video`, but video steps only report to GA4 and never push a `StoredAnswer`, so neither field has ever been written. See `docs/tracking-changelog.md`.
 
 Epsilon calls are fire-and-forget — failures are logged but don't block the user flow. The `EPSILON_OUID` env var gates whether tracking is active.
 

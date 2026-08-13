@@ -1,5 +1,9 @@
 # GTM / GA4 Setup Guide
 
+> **Out of date.** This document describes an earlier version of the funnel. See [Tracking Changelog](tracking-changelog.md) for what is tracked today and what has changed.
+>
+> The tag setup is still broadly correct, but the buy_now_click, learn_more_click and store_search sections cover retired events.
+
 This doc covers what needs to be configured in Google Tag Manager and GA4 to capture the custom events fired by the Better Sleep Tonight quiz.
 
 The dev side is done — the app fires these events automatically. This guide is about catching them on the GTM/GA4 side.

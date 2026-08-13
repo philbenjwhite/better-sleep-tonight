@@ -1,5 +1,9 @@
 # Epsilon Integration — Overview
 
+> **Out of date.** This document describes an earlier version of the funnel. See [Tracking Changelog](tracking-changelog.md) for what is tracked today and what has changed.
+>
+> It still describes per step Epsilon tracking and anonymous session linking. Both were removed in March 2026.
+
 **For:** Stakeholder walkthrough
 **Last updated:** 2026-02-27
 

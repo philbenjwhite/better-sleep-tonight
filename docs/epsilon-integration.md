@@ -1,5 +1,9 @@
 # Epsilon PeopleCloud Integration
 
+> **Out of date.** This document describes an earlier version of the funnel. See [Tracking Changelog](tracking-changelog.md) for what is tracked today and what has changed.
+>
+> The step and field list still includes the postal code, store locations and purchase intent steps, all retired.
+
 ## Overview
 
 The Better Sleep Tonight flow captures user interactions at every step and pushes them to Epsilon's PeopleCloud platform for CRM and follow-up marketing purposes.

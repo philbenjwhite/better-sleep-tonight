@@ -1,5 +1,9 @@
 # Epsilon Submit Payload Example
 
+> **Out of date.** This document describes an earlier version of the funnel. See [Tracking Changelog](tracking-changelog.md) for what is tracked today and what has changed.
+>
+> The example payload still carries postal code and store fields that submissions no longer send.
+
 ## Frontend → `/api/epsilon/submit`
 
 ```json

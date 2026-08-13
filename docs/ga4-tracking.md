@@ -1,5 +1,9 @@
 # GA4 Analytics Tracking
 
+> **Out of date.** This document describes an earlier version of the funnel. See [Tracking Changelog](tracking-changelog.md) for what is tracked today and what has changed.
+>
+> It still lists buy_now_click, learn_more_click, store_search, video_start and video_complete as live. None of them fire.
+
 ## Overview
 
 The Better Sleep Tonight quiz is a single-page app — the URL never changes. There are no traditional pageviews to track. Instead, we fire custom GA4 events at key moments as users move through the quiz.
