@@ -122,6 +122,25 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   const listRef = useRef<HTMLDivElement>(null);
   const locationCardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const hasInitializedRef = useRef(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * Put the cursor in the email field on arrival, so the one thing the step
+   * asks for can be typed without a click.
+   *
+   * Not on a touch device. Focus there summons the keyboard, which covers
+   * roughly half the screen the moment the step loads — over Ashley, who is
+   * still speaking, and over the offer card the step is built around. Nothing
+   * is lost by waiting for the tap that means the user is ready to type.
+   *
+   * preventScroll because the field sits below the fold on a short viewport and
+   * the browser would jump to it, taking the CTA card's heading off screen.
+   */
+  useEffect(() => {
+    if (!onEmailSubmit) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    emailInputRef.current?.focus({ preventScroll: true });
+  }, [onEmailSubmit]);
 
   // Calculate distances and sort locations
   const sortedLocations = useMemo(() => {
@@ -228,6 +247,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               <form onSubmit={handleGateEmailSubmit} className={styles.emailGateForm}>
                 <div className={styles.emailGateInputWrapper}>
                   <input
+                    ref={emailInputRef}
                     type="email"
                     value={gateEmail}
                     onChange={(e) => {

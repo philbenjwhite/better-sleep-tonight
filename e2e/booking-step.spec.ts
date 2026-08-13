@@ -53,6 +53,18 @@ test("reaches the booking step with its email gate and CTAs", async ({
   await expectBookingStepUsable(page);
 });
 
+test("puts the cursor in the email field on arrival", async ({ page }) => {
+  await walkToRecommendations(page);
+  await walkToBookingStep(page);
+  await expectBookingStepUsable(page);
+
+  await expect(page.locator('input[type="email"]')).toBeFocused();
+
+  // Without preventScroll the browser jumps to the field on a short viewport,
+  // taking the card's own heading off screen before it has been read.
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 /**
  * The closing steps promise a follow-up email rather than booking on the spot,
  * so the card copy is the change rather than decoration around it. Worth
