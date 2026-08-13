@@ -10,6 +10,17 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  /*
+   * No rubber-band. Every step but the results page is exactly one viewport
+   * tall and does not scroll, but macOS and iOS bounce a page whether or not it
+   * has anywhere to go. The bounce drags the document while the fixed header
+   * and footer stay put, so the avatar slides under her own controls for the
+   * length of a flick — the funnel looks like it has come loose.
+   *
+   * Only the overscroll is refused. The results page still scrolls normally;
+   * this stops the scroll going nowhere, not the scroll going somewhere.
+   */
+  overscroll-behavior-y: none;
 }
 
 body {
