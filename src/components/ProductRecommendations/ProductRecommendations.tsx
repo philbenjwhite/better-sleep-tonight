@@ -176,7 +176,7 @@ function MattressCard({ mattress, onBookRestTest }: MattressCardProps) {
           </div>
         </div>
 
-        {/* Offer flash & Book A Rest Test button */}
+        {/* Offer flash & Book a Rest Test button */}
         <div className={styles.cardAction}>
           {/*
             The offer is a fact about the price, so it sits with the price
@@ -200,7 +200,7 @@ function MattressCard({ mattress, onBookRestTest }: MattressCardProps) {
             className={styles.buyButton}
             onClick={onBookRestTest}
           >
-            Book A Rest Test
+            Book a Rest Test
           </Button>
         </div>
       </div>

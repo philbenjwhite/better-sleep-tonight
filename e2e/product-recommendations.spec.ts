@@ -18,7 +18,7 @@ import {
  *
  * Since July 2026 the funnel targets in-store rest tests only: there is no
  * purchase-intent question and no Buy Now path, so every card carries the same
- * Book A Rest Test CTA and the $300 offer flash.
+ * Book a Rest Test CTA and the $300 offer flash.
  */
 
 const AVATAR_VIDEO = /ashley-\d+\.mp4/i;
@@ -39,7 +39,7 @@ test("shows the mattress recommendation cards at the end of the funnel", async (
   await expect(cards.first()).toBeVisible();
   expect(await cards.count()).toBeGreaterThanOrEqual(2);
 
-  // Every card carries the same Book A Rest Test CTA.
+  // Every card carries the same Book a Rest Test CTA.
   const cardCtas = bookRestTestButton(page);
   await expect(cardCtas.first()).toBeVisible();
   expect(await cardCtas.count()).toBeGreaterThanOrEqual(2);

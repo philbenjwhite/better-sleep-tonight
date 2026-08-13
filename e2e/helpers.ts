@@ -6,7 +6,7 @@ import { expect, type Page } from "@playwright/test";
 
 /** Matches the CTA on the product recommendations cards. */
 export const bookRestTestButton = (page: Page) =>
-  page.getByRole("button", { name: /Book A Rest Test/i });
+  page.getByRole("button", { name: /Book a Rest Test/i });
 
 /**
  * The forward control while a segment is playing.
