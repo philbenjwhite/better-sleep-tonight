@@ -11,6 +11,8 @@ import styles from "./page.module.css";
 
 const VIDEO_SRC = "/videos/ashley/ashley-thank-you.mp4";
 const VTT_SRC = "/videos/ashley/ashley-thank-you.vtt";
+// The same loop the booking step hands off to when its segment ends.
+const IDLE_SRC = "/videos/ashley/ashley-idle-crf28.mp4";
 
 export default function ThankYouPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -18,6 +20,7 @@ export default function ThankYouPage() {
   const [subtitleCues, setSubtitleCues] = useState<SubtitleCue[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isIdle, setIsIdle] = useState(false);
 
   // Load and parse VTT
   useEffect(() => {
@@ -61,23 +64,49 @@ export default function ThankYouPage() {
   }, []);
 
   const handleTimeUpdate = useCallback(() => {
+    // The idle loop restarts its clock on every pass and the speech bubble is
+    // driven off that clock, so leave it wherever the closing segment finished.
+    // Otherwise the bubble snaps back to its first line each time the loop wraps.
+    if (isIdle) return;
     if (videoRef.current) {
-      const { currentTime: time, duration } = videoRef.current;
-      setCurrentTime(time);
-      // Pause 0.5s before end to freeze on last frame (timeupdate fires ~every 250ms)
-      if (duration && time >= duration - 0.5 && !videoRef.current.paused) {
-        videoRef.current.pause();
-      }
+      setCurrentTime(videoRef.current.currentTime);
     }
+  }, [isIdle]);
+
+  /**
+   * Hand off to the looping idle clip, the same way the booking step does when
+   * its segment ends.
+   *
+   * This used to rewind half a second and freeze on that frame. It only ever
+   * worked by luck: it parked on whatever the final moment of the recording
+   * happened to contain, which was fine for the 20s original but lands mid
+   * glance-down on the shorter August 2026 re-record. Any future re-record
+   * would have rolled the same dice.
+   */
+  const handleEnded = useCallback(() => {
+    setIsIdle(true);
   }, []);
 
-  // Safety net: if video reaches end despite pause attempt, seek back to last frame
-  const handleEnded = useCallback(() => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = videoRef.current.duration - 0.5;
-      videoRef.current.pause();
-    }
-  }, []);
+  useEffect(() => {
+    if (!isIdle) return;
+    videoRef.current?.play().catch(() => {
+      /* the closing frame stays up if the loop will not start */
+    });
+  }, [isIdle]);
+
+  // Warm the idle clip while the closing segment is still playing. Without it
+  // the swap waits on a cold request and holds the segment's final frame while
+  // it loads, which is the frame this handoff exists to get off the screen.
+  useEffect(() => {
+    if (!hasStarted) return;
+    const abort = new AbortController();
+    fetch(IDLE_SRC, { signal: abort.signal })
+      .then((res) => res.blob())
+      .catch(() => {
+        /* falls back to loading at swap time */
+      });
+    return () => abort.abort();
+  }, [hasStarted]);
 
   const handlePlay = useCallback(() => {
     if (!hasStarted) setHasStarted(true);
@@ -113,7 +142,8 @@ export default function ThankYouPage() {
               <video
                 ref={videoRef}
                 className={styles.avatarVideo}
-                src={VIDEO_SRC}
+                src={isIdle ? IDLE_SRC : VIDEO_SRC}
+                loop={isIdle}
                 playsInline
                 muted={isMuted}
                 onTimeUpdate={handleTimeUpdate}
