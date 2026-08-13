@@ -37,6 +37,24 @@ export enum VideoState {
   ERROR = 'ERROR',
 }
 
+/**
+ * How far from the end a segment is stopped, and how far from the end the still
+ * that replaces it is taken.
+ *
+ * Both are set by what timeupdate can promise. It fires roughly four times a
+ * second, so the first tick at or past a threshold can be a further ~0.25s
+ * along — the stop therefore lands somewhere in [dur - 0.4, dur - 0.15], and
+ * the capture in [dur - 1, dur - 0.5].
+ *
+ * The window matters because every avatar recording delivered so far ends on
+ * three black frames, 0.1s of them, baked into the file. Stopping inside that
+ * tail puts the black on screen, which is what the funnel used to do. Both
+ * margins clear it with room to spare, and the tail of a talking head that is
+ * already settling is not worth the risk of cutting it finer.
+ */
+const STOP_BEFORE_END_SECONDS = 0.4;
+const CAPTURE_BEFORE_END_SECONDS = 0.5;
+
 /** True for the autoplay-policy refusal browsers raise from play(). */
 function isAutoplayRefusal(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'NotAllowedError';
@@ -64,6 +82,14 @@ interface VideoAvatarContextType {
   duration: number;
   connectionQuality: ConnectionQuality;
   videoRef: React.RefObject<HTMLVideoElement | null>;
+  /**
+   * True while the still of the outgoing segment's last frame should cover the
+   * player. Set when a new source is about to replace one that is on screen,
+   * cleared once the new source has painted a frame of its own.
+   */
+  showHeldFrame: boolean;
+  /** Registers the canvas the held frame is drawn into. */
+  setHeldFrameRef: (ref: HTMLCanvasElement | null) => void;
   play: (videoId: string, options?: { loop?: boolean }) => Promise<void>;
   pause: () => void;
   skip: () => void;
@@ -103,7 +129,11 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     ConnectionQuality.FAST
   );
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
+  const [showHeldFrame, setShowHeldFrame] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const heldFrameCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const heldFrameTimeoutRef = useRef<number | undefined>(undefined);
+  const hasCapturedFrameRef = useRef(false);
   const playPromiseRef = useRef<{
     resolve: () => void;
     reject: (error: Error) => void;
@@ -147,6 +177,81 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     videoRef.current = ref;
   }, []);
 
+  const setHeldFrameRef = useCallback((ref: HTMLCanvasElement | null) => {
+    heldFrameCanvasRef.current = ref;
+  }, []);
+
+  /**
+   * Copy the frame currently on screen into the held-frame canvas, without
+   * putting it up.
+   *
+   * Two separate things blank the player, and one still covers both. Assigning
+   * a new src empties the element, and the browser paints that gap black —
+   * milliseconds on a warm cache, a lot longer on a cold one. And every avatar
+   * segment so far ends on three black frames, baked into the recording, which
+   * the near-end pause in onVideoTimeUpdate is meant to stop short of but
+   * cannot reliably: timeupdate fires about four times a second, so where the
+   * pause actually lands is a coin toss over a window wider than the black tail
+   * itself.
+   *
+   * So the capture is deliberately taken early, while the segment is still
+   * playing a frame worth keeping, and held from the pause through the swap.
+   */
+  const captureFrame = useCallback((): boolean => {
+    const video = videoRef.current;
+    const canvas = heldFrameCanvasRef.current;
+    if (!video || !canvas) return false;
+    // HAVE_CURRENT_DATA or better, or there is nothing decoded to copy — which
+    // is the normal case for the first segment of the funnel.
+    if (video.readyState < 2 || !video.videoWidth) return false;
+
+    // Half the source's width is more than enough for a still that stands in
+    // for the player briefly, and keeps the backing store off a phone's budget.
+    const width = Math.min(video.videoWidth, 720);
+    const height = Math.round((width / video.videoWidth) * video.videoHeight);
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    const context = canvas.getContext('2d');
+    if (!context) return false;
+    context.drawImage(video, 0, 0, width, height);
+    hasCapturedFrameRef.current = true;
+    return true;
+  }, []);
+
+  /** Put the captured still up over the player. */
+  const holdCapturedFrame = useCallback(() => {
+    if (hasCapturedFrameRef.current) setShowHeldFrame(true);
+  }, []);
+
+  /**
+   * Uncover the player, once the new segment has a frame of its own.
+   *
+   * The play event fires before that frame is composited, so where the browser
+   * can tell us about frames directly, wait to be told. The timeout is the
+   * backstop for the browsers that cannot, and for a segment that plays without
+   * ever presenting a frame: a stale still left up forever is worse than the
+   * flash this avoids.
+   */
+  const releaseHeldFrame = useCallback(() => {
+    const video = videoRef.current;
+    window.clearTimeout(heldFrameTimeoutRef.current);
+    heldFrameTimeoutRef.current = window.setTimeout(
+      () => setShowHeldFrame(false),
+      1000,
+    );
+    if (video && 'requestVideoFrameCallback' in video) {
+      video.requestVideoFrameCallback(() => {
+        window.clearTimeout(heldFrameTimeoutRef.current);
+        setShowHeldFrame(false);
+      });
+      return;
+    }
+    setShowHeldFrame(false);
+  }, []);
+
   const play = useCallback(async (videoIdOrPath: string, options?: { loop?: boolean }): Promise<void> => {
     // Accept either a registry ID or a direct path (starting with /)
     const videoSrc = videoIdOrPath.startsWith('/')
@@ -163,6 +268,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     // synchronously within a user-initiated event (click/tap handler).
     if (videoRef.current) {
       const videoElement = videoRef.current;
+
+      // Cover the swap. A segment that is still playing gives a fresh frame;
+      // one that has already been stopped (the near-end pause, or a skip) has
+      // left one behind for exactly this.
+      if (!videoElement.paused) captureFrame();
+      holdCapturedFrame();
 
       const segment = new Promise<void>((resolve, reject) => {
         playPromiseRef.current = { resolve, reject };
@@ -243,6 +354,9 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         videoElement.loop = options?.loop ?? false;
         setIsLooping(videoElement.loop);
 
+        if (!videoElement.paused) captureFrame();
+        holdCapturedFrame();
+
         // Update video source and load
         videoElement.src = videoSrc;
         videoElement.load();
@@ -252,7 +366,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     } catch (error) {
       console.error('[VideoAvatar] Failed to get video element:', error);
     }
-  }, [attemptPlay]);
+  }, [attemptPlay, captureFrame, holdCapturedFrame]);
 
   const pause = useCallback(() => {
     if (videoRef.current) {
@@ -302,12 +416,16 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     // advance to — skipping them would strand the user.
     if (!isSkippable || isLooping || videoRef.current?.loop) return;
 
+    // Capture before pausing, while there is still a frame to take, so the skip
+    // hands over on a held still rather than on whatever the element shows once
+    // it is emptied.
+    captureFrame();
     videoRef.current?.pause();
     setVideoState(VideoState.ENDED);
     playPromiseRef.current?.resolve();
     playPromiseRef.current = null;
     onVideoEnd?.();
-  }, [videoState, isLooping, onVideoEnd]);
+  }, [videoState, isLooping, onVideoEnd, captureFrame]);
 
   const preload = useCallback((videoIdOrPath: string) => {
     const { preloadAttribute } = getPreloadStrategy(connectionQuality);
@@ -359,6 +477,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     }
     setVideoState(VideoState.IDLE);
     setCurrentVideoId(null);
+    window.clearTimeout(heldFrameTimeoutRef.current);
+    setShowHeldFrame(false);
   }, []);
 
   const onVideoLoaded = useCallback(() => {
@@ -385,7 +505,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
 
   const onVideoPlay = useCallback(() => {
     setVideoState(VideoState.PLAYING);
-  }, []);
+    releaseHeldFrame();
+  }, [releaseHeldFrame]);
 
   const onVideoEnded = useCallback(() => {
     setVideoState(VideoState.ENDED);
@@ -397,6 +518,10 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   const onVideoError = useCallback(() => {
     console.error('[VideoAvatar] Video error');
     setVideoState(VideoState.ERROR);
+    // Nothing is coming to replace the held frame, and the steps that survive a
+    // failed segment do it by showing their own content, not the player.
+    window.clearTimeout(heldFrameTimeoutRef.current);
+    setShowHeldFrame(false);
     playPromiseRef.current?.reject(new Error('Video playback error'));
     playPromiseRef.current = null;
   }, []);
@@ -410,17 +535,35 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       if (dur && time >= dur - 1 && !isNearingEnd) {
         setIsNearingEnd(true);
       }
-      // Pause just before end to freeze on last frame (prevents black frame / flicker)
-      // Skip for looping videos. Manually fire ended state so app logic continues.
-      if (dur && time >= dur - 0.15 && !videoRef.current.paused && !videoRef.current.loop) {
+      // Keep a still of the run-out, taken while the segment is safely clear of
+      // its own end. See CAPTURE_BEFORE_END_SECONDS.
+      if (
+        dur &&
+        time >= dur - 1 &&
+        time < dur - CAPTURE_BEFORE_END_SECONDS &&
+        !videoRef.current.loop
+      ) {
+        captureFrame();
+      }
+      // Stop before the end and hold that still, so the segment rests on a
+      // frame of Ashley rather than on the recording's black tail or on an
+      // empty element. Skip for looping videos. Manually fire ended state so
+      // app logic continues.
+      if (
+        dur &&
+        time >= dur - STOP_BEFORE_END_SECONDS &&
+        !videoRef.current.paused &&
+        !videoRef.current.loop
+      ) {
         videoRef.current.pause();
+        holdCapturedFrame();
         setVideoState(VideoState.ENDED);
         playPromiseRef.current?.resolve();
         playPromiseRef.current = null;
         onVideoEnd?.();
       }
     }
-  }, [isNearingEnd, onVideoEnd]);
+  }, [isNearingEnd, onVideoEnd, captureFrame, holdCapturedFrame]);
 
   // Buffering detection - called when video is waiting for data
   const onVideoWaiting = useCallback(() => {
@@ -459,6 +602,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         duration,
         connectionQuality,
         videoRef,
+        showHeldFrame,
+        setHeldFrameRef,
         play,
         pause,
         skip,

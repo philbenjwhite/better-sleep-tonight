@@ -68,8 +68,18 @@ export default function ThankYouPage() {
     // driven off that clock, so leave it wherever the closing segment finished.
     // Otherwise the bubble snaps back to its first line each time the loop wraps.
     if (isIdle) return;
-    if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
+    const video = videoRef.current;
+    if (!video) return;
+    setCurrentTime(video.currentTime);
+
+    // Hand off before the end rather than on it. The recording finishes on
+    // three black frames — 0.1s of them, baked into the file — and playing it
+    // out to `ended` puts them on screen every time. The margin clears them
+    // with room for timeupdate's ~0.25s of jitter, and costs a fraction of a
+    // second of a shot that is already still. See STOP_BEFORE_END_SECONDS in
+    // VideoAvatarContext, which is the same number for the same reason.
+    if (video.duration && video.currentTime >= video.duration - 0.4) {
+      setIsIdle(true);
     }
   }, [isIdle]);
 
@@ -82,6 +92,11 @@ export default function ThankYouPage() {
    * happened to contain, which was fine for the 20s original but lands mid
    * glance-down on the shorter August 2026 re-record. Any future re-record
    * would have rolled the same dice.
+   *
+   * The hand-off normally happens in handleTimeUpdate, before the end. This is
+   * the backstop for a segment whose end arrives without one — a browser that
+   * stops firing timeupdate on a backgrounded tab, or a duration that never
+   * resolves.
    */
   const handleEnded = useCallback(() => {
     setIsIdle(true);

@@ -49,6 +49,23 @@
   z-index: 2; /* Above fallback image */
 }
 
+/*
+ * Held frame. Geometry has to match .avatarVideo exactly, or the still and the
+ * segment it covers for do not line up and the swap reads as a jump instead of
+ * the flash it replaced.
+ */
+.heldFrame {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 2px);
+  object-fit: cover;
+  object-position: center top;
+  z-index: 3; /* Above the video it is covering for */
+  pointer-events: none;
+}
+
 .avatarImage {
   position: absolute;
   top: -2px;

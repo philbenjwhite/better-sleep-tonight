@@ -24,6 +24,8 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
     duration,
     isBuffering,
     isAudioBlocked,
+    showHeldFrame,
+    setHeldFrameRef,
     resume,
     enableAudio,
     setVideoRef,
@@ -116,6 +118,21 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
             opacity: videoOpacity,
             transition: 'opacity 0.1s ease-out',
           }}
+        />
+
+        {/*
+          The outgoing segment's last frame, held over the source swap. Above
+          the video rather than behind it: the gap between an emptied element
+          and the new segment's first frame is painted black by the browser, so
+          covering the player is the point. See holdCurrentFrame in
+          VideoAvatarContext.
+        */}
+        <canvas
+          ref={setHeldFrameRef}
+          className={styles.heldFrame}
+          data-held-frame={showHeldFrame ? 'visible' : 'hidden'}
+          aria-hidden="true"
+          style={{ display: showHeldFrame ? 'block' : 'none' }}
         />
       </div>
 
