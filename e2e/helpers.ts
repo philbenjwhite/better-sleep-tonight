@@ -8,9 +8,13 @@ import { expect, type Page } from "@playwright/test";
 export const bookRestTestButton = (page: Page) =>
   page.getByRole("button", { name: /Book A Rest Test/i });
 
-/** The skip control rendered over every avatar video. */
+/**
+ * Forward control. This was a "Skip" button floating over the avatar video; it
+ * is now "Next" in the header beside Back, and collapses to a bare arrow at
+ * 1024px, so match on the accessible name rather than visible text.
+ */
 export const skipButton = (page: Page) =>
-  page.getByRole("button", { name: /Skip video/i });
+  page.getByRole("button", { name: "Next", exact: true });
 
 /** The heading of the question currently on screen. */
 export const questionHeading = (page: Page) =>

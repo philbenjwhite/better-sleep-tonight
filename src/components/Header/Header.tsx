@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
 import { BackButton } from "@/components/BackButton";
+import { NextButton } from "@/components/NextButton";
 import styles from "./Header.module.css";
 
 export interface HeaderProps {
@@ -16,11 +17,18 @@ export interface HeaderProps {
   onBackClick?: () => void;
   showBackButton?: boolean;
   /**
-   * Hide the header's back control below 1200px, for steps where the avatar
-   * frame carries its own back control paired with skip. Kept as a CSS rule
-   * rather than a JS breakpoint so it survives server rendering.
+   * Step-forward handler. This is the old skip control: it advances past the
+   * avatar segment currently playing. Only renders when provided, and the
+   * caller decides when there is anything to advance to.
    */
-  backButtonWideOnly?: boolean;
+  onNextClick?: () => void;
+  showNextButton?: boolean;
+  /**
+   * Below 1024px, move Back and Next out of the header to the viewport's left
+   * and right edges. Off for steps whose content runs full width and scrolls,
+   * where an edge-pinned control would sit on top of that content.
+   */
+  edgeNavOnNarrow?: boolean;
   centerContent?: React.ReactNode;
   /** Content rendered below the header row on mobile only */
   mobileContent?: React.ReactNode;
@@ -33,7 +41,9 @@ export function Header({
   isMuted = true,
   onBackClick,
   showBackButton = false,
-  backButtonWideOnly = false,
+  onNextClick,
+  showNextButton = false,
+  edgeNavOnNarrow = true,
   centerContent,
   mobileContent,
 }: HeaderProps) {
@@ -69,13 +79,14 @@ export function Header({
         )}
 
         {/* Actions - Top Right */}
-        <div className={styles.headerActions}>
-          {showBackButton && onBackClick && (
-            <BackButton
-              onClick={onBackClick}
-              className={backButtonWideOnly ? styles.backButtonWideOnly : undefined}
-            />
-          )}
+        <div
+          className={`${styles.headerActions} ${
+            edgeNavOnNarrow ? styles.edgeNav : ""
+          }`}
+        >
+          {showBackButton && onBackClick && <BackButton onClick={onBackClick} />}
+
+          {showNextButton && onNextClick && <NextButton onClick={onNextClick} />}
 
           {showVolumeButton && (
             <button

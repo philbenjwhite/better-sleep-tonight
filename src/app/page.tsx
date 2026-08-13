@@ -38,7 +38,6 @@ import type {
 import type { ActionPromptContent } from "@/components/ActionPrompt";
 import type { StoreLocationsContent } from "@/components/StoreLocations";
 import { StepIndicator } from "@/components/StepIndicator";
-import { BackButton } from "@/components/BackButton";
 import {
   trackQuizEvent,
   trackQuizBack,
@@ -169,6 +168,7 @@ function HomeContent() {
     videoState,
     isPlaying,
     isNearingEnd,
+    isLooping,
     play,
     pause,
     skip,
@@ -331,6 +331,27 @@ function HomeContent() {
   const isQuestionStep = currentStep?._template === "questionStep";
   // Steps that push the avatar offstage to give their content the full page.
   const avatarHidden = isProductRecommendationsStep;
+
+  /**
+   * Whether the header's Next control has anything to advance past.
+   *
+   * Offered while a non-looping segment still has content left to play. The
+   * closing idle loop has nothing after it, and nothing follows the booking
+   * step at all. This rule used to live inside VideoAvatar, next to the skip
+   * control it gated; it moved out with the control itself.
+   */
+  const canAdvanceVideo =
+    !isLooping &&
+    !isBookingCtaStep &&
+    // Results steps push the avatar offstage. The old skip control went with it
+    // and was hidden by that same class; this one lives in the header, so it has
+    // to opt out itself rather than inherit the frame's visibility.
+    !avatarHidden &&
+    (videoState === VideoState.LOADING ||
+      videoState === VideoState.READY ||
+      videoState === VideoState.PLAYING ||
+      videoState === VideoState.PAUSED ||
+      videoState === VideoState.BLOCKED);
 
   // GA4: fire view_item for each product when recommendations step is shown
   // GA4: fire quiz_complete when the user reaches the final step
@@ -1265,7 +1286,11 @@ function HomeContent() {
         onVolumeClick={handleVolumeToggle}
         showBackButton={currentView === "question" && !isTransitioning}
         onBackClick={handleBack}
-        backButtonWideOnly={!avatarHidden}
+        showNextButton={
+          currentView === "question" && !isTransitioning && canAdvanceVideo
+        }
+        onNextClick={handleSkipVideo}
+        edgeNavOnNarrow={!avatarHidden}
         centerContent={
           <StepIndicator
             steps={getProgressSteps(currentView, currentStep?._template)}
@@ -1360,10 +1385,6 @@ function HomeContent() {
                 <VideoAvatar
                   className={styles.heygenAvatar}
                   isMuted={isMuted}
-                  // No skip on the booking CTA step. Its closing line is short
-                  // and wraps up the experience, and the bubble sits over the
-                  // control's anchor point, leaving it half-hidden.
-                  onSkip={isBookingCtaStep ? undefined : handleSkipVideo}
                 />
 
                 {/* Speech Bubble Sequence - intro message (only show once, before first question) */}
@@ -1448,18 +1469,6 @@ function HomeContent() {
             </div>
             );
           })()}
-
-          {/*
-            Step-back control, paired with the avatar's skip control on the
-            frame's other edge. Not rendered on the results steps: their content
-            is full-width and scrolls, so a floating control on the leading edge
-            lands on the headline. Those steps keep the header's copy instead.
-          */}
-          {!avatarHidden && (
-            <div className={styles.stepBackControl}>
-              <BackButton onClick={handleBack} />
-            </div>
-          )}
 
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (

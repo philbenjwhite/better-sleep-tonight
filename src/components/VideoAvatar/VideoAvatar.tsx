@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useVideoAvatar, VideoState } from './VideoAvatarContext';
-import { SkipButton } from './SkipButton';
 import styles from './VideoAvatar.module.css';
 
 export interface VideoAvatarProps {
@@ -11,13 +10,6 @@ export interface VideoAvatarProps {
   fallbackImage?: string;
   alt?: string;
   isMuted?: boolean;
-  /**
-   * Called when the user skips the current video. When provided, a skip control
-   * is shown over the avatar while a video is playing or paused. The handler is
-   * responsible for advancing the funnel — see `handleSkipVideo` in
-   * src/app/page.tsx.
-   */
-  onSkip?: () => void;
 }
 
 export const VideoAvatar: React.FC<VideoAvatarProps> = ({
@@ -25,14 +17,12 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   fallbackImage = '/images/ashley-video-frame.png',
   alt = 'Ashley, your virtual sleep guide',
   isMuted = false,
-  onSkip,
 }) => {
   const {
     videoState,
     currentTime,
     duration,
     isBuffering,
-    isLooping,
     isAudioBlocked,
     resume,
     enableAudio,
@@ -83,13 +73,6 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
 
   // Video is paused on last frame when ended, so keep it visible
   const videoOpacity = hasError ? 0 : 1;
-
-  // Skip is offered while a non-looping video still has content left to play.
-  // The closing idle loop has nothing to advance to, so it gets no control.
-  const canSkip =
-    !!onSkip &&
-    !isLooping &&
-    (isLoading || isReady || isPlaying || isPaused || isBlocked);
 
   return (
     <div
@@ -188,8 +171,6 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         </div>
       )}
 
-      {/* Skip control - lets the user move past any avatar video */}
-      {canSkip && <SkipButton onSkip={onSkip} />}
     </div>
   );
 };

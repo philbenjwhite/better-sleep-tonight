@@ -84,32 +84,83 @@ test("returns to the previous question with the earlier answer re-selected", asy
 });
 
 /**
- * Below 1200px the control leaves the header and pairs with skip on the avatar
- * frame's other edge. The two are positioned from separate files — skip off the
- * frame, back off the viewport — so the alignment is asserted rather than
- * trusted.
+ * Back and Next both live in the header now. Next replaced the skip control
+ * that used to float over the avatar video, so the two read as a pair and are
+ * asserted as one: they sit on the same row, in that order, and drop their
+ * labels together at 1024px. A width where one still has its label and the
+ * other does not is the regression this guards.
  */
-test.describe("narrow viewport", () => {
-  test.use({ viewport: { width: 390, height: 844 } });
-
-  test("sits level with the skip control and still steps back", async ({
-    page,
-  }) => {
+test.describe("header navigation pair", () => {
+  test("sit together in the header row, back before next", async ({ page }) => {
     await startFunnel(page);
     await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
 
-    const skipBox = await skipButton(page).boundingBox();
-    const backBox = await backButton(page).boundingBox();
-    expect(backBox!.y).toBeCloseTo(skipBox!.y, 0);
-    // One on each edge, at matching insets
-    expect(backBox!.x).toBeLessThan(24);
-    expect(390 - (skipBox!.x + skipBox!.width)).toBeLessThan(24);
+    const backBox = (await backButton(page).boundingBox())!;
+    const nextBox = (await skipButton(page).boundingBox())!;
 
+    // Same row, and Next to the right of Back.
+    expect(backBox.y).toBeCloseTo(nextBox.y, 0);
+    expect(nextBox.x).toBeGreaterThan(backBox.x);
+    // Both in the header rather than floating over the video.
+    expect(backBox.y).toBeLessThan(100);
+    expect(nextBox.y).toBeLessThan(100);
+  });
+
+  test("show their labels above 1024px and only arrows below", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await startFunnel(page);
+    await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
+
+    // The labels are hidden with display:none, which textContent still reports,
+    // so count the ones actually rendered rather than reading the buttons' text.
+    const labels = page.locator("header [data-nav-label]:visible");
+    await expect(labels).toHaveCount(2);
+    await expect(labels).toHaveText(["Back", "Next"]);
+
+    // Below the breakpoint neither label survives. Counting both in one
+    // assertion is the point: a width where only one collapses fails here.
+    await page.setViewportSize({ width: 900, height: 900 });
+    await expect(labels).toHaveCount(0);
+
+    // ...and both buttons are still there, still named, just down to arrows.
+    await expect(backButton(page)).toBeVisible();
+    await expect(skipButton(page)).toBeVisible();
+  });
+
+  test("pins to opposite viewport edges below the breakpoint", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 820, height: 1180 });
+    await startFunnel(page);
+    await skipButton(page).waitFor({ state: "visible", timeout: 30_000 });
+
+    const back = (await backButton(page).boundingBox())!;
+    const next = (await skipButton(page).boundingBox())!;
+
+    // Hugging each edge rather than sitting in the header row.
+    expect(back.x).toBeLessThan(24);
+    expect(820 - (next.x + next.width)).toBeLessThan(24);
+    expect(back.y).toBeGreaterThan(150);
+
+    // Level with each other, and centred on the viewport. Centring is on the
+    // viewport rather than the avatar frame on purpose, so it does not have to
+    // track the frame's vh-derived height across breakpoints.
+    expect(back.y).toBeCloseTo(next.y, 0);
+    expect(back.y + back.height / 2).toBeCloseTo(1180 / 2, -1);
+  });
+});
+
+test.describe("narrow viewport", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("steps back through the funnel from the header", async ({ page }) => {
+    await startFunnel(page);
     await videoCta(page).first().waitFor({ state: "visible", timeout: 45_000 });
     await videoCta(page).first().click();
     await expect(answerOption(page).first()).toBeVisible({ timeout: 30_000 });
 
-    // The header's copy is hidden at this width, so this resolves to one node.
     // Back from the first question returns to the intro video, which replays.
     await backButton(page).click();
     await expect(answerOption(page).first()).toBeHidden({ timeout: 30_000 });
@@ -122,12 +173,10 @@ test.describe("narrow viewport", () => {
     ).toBeVisible();
   });
 
-  test("keeps the control in the header on the results steps", async ({
-    page,
-  }) => {
+  test("offers no forward control on the results steps", async ({ page }) => {
     await walkToRecommendations(page);
 
-    // No skip to pair with here, and the content runs full width
+    // Nothing is playing here, so there is nothing to advance past.
     await expect(skipButton(page)).toBeHidden();
     const backBox = await backButton(page).boundingBox();
     expect(backBox!.y).toBeLessThan(80); // in the header row

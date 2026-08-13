@@ -6,7 +6,7 @@ import styles from "./BackButton.module.css";
 
 export interface BackButtonProps {
   onClick?: () => void;
-  /** Visible label; hidden on small screens, always kept as the accessible name */
+  /** Visible label; hidden at tablet widths, always kept as the accessible name */
   label?: string;
   disabled?: boolean;
   className?: string;
@@ -25,9 +25,12 @@ export function BackButton({
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
+      data-nav-button="back"
     >
       <ArrowLeft size={20} weight="bold" color="#363534" aria-hidden="true" />
-      <span className={styles.label}>{label}</span>
+      <span className={styles.label} data-nav-label>
+        {label}
+      </span>
     </button>
   );
 }

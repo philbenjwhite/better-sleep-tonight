@@ -1,5 +1,4 @@
 export { VideoAvatar, type VideoAvatarProps } from './VideoAvatar';
-export { SkipButton, type SkipButtonProps } from './SkipButton';
 export {
   VideoAvatarProvider,
   useVideoAvatar,

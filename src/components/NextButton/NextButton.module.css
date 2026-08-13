@@ -1,12 +1,12 @@
 /*
- * Pill button matching the header volume control. Kept in step with
- * src/components/NextButton/NextButton.module.css: the two sit side by side in
- * the header row and any difference between them is visible.
+ * Pill button matching BackButton and the header volume control. Kept in step
+ * with src/components/BackButton/BackButton.module.css: the two sit side by
+ * side in the header row and any difference between them is visible.
  *
  * The collapse to icon-only is deliberately NOT here. Header.module.css owns it
  * for both buttons at once, so they can never flip at different widths.
  */
-.backButton {
+.nextButton {
   background-color: #ffffff;
   border: 2px solid var(--sds-color-border-brand-default, #f68b29);
   border-radius: 32px;
@@ -20,17 +20,17 @@
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-.backButton:hover:not(:disabled) {
+.nextButton:hover:not(:disabled) {
   background-color: #f5f5f5;
   transform: scale(1.05);
 }
 
-.backButton:focus-visible {
+.nextButton:focus-visible {
   outline: 2px solid #f68b29;
   outline-offset: 2px;
 }
 
-.backButton:disabled {
+.nextButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -44,11 +44,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .backButton {
+  .nextButton {
     transition: none;
   }
 
-  .backButton:hover:not(:disabled) {
+  .nextButton:hover:not(:disabled) {
     transform: none;
   }
 }
