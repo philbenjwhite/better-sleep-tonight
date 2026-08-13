@@ -52,7 +52,7 @@ Everything flows through Google Tag Manager (GTM-NFXLP675) into GA4 (G-MQ5XK3D94
 
 **`quiz_step` also fires on the two video steps.** Video steps report an answer value of "Y" when the segment finishes, and carry two extra parameters: `skipped` tells you whether the user used the skip control, and `video_error` tells you the segment failed to load and the funnel advanced them anyway. `skipped` is how you measure appetite for the skip control that was added in July.
 
-**Backwards moves are reported separately.** `quiz_step_back` exists so that a user stepping back and re answering does not inflate forward step counts. If your funnel report only counts `quiz_step`, backwards movement is already excluded, which is what you want.
+**Backwards moves are reported separately.** `quiz_step_back` exists so that a user stepping back and re-answering does not inflate forward step counts. If your funnel report only counts `quiz_step`, backwards movement is already excluded, which is what you want.
 
 **Analytics only load on the client's production hosts.** Preview links and temporary deployment URLs deliberately load no GTM, no GA4 and no Hotjar. This keeps stakeholder walkthroughs of a preview link out of the real reporting. If you are testing a preview link and seeing no data, that is working as intended.
 
@@ -127,7 +127,7 @@ If postal code or store attribution matters for regional reporting, that visibil
 A back control was added throughout the funnel, and with it a new event.
 
 - `quiz_step_back` is new. It reports the step the user landed on, the step they came from, and the flow variant.
-- Stepping back also clears the answer recorded on the step being returned to, so re answering revises the answer rather than recording a second one. Answer counts per user stay accurate.
+- Stepping back also clears the answer recorded on the step being returned to, so re-answering revises the answer rather than recording a second one. Answer counts per user stay accurate.
 
 ### July 2026: skip control added, purchase intent question dropped
 
