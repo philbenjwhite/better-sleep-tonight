@@ -14,13 +14,6 @@ export interface FooterProps {
    * pushes them to opposite ends of the content measure.
    */
   nav?: ReactNode;
-  /**
-   * For steps whose content runs the page's full width and scrolls under the
-   * bar. The row spreads to the page's edges to match that content, and the
-   * bar's fill gives way to a fade, so what passes beneath it stays visible
-   * instead of being cut off by an opaque slab.
-   */
-  navFullBleed?: boolean;
   /** Show progress bar above footer */
   showProgress?: boolean;
   /** Current step (1-indexed) for progress bar */
@@ -87,7 +80,6 @@ function splitIntoParagraphs(text: string): string[] {
 
 export function Footer({
   nav,
-  navFullBleed = false,
   showProgress = false,
   currentStep = 0,
   totalSteps = 0,
@@ -198,7 +190,7 @@ export function Footer({
 
   return (
     <footer
-      className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''} ${nav ? styles.withNav : ''} ${nav && navFullBleed ? styles.navFullBleed : ''}`}
+      className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''} ${nav ? styles.withNav : ''}`}
     >
       {/* Avatar section renders above progress bar (mobile only via CSS) */}
       {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (

@@ -39,27 +39,25 @@
 }
 
 /*
- * Navigation row: Back at one end, the forward control at the other.
+ * Navigation row: Back at one edge of the page, the forward control at the
+ * other, over a fade rather than a fill.
  *
- * Capped to the same measure the question block uses so the two controls frame
- * the content rather than hugging the far corners of a wide screen, and pushed
- * clear of the home indicator on phones.
+ * It was held to the content's measure with a solid bar behind it. Both had to
+ * go for the same reason: on the results step the cards run the page's full
+ * width and scroll underneath, so a measured row sat over the middle card and
+ * nowhere near the ones either side, and the fill cut every card's CTA in half
+ * on the way past. The fade keeps the controls legible over whatever is behind
+ * them while leaving it readable.
+ *
+ * Applied on every step rather than only the one that needed it, so the
+ * controls hold one position from the first question through to the booking
+ * step instead of jumping when the content behind them changes shape.
  */
 .nav {
-  background-color: #f6f3ed;
-  /* The footer is within a shade of the page behind it, so the bar needs a line
-     to read as a bar rather than as controls loose at the bottom of the page. */
-  border-top: 1px solid rgba(54, 53, 52, 0.09);
-  padding: 12px 24px 0;
+  padding: 12px clamp(16px, 3vw, 32px) 0;
 }
 
-/* A little past the question block's own 520px, so the pair frames the answer
-   options rather than sitting flush with their edges. Wide enough to read as
-   the page's navigation, short of the corners, where the controls would be a
-   screen's width apart from each other and from what they navigate. */
 .navInner {
-  max-width: 700px;
-  margin: 0 auto;
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -77,47 +75,34 @@
   box-sizing: border-box;
 }
 
-/* The nav row carries the footer's height once it is there, so the line below
-   it tightens to a footnote rather than stacking two full-height rows. */
+/*
+ * With the nav row present the footer is a fade over the page rather than a
+ * band beneath it, so neither row carries a fill of its own. The line below the
+ * controls tightens to a footnote at the same time: the row carries the
+ * footer's height, and two full-height rows would take a third of a phone.
+ */
+.withNav {
+  /*
+   * Opaque under the controls and the line below them, fading out only above
+   * them. At 0.97 the avatar behind was still showing through the bottom of the
+   * bar, which reads as a rendering fault rather than as a fade.
+   */
+  background: linear-gradient(
+    to top,
+    rgb(255, 251, 248) 0%,
+    rgb(255, 251, 248) 62%,
+    rgba(255, 251, 248, 0) 100%
+  );
+}
+
 .withNav .footerContent {
+  background-color: transparent;
   padding: 10px 24px calc(12px + env(safe-area-inset-bottom));
   min-height: 0;
 }
 
 .withNav .copyright {
   font-size: 12px;
-}
-
-/*
- * Full-bleed treatment, for the steps whose cards run the width of the page and
- * scroll underneath. The bar's fill cut every card's CTA in half on the way
- * past, so the fill becomes a fade: the controls stay legible over whatever is
- * behind them, and the card underneath is still readable rather than sliced.
- *
- * The row spreads to the page's edges at the same time. Held to the content's
- * measure it sat over the middle card and nowhere near the ones either side; at
- * the edges it lines up with the grid it belongs to.
- */
-.navFullBleed {
-  background: linear-gradient(
-    to top,
-    rgba(255, 251, 248, 0.97) 55%,
-    rgba(255, 251, 248, 0) 100%
-  );
-}
-
-.navFullBleed .nav,
-.navFullBleed .footerContent {
-  background-color: transparent;
-}
-
-.navFullBleed .nav {
-  border-top: none;
-  padding-inline: clamp(16px, 3vw, 32px);
-}
-
-.navFullBleed .navInner {
-  max-width: none;
 }
 
 .copyright {

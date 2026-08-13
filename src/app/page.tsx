@@ -1648,10 +1648,6 @@ function HomeContent() {
       {/* Footer with Progress Bar */}
       <Footer
         nav={showFunnelNav ? funnelNav : undefined}
-        // The results step is the one whose content runs full width and scrolls
-        // under the bar, so it is the one that needs the bar to get out of the
-        // way. See FooterProps.navFullBleed.
-        navFullBleed={isProductRecommendationsStep}
         showProgress={false}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
