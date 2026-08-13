@@ -56,7 +56,9 @@
   position: relative;
   background-color: var(--sds-color-background-default-default, #ffffff);
   border-radius: 4px;
-  padding: 24px;
+  /* No padding at the top: the product shot carries its own white space, and
+     padding above it only reads as the card being taller than it needs to be. */
+  padding: 0 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -87,10 +89,17 @@
   overflow: visible; /* Allow badge to overflow */
 }
 
-/* Badge - positioned on top of the product image */
+/*
+ * Badge - positioned on top of the product image.
+ *
+ * Sits inside the image rather than overhanging its top edge, because with the
+ * card's top padding gone that edge is the card's own: an overhang there would
+ * hang off the card. It still breaks the left margin, which is what gives it
+ * the applied-label look.
+ */
 .badge {
   position: absolute;
-  top: -8px;
+  top: 16px;
   left: -8px;
   background-color: #363534;
   color: #ffffff;

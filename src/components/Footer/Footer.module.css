@@ -88,6 +88,38 @@
   font-size: 12px;
 }
 
+/*
+ * Full-bleed treatment, for the steps whose cards run the width of the page and
+ * scroll underneath. The bar's fill cut every card's CTA in half on the way
+ * past, so the fill becomes a fade: the controls stay legible over whatever is
+ * behind them, and the card underneath is still readable rather than sliced.
+ *
+ * The row spreads to the page's edges at the same time. Held to the content's
+ * measure it sat over the middle card and nowhere near the ones either side; at
+ * the edges it lines up with the grid it belongs to.
+ */
+.navFullBleed {
+  background: linear-gradient(
+    to top,
+    rgba(255, 251, 248, 0.97) 55%,
+    rgba(255, 251, 248, 0) 100%
+  );
+}
+
+.navFullBleed .nav,
+.navFullBleed .footerContent {
+  background-color: transparent;
+}
+
+.navFullBleed .nav {
+  border-top: none;
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+
+.navFullBleed .navInner {
+  max-width: none;
+}
+
 .copyright {
   font-family: var(--sds-typography-body-font-family, 'Open Sans', sans-serif);
   font-weight: 400;
