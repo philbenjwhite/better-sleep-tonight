@@ -53,10 +53,12 @@
   padding: 12px 24px 0;
 }
 
-/* 520px is the question block's width, so Back and Next line up with the edges
-   of the options above them rather than sitting at some other measure. */
+/* A little past the question block's own 520px, so the pair frames the answer
+   options rather than sitting flush with their edges. Wide enough to read as
+   the page's navigation, short of the corners, where the controls would be a
+   screen's width apart from each other and from what they navigate. */
 .navInner {
-  max-width: 520px;
+  max-width: 700px;
   margin: 0 auto;
   min-height: 48px;
   display: flex;

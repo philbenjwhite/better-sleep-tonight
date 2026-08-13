@@ -262,56 +262,39 @@
 }
 
 /*
- * Offer flash. Deliberately not a button: it used to stretch the full card
- * width directly above the CTA, with a solid fill, a 1.5px stroke and centred
- * bold text, which is the same recipe as a secondary button and read as a
- * second thing to click. It is now an inline chip — sized to its text, no
- * stroke, lighter weight — so it registers as a label on the offer while the
- * tint, the tag icon and the sweep keep it noticeable.
+ * Offer flash. Everything button-shaped about it has been taken away in turn,
+ * because every version of the shape was read as a second thing to click.
+ *
+ * It began as a full-card-width block with a solid fill, a 1.5px stroke and
+ * centred bold text directly above the CTA, which is the recipe for a secondary
+ * button. Then a tinted pill chip, which is still a pill above a pill. Then a
+ * sweep of light across it on a loop, which is how a control asks to be
+ * pressed, and which put three separate glints on the one page where the reader
+ * is comparing rather than being led.
+ *
+ * What is left has no container at all: a tag, a line of amber, set with the
+ * price. Nothing about it can be clicked, so nothing about it invites a click,
+ * and its meaning is carried by where it sits — the offer is a fact about the
+ * price, not about the button.
  */
 .promoBadge {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-self: center;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: #FDF0DC;
-  border-radius: 999px;
-  padding: 6px 12px;
+  margin: 0;
 }
 
-.promoBadge::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  /* Softer than the old sheen: a glint across a label, not a gloss on a control */
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.55) 50%,
-    rgba(255, 255, 255, 0) 65%
-  );
-  transform: translateX(-120%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .promoBadge::after {
-    animation: promoShine 4.5s ease-in-out 1s infinite;
-  }
-}
-
-@keyframes promoShine {
-  0% {
-    transform: translateX(-120%);
-  }
-  /* Sweep quickly, then hold off-screen so the badge rests most of the time */
-  30%,
-  100% {
-    transform: translateX(120%);
-  }
+/*
+ * The price and its offer, bound by proximity. They sit a third of the distance
+ * from each other that either sits from the CTA below, which is what makes them
+ * read as one statement rather than as three stacked items.
+ */
+.priceGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 
 .promoBadgeIcon {

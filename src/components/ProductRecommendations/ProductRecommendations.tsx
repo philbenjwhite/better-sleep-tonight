@@ -178,14 +178,21 @@ function MattressCard({ mattress, onBookRestTest }: MattressCardProps) {
 
         {/* Offer flash & Book A Rest Test button */}
         <div className={styles.cardAction}>
-          {SHOW_CARD_PRICE && mattress.basePrice > 0 && (
-            <p className={styles.productPrice}>
-              Starting at ${mattress.basePrice.toLocaleString()}
+          {/*
+            The offer is a fact about the price, so it sits with the price
+            rather than floating midway between it and the CTA, where it read as
+            a second thing to click.
+          */}
+          <div className={styles.priceGroup}>
+            {SHOW_CARD_PRICE && mattress.basePrice > 0 && (
+              <p className={styles.productPrice}>
+                Starting at ${mattress.basePrice.toLocaleString()}
+              </p>
+            )}
+            <p className={styles.promoBadge}>
+              <Tag size={14} weight="fill" className={styles.promoBadgeIcon} />
+              <span className={styles.promoBadgeText}>{OFFER_FLASH_TEXT}</span>
             </p>
-          )}
-          <div className={styles.promoBadge}>
-            <Tag size={14} weight="fill" className={styles.promoBadgeIcon} />
-            <p className={styles.promoBadgeText}>{OFFER_FLASH_TEXT}</p>
           </div>
           <Button
             variant="primary"

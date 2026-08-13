@@ -175,9 +175,12 @@ test.describe("footer navigation row", () => {
     await walkToFirstQuestion(page);
 
     // A question waiting to be answered has nothing to go forward past: the
-    // answer advances the step itself.
+    // questions are the point, so there is no skipping them, and the answer
+    // advances the step itself. The control stays in the row all the same, so
+    // that Back is never the only thing offered.
     await expect(skipButton(page)).toBeHidden();
-    await expect(nextButton(page)).toBeHidden();
+    await expect(nextButton(page)).toBeVisible();
+    await expect(nextButton(page)).toBeDisabled();
 
     const firstQuestion = (await questionHeading(page).textContent())?.trim();
     await answerOption(page).first().click();
@@ -294,12 +297,13 @@ test.describe("narrow viewport", () => {
     ).toBeVisible();
   });
 
-  test("offers no forward control on the results steps", async ({ page }) => {
+  test("offers no way forward from the results steps", async ({ page }) => {
     await walkToRecommendations(page);
 
-    // Nothing is playing here, so there is nothing to advance past.
+    // Nothing is playing here, and the way on is a card's own CTA, so the
+    // forward control has nothing to do and says so.
     await expect(skipButton(page)).toBeHidden();
-    await expect(nextButton(page)).toBeHidden();
+    await expect(nextButton(page)).toBeDisabled();
 
     // Back stays in the same place it occupies everywhere else. The footer is
     // fixed, so it holds over the scrolling cards rather than being scrolled

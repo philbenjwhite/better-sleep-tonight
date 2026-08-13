@@ -1264,11 +1264,22 @@ function HomeContent() {
   /**
    * The footer's navigation row.
    *
-   * Back is always there once the funnel has started. The forward control has
-   * two jobs and says which one it is doing: it skips a segment that is still
-   * playing, or it carries a question that already has an answer forward. On a
-   * question waiting to be answered there is nothing to go forward past — the
-   * answer itself advances the step — so no forward control is offered.
+   * Back is always there once the funnel has started, and so is a forward
+   * control opposite it. Back on its own drew the eye to the one direction the
+   * funnel does not want, and left the row looking like something had failed to
+   * render.
+   *
+   * The forward control says which of its jobs it is doing. It skips a segment
+   * that is still playing, or it carries a question that already has an answer
+   * — the state a step back leaves — forward on that answer. On a question
+   * waiting to be answered it is present but inert: the questions are the
+   * point, so there is no skipping them, and the answer advances the step by
+   * itself.
+   *
+   * Deliberately unchanged by the act of answering. Prose flashes its Next into
+   * life the moment an option is picked, and then advances anyway, which is a
+   * change of state that means nothing. Ours stays as it is through the pause
+   * and leaves with the step.
    */
   const showFunnelNav = currentView === "question" && !isTransitioning;
   const canKeepAnswer =
@@ -1278,10 +1289,10 @@ function HomeContent() {
       <BackButton onClick={handleBack} />
       {canKeepAnswer ? (
         <NextButton variant="primary" onClick={handleKeepAnswer} />
+      ) : canAdvanceVideo ? (
+        <NextButton label="Skip" onClick={handleSkipVideo} />
       ) : (
-        canAdvanceVideo && (
-          <NextButton label="Skip" onClick={handleSkipVideo} />
-        )
+        <NextButton disabled />
       )}
     </>
   );
