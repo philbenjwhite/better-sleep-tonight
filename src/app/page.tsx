@@ -31,17 +31,12 @@ import {
   SubtitleCue,
 } from "@/components/SpeechBubbleSequence";
 import { parseVtt, getVttPathFromVideo } from "@/lib/subtitles";
-import { geocodeWithFallback, Coordinates } from "@/lib/geocoding";
 import type {
   MattressSize,
   MattressFeel,
 } from "@/components/MattressRecommendation";
 import type { ActionPromptContent } from "@/components/ActionPrompt";
-import type {
-  StoreLocationsContent,
-  StoreLocation,
-} from "@/components/StoreLocations";
-import type { ZipCodeCaptureContent } from "@/components/ZipCodeCapture";
+import type { StoreLocationsContent } from "@/components/StoreLocations";
 import { StepIndicator } from "@/components/StepIndicator";
 import { BackButton } from "@/components/BackButton";
 import {
@@ -49,7 +44,6 @@ import {
   trackQuizBack,
   trackBookRestTestIntent,
   trackFormSubmissionConversion,
-  trackStoreSearch,
 } from "@/lib/analytics/conversionTracking";
 
 // Lazy-load late-stage step components (not needed until user progresses)
@@ -69,11 +63,10 @@ const ProductRecommendations = dynamic(() =>
 const ActionPrompt = dynamic(() =>
   import("@/components/ActionPrompt").then((m) => m.ActionPrompt)
 );
+// Still used by the booking CTA step, which renders its CTA cards and email
+// capture with the map and store list switched off.
 const StoreLocations = dynamic(() =>
   import("@/components/StoreLocations").then((m) => m.StoreLocations)
-);
-const ZipCodeCapture = dynamic(() =>
-  import("@/components/ZipCodeCapture").then((m) => m.ZipCodeCapture)
 );
 import { useProgressPersistence } from "@/hooks";
 import {
@@ -144,11 +137,6 @@ function HomeContent() {
   const [hasSpokenSummary, setHasSpokenSummary] = useState(false);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [backdropHasAnimated, setBackdropHasAnimated] = useState(false);
-  const [userZipCode, setUserZipCode] = useState<string | null>(null);
-  const [selectedStore, setSelectedStore] = useState<StoreLocation | null>(null);
-  const [userCoordinates, setUserCoordinates] = useState<Coordinates | null>(
-    null,
-  );
 
   const [videoSubtitleCues, setVideoSubtitleCues] = useState<SubtitleCue[]>([]);
 
@@ -339,13 +327,10 @@ function HomeContent() {
   const isProductRecommendationsStep =
     currentStep?._template === "productRecommendationsStep";
   const isSeeOptionsStep = currentStep?._template === "seeOptionsStep";
-  const isZipCodeCaptureStep = currentStep?._template === "zipcodeCaptureStep";
-  const isStoreLocationsStep = currentStep?._template === "storeLocationsStep";
   const isBookingCtaStep = currentStep?._template === "bookingCtaStep";
   const isQuestionStep = currentStep?._template === "questionStep";
   // Steps that push the avatar offstage to give their content the full page.
-  const avatarHidden =
-    isStoreLocationsStep || isProductRecommendationsStep || isZipCodeCaptureStep;
+  const avatarHidden = isProductRecommendationsStep;
 
   // GA4: fire view_item for each product when recommendations step is shown
   // GA4: fire quiz_complete when the user reaches the final step
@@ -425,7 +410,6 @@ function HomeContent() {
           flowId: flowParam,
           currentStepIndex,
           totalSteps: questionSteps.length,
-          userZipCode,
           selectedMattressSize,
           selectedMattressFeel,
           answers,
@@ -437,7 +421,6 @@ function HomeContent() {
       flowParam,
       currentStepIndex,
       questionSteps.length,
-      userZipCode,
       selectedMattressSize,
       selectedMattressFeel,
     ],
@@ -489,9 +472,9 @@ function HomeContent() {
    * first step. Going back has to undo the step it leaves, not just decrement
    * the index: answers recorded at or after the target step are dropped so
    * re-answering appends rather than duplicates, and any state derived from
-   * those answers (postal code, chosen store, mattress selection) is cleared
-   * along with them. Saved progress is rewritten to match, otherwise a reload
-   * would restore the step the user just backed out of.
+   * those answers (the mattress selection) is cleared along with them. Saved
+   * progress is rewritten to match, otherwise a reload would restore the step
+   * the user just backed out of.
    */
   const handleBack = useCallback(() => {
     if (isTransitioning) return;
@@ -555,13 +538,6 @@ function HomeContent() {
     const revisitedTemplates = new Set(
       questionSteps.slice(targetIndex).map((step) => step._template),
     );
-    if (revisitedTemplates.has("zipcodeCaptureStep")) {
-      setUserZipCode(null);
-      setUserCoordinates(null);
-    }
-    if (revisitedTemplates.has("storeLocationsStep")) {
-      setSelectedStore(null);
-    }
     if (revisitedTemplates.has("mattressRecommendationStep")) {
       setSelectedMattressSize(undefined);
       setSelectedMattressFeel(undefined);
@@ -1138,110 +1114,6 @@ function HomeContent() {
     }
   }, [currentStepIndex, questionSteps.length, currentStep, trackStepGA4]);
 
-  // Handle zipcode submission
-  const handleZipCodeSubmit = useCallback(
-    async (zipCode: string) => {
-      // Store the zipcode for the store locations step
-      setUserZipCode(zipCode);
-
-      // GA4: track store search by zip code
-      trackStoreSearch(zipCode);
-
-      // Geocode the postal code to get coordinates
-      const coordinates = await geocodeWithFallback(zipCode);
-      if (coordinates) {
-        setUserCoordinates(coordinates);
-      }
-
-      // Store as an answer
-      const newAnswer: StoredAnswer = {
-        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-        questionText: "Postal Code",
-        value: zipCode,
-        label: zipCode,
-        timestamp: new Date(),
-      };
-      const updatedAnswers = [...storedAnswers, newAnswer];
-      setStoredAnswers(updatedAnswers);
-      trackStepGA4(newAnswer);
-
-      // Log flow data after zip code submission
-      logFlowData(updatedAnswers, `Postal Code: ${zipCode}`);
-
-      // Save progress
-      saveProgress({
-        flowId: flowParam,
-        currentStepIndex: currentStepIndex + 1,
-        answers: updatedAnswers,
-      });
-
-      // Advance to next step (store locations)
-      setShowQuestionBlock(false);
-
-      if (currentStepIndex < questionSteps.length - 1) {
-        setCurrentStepIndex((prev) => prev + 1);
-        setTimeout(() => {
-          setShowQuestionBlock(true);
-        }, 100);
-      }
-    },
-    [
-      currentStep,
-      currentStepIndex,
-      storedAnswers,
-      saveProgress,
-      flowParam,
-      questionSteps.length,
-      logFlowData,
-      trackStepGA4,
-    ],
-  );
-
-  // Handle selecting a store location — advances to the next step
-  const handleSelectLocation = useCallback(
-    (location: StoreLocation) => {
-      setSelectedStore(location);
-      const newAnswer: StoredAnswer = {
-        stepId: currentStep?.stepId || `step-${currentStepIndex}`,
-        questionText: "Store Location",
-        value: location.id,
-        label: `${location.city} - ${location.storeName}`,
-        timestamp: new Date(),
-      };
-      const updatedAnswers = [...storedAnswers, newAnswer];
-      setStoredAnswers(updatedAnswers);
-      trackStepGA4(newAnswer);
-
-      logFlowData(updatedAnswers, `Store: ${location.storeName}`);
-
-      saveProgress({
-        flowId: flowParam,
-        currentStepIndex: currentStepIndex + 1,
-        answers: updatedAnswers,
-      });
-
-      setShowQuestionBlock(false);
-      setHasSpokenSummary(false);
-
-      if (currentStepIndex < questionSteps.length - 1) {
-        setCurrentStepIndex((prev) => prev + 1);
-        setTimeout(() => {
-          setShowQuestionBlock(true);
-        }, 100);
-      }
-    },
-    [
-      currentStep,
-      currentStepIndex,
-      storedAnswers,
-      saveProgress,
-      flowParam,
-      questionSteps.length,
-      logFlowData,
-      trackStepGA4,
-    ],
-  );
-
   // Handle email submission on the booking CTA step (gates the Schedule Appointment button)
   const handleBookingEmailSubmit = useCallback(
     async (email: string) => {
@@ -1267,15 +1139,7 @@ function HomeContent() {
         body: JSON.stringify({
           sessionId,
           email,
-          postalCode: userZipCode || undefined,
           flowId: flowParam,
-          selectedStore: selectedStore
-            ? {
-                id: selectedStore.id,
-                storeName: selectedStore.storeName,
-                city: selectedStore.city,
-              }
-            : undefined,
           answers: updatedAnswers.map((a) => ({
             stepId: a.stepId,
             questionText: a.questionText,
@@ -1288,7 +1152,7 @@ function HomeContent() {
       // Redirect to thank-you page
       window.location.href = "/thank-you";
     },
-    [storedAnswers, logFlowData, trackStepGA4, sessionId, userZipCode, flowParam, selectedStore],
+    [storedAnswers, logFlowData, trackStepGA4, sessionId, flowParam],
   );
 
   // Show next question after avatar response finishes
@@ -1359,8 +1223,6 @@ function HomeContent() {
     <main
       id="main-content"
       className={`${styles.main} ${
-        isStoreLocationsStep ? styles.storeLocationsPage : ""
-      } ${
         isProductRecommendationsStep ? styles.productRecommendationsPage : ""
       } ${isBookingCtaStep ? styles.bookingCtaPage : ""} ${
         isBookingCtaStep && currentVideoId === currentStep?.video
@@ -1491,11 +1353,9 @@ function HomeContent() {
               aria-hidden={avatarHidden || undefined}
             >
               {/* Full-width Gradient Overlay at Bottom - above avatar, below chat bubbles */}
-              {!isStoreLocationsStep &&
-                !isBookingCtaStep &&
-                !isProductRecommendationsStep && (
-                  <div className={styles.avatarGradientOverlay} />
-                )}
+              {!isBookingCtaStep && !isProductRecommendationsStep && (
+                <div className={styles.avatarGradientOverlay} />
+              )}
               <div className={styles.avatarWrapper}>
                 <VideoAvatar
                   className={styles.heygenAvatar}
@@ -1604,8 +1464,8 @@ function HomeContent() {
           {/* Persistent Backdrop - stays visible during question transitions */}
           {(showQuestionBlock || showBackdrop) && (
             <div className={styles.questionBlockWrapper}>
-              {/* Hide backdrop on store locations, booking CTA, and video steps to show full view */}
-              {!isStoreLocationsStep && !isBookingCtaStep && !isVideoStep && (
+              {/* Hide backdrop on booking CTA and video steps to show full view */}
+              {!isBookingCtaStep && !isVideoStep && (
                 <div
                   className={`${styles.questionBlockBackdrop} ${
                     backdropHasAnimated || skipIntro ? styles.backdropOnly : ""
@@ -1688,49 +1548,6 @@ function HomeContent() {
                 </div>
               )}
 
-              {/* Zip Code Capture Step */}
-              {showQuestionBlock && isZipCodeCaptureStep && (
-                <div className={`${styles.questionBlockInner} ${styles.fadeIn}`}>
-                  <ZipCodeCapture
-                    content={
-                      {
-                        headline: currentStep?.headline,
-                        placeholderText: currentStep?.placeholderText,
-                        buttonText: currentStep?.buttonText,
-                      } as ZipCodeCaptureContent
-                    }
-                    onSubmit={handleZipCodeSubmit}
-                  />
-                </div>
-              )}
-
-              {/* Store Locations Step */}
-              {showQuestionBlock && isStoreLocationsStep && (
-                <div className={styles.storeLocationsInner}>
-                  <StoreLocations
-                    content={
-                      {
-                        headerText: currentStep?.headerText,
-                        defaultPostalCode: currentStep?.defaultPostalCode,
-                        ctaBookTitle: currentStep?.ctaBookTitle,
-                        ctaBookDescription: currentStep?.ctaBookDescription,
-                        ctaBookButtonText: currentStep?.ctaBookButtonText,
-                        ctaContactTitle: currentStep?.ctaContactTitle,
-                        ctaContactDescription:
-                          currentStep?.ctaContactDescription,
-                        ctaContactButtonText: currentStep?.ctaContactButtonText,
-                      } as StoreLocationsContent
-                    }
-                    postalCode={
-                      userZipCode || currentStep?.defaultPostalCode || ""
-                    }
-                    userCoordinates={userCoordinates || undefined}
-                    hideCtas
-                    onSelectLocation={handleSelectLocation}
-                  />
-                </div>
-              )}
-
               {/* Booking CTA Step - right column */}
               {showQuestionBlock && isBookingCtaStep && (
                 <div className={styles.bookingCtaInner}>
@@ -1764,15 +1581,11 @@ function HomeContent() {
         showProgress={false}
         currentStep={currentStepIndex + 1}
         totalSteps={questionSteps.length}
-        showAvatarSection={isStoreLocationsStep || isBookingCtaStep}
+        showAvatarSection={isBookingCtaStep}
         avatarVideoSrc={
-          isBookingCtaStep
-            ? "/videos/ashley/ashley-5-square.mp4"
-            : currentStep?.avatarVideoSrc
+          isBookingCtaStep ? "/videos/ashley/ashley-5-square.mp4" : undefined
         }
-        avatarText={
-          isBookingCtaStep ? avatarResponse ?? undefined : currentStep?.avatarText
-        }
+        avatarText={isBookingCtaStep ? avatarResponse ?? undefined : undefined}
         isMuted={isMuted}
         avatarMobileOnly={isBookingCtaStep}
       />

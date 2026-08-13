@@ -10,8 +10,6 @@ export const MANUAL_CTA_LABELS: Record<string, string> = {
 export const RESULTS_TEMPLATES = new Set([
   "seeOptionsStep",
   "productRecommendationsStep",
-  "zipcodeCaptureStep",
-  "storeLocationsStep",
   "bookingCtaStep",
 ]);
 

@@ -93,7 +93,7 @@ test.describe("skipping", () => {
 
     // Skip every video, answer every question. The recommendations step must
     // still be reached: skipping video-step-1 must not carry the user past the
-    // cards into the postal code step.
+    // cards into the booking step.
     const answered = await answerAllQuestions(page, { skipVideos: true });
 
     expect(answered).toHaveLength(QUESTION_COUNT);
@@ -110,7 +110,7 @@ test.describe("skipping", () => {
     // runs, and the idle loop suppresses the control on its own — so the
     // interesting window, the video actually playing, would go unchecked.
     await walkToBookingStep(page, {
-      beforeStoreSelect: () => setVideoRateNow(page, 0.25),
+      beforeBookRestTest: () => setVideoRateNow(page, 0.25),
     });
 
     await expect(

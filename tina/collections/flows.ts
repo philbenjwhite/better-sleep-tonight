@@ -266,92 +266,6 @@ const productRecommendationsStepTemplate: Template = {
   ],
 };
 
-const zipcodeCaptureStepTemplate: Template = {
-  name: "zipcodeCaptureStep",
-  label: "Zip Code Capture",
-  fields: [
-    ...commonStepFields,
-    {
-      name: "headline",
-      label: "Headline",
-      type: "string",
-    },
-    {
-      name: "placeholderText",
-      label: "Placeholder Text",
-      type: "string",
-    },
-    {
-      name: "buttonText",
-      label: "Button Text",
-      type: "string",
-    },
-  ],
-};
-
-const storeLocationsStepTemplate: Template = {
-  name: "storeLocationsStep",
-  label: "Store Locations",
-  fields: [
-    ...commonStepFields,
-    {
-      name: "headerText",
-      label: "Header Text",
-      type: "string",
-    },
-    {
-      name: "defaultPostalCode",
-      label: "Default Postal Code",
-      type: "string",
-    },
-    {
-      name: "ctaBookTitle",
-      label: "Book CTA Title",
-      type: "string",
-    },
-    {
-      name: "ctaBookDescription",
-      label: "Book CTA Description",
-      type: "string",
-      ui: { component: "textarea" },
-    },
-    {
-      name: "ctaBookButtonText",
-      label: "Book CTA Button Text",
-      type: "string",
-    },
-    {
-      name: "ctaContactTitle",
-      label: "Contact CTA Title",
-      type: "string",
-    },
-    {
-      name: "ctaContactDescription",
-      label: "Contact CTA Description",
-      type: "string",
-      ui: { component: "textarea" },
-    },
-    {
-      name: "ctaContactButtonText",
-      label: "Contact CTA Button Text",
-      type: "string",
-    },
-    {
-      name: "avatarVideoSrc",
-      label: "Avatar Video",
-      type: "image",
-      description: "Small avatar video shown alongside the store list",
-    },
-    {
-      name: "avatarText",
-      label: "Avatar Text",
-      type: "string",
-      ui: { component: "textarea" },
-      description: "Text the avatar displays on this step",
-    },
-  ],
-};
-
 const bookingCtaStepTemplate: Template = {
   name: "bookingCtaStep",
   label: "Booking CTA",
@@ -523,8 +437,6 @@ export const flowsCollection: Collection = {
         emailCaptureStepTemplate,
         seeOptionsStepTemplate,
         productRecommendationsStepTemplate,
-        zipcodeCaptureStepTemplate,
-        storeLocationsStepTemplate,
         bookingCtaStepTemplate,
         ctaStepTemplate,
         resultsStepTemplate,

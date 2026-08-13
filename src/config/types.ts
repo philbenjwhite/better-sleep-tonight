@@ -17,28 +17,21 @@ export interface FlowStep {
   helperText?: string;
   isRequired?: boolean;
   answerOptions?: CMSAnswerOption[];
-  // Shared fields (used by zipcode capture, etc.)
+  // Shared fields
   promptText?: string;
-  placeholderText?: string;
-  submitButtonText?: string;
   // See options fields
   buttonText?: string;
   avatarMessage?: string;
   // Product recommendations fields
   headline?: string;
   avatarResponse?: string;
-  // Zipcode capture fields (uses headline, placeholderText, buttonText)
-  // Store locations fields
-  headerText?: string;
-  defaultPostalCode?: string;
+  // Booking CTA fields
   ctaBookTitle?: string;
   ctaBookDescription?: string;
   ctaBookButtonText?: string;
   ctaContactTitle?: string;
   ctaContactDescription?: string;
   ctaContactButtonText?: string;
-  avatarVideoSrc?: string;
-  avatarText?: string;
   // Mattress recommendation (if still used)
   mattressRecommendationContent?: MattressRecommendationContent;
   productRecommendationsContent?: ProductRecommendationsContent;

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Better Sleep Tonight is a Tempur-Pedic interactive sleep quiz built with Next.js 15, React 19, and TypeScript. Users watch video avatar segments, answer sleep-related questions, receive mattress recommendations, find nearby stores via Mapbox, and optionally provide their email. All funnel data is tracked in Epsilon PeopleCloud.
+Better Sleep Tonight is a Tempur-Pedic interactive sleep quiz built with Next.js 15, React 19, and TypeScript. Users watch video avatar segments, answer sleep-related questions, receive mattress recommendations, and give their email to book an in-store rest test. All funnel data is tracked in Epsilon PeopleCloud.
 
 ## Key Commands
 
@@ -83,7 +83,7 @@ Three tracking layers:
 2. **Epsilon PeopleCloud** — per-step + final submission (see API routes above)
 3. **Custom analytics** in `src/lib/analytics/` — video engagement, scroll depth, conversions
 
-GA4 events are fired programmatically via `gtag()` in `src/lib/analytics/conversionTracking.ts`. Key events: `quiz_start`, `quiz_step` (with `quiz_step` number and `step_id`), `quiz_complete`, `buy_now_click`, `store_search`. Since this is a SPA with no URL changes between steps, GTM triggers must be event-based, not pageview-based.
+GA4 events are fired programmatically via `gtag()` in `src/lib/analytics/conversionTracking.ts`. Key events: `quiz_start`, `quiz_step` (with `quiz_step` number and `step_id`), `quiz_complete`, `book_rest_test_intent`. `buy_now_click` and `store_search` are retired and asserted against in `e2e/tracking.spec.ts`. Since this is a SPA with no URL changes between steps, GTM triggers must be event-based, not pageview-based.
 
 ### Key Hooks
 
@@ -95,9 +95,11 @@ GA4 events are fired programmatically via `gtag()` in `src/lib/analytics/convers
 | `useSubtitleSync` | `src/hooks/` | Sync VTT captions to video playback |
 | `useVideoAvatar` | `src/components/VideoAvatar/` | Context consumer for video state |
 
-### Store Locator
+### Store Locator (dormant)
 
-Uses Mapbox GL for map rendering and geocoding (`src/lib/geocoding.ts`). The `StoreLocations` component accepts a postal code, geocodes it, and displays nearby stores from CMS data.
+The postal code capture and store locations steps were removed from the funnel in August 2026, along with the post-selection video that introduced them: both asked for effort right before booking, and the booking step already gets people to a store. Nothing in the funnel now geocodes or renders a map.
+
+`StoreLocations` survives because the booking CTA step reuses it with `hideMap` to render its CTA cards and email gate. Its store list, distance sorting, and `StoreMap` (Mapbox GL) path are unreachable from the funnel but intact, as is `content/locations/`. Restoring the steps means re-adding the CMS templates in `tina/collections/flows.ts` and the render branches in `page.tsx`; `src/lib/geocoding.ts` and the `store_search` GA4 event were deleted and would need to come back from git.
 
 ## Conventions
 
@@ -111,7 +113,7 @@ Uses Mapbox GL for map rendering and geocoding (`src/lib/geocoding.ts`). The `St
 ## Environment Variables
 
 ```
-NEXT_PUBLIC_MAPBOX_TOKEN       # Mapbox (store locator + geocoding)
+NEXT_PUBLIC_MAPBOX_TOKEN       # Mapbox (dormant store locator map — see above)
 NEXT_PUBLIC_TINA_CLIENT_ID     # TinaCMS client ID
 TINA_TOKEN                     # TinaCMS read-only token
 NEXT_PUBLIC_APP_URL            # App URL

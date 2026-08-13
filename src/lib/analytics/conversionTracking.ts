@@ -75,12 +75,5 @@ export const trackFormSubmissionConversion = (): void => {
   fireEvent('conversion', { send_to: 'AW-952158342/ZQuYCJ35mYYcEIaRg8YD' });
 };
 
-// Track store search (zip code submission)
-export const trackStoreSearch = (zipCode: string, resultsCount?: number): void => {
-  fireEvent('store_search', {
-    event_category: 'Engagement',
-    event_label: zipCode,
-    zip_code: zipCode,
-    ...(resultsCount !== undefined && { results_count: resultsCount }),
-  });
-};
+// Note: store_search fired when the funnel asked for a postal code. That step
+// was removed in August 2026, so the event no longer exists.

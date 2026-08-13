@@ -113,28 +113,14 @@ export async function keepVideosSlow(page: Page) {
 }
 
 /**
- * Stub the two live third-party dependencies the funnel touches.
+ * Stub the live third-party dependency the funnel touches.
  *
  * EPSILON_OUID is set in .env, so an unstubbed run POSTs a real record to the
- * client's PeopleCloud list on every walk that reaches the email submit, and
- * every store search burns Mapbox geocoding quota against the same postal code.
- * Beyond the pollution, both are network round trips on the critical path, which
- * is what makes an unstubbed suite slow and erratic.
+ * client's PeopleCloud list on every walk that reaches the email submit. Beyond
+ * the pollution, it is a network round trip on the critical path, which is what
+ * makes an unstubbed suite slow and erratic.
  */
 export async function stubExternalServices(page: Page) {
-  await page.route("**/api.mapbox.com/geocoding/**", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      // Burlington, ON — matches the L7M FSA the specs search for.
-      body: JSON.stringify({
-        features: [
-          { center: [-79.76, 43.39], place_name: "L7M 1A1, Burlington, Ontario, Canada" },
-        ],
-      }),
-    }),
-  );
-
   await page.route("**/api/epsilon/**", (route) =>
     route.fulfill({
       status: 200,
@@ -236,31 +222,20 @@ export async function walkToRecommendations(page: Page) {
 }
 
 /**
- * Continue past the recommendations cards through to the final booking step:
- * Book A Rest Test, a post-selection video, the postal code, then picking the
- * first store in the list.
+ * Continue past the recommendations cards to the final booking step. Book A
+ * Rest Test now lands there directly — the post-selection video, postal code
+ * capture and store list that used to sit in between were removed.
  */
 export async function walkToBookingStep(
   page: Page,
   options: {
     /**
-     * Runs after the store list is up but before the click that lands on the
-     * booking step, which is the last moment to set up for its closing video.
+     * Runs immediately before the click that lands on the booking step, which
+     * is the last moment to set up for its closing video.
      */
-    beforeStoreSelect?: () => Promise<void>;
+    beforeBookRestTest?: () => Promise<void>;
   } = {},
 ) {
+  await options.beforeBookRestTest?.();
   await bookRestTestButton(page).first().click();
-
-  // Postal code capture (a video step plays in between)
-  const zipInput = page.locator("#postal-code");
-  await zipInput.waitFor({ timeout: 45_000 });
-  await zipInput.fill("L7M1A1");
-  await page.getByRole("button", { name: /^Continue$/i }).first().click();
-
-  // Store locations — select the first store in the list
-  const selectButton = page.getByRole("button", { name: /^Select$/ });
-  await selectButton.first().waitFor({ timeout: 45_000 });
-  await options.beforeStoreSelect?.();
-  await selectButton.first().click();
 }

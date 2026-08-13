@@ -38,7 +38,6 @@ export interface BuildFlowDataParams {
   flowId: string;
   currentStepIndex: number;
   totalSteps: number;
-  userZipCode: string | null;
   selectedMattressSize: MattressSize | null | undefined;
   selectedMattressFeel: MattressFeel | null | undefined;
   answers: StoredAnswer[];
@@ -49,7 +48,6 @@ export function buildFlowData(params: BuildFlowDataParams) {
     flowId,
     currentStepIndex,
     totalSteps,
-    userZipCode,
     selectedMattressSize,
     selectedMattressFeel,
     answers,
@@ -63,7 +61,6 @@ export function buildFlowData(params: BuildFlowDataParams) {
       totalSteps,
       email:
         answers.find((a) => a.stepId === "email-capture")?.value || null,
-      zipCode: userZipCode,
       mattressSelection:
         selectedMattressSize && selectedMattressFeel
           ? {

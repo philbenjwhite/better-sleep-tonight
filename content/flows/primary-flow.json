@@ -271,36 +271,6 @@
       "_template": "productRecommendationsStep"
     },
     {
-      "stepId": "video-step-3",
-      "internalName": "Post-Selection Video",
-      "video": "/videos/ashley/ashley-3.mp4",
-      "script": "Okay, great! I can book a rest test for you at your nearest Ashley home store. Enter your zip code and I'll find the nearest one.",
-      "_template": "videoStep"
-    },
-    {
-      "stepId": "zipcode-capture-step",
-      "internalName": "Zip Code Capture",
-      "headline": "Enter your Postal Code",
-      "placeholderText": "postal code",
-      "buttonText": "Continue",
-      "_template": "zipcodeCaptureStep"
-    },
-    {
-      "stepId": "store-locations-step",
-      "internalName": "Store Locations",
-      "headerText": "Stores near",
-      "defaultPostalCode": "L7M",
-      "ctaBookTitle": "Book a Rest Test",
-      "ctaBookDescription": "Experience the mattress in-store before you buy. Our sleep experts will help you find the perfect fit.",
-      "ctaBookButtonText": "Schedule Appointment",
-      "ctaContactTitle": "Questions? We're here to help",
-      "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
-      "ctaContactButtonText": "Contact Us",
-      "avatarVideoSrc": "/videos/ashley/ashley-4-square.mp4",
-      "avatarText": "All the Ashley stores that stock your mattress are listed on this page.",
-      "_template": "storeLocationsStep"
-    },
-    {
       "stepId": "booking-cta-step",
       "internalName": "Booking CTAs",
       "video": "/videos/ashley/ashley-5.mp4",

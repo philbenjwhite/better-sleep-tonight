@@ -30,10 +30,11 @@ export const STEP_TO_EPSILON_FIELD: Record<string, string> = {
   // question that fed it was removed when the funnel moved to in-store rest
   // tests only. Nothing writes to it now.
   "video-step-1": "Summary_Video",
-  "video-step-3": "Post_Selection_Video",
+  // Note: the Post_Selection_Video, Postal_Code and Store_Locations fields still
+  // exist on the Epsilon list, but the steps that fed them (the post-selection
+  // video, postal code capture and store locations) were removed in August 2026
+  // to shorten the path to booking. Nothing writes to them now.
   "product-recommendations-step": "Product_Recommendations",
-  "zipcode-capture-step": "Postal_Code",
-  "store-locations-step": "Store_Locations",
   "booking-cta-step": "EmailAddress",
 };
 

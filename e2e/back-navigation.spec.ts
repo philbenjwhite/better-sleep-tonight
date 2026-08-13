@@ -17,9 +17,9 @@ import {
  *
  * Stepping back has to undo the step it leaves, not just decrement the index:
  * the answer recorded on the step being returned to is dropped so re-answering
- * appends rather than duplicates, state derived from later steps (postal code,
- * chosen store) is cleared, and saved progress is rewritten so a reload does
- * not restore the step the user just backed out of.
+ * appends rather than duplicates, state derived from later steps is cleared,
+ * and saved progress is rewritten so a reload does not restore the step the
+ * user just backed out of.
  */
 
 const STORAGE_KEY = "bettersleep_progress_v2";
@@ -150,7 +150,7 @@ test("returns to the intro screen from the first step", async ({ page }) => {
   await expect(backButton(page)).toBeHidden();
 });
 
-test("backs out of the booking step and clears the postal code it collected", async ({
+test("backs out of the booking step and clears the recommendation it recorded", async ({
   page,
 }) => {
   await walkToRecommendations(page);
@@ -159,22 +159,23 @@ test("backs out of the booking step and clears the postal code it collected", as
     timeout: 30_000,
   });
 
-  // Booking step → store locations
+  const bookedAnswers = await savedAnswerIds(page);
+  expect(bookedAnswers).toContain("product-recommendations-step");
+
+  // Booking step → recommendation cards, with the recorded pick dropped so
+  // booking again appends rather than duplicates.
   await backButton(page).click();
-  await expect(page.getByRole("button", { name: /^Select$/ }).first()).toBeVisible({
+  await expect(bookRestTestButton(page).first()).toBeVisible({
     timeout: 30_000,
   });
-
-  // Store locations → postal code capture, with the earlier entry dropped
-  await backButton(page).click();
-  const zipInput = page.locator("#postal-code");
-  await expect(zipInput).toBeVisible({ timeout: 30_000 });
-  await expect(zipInput).toHaveValue("");
+  expect(await savedAnswerIds(page)).not.toContain(
+    "product-recommendations-step",
+  );
 
   // And the funnel still runs forward from here
-  await zipInput.fill("L7M1A1");
-  await page.getByRole("button", { name: /^Continue$/i }).first().click();
-  await expect(page.getByRole("button", { name: /^Select$/ }).first()).toBeVisible({
+  await walkToBookingStep(page);
+  await expect(page.locator('input[type="email"]')).toBeVisible({
     timeout: 45_000,
   });
+  expect(await savedAnswerIds(page)).toContain("product-recommendations-step");
 });

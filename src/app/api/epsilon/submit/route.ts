@@ -28,13 +28,7 @@ interface FlowAnswer {
 interface SubmitPayload {
   sessionId: string;
   email: string;
-  postalCode?: string;
   flowId?: string;
-  selectedStore?: {
-    id: string;
-    storeName: string;
-    city: string;
-  };
   answers?: FlowAnswer[];
 }
 
@@ -47,13 +41,9 @@ function buildRecordPayload(payload: SubmitPayload) {
     EmailAddress: payload.email,
   };
 
-  if (payload.postalCode) {
-    record.Postal_Code = payload.postalCode;
-  }
-
-  if (payload.selectedStore) {
-    record.Store_Locations = payload.selectedStore.storeName;
-  }
+  // Note: Postal_Code and Store_Locations were written here from the postal
+  // code and store location steps. Those steps were removed in August 2026, so
+  // submissions no longer carry either. The fields remain on the Epsilon list.
 
   // Map flow answers to Epsilon field names
   if (payload.answers) {

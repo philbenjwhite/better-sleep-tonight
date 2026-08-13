@@ -148,4 +148,11 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
     expect(answeredStepIds).toContain(stepId);
   }
   expect(answeredStepIds).not.toContain("q7-purchase-intent");
+
+  // The postal code and store location steps were removed, so neither reports
+  // and no postal code or store rides along with the submission.
+  expect(answeredStepIds).not.toContain("zipcode-capture-step");
+  expect(answeredStepIds).not.toContain("store-locations-step");
+  expect(submitBody).not.toHaveProperty("postalCode");
+  expect(submitBody).not.toHaveProperty("selectedStore");
 });
