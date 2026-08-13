@@ -286,15 +286,17 @@
 }
 
 /*
- * The price and its offer, bound by proximity. They sit a third of the distance
- * from each other that either sits from the CTA below, which is what makes them
- * read as one statement rather than as three stacked items.
+ * The price and its offer, bound by proximity and closed off by a hairline.
+ * They sit a third of the distance from each other that either sits from the
+ * CTA, and the rule under them draws the line between what the card is telling
+ * you and what it is asking you to do.
  */
 .priceGroup {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(54, 53, 52, 0.12);
 }
 
 .promoBadgeIcon {
