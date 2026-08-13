@@ -55,3 +55,8 @@ storybook-static
 .dolt/
 *.db
 /screenshots/
+
+# Camera masters for the avatar segments. 4320x7680 HEVC, ~50MB each, and they
+# live under public/ where Next.js would serve them. The web encodes committed
+# beside them (ashley-*.mp4) are what the app actually loads.
+public/videos/ashley/Ash-Video-*.mp4
