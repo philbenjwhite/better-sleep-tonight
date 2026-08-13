@@ -2,8 +2,8 @@
   position: relative;
   /* 9:16 aspect ratio container */
   width: 100%;
-  max-width: calc((100vh - 108px) * (9 / 16)); /* Height-based max-width for 9:16 */
-  height: calc(100vh - 108px);
+  max-width: calc((var(--page-height) - 108px) * (9 / 16)); /* Height-based max-width for 9:16 */
+  height: calc(var(--page-height) - 108px);
   margin: 0 auto; /* Center horizontally */
 }
 
@@ -21,17 +21,17 @@
 /* Mobile to tablet: 10% smaller */
 @media (max-width: 768px) {
   .avatarContainer {
-    max-width: calc((100vh - 72px) * (9 / 16) * 0.9);
-    height: calc((100vh - 72px) * 0.9);
+    max-width: calc((var(--page-height) - 72px) * (9 / 16) * 0.9);
+    height: calc((var(--page-height) - 72px) * 0.9);
   }
 }
 
 /* On very wide screens, limit the width but still respect viewport height */
 @media (min-width: 1200px) {
   .avatarContainer {
-    max-width: min(450px, calc((100vh - 108px) * (9 / 16))); /* Cap width, but scale down for shorter viewports */
+    max-width: min(450px, calc((var(--page-height) - 108px) * (9 / 16))); /* Cap width, but scale down for shorter viewports */
     height: auto;
-    max-height: calc(100vh - 108px); /* Never exceed viewport height minus header/footer */
+    max-height: calc(var(--page-height) - 108px); /* Never exceed viewport height minus header/footer */
     aspect-ratio: 9 / 16;
   }
 }

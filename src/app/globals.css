@@ -46,6 +46,28 @@ a {
   color-scheme: light only;
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 249, 244, 237; /* #F9F4ED */
+
+  /*
+   * Page height in a unit that tracks the *visible* viewport.
+   *
+   * 100vh on a phone is the toolbar-hidden height, so a 100vh page stands
+   * taller than what is on screen for as long as the browser's own bar is
+   * showing. Every step but the results page is meant to be exactly one
+   * screen with nothing to scroll, and that difference — the height of the
+   * URL bar, and nothing else — was the whole of the scroll people were
+   * finding on the intro screen.
+   *
+   * Anything sized off the page height uses this, the avatar frame included:
+   * leave one of them on vh and it gets laid out against the taller viewport
+   * and is clipped by the shorter one.
+   */
+  --page-height: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --page-height: 100dvh;
+  }
 }
 
 

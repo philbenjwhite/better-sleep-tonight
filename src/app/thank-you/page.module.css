@@ -1,25 +1,10 @@
 /*
- * Page height in a unit that tracks the *visible* viewport.
- *
- * 100vh on iOS Safari is the toolbar-hidden height, so a 100vh page stands
- * taller than what is actually on screen while the bottom URL bar is showing.
- * Header and Footer are both position: fixed, so this page's whole document
- * height is the container — that overflow was the only thing making the page
- * scrollable, and scrolling it slid the fixed footer up over the avatar.
- *
- * dvh follows the visible viewport, so there is no overflow left to scroll.
- * Everything sized off the page height uses this, otherwise the avatar would
- * still be laid out against the taller viewport and get clipped.
+ * --page-height tracks the visible viewport rather than the toolbar-hidden one.
+ * It was defined here first, for this page's own version of the same bug: the
+ * header and footer are fixed, so the container's overflow was the only thing
+ * making the page scrollable, and scrolling it slid the footer up over the
+ * avatar. It now lives in globals.css, where the funnel uses it too.
  */
-.container {
-  --page-height: 100vh;
-}
-
-@supports (height: 100dvh) {
-  .container {
-    --page-height: 100dvh;
-  }
-}
 
 /* Match main page .main */
 .container {
