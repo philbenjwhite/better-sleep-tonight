@@ -10,16 +10,24 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  /*
-   * No rubber-band. Every step but the results page is exactly one viewport
-   * tall and does not scroll, but macOS and iOS bounce a page whether or not it
-   * has anywhere to go. The bounce drags the document while the fixed header
-   * and footer stay put, so the avatar slides under her own controls for the
-   * length of a flick — the funnel looks like it has come loose.
-   *
-   * Only the overscroll is refused. The results page still scrolls normally;
-   * this stops the scroll going nowhere, not the scroll going somewhere.
-   */
+}
+
+/*
+ * No rubber-band. Every step but the results page is exactly one viewport tall
+ * and does not scroll, but macOS and iOS bounce a page whether or not it has
+ * anywhere to go. The bounce drags the document while the fixed header and
+ * footer stay put, so the avatar slides under her own controls for the length
+ * of a flick and the funnel looks like it has come loose.
+ *
+ * On the document element only, never on the body. The overflow-x above makes
+ * the body's overflow-y compute to auto, which makes the body a scroll
+ * container in its own right, and refusing overscroll on it stops touch
+ * scrolling dead: the results page would not move at all under a finger.
+ * Measured in mobile emulation, a 500px touch drag moved the page 0px with the
+ * rule on the body and 497px without it. The viewport takes its value from
+ * here, so this is the whole fix and the body has no business in it.
+ */
+html {
   overscroll-behavior-y: none;
 }
 

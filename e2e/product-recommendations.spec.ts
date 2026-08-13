@@ -29,6 +29,46 @@ test.beforeEach(async ({ page }) => {
   await speedUpVideos(page);
 });
 
+/**
+ * The one step with more than a viewport of content has to move under a finger.
+ *
+ * It once did not: overscroll-behavior was set on the body as well as the
+ * document element to stop the page rubber-banding, and the body is a scroll
+ * container here — overflow-x: hidden makes its overflow-y compute to auto — so
+ * refusing overscroll on it stopped touch scrolling outright. The cards were
+ * frozen on a phone while every wheel-driven test still passed, which is why
+ * this one drives a real touch gesture through the compositor.
+ */
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 664 }, hasTouch: true, isMobile: true });
+
+  test("scrolls the cards under a finger", async ({ page, context }) => {
+    await walkToRecommendations(page);
+    await expect(bookRestTestButton(page).first()).toBeVisible({
+      timeout: 30_000,
+    });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollHeight > window.innerHeight,
+      ),
+    ).toBe(true);
+
+    const session = await context.newCDPSession(page);
+    await session.send("Input.synthesizeScrollGesture", {
+      x: 195,
+      y: 400,
+      xDistance: 0,
+      yDistance: -400,
+      gestureSourceType: "touch",
+      speed: 2000,
+    });
+
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY), { timeout: 5_000 })
+      .toBeGreaterThan(100);
+  });
+});
+
 test("shows the mattress recommendation cards at the end of the funnel", async ({
   page,
 }) => {
