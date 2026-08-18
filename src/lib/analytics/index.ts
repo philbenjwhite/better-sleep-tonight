@@ -6,3 +6,4 @@
 
 export * from './videoTracking';
 export * from './conversionTracking';
+export * from './sessionId';

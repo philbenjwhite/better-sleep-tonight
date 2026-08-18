@@ -46,6 +46,7 @@ import {
   trackBookRestTestIntent,
   trackFormSubmissionConversion,
 } from "@/lib/analytics/conversionTracking";
+import { createSessionId } from "@/lib/analytics/sessionId";
 
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
@@ -146,7 +147,7 @@ function HomeContent() {
 
   // Stable session ID for Epsilon event tracking (persists across re-renders, new per page load)
   const sessionId = useMemo(
-    () => crypto.randomUUID(),
+    () => createSessionId(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );

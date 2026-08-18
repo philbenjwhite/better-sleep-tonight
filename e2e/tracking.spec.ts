@@ -156,3 +156,57 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
   expect(submitBody).not.toHaveProperty("postalCode");
   expect(submitBody).not.toHaveProperty("selectedStore");
 });
+
+/**
+ * The session key the submit is filed under, where crypto.randomUUID is absent.
+ *
+ * randomUUID is exposed only in a secure context. Over plain http it is
+ * undefined rather than merely unavailable, so calling it threw and took the
+ * whole funnel down on an unhandled runtime error before a single question was
+ * asked. That is the state the app is in on a LAN address during testing, and a
+ * deploy behind a proxy away from being the state real people meet.
+ *
+ * Removing it from the prototype is what a non-secure context does; the rest of
+ * the Crypto interface, getRandomValues included, stays where it is.
+ */
+test("files the submit under a well-formed session key without crypto.randomUUID", async ({
+  page,
+}) => {
+  const crashes: string[] = [];
+  page.on("pageerror", (error) => crashes.push(error.message));
+
+  await page.addInitScript(() => {
+    delete (Crypto.prototype as { randomUUID?: unknown }).randomUUID;
+    delete (crypto as { randomUUID?: unknown }).randomUUID;
+  });
+
+  let submitBody: Record<string, unknown> | null = null;
+  await page.route("**/api/epsilon/submit", async (route) => {
+    submitBody = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    });
+  });
+
+  await walkToRecommendations(page);
+  await walkToBookingStep(page);
+
+  const emailInput = page.locator('input[type="email"]').first();
+  await emailInput.waitFor({ timeout: 45_000 });
+  await emailInput.fill("e2e-test@visualboston.com");
+  await page
+    .getByRole("button", { name: /Register Email/i })
+    .first()
+    .click();
+
+  await expect.poll(() => submitBody, { timeout: 30_000 }).not.toBeNull();
+
+  const { sessionId } = submitBody as unknown as { sessionId: string };
+
+  expect(sessionId).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+  );
+  expect(crashes).toEqual([]);
+});
