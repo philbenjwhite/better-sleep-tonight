@@ -222,6 +222,40 @@ export async function answerAllQuestions(
 }
 
 /**
+ * Drive the funnel to the moment the summary video takes over, and no further.
+ *
+ * answerAllQuestions walks straight past that segment to the recommendations,
+ * so anything asserted about the summary itself needs a walk that stops on it.
+ * Waits for the heading to change after each answer rather than polling: the
+ * options stay mounted through the 1000ms pause before the advance, and a blind
+ * loop clicks the same question twice and skips a step.
+ */
+export async function walkToSummaryVideo(page: Page) {
+  await startFunnel(page);
+  await videoCta(page).first().waitFor({ state: "visible", timeout: 45_000 });
+  await videoCta(page).first().click();
+
+  for (let i = 0; i < 6; i++) {
+    await answerOption(page)
+      .first()
+      .waitFor({ state: "visible", timeout: 30_000 });
+    const heading = (await questionHeading(page).textContent())?.trim() ?? "";
+    await answerOption(page).first().click();
+    await page
+      .waitForFunction(
+        (prev) => {
+          const el = document.querySelector('[class*="questionText"]');
+          const text = el?.textContent?.trim();
+          return !text || text !== prev;
+        },
+        heading,
+        { timeout: 30_000 },
+      )
+      .catch(() => {});
+  }
+}
+
+/**
  * Drive the funnel from the intro screen to the product recommendations step.
  */
 export async function walkToRecommendations(page: Page) {

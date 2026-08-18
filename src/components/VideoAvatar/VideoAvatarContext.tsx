@@ -281,6 +281,15 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false);
+        // A new segment starts at zero. Without this the last reported time of
+        // the segment just finished stands until the new one's first timeupdate
+        // arrives, and everything timed off the clock reads that stale value as
+        // this segment's position: subtitles open on the closing cue, and the
+        // manual CTA that waits for it appears at once. Chromium hides it by
+        // resetting the position on the src assignment, mobile Safari reports
+        // nothing at all until the media has data.
+        setCurrentTime(0);
+        setDuration(0);
         // Give each segment a fresh chance at sound: if the policy refuses
         // again, attemptPlay re-mutes it.
         setIsAudioBlocked(false);
@@ -348,6 +357,8 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         setVideoState(VideoState.LOADING);
         setCurrentVideoId(videoIdOrPath);
         setIsNearingEnd(false); // Reset for new video
+        setCurrentTime(0);
+        setDuration(0);
         setIsAudioBlocked(false);
 
         // Set loop attribute based on options
@@ -475,6 +486,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
+    setCurrentTime(0);
     setVideoState(VideoState.IDLE);
     setCurrentVideoId(null);
     window.clearTimeout(heldFrameTimeoutRef.current);
