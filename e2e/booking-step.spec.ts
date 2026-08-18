@@ -148,3 +148,72 @@ test("treats a refused final segment as blocked, not as a broken video", async (
   );
   await expect(page.getByText(/Video failed to load/i)).toHaveCount(0);
 });
+
+/**
+ * The step has to flow and scroll on a phone, at any height a keyboard leaves.
+ *
+ * questionBlockWrapper is a fixed, full-viewport flex box that centres what the
+ * step puts in it, which suits a question because a question always fits. The
+ * booking card does not: it stands taller than the space a phone keyboard
+ * leaves, and centring split the overflow evenly so its heading sat behind the
+ * logo. Being fixed, it contributed nothing to scrollHeight, so the document
+ * measured exactly one viewport tall and nothing could scroll to reach it.
+ *
+ * 483px is not an arbitrary small viewport: it is what an iPhone reporting 755
+ * at rest reports with the keyboard up, measured on the device. iOS shrinks
+ * window.innerHeight itself, and --page-height is 100dvh, so a shorter viewport
+ * reproduces the keyboard state exactly. No browser here can open a keyboard,
+ * which is the only reason this is expressible as a test at all.
+ */
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 755 }, isMobile: true, hasTouch: true });
+
+  test("keeps the card clear of the header and scrollable at keyboard height", async ({
+    page,
+  }) => {
+    await walkToRecommendations(page);
+    await walkToBookingStep(page);
+    await page.locator('input[type="email"]').first().waitFor({ timeout: 45_000 });
+
+    const measure = () =>
+      page.evaluate(() => {
+        const header = document.querySelector("header");
+        const heading = [...document.querySelectorAll("*")].find(
+          (el) =>
+            el.children.length === 0 &&
+            /^Book a Rest Test$/i.test(el.textContent?.trim() ?? ""),
+        );
+        return {
+          canScroll:
+            document.documentElement.scrollHeight > window.innerHeight,
+          headerBottom: header?.getBoundingClientRect().bottom ?? 0,
+          headingTop: heading?.getBoundingClientRect().top ?? -1,
+        };
+      });
+
+    for (const height of [755, 483]) {
+      await page.setViewportSize({ width: 390, height });
+      await page.waitForTimeout(500);
+      const { canScroll, headerBottom, headingTop } = await measure();
+
+      expect(canScroll, `page must scroll at ${height}px`).toBe(true);
+      expect(
+        headingTop,
+        `heading must clear the header at ${height}px`,
+      ).toBeGreaterThan(headerBottom);
+    }
+
+    // A page that scrolls is what brings the header's fade back.
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await page.waitForTimeout(400);
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document.querySelector("header")?.className.includes("scrolled") ??
+            false,
+        ),
+      )
+      .toBe(true);
+  });
+});

@@ -905,6 +905,46 @@
   }
 }
 
+/*
+ * Below 1200px the booking step has to flow and scroll, not hang in an overlay.
+ *
+ * questionBlockWrapper is a fixed, full-viewport flex box centring whatever the
+ * step puts in it. That suits a question, which always fits. The booking card
+ * does not fit: it stands 568px tall against a 483px box once a phone keyboard
+ * is up, and centring splits the overflow evenly, so its heading and opening
+ * line sit behind the logo. Being fixed, it adds nothing to scrollHeight, so
+ * the document measured exactly one viewport tall and there was nothing to
+ * scroll to reach them. Measured on an iPhone: innerHeight 755 falls to 483
+ * with the keyboard, because --page-height is 100dvh and iOS shrinks that too.
+ *
+ * The recommendations step already had this problem and answers it by putting
+ * its wrapper back in flow. Same answer here, and it settles all three
+ * complaints at once: nothing lands under the header, the page scrolls when the
+ * card does not fit, and the header's fade comes back because that reads a
+ * document scroll.
+ */
+@media (max-width: 1200px) {
+  .main.bookingCtaPage {
+    height: auto;
+    min-height: var(--page-height);
+    overflow: visible;
+    padding-bottom: 132px; /* Clears the footer's nav row. */
+  }
+
+  .bookingCtaPage .questionBlockWrapper {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    min-height: auto;
+    align-items: flex-start;
+    padding-top: 80px; /* Space for header */
+    pointer-events: auto; /* A layout container now, not an overlay. */
+  }
+}
+
 /* Below 1200px (single-column): hide full-screen avatar + speech bubble, use Footer avatar bar instead */
 @media (max-width: 1200px) {
   .bookingCtaPage .heygenAvatar,
