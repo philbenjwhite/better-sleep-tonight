@@ -188,12 +188,17 @@ export function Footer({
     }
   };
 
+  // Drives the fill behind the nav row: see .withAvatar in the stylesheet.
+  const isAvatarBarUp = Boolean(
+    showAvatarSection && avatarVideoSrc && !isAvatarDismissed,
+  );
+
   return (
     <footer
-      className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''} ${nav ? styles.withNav : ''}`}
+      className={`${styles.footer} ${!showProgress ? styles.footerStatic : ''} ${nav ? styles.withNav : ''} ${isAvatarBarUp ? styles.withAvatar : ''}`}
     >
       {/* Avatar section renders above progress bar (mobile only via CSS) */}
-      {showAvatarSection && avatarVideoSrc && !isAvatarDismissed && (
+      {isAvatarBarUp && (
         <div className={`${styles.avatarSection} ${isSliding ? styles.avatarSlideOut : ''} ${avatarMobileOnly ? styles.avatarMobileOnly : ''}`}>
           <button
             type="button"

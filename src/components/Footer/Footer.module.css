@@ -95,6 +95,22 @@
   );
 }
 
+/*
+ * Fill rather than fade, for as long as the avatar bar is up.
+ *
+ * The fade leaves the top third of the footer translucent, which is what keeps
+ * it off the cards on the results step. On the booking step the avatar bar sits
+ * flush on the footer's top edge, so that translucent band is a strip of page
+ * trapped between two solid panels: the closing line of the Contact Us card
+ * showed through it, straight behind Back and Next.
+ *
+ * Tied to the bar being up rather than to the step, so dismissing it hands the
+ * fade back, and the results step never sees this at all.
+ */
+.withNav.withAvatar {
+  background: rgb(255, 251, 248);
+}
+
 .withNav .footerContent {
   background-color: transparent;
   padding: 10px 24px calc(12px + env(safe-area-inset-bottom));
