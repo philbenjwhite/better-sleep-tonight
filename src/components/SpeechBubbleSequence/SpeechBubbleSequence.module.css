@@ -176,6 +176,12 @@
   .text {
     font-size: 18px;
   }
+
+  /* The bubble runs nearly edge to edge on a phone, so a left-hugging pill
+     under it reads as misaligned. Centre it on the avatar's axis instead. */
+  .ctaButton {
+    align-self: center;
+  }
 }
 
 @media (max-width: 480px) {
