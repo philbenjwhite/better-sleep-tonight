@@ -18,7 +18,7 @@ import {
  *
  * Since July 2026 the funnel targets in-store rest tests only: there is no
  * purchase-intent question and no Buy Now path, so every card carries the same
- * Book a Rest Test CTA and the $300 offer flash.
+ * Book a Rest Test CTA and the $200 offer flash.
  */
 
 const AVATAR_VIDEO = /ashley-\d+\.mp4/i;
@@ -119,13 +119,13 @@ test("no Buy Now path remains anywhere on the results page", async ({
   await expect(page.locator('a[href*="ashleyhomestore.ca"]')).toHaveCount(0);
 });
 
-test("every card shows the $300 offer flash above the CTA", async ({ page }) => {
+test("every card shows the $200 offer flash above the CTA", async ({ page }) => {
   await walkToRecommendations(page);
 
   // Count cards by their CTA — the productName class also matches the
   // productNameLight spans used for the bracketed part of a product name.
   const cardCount = await bookRestTestButton(page).count();
-  const flashes = page.getByText(/Get \$300 off/i);
+  const flashes = page.getByText(/Get \$200 off/i);
 
   await expect(flashes.first()).toBeVisible();
   expect(await flashes.count()).toBe(cardCount);

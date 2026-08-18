@@ -12,7 +12,7 @@ import styles from "./ProductRecommendations.module.css";
 const SHOW_CARD_PRICE = true;
 
 /** Offer flash shown above the CTA on every card. */
-const OFFER_FLASH_TEXT = "Get $300 off in store";
+const OFFER_FLASH_TEXT = "Get $200 off in store";
 
 export type MattressSize = "twin" | "twin-xl" | "full" | "queen" | "king";
 export type MattressFeel = "soft" | "medium" | "firm" | "hybrid";
