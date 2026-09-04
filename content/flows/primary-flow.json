@@ -274,7 +274,7 @@
       "stepId": "booking-cta-step",
       "internalName": "Booking CTAs",
       "video": "/videos/ashley/ashley-5.mp4",
-      "script": "Just leave me your email address and I'll send you an email in the next five minutes, so you can book your rest test.",
+      "script": "Thanks, you're all set.\n\nI'll send you an email in the next five minutes so you can book a rest test at your nearest Ashley store.\n\nThanks for visiting Better Sleep Tonight.",
       "ctaBookTitle": "Book a Rest Test",
       "ctaBookDescription": "Leave your email and we'll send you a link to book a rest test at your nearest Ashley store.",
       "ctaBookButtonText": "Register Email",
