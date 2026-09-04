@@ -92,17 +92,32 @@ Nothing here should reach `/thank-you` any more, since the booking step is now i
 Ordered so each commit stands alone and the branch is demoable throughout.
 
 1. `docs: plan the email capture move` (this file)
-2. `refactor: extract the email capture form out of the booking step` (no behaviour change)
-3. `feat: let the speech bubble carry an input alongside its CTA`
-4. `feat: ask for the email as Ashley finishes the summary`
-5. `fix: withhold the video skip while the email ask is showing`
-6. `feat: turn the booking step into a confirmation`
-7. `fix: send the follow-up email once, from the new capture point`
-8. `content: new Ashley scripts and captions`
-9. `test: cover the email ask and the confirmation step`
-10. `content: new Ashley video segments` (waiting on delivery)
+2. `content: new Ashley booking segment, captions and script` **done**
+3. `content: new Ashley summary segment, captions and script` **done**
+4. `refactor: extract the email capture form out of the booking step` (no behaviour change)
+5. `feat: let the speech bubble carry an input alongside its CTA`
+6. `feat: ask for the email as Ashley finishes the summary`
+7. `fix: withhold the video skip while the email ask is showing`
+8. `feat: turn the booking step into a confirmation`
+9. `fix: send the follow-up email once, from the new capture point`
+10. `test: cover the email ask and the confirmation step`
 
-Commits 2 to 9 run against the current video files. Only commit 10 needs the new footage, so the branch reviews and demos in full before it arrives. The captions in commit 8 carry the new wording, which is what the bubble renders, so the on-screen copy is correct ahead of the audio.
+The footage arrived early, so the two content commits landed ahead of the build rather than after it. Both segments are in, transcoded, captioned, and their scripts rewritten. The rest of the sequence now runs against the final audio.
+
+### What the delivered footage changed
+
+The summary segment is the closing copy only. The mattress-age opening is cut, not spliced, so `video-step-1` is now two paragraphs rather than four:
+
+| | Before | After |
+|---|---|---|
+| Runtime | 16.65s | 12.35s |
+| Paragraphs | 4 | 2 |
+| Closing cue opens | 12.72s | 5.92s |
+| Video pauses at | end of file | 11.90s, before the fade to black |
+
+The email field appears when the video pauses at 11.9s, which is the last cue's end. That is the number to reach for when wiring the input into the CTA slot, and the same number the Skip withholding has to key off.
+
+The booking segment now opens by speaking the words that are also becoming the on-screen headline: "Thanks, you're all set." Captions must match the audio, so the phrase is in `ashley-5.vtt` and in the step's script, which means the speech bubble renders it alongside the headline. **Decide at build time whether the headline or the bubble carries it.** Showing both is the default if nobody chooses.
 
 ## Needed from Ashley's team
 
