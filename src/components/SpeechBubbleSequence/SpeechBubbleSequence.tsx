@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import styles from './SpeechBubbleSequence.module.css';
 
 export interface SubtitleCue {
@@ -34,6 +34,16 @@ export interface SpeechBubbleSequenceProps {
   ctaButtonText?: string;
   /** Called when CTA button is clicked */
   onCtaClick?: () => void;
+  /**
+   * Rendered in place of the CTA button, on the same trigger. Use it where the
+   * step asks for something before it advances rather than just advancing.
+   *
+   * Timing is the reason this is a slot here rather than markup in the parent:
+   * whatever goes in it appears only once the closing paragraph has finished
+   * animating, so an ask arrives when the avatar finishes asking, not over the
+   * top of her while she is still speaking.
+   */
+  ctaSlot?: ReactNode;
   /** Hide the chat bubble tail pointer */
   hideTail?: boolean;
 }
@@ -51,6 +61,7 @@ export function SpeechBubbleSequence({
   videoCurrentTime,
   ctaButtonText,
   onCtaClick,
+  ctaSlot,
   hideTail = false,
 }: SpeechBubbleSequenceProps) {
   // Determine if we're in video-synced mode
@@ -318,8 +329,14 @@ export function SpeechBubbleSequence({
         )}
       </div>
 
+      {/* Slot and CTA share the one trigger, so an ask lands exactly where the
+          plain advance button would have. */}
+      {ctaSlot && showCtaButton && (
+        <div className={styles.ctaSlot}>{ctaSlot}</div>
+      )}
+
       {/* CTA Button - shown beneath speech bubble after text animation on last paragraph */}
-      {ctaButtonText && showCtaButton && (
+      {!ctaSlot && ctaButtonText && showCtaButton && (
         <button
           type="button"
           className={styles.ctaButton}
