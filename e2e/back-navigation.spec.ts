@@ -334,9 +334,9 @@ test("backs out of the booking step and clears the recommendation it recorded", 
 }) => {
   await walkToRecommendations(page);
   await walkToBookingStep(page);
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 30_000,
-  });
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
 
   const bookedAnswers = await savedAnswerIds(page);
   expect(bookedAnswers).toContain("product-recommendations-step");
@@ -353,8 +353,8 @@ test("backs out of the booking step and clears the recommendation it recorded", 
 
   // And the funnel still runs forward from here
   await walkToBookingStep(page);
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 45_000,
-  });
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 45_000 });
   expect(await savedAnswerIds(page)).toContain("product-recommendations-step");
 });

@@ -67,6 +67,19 @@ test("offers no way past the ask", async ({ page }) => {
   await expect(emailAskSubmit(page)).toBeDisabled();
 });
 
+/**
+ * Coverage that moved here with the field, off the booking step.
+ *
+ * preventScroll matters: without it the browser jumps to the field on a short
+ * viewport and takes the line above it off screen before it has been read.
+ */
+test("puts the cursor in the field on arrival", async ({ page }) => {
+  await walkToEmailAsk(page);
+
+  await expect(emailAskField(page)).toBeFocused();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 test("refuses an address that is not one, and stays put", async ({ page }) => {
   await walkToEmailAsk(page);
 

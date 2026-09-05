@@ -32,60 +32,74 @@ test.beforeEach(async ({ page }) => {
   await speedUpVideos(page);
 });
 
-/** The email gate and CTAs that make the final step actionable. */
+/**
+ * What makes the closing step actionable, now that the address is taken a step
+ * earlier and this one only confirms.
+ */
 async function expectBookingStepUsable(page: import("@playwright/test").Page) {
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 30_000,
-  });
-  await expect(
-    page.getByRole("button", { name: /Register Email/i }),
-  ).toBeVisible();
   await expect(
     page.getByRole("link", { name: /Contact Us/i }).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30_000 });
+
+  // And nothing asks for the address a second time.
+  await expect(page.locator('input[type="email"]')).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /Register Email/i }),
+  ).toHaveCount(0);
 }
 
-test("reaches the booking step with its email gate and CTAs", async ({
+test("reaches the closing step with Contact Us and no second ask", async ({
   page,
 }) => {
   await walkToRecommendations(page);
   await walkToBookingStep(page);
   await expectBookingStepUsable(page);
-});
-
-test("puts the cursor in the email field on arrival", async ({ page }) => {
-  await walkToRecommendations(page);
-  await walkToBookingStep(page);
-  await expectBookingStepUsable(page);
-
-  await expect(page.locator('input[type="email"]')).toBeFocused();
-
-  // Without preventScroll the browser jumps to the field on a short viewport,
-  // taking the card's own heading off screen before it has been read.
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
 /**
- * The closing steps promise a follow-up email rather than booking on the spot,
- * so the card copy is the change rather than decoration around it. Worth
- * pinning: the wording lives in the flow JSON and the caption file, both of
- * which are edited by hand.
+ * The closing line has to survive the hand-off to the idle loop.
+ *
+ * It did not. Paragraphs are the cue texts while a segment plays and the split
+ * script once it stops, and the parent withdraws the cue track when the avatar
+ * switches to its idle clip. The two lists were different lengths, because the
+ * splitter counted an apostrophe as a quote mark and merged the paragraph after
+ * every contraction, so the live index pointed past the end of the shorter list
+ * and the bubble rendered as an empty box over the avatar.
  */
-test("the booking card is framed around the follow-up email", async ({
+test("keeps the closing line up after the avatar goes idle", async ({
   page,
 }) => {
   await walkToRecommendations(page);
   await walkToBookingStep(page);
 
-  await expect(
-    page.getByText(/we'll send you a link to book a rest test/i),
-  ).toBeVisible({ timeout: 30_000 });
+  const closing = page.getByText(/Thanks for visiting Better Sleep Tonight/i);
+  await expect(closing).toBeVisible({ timeout: 45_000 });
 
-  // Nothing should still offer to book on the spot.
+  // Past the end of the segment, which is when the idle clip takes over.
+  await page.waitForTimeout(4_000);
+  await expect(closing).toBeVisible();
+});
+
+/**
+ * The promise of the follow-up email moved off a card and into what Ashley
+ * says, so the flow script and the caption file carry it now. Both are edited
+ * by hand, which is why it is worth pinning.
+ */
+test("closes on the promise of the follow-up email", async ({ page }) => {
+  await walkToRecommendations(page);
+  await walkToBookingStep(page);
+
+  await expect(
+    page.getByText(/Thanks for visiting Better Sleep Tonight/i),
+  ).toBeVisible({ timeout: 45_000 });
+
+  // Nothing offers to book on the spot, and the card that used to ask for an
+  // address a second time is gone with it.
   await expect(page.getByText(/before you buy/i)).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: /Schedule Appointment/i }),
   ).toHaveCount(0);
+  await expect(page.getByText(/Leave your email/i)).toHaveCount(0);
 });
 
 /** The avatar's playback state machine, surfaced by VideoAvatar for tests. */
@@ -150,20 +164,17 @@ test("treats a refused final segment as blocked, not as a broken video", async (
 });
 
 /**
- * The step has to flow and scroll on a phone, at any height a keyboard leaves.
+ * The step has to stay readable on a short phone.
  *
  * questionBlockWrapper is a fixed, full-viewport flex box that centres what the
  * step puts in it, which suits a question because a question always fits. The
- * booking card does not: it stands taller than the space a phone keyboard
- * leaves, and centring split the overflow evenly so its heading sat behind the
- * logo. Being fixed, it contributed nothing to scrollHeight, so the document
- * measured exactly one viewport tall and nothing could scroll to reach it.
+ * card here need not: when it stands taller than the viewport, centring splits
+ * the overflow evenly and puts its heading behind the logo.
  *
- * 483px is not an arbitrary small viewport: it is what an iPhone reporting 755
- * at rest reports with the keyboard up, measured on the device. iOS shrinks
- * window.innerHeight itself, and --page-height is 100dvh, so a shorter viewport
- * reproduces the keyboard state exactly. No browser here can open a keyboard,
- * which is the only reason this is expressible as a test at all.
+ * The keyboard that used to make this acute is gone with the email field, but
+ * the geometry has not changed, and 483px is still a real measurement rather
+ * than an arbitrary small viewport: it is what an iPhone reporting 755 at rest
+ * reports with a keyboard up.
  */
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 755 }, isMobile: true, hasTouch: true });
@@ -173,7 +184,10 @@ test.describe("on a phone", () => {
   }) => {
     await walkToRecommendations(page);
     await walkToBookingStep(page);
-    await page.locator('input[type="email"]').first().waitFor({ timeout: 45_000 });
+    await page
+      .getByRole("link", { name: /Contact Us/i })
+      .first()
+      .waitFor({ timeout: 45_000 });
 
     const measure = () =>
       page.evaluate(() => {
@@ -181,39 +195,45 @@ test.describe("on a phone", () => {
         const heading = [...document.querySelectorAll("*")].find(
           (el) =>
             el.children.length === 0 &&
-            /^Book a Rest Test$/i.test(el.textContent?.trim() ?? ""),
+            /^Questions\? We're here to help$/i.test(
+              el.textContent?.trim() ?? "",
+            ),
         );
         return {
-          canScroll:
-            document.documentElement.scrollHeight > window.innerHeight,
           headerBottom: header?.getBoundingClientRect().bottom ?? 0,
           headingTop: heading?.getBoundingClientRect().top ?? -1,
+          overflows:
+            document.documentElement.scrollHeight > window.innerHeight,
         };
       });
 
     for (const height of [755, 483]) {
       await page.setViewportSize({ width: 390, height });
       await page.waitForTimeout(500);
-      const { canScroll, headerBottom, headingTop } = await measure();
+      const { headerBottom, headingTop, overflows } = await measure();
 
-      expect(canScroll, `page must scroll at ${height}px`).toBe(true);
+      expect(headingTop, `heading must render at ${height}px`).toBeGreaterThan(
+        -1,
+      );
       expect(
         headingTop,
         `heading must clear the header at ${height}px`,
       ).toBeGreaterThan(headerBottom);
+
+      // Anything that does not fit has to be reachable rather than clipped.
+      if (overflows) {
+        await page.evaluate(() => window.scrollTo(0, 200));
+        await page.waitForTimeout(300);
+        expect(
+          await page.evaluate(() => window.scrollY),
+          `page must scroll at ${height}px`,
+        ).toBeGreaterThan(0);
+        await page.evaluate(() => window.scrollTo(0, 0));
+      }
     }
 
-    // A page that scrolls is what brings the header's fade back.
-    await page.evaluate(() => window.scrollTo(0, 200));
-    await page.waitForTimeout(400);
-    await expect
-      .poll(() =>
-        page.evaluate(
-          () =>
-            document.querySelector("header")?.className.includes("scrolled") ??
-            false,
-        ),
-      )
-      .toBe(true);
+    await expect(
+      page.getByRole("link", { name: /Contact Us/i }).first(),
+    ).toBeVisible();
   });
 });

@@ -56,9 +56,9 @@ test("stops a segment short of the black frames it ends on", async ({
   await walkToBookingStep(page, {
     beforeBookRestTest: () => setVideoRateNow(page, 1),
   });
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 30_000,
-  });
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
 
   const stopped = await page.waitForFunction(
     () => (window as unknown as Record<string, unknown>).__stoppedAt,
