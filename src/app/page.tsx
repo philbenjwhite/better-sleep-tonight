@@ -391,6 +391,14 @@ function HomeContent() {
     // and was hidden by that same class; this one lives in the footer, so it has
     // to opt out itself rather than inherit the frame's visibility.
     !avatarHidden &&
+    /*
+      Not while the summary step is still waiting for an email. Skip does not
+      seek to the end here, it advances past the manual CTA outright, so it
+      would carry the user to the results having given nothing. The video
+      pauses on its closing cue, which is exactly when the field appears, so
+      without this the button sits live beside the one thing being asked for.
+    */
+    !isAwaitingEmailCapture &&
     (videoState === VideoState.LOADING ||
       videoState === VideoState.READY ||
       videoState === VideoState.PLAYING ||
