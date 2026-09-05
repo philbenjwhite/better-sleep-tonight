@@ -77,9 +77,16 @@ export function SpeechBubbleSequence({
     while (i < text.length) {
       const char = text[i];
 
-      // Track quote state (handle double quotes " " " and single quotes ' ' ')
-      // Using Unicode: " = \u201C, " = \u201D, ' = \u2018, ' = \u2019
-      if (char === '"' || char === '\u201C' || char === '\u201D' || char === "'" || char === '\u2018' || char === '\u2019') {
+      /*
+        Track quote state, so a paragraph break inside quoted speech is kept
+        rather than treated as a break between paragraphs.
+
+        Double quotes only. An apostrophe is a contraction far more often than
+        a quote mark, and counting it as one left the state flipped on the
+        first "you're" or "I'll" in a paragraph, which then swallowed the
+        break after it and merged that paragraph into the next.
+      */
+      if (char === '"' || char === '\u201C' || char === '\u201D') {
         inQuote = !inQuote;
         current += char;
         i++;
@@ -173,7 +180,14 @@ export function SpeechBubbleSequence({
     }
   }, [isVideoSyncMode, videoCueIndex, lastShownCueIndex, subtitleCues, videoCurrentTime, onComplete]);
 
-  const currentParagraph = paragraphs[currentParagraphIndex] || '';
+  /*
+    Clamped, because the list can shrink under a live index. Paragraphs are the
+    cue texts while a segment is playing and the split message once it is not,
+    and the parent withdraws the cue track when the avatar hands off to its
+    idle loop. An index left past the end rendered a bubble with nothing in it.
+  */
+  const currentParagraph =
+    paragraphs[Math.min(currentParagraphIndex, paragraphs.length - 1)] || '';
   const words = currentParagraph.split(' ').filter(w => w);
 
   // In video-sync mode, calculate dynamic word delay based on cue duration
