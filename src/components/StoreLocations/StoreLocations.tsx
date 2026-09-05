@@ -56,6 +56,15 @@ export interface StoreLocationsProps {
   stackCtas?: boolean;
   /** When provided, gates the rest-test CTA behind email capture */
   onEmailSubmit?: (email: string) => Promise<void>;
+  /**
+   * Drop the rest-test card and leave only Contact Us.
+   *
+   * For the closing step, where the address has already been given a step
+   * earlier: the card would be asking a second time for something the person
+   * has handed over, and its own copy promises the email that is already on
+   * its way.
+   */
+  hideBookCta?: boolean;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -111,6 +120,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   hideMap = false,
   stackCtas = false,
   onEmailSubmit,
+  hideBookCta = false,
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [panToLocationId, setPanToLocationId] = useState<string | null>(null);
@@ -170,6 +180,7 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       {/* CTA Row - Two columns */}
       {!hideCtas && <div className={`${styles.ctaRow} ${stackCtas ? styles.ctaRowStacked : ""}`}>
         {/* Rest test CTA, gated behind email capture */}
+        {!hideBookCta && (
         <div className={styles.section}>
           {/* Calendar Icon */}
           <div className={styles.ctaIcon}>
@@ -220,9 +231,12 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
             )}
           </div>
         </div>
+        )}
 
         {/* Contact Us CTA */}
-        <div className={styles.section}>
+        <div
+          className={`${styles.section} ${hideBookCta ? styles.soleCta : ""}`}
+        >
           {/* Chat/Help Icon */}
           <div className={styles.ctaIcon}>
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">

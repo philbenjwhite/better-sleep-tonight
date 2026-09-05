@@ -1273,46 +1273,6 @@ function HomeContent() {
     ],
   );
 
-  // Handle email submission on the booking CTA step (gates the Register Email button)
-  const handleBookingEmailSubmit = useCallback(
-    async (email: string) => {
-      const newAnswer: StoredAnswer = {
-        stepId: "booking-cta-step",
-        questionText: "Booking Email",
-        value: email,
-        label: email,
-        timestamp: new Date(),
-      };
-      const updatedAnswers = [...storedAnswers, newAnswer];
-      setStoredAnswers(updatedAnswers);
-      trackStepGA4(newAnswer);
-      trackFormSubmissionConversion();
-      logFlowData(updatedAnswers, `Booking Email: ${email}`);
-
-      // Push full contact record to Epsilon CRM via API route (fire-and-forget)
-      // keepalive: true ensures the request survives the page navigation to /thank-you
-      fetch("/api/epsilon/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        keepalive: true,
-        body: JSON.stringify({
-          sessionId,
-          email,
-          flowId: flowParam,
-          answers: updatedAnswers.map((a) => ({
-            stepId: a.stepId,
-            questionText: a.questionText,
-            value: a.value,
-            label: a.label,
-          })),
-        }),
-      }).catch((err) => console.error("[Epsilon] Submit failed:", err));
-
-      // Redirect to thank-you page
-      window.location.href = "/thank-you";
-    },
-    [storedAnswers, logFlowData, trackStepGA4, sessionId, flowParam],
-  );
 
   // Show next question after avatar response finishes
   // (Skip if in video step or booking CTA step - those have their own handlers)
@@ -1760,7 +1720,13 @@ function HomeContent() {
                     postalCode=""
                     hideMap
                     stackCtas
-                    onEmailSubmit={handleBookingEmailSubmit}
+                    /*
+                      The address was given a step earlier, so the rest-test
+                      card has nothing left to ask for: its own copy promises
+                      the email that is already on its way. Contact Us is the
+                      only thing the closing step still offers.
+                    */
+                    hideBookCta
                   />
                 </div>
               )}

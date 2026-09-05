@@ -66,6 +66,41 @@
   margin-top: auto;
 }
 
+/*
+  The closing step's only card.
+  
+  With the rest-test card gone it would otherwise sit as a short block adrift
+  in a column sized for two. The height gives it enough presence to hold the
+  space on its own, and .ctaContent's margin-top: auto already pushes the copy
+  and button to the bottom, so the extra room opens up under the icon rather
+  than as slack below the button.
+*/
+.soleCta {
+  min-height: 340px;
+  padding: var(--sds-size-space-800, 32px);
+}
+
+/*
+  The paired layout pushes each card's content to its bottom edge so the two
+  line up. Alone there is nothing to line up with, and that rule leaves a void
+  between the icon and the copy, so the group centres as one block instead.
+*/
+.ctaRow > .soleCta {
+  justify-content: center;
+}
+
+.soleCta .ctaContent {
+  margin-top: var(--sds-size-space-400, 16px);
+}
+
+@media (max-width: 1200px) {
+  /* Back to hugging its content once the column is no longer full height. */
+  .soleCta {
+    min-height: 0;
+    padding: var(--sds-size-space-600, 24px);
+  }
+}
+
 /* Map Container */
 .mapContainer {
   width: 100%;
