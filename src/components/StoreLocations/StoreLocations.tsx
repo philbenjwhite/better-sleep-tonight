@@ -9,6 +9,7 @@ const StoreMap = dynamic(
   { ssr: false }
 );
 import { Button } from '@/components/Button';
+import { EmailCaptureForm } from '@/components/EmailCaptureForm';
 
 // Import locations data
 import locationsData from '../../../content/locations/ontario-stores.json';
@@ -114,33 +115,9 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [panToLocationId, setPanToLocationId] = useState<string | null>(null);
 
-  // Email gate state
-  const [gateEmail, setGateEmail] = useState('');
-  const [gateEmailValid, setGateEmailValid] = useState(true);
-  const [gateSubmitting, setGateSubmitting] = useState(false);
-  const [gateSubmitted, setGateSubmitted] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const locationCardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const hasInitializedRef = useRef(false);
-  const emailInputRef = useRef<HTMLInputElement>(null);
-
-  /**
-   * Put the cursor in the email field on arrival, so the one thing the step
-   * asks for can be typed without a click.
-   *
-   * Not on a touch device. Focus there summons the keyboard, which covers
-   * roughly half the screen the moment the step loads — over Ashley, who is
-   * still speaking, and over the offer card the step is built around. Nothing
-   * is lost by waiting for the tap that means the user is ready to type.
-   *
-   * preventScroll because the field sits below the fold on a short viewport and
-   * the browser would jump to it, taking the CTA card's heading off screen.
-   */
-  useEffect(() => {
-    if (!onEmailSubmit) return;
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    emailInputRef.current?.focus({ preventScroll: true });
-  }, [onEmailSubmit]);
 
   // Calculate distances and sort locations
   const sortedLocations = useMemo(() => {
@@ -174,26 +151,6 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
       cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, []);
-
-  const validateEmail = (email: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const handleGateEmailSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmail(gateEmail)) {
-      setGateEmailValid(false);
-      return;
-    }
-    setGateEmailValid(true);
-    setGateSubmitting(true);
-    try {
-      await onEmailSubmit?.(gateEmail);
-      setGateSubmitted(true);
-    } finally {
-      setGateSubmitting(false);
-    }
-  }, [gateEmail, onEmailSubmit]);
 
   const handleBookRestTest = () => {
     onBookRestTest?.();
@@ -244,36 +201,12 @@ export const StoreLocations: React.FC<StoreLocationsProps> = ({
               submit landing during the redirect.
             */}
             {onEmailSubmit ? (
-              <form onSubmit={handleGateEmailSubmit} className={styles.emailGateForm}>
-                <div className={styles.emailGateInputWrapper}>
-                  <input
-                    ref={emailInputRef}
-                    type="email"
-                    value={gateEmail}
-                    onChange={(e) => {
-                      setGateEmail(e.target.value);
-                      if (!gateEmailValid) setGateEmailValid(true);
-                    }}
-                    placeholder="Enter your email"
-                    className={`${styles.emailGateInput} ${!gateEmailValid ? styles.emailGateInputInvalid : ''}`}
-                    disabled={gateSubmitting}
-                    aria-label="Email address"
-                    aria-invalid={!gateEmailValid}
-                  />
-                  {!gateEmailValid && (
-                    <span className={styles.emailGateError}>Please enter a valid email</span>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  className={styles.ctaButton}
-                  disabled={gateSubmitting || gateSubmitted || !gateEmail.trim()}
-                >
-                  {gateSubmitting || gateSubmitted
-                    ? 'Submitting...'
-                    : content.ctaBookButtonText}
-                </button>
-              </form>
+              <EmailCaptureForm
+                onSubmit={onEmailSubmit}
+                buttonText={content.ctaBookButtonText}
+                className={styles.emailGateForm}
+                buttonClassName={styles.ctaButton}
+              />
             ) : (
               <a
                 href="https://ashleyhomestore.ca/pages/book-appointment"
