@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Button } from "@/components/Button";
+import { EmailCaptureForm } from "@/components/EmailCaptureForm";
 import {
   AnimatedQuestionBlock,
   CMSAnswerOption,
@@ -47,6 +48,27 @@ import {
   trackFormSubmissionConversion,
 } from "@/lib/analytics/conversionTracking";
 import { createSessionId } from "@/lib/analytics/sessionId";
+
+/**
+ * The step the email is asked for on, and the id its answer is stored under.
+ *
+ * The ask lives inside the summary video step rather than being a step of its
+ * own. A new step would shift every index after it, which breaks resumable
+ * sessions inside the 7-day window, ?step=N links, the analytics step numbers
+ * and the back button's answer pruning, all at once.
+ */
+const EMAIL_CAPTURE_ON_STEP = "video-step-1";
+const EMAIL_CAPTURE_STEP_ID = "email-capture";
+
+/**
+ * Answers that are not addressable by step index.
+ *
+ * handleBack prunes answers by slicing the steps array, so an answer whose id
+ * is not a step id is dropped on any move backwards. The captured email has
+ * already been given and already sent, so re-asking for it would be both rude
+ * and double-counted.
+ */
+const NON_STEP_ANSWER_IDS = new Set([EMAIL_CAPTURE_STEP_ID]);
 
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
@@ -338,6 +360,16 @@ function HomeContent() {
   // Steps that push the avatar offstage to give their content the full page.
   const avatarHidden = isProductRecommendationsStep;
 
+  /*
+    Derived from the answers rather than held separately, so it survives a
+    refresh and a resumed session for free: answers are already persisted.
+  */
+  const capturedEmail =
+    storedAnswers.find((answer) => answer.stepId === EMAIL_CAPTURE_STEP_ID)
+      ?.value ?? null;
+  const isAwaitingEmailCapture =
+    currentStep?.stepId === EMAIL_CAPTURE_ON_STEP && capturedEmail === null;
+
   /**
    * Whether there is a segment left to skip past.
    *
@@ -551,8 +583,10 @@ function HomeContent() {
         .slice(0, targetIndex)
         .map((step, index) => step.stepId || `step-${index}`),
     );
-    const updatedAnswers = storedAnswers.filter((answer) =>
-      retainedStepIds.has(answer.stepId),
+    const updatedAnswers = storedAnswers.filter(
+      (answer) =>
+        retainedStepIds.has(answer.stepId) ||
+        NON_STEP_ANSWER_IDS.has(answer.stepId),
     );
 
     // Re-select whatever the user picked on the step being returned to, so it
@@ -1166,6 +1200,71 @@ function HomeContent() {
     }
   }, [currentStepIndex, questionSteps.length, currentStep, trackStepGA4]);
 
+  /**
+   * The funnel's conversion point, moved here from the booking step.
+   *
+   * The recommendations are what the person came for, so the address is asked
+   * for while they still want something, rather than after they have already
+   * been handed it.
+   */
+  const handleEmailCaptureSubmit = useCallback(
+    async (email: string) => {
+      const newAnswer: StoredAnswer = {
+        stepId: EMAIL_CAPTURE_STEP_ID,
+        questionText: "Email Capture",
+        value: email,
+        label: email,
+        timestamp: new Date(),
+      };
+      const updatedAnswers = [...storedAnswers, newAnswer];
+      setStoredAnswers(updatedAnswers);
+      trackStepGA4(newAnswer);
+      trackFormSubmissionConversion();
+      logFlowData(updatedAnswers, `Email Capture: ${email}`);
+
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex,
+        answers: updatedAnswers,
+      });
+
+      /*
+        No keepalive, unlike the booking submit this replaces. Nothing is
+        navigating: the step advances in place, so the request completes
+        normally.
+      */
+      fetch("/api/epsilon/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          email,
+          flowId: flowParam,
+          answers: updatedAnswers.map((a) => ({
+            stepId: a.stepId,
+            questionText: a.questionText,
+            value: a.value,
+            label: a.label,
+          })),
+        }),
+      }).catch((err) => console.error("[Epsilon] Submit failed:", err));
+
+      // Advance through the existing handler rather than repeating it. It
+      // clears the speech, response flags and backdrop in a specific order.
+      handleSeeOptionsClick();
+    },
+    [
+      storedAnswers,
+      trackStepGA4,
+      logFlowData,
+      saveProgress,
+      flowParam,
+      currentStepIndex,
+      sessionId,
+      handleSeeOptionsClick,
+    ],
+  );
+
   // Handle email submission on the booking CTA step (gates the Register Email button)
   const handleBookingEmailSubmit = useCallback(
     async (email: string) => {
@@ -1497,6 +1596,22 @@ function HomeContent() {
                       currentStep.stepId in MANUAL_CTA_LABELS
                         ? handleSeeOptionsClick
                         : undefined
+                    }
+                    /*
+                      The ask replaces the plain advance button in the same
+                      slot, on the same trigger, so it appears only once Ashley
+                      has finished asking for it rather than over the top of
+                      her while she is still speaking.
+                    */
+                    ctaSlot={
+                      isAwaitingEmailCapture ? (
+                        <EmailCaptureForm
+                          onSubmit={handleEmailCaptureSubmit}
+                          buttonText={
+                            MANUAL_CTA_LABELS[currentStep?.stepId ?? ""]
+                          }
+                        />
+                      ) : undefined
                     }
                   />
                 )}
