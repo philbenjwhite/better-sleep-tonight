@@ -17,6 +17,13 @@ export interface EmailCaptureFormProps {
   buttonClassName?: string;
   ariaLabel?: string;
   /**
+   * Seed the field, for a step that asks again after the address is already
+   * in. Showing it back is what keeps the ask honest: the copy still asks, so
+   * the field has to be there rather than the step quietly offering a way past
+   * itself.
+   */
+  initialValue?: string;
+  /**
    * Put the cursor in the field on mount. Ignored on touch devices whatever
    * this says: see the effect below.
    */
@@ -42,8 +49,9 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
   buttonClassName,
   ariaLabel = 'Email address',
   autoFocus = true,
+  initialValue = '',
 }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialValue);
   const [isValid, setIsValid] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);

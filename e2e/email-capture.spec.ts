@@ -1,6 +1,5 @@
 import { test, expect } from "@playwright/test";
 import {
-  answerEmailAskIfPresent,
   bookRestTestButton,
   emailAskField,
   emailAskSubmit,
@@ -136,22 +135,55 @@ test("sends the address on to the CRM", async ({ page }) => {
 });
 
 /**
- * handleBack prunes answers by slicing the steps array, and the captured
- * address is not addressable by index. Without an exemption it is dropped on
- * the way back, and the person is asked again for something they have already
- * given and that has already been sent.
+ * Stepping back onto the step that asks.
+ *
+ * The field used to be gated on the address not being in yet, so a step back
+ * replayed Ashley asking for one with nothing to put it in, and See My
+ * Results, Skip and Next all live beside her. Nothing escaped, because the
+ * results cannot be reached without giving it once, but a step that asks and
+ * then offers three ways past itself reads exactly like a hole, and that is
+ * what it was reported as.
+ *
+ * The step asks either way now. What the capture changes is that the field
+ * arrives filled in, and that answering it again writes nothing new.
  */
-test("does not ask twice after stepping back", async ({ page }) => {
+test("asks again on the way back, with the address already in the field", async ({
+  page,
+}) => {
+  const submits: unknown[] = [];
+  await page.route("**/api/epsilon/**", (route) => {
+    submits.push(route.request().postDataJSON());
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true, stubbed: true }),
+    });
+  });
+
+  // answerAllQuestions answers the ask on the way through, which is the one
+  // record the CRM should ever see for this person.
   await walkToRecommendations(page);
+  expect(submits.length).toBe(1);
 
-  // answerAllQuestions already answered the ask on the way through.
   await page.getByRole("button", { name: /Back/i }).first().click();
+  // The segment replays, and the pause that reveals the ask is measured in the
+  // media clock, so it needs real time rather than the walk's fast-forward.
+  await setVideoRateNow(page, 1);
 
-  // Back onto the summary step: it must not re-ask.
-  await page.waitForTimeout(1_500);
-  await expect(emailAskField(page)).toHaveCount(0);
+  await emailAskField(page).waitFor({ state: "visible", timeout: 60_000 });
+  await expect(emailAskField(page)).toHaveValue(WALKTHROUGH_EMAIL);
 
-  // And forward again still reaches the results.
-  const asked = await answerEmailAskIfPresent(page);
-  expect(asked).toBe(false);
+  // Still no way around it, so it cannot read as a bypass.
+  const skips = await skipButton(page).count();
+  if (skips > 0) {
+    await expect(skipButton(page).first()).toBeHidden();
+  }
+
+  // Answering the same address again is the step being seen twice, not
+  // answered twice: it advances, and the CRM gets nothing further.
+  await emailAskSubmit(page).click();
+  await expect(bookRestTestButton(page).first()).toBeVisible({
+    timeout: 45_000,
+  });
+  expect(submits.length).toBe(1);
 });

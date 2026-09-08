@@ -367,8 +367,17 @@ function HomeContent() {
   const capturedEmail =
     storedAnswers.find((answer) => answer.stepId === EMAIL_CAPTURE_STEP_ID)
       ?.value ?? null;
-  const isAwaitingEmailCapture =
-    currentStep?.stepId === EMAIL_CAPTURE_ON_STEP && capturedEmail === null;
+
+  /*
+    The step asks whether or not the address is already in, because Ashley's
+    script asks either way. Gating the field on "not yet captured" meant that
+    stepping back onto this step replayed her asking for an address with no
+    field to put it in, and a live See My Results, Skip and Next beside her.
+    Nothing escaped, since the results are unreachable without giving it once,
+    but a step that asks and then offers three ways past itself reads exactly
+    like a hole. capturedEmail now seeds the field instead of removing it.
+  */
+  const isEmailAskStep = currentStep?.stepId === EMAIL_CAPTURE_ON_STEP;
 
   /**
    * Whether there is a segment left to skip past.
@@ -392,13 +401,15 @@ function HomeContent() {
     // to opt out itself rather than inherit the frame's visibility.
     !avatarHidden &&
     /*
-      Not while the summary step is still waiting for an email. Skip does not
-      seek to the end here, it advances past the manual CTA outright, so it
-      would carry the user to the results having given nothing. The video
-      pauses on its closing cue, which is exactly when the field appears, so
-      without this the button sits live beside the one thing being asked for.
+      Never on the step that asks for an email. Skip does not seek to the end
+      here, it advances past the manual CTA outright, so it would carry the
+      user to the results having given nothing. The video pauses on its closing
+      cue, which is exactly when the field appears, so without this the button
+      sits live beside the one thing being asked for. Withheld on the step
+      rather than on whether the address is in yet, so a replay of the step
+      does not put it back.
     */
-    !isAwaitingEmailCapture &&
+    !isEmailAskStep &&
     (videoState === VideoState.LOADING ||
       videoState === VideoState.READY ||
       videoState === VideoState.PLAYING ||
@@ -1217,6 +1228,16 @@ function HomeContent() {
    */
   const handleEmailCaptureSubmit = useCallback(
     async (email: string) => {
+      /*
+        Already sent, and unchanged. Advance without writing a second record:
+        the step is being seen again, not answered again. A corrected address
+        falls through and is sent, which is the one case worth another write.
+      */
+      if (capturedEmail !== null && email === capturedEmail) {
+        handleSeeOptionsClick();
+        return;
+      }
+
       const newAnswer: StoredAnswer = {
         stepId: EMAIL_CAPTURE_STEP_ID,
         questionText: "Email Capture",
@@ -1270,6 +1291,7 @@ function HomeContent() {
       currentStepIndex,
       sessionId,
       handleSeeOptionsClick,
+      capturedEmail,
     ],
   );
 
@@ -1572,12 +1594,13 @@ function HomeContent() {
                       her while she is still speaking.
                     */
                     ctaSlot={
-                      isAwaitingEmailCapture ? (
+                      isEmailAskStep ? (
                         <EmailCaptureForm
                           onSubmit={handleEmailCaptureSubmit}
                           buttonText={
                             MANUAL_CTA_LABELS[currentStep?.stepId ?? ""]
                           }
+                          initialValue={capturedEmail ?? undefined}
                         />
                       ) : undefined
                     }
