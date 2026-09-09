@@ -125,13 +125,32 @@ test("sends the address on to the CRM", async ({ page }) => {
     timeout: 45_000,
   });
 
-  expect(submitted.length).toBeGreaterThanOrEqual(1);
-  const record = submitted[0] as { email?: string; answers?: unknown[] };
+  // One write, not two. The booking step used to send the second, and the CRM
+  // mails a follow-up on every successful write, so a second one would mail
+  // the same person twice.
+  expect(submitted).toHaveLength(1);
+  const record = submitted[0] as {
+    email?: string;
+    answers?: { stepId: string; label: string }[];
+  };
   expect(record.email).toBe(WALKTHROUGH_EMAIL);
   // The quiz answers ride along with it, so the record is a lead and not just
   // an address.
-  expect(Array.isArray(record.answers)).toBe(true);
-  expect((record.answers ?? []).length).toBeGreaterThan(1);
+  const answers = record.answers ?? [];
+  expect(Array.isArray(answers)).toBe(true);
+  expect(answers.length).toBeGreaterThan(1);
+
+  /*
+    The recommendations are on the payload even though the results step has not
+    been reached yet. This is the only write, and it happens a step before the
+    cards are shown, so the CRM's Product_Recommendations field depends on them
+    being derived at capture time rather than collected from the step.
+  */
+  const recommended = answers.find(
+    (a) => a.stepId === "product-recommendations-step",
+  );
+  expect(recommended).toBeDefined();
+  expect(recommended?.label ?? "").not.toBe("");
 });
 
 /**

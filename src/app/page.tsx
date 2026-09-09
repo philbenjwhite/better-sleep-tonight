@@ -70,6 +70,36 @@ const EMAIL_CAPTURE_STEP_ID = "email-capture";
  */
 const NON_STEP_ANSWER_IDS = new Set([EMAIL_CAPTURE_STEP_ID]);
 
+/**
+ * The mattresses this person is about to be shown.
+ *
+ * Two answers away from being derivable at any point after q6: which options
+ * the results step carries, and whether they sleep alone. The results step
+ * itself works this out when its CTA is clicked, but the CRM record is now
+ * written a step earlier, before that click has happened. Without this the
+ * Product_Recommendations field goes empty for everyone, since nothing writes
+ * to Epsilon after the email.
+ */
+function deriveShownProducts(
+  steps: FlowStep[],
+  answers: StoredAnswer[],
+): { ids: string; names: string } {
+  const resultsStep = steps.find(
+    (step) => step._template === "productRecommendationsStep",
+  );
+  const options =
+    resultsStep?.productRecommendationsContent?.mattressOptions ||
+    DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
+  const sleepAlone =
+    answers.find((a) => a.stepId === "q6-sleep-alone-or-partner")?.value ===
+    "alone";
+  const shown = sleepAlone ? options.slice(0, 2) : options;
+  return {
+    ids: shown.map((p) => p.id).join(","),
+    names: shown.map((p) => p.productName).join(", "),
+  };
+}
+
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
   import("@/components/RecoveryModal").then((m) => m.RecoveryModal)
@@ -1074,19 +1104,19 @@ function HomeContent() {
 
   // Handle "Book a Rest Test" button - advances directly to the next step
   const handleBookRestTest = useCallback(() => {
-    // Determine which product IDs were shown based on sleep-alone answer
+    // Which products were shown, by the same rule the CRM payload uses a step
+    // earlier. Names, not ids, are what Product_Recommendations carries.
+    const { ids: productIds, names: productNames } = deriveShownProducts(
+      flowSteps,
+      storedAnswers,
+    );
+    const options =
+      currentStep?.productRecommendationsContent?.mattressOptions ||
+      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
     const sleepAlone =
       storedAnswers.find((a) => a.stepId === "q6-sleep-alone-or-partner")
         ?.value === "alone";
-    const recommendations =
-      currentStep?.productRecommendationsContent?.mattressOptions ||
-      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
-    const shownProducts = sleepAlone
-      ? recommendations.slice(0, 2)
-      : recommendations;
-    const productIds = shownProducts.map((p) => p.id).join(",");
-    // Product names for Epsilon Product_Recommendations field (mattresses only, no CTA text)
-    const productNames = shownProducts.map((p) => p.productName).join(", ");
+    const shownProducts = sleepAlone ? options.slice(0, 2) : options;
 
     // GA4: track booking intent — fire once per click with all shown products
     trackBookRestTestIntent(
@@ -1134,6 +1164,7 @@ function HomeContent() {
     storedAnswers,
     saveProgress,
     flowParam,
+    flowSteps,
     questionSteps.length,
     logFlowData,
     trackStepGA4,
@@ -1262,6 +1293,30 @@ function HomeContent() {
         navigating: the step advances in place, so the request completes
         normally.
       */
+      /*
+        The recommendations ride along on the payload without joining
+        storedAnswers. This is the only write to the CRM, and it happens a step
+        before the results are shown, so Product_Recommendations has to be
+        derived here or it is never written at all. Kept out of storedAnswers
+        because the results step pushes its own answer under the same id when
+        its CTA is clicked, which would double the GA4 step event.
+      */
+      const shown = deriveShownProducts(flowSteps, updatedAnswers);
+      const crmAnswers = [
+        ...updatedAnswers.map((a) => ({
+          stepId: a.stepId,
+          questionText: a.questionText,
+          value: a.value,
+          label: a.label,
+        })),
+        {
+          stepId: "product-recommendations-step",
+          questionText: "Product Recommendation",
+          value: shown.ids,
+          label: shown.names,
+        },
+      ];
+
       fetch("/api/epsilon/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1269,12 +1324,7 @@ function HomeContent() {
           sessionId,
           email,
           flowId: flowParam,
-          answers: updatedAnswers.map((a) => ({
-            stepId: a.stepId,
-            questionText: a.questionText,
-            value: a.value,
-            label: a.label,
-          })),
+          answers: crmAnswers,
         }),
       }).catch((err) => console.error("[Epsilon] Submit failed:", err));
 
@@ -1288,6 +1338,7 @@ function HomeContent() {
       logFlowData,
       saveProgress,
       flowParam,
+      flowSteps,
       currentStepIndex,
       sessionId,
       handleSeeOptionsClick,
