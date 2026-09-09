@@ -18,9 +18,15 @@ No step is added or removed. Every index is unchanged, so saved progress from th
 
 ## New copy
 
-Summary video, replacing the current script:
+Summary video. The production script keeps all four of its lines and gains a fifth:
 
-> ...I found some mattress options that are perfect for you based on your responses.
+> Did you know that many sleep problems start with an ageing or unsupportive mattress?
+>
+> Our bodies change over the years, but our mattress usually doesn't.
+>
+> If it's been 7 to 10 years since you changed your mattress, maybe it's time to swap it out.
+>
+> I found some mattress options that are perfect for you based on your responses.
 >
 > Leave me your email address so I can show them to you and I'll also send over your personalized sleep report!
 
@@ -106,16 +112,22 @@ The footage arrived early, so the two content commits landed ahead of the build 
 
 ### What the delivered footage changed
 
-The summary segment is the closing copy only. The mattress-age opening is cut, not spliced, so `video-step-1` is now two paragraphs rather than four:
+The summary segment as delivered is the closing copy only: two paragraphs, 12.35s, opening on "I found some mattress options". The mattress-age opening that plays in production was not in the file.
 
-| | Before | After |
-|---|---|---|
-| Runtime | 16.65s | 12.35s |
-| Paragraphs | 4 | 2 |
-| Closing cue opens | 12.72s | 5.92s |
-| Video pauses at | end of file | 11.90s, before the fade to black |
+Rather than lose those three lines, the delivered clip is spliced onto the production one. Both were shot to the same setup, so the join is invisible: the background matte is the same value in both (252, 247, 244), her head measures 372px wide before the cut and 374px after, and the frame's average luminance moves by 1.3 of 255 across it. The cut sits in the 0.355s pause after "maybe it's time to swap it out", under a four-frame dissolve, and the delivered clip's own 0.4s of lead-in restores that pause exactly. Its audio is 1.4 LU hotter, so the production half is lifted to match.
 
-The email field appears when the video pauses at 11.9s, which is the last cue's end. That is the number to reach for when wiring the input into the CTA slot, and the same number the Skip withholding has to key off.
+| | In production | Delivered | Spliced |
+|---|---|---|---|
+| Runtime | 16.65s | 12.35s | 24.33s |
+| Paragraphs | 4 | 2 | 5 |
+| Closing cue opens | n/a | 5.92s | 18.04s |
+| Video pauses at | end of file | 11.90s | 23.27s |
+
+Delivered-clip time `t` maps to `t + 12.117` in the splice, which is how `ashley-2.vtt` was retimed.
+
+The email field appears when the video pauses at 23.27s, the last cue's end. Nothing in the code carries that number: the pause effect and the Skip withholding both read it off the last cue in the VTT, so recutting the segment only ever means recutting the captions.
+
+If Alec re-records this as one continuous take, the splice is thrown away and only `ashley-2.mp4` and `ashley-2.vtt` change. Nothing else on the branch is keyed to the footage.
 
 The booking segment now opens by speaking the words that are also becoming the on-screen headline: "Thanks, you're all set." Captions must match the audio, so the phrase is in `ashley-5.vtt` and in the step's script, which means the speech bubble renders it alongside the headline. **Decide at build time whether the headline or the bubble carries it.** Showing both is the default if nobody chooses.
 

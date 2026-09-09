@@ -203,13 +203,13 @@ test("opens the incoming segment on its first cue, not the outgoing one's last",
 
     if (frame.segment === "ashley-2.mp4") {
       if (frame.line) lines.push(frame.line);
-      // The closing cue opens at 5.92s; a CTA before it is one the stale clock
+      // The closing cue opens at 18.04s; a CTA before it is one the stale clock
       // brought forward.
-      if (frame.cta && (frame.time ?? Infinity) < 5.9) ctaWhileSpeaking = true;
+      if (frame.cta && (frame.time ?? Infinity) < 18.03) ctaWhileSpeaking = true;
     }
     await page.waitForTimeout(100);
   }
 
-  expect(lines[0]).toContain("I found some mattress options");
+  expect(lines[0]).toContain("Did you know that many sleep problems");
   expect(ctaWhileSpeaking).toBe(false);
 });
