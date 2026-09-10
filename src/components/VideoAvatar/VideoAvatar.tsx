@@ -42,6 +42,24 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   // Track if a video has ever been loaded (to know when to show fallback vs last frame)
   const [hasPlayedVideo, setHasPlayedVideo] = useState(false);
 
+  /*
+    Keep the held still mounted while it fades, so the swap dissolves rather
+    than cuts.
+
+    Covering the swap already stopped the black flash, but uncovering it was
+    still a hard cut between two poses that were never recorded to match. The
+    booking segment ends on a closed-mouth smile with her head 26px higher than
+    the idle loop's first frame, where she is mid open-mouth smile, and the two
+    differ by 2 of 255 in average brightness as well. Swapped instantly that
+    reads as a jump; dissolved over a fifth of a second it reads as her
+    settling.
+
+    Deliberately short. Long enough to break up the cut, not long enough to
+    show as a double exposure of two different poses.
+  */
+  const HELD_FRAME_FADE_MS = 200;
+  const [heldFrameMounted, setHeldFrameMounted] = useState(false);
+
   // Register video element with context
   useEffect(() => {
     setVideoRef(videoElementRef.current);
@@ -54,6 +72,19 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
       setHasPlayedVideo(true);
     }
   }, [videoState]);
+
+  // Mount on the way in, unmount only once the fade-out has finished.
+  useEffect(() => {
+    if (showHeldFrame) {
+      setHeldFrameMounted(true);
+      return;
+    }
+    const timer = window.setTimeout(
+      () => setHeldFrameMounted(false),
+      HELD_FRAME_FADE_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [showHeldFrame]);
 
   const isLoading = videoState === VideoState.LOADING;
   const hasError = videoState === VideoState.ERROR;
@@ -140,9 +171,18 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
         <canvas
           ref={setHeldFrameRef}
           className={styles.heldFrame}
+          /*
+            Reports whether the still is covering the player, not whether it is
+            painted: it flips to hidden when the incoming segment presents its
+            first frame, and the fade runs after that.
+          */
           data-held-frame={showHeldFrame ? 'visible' : 'hidden'}
           aria-hidden="true"
-          style={{ display: showHeldFrame ? 'block' : 'none' }}
+          style={{
+            display: heldFrameMounted ? 'block' : 'none',
+            opacity: showHeldFrame ? 1 : 0,
+            transition: `opacity ${HELD_FRAME_FADE_MS}ms ease-out`,
+          }}
         />
       </div>
 
