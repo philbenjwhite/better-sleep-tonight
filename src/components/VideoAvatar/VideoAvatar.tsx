@@ -63,8 +63,18 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({
   const isPlaying = videoState === VideoState.PLAYING;
   const isReady = videoState === VideoState.READY;
 
-  // Only show fallback before first video plays — video freezes on last frame after that
-  const showFallbackImage = !hasPlayedVideo;
+  /*
+    Only show fallback before first video plays — video freezes on last frame
+    after that.
+
+    Also show it on error, which is the case that was missing. A failed segment
+    sets the video to opacity 0 (see videoOpacity below), and once any segment
+    has played this flag was already false, so the two together left the frame
+    empty: no avatar, no poster, no audio, just the speech bubble talking to
+    nobody. One transient media error was enough to do it, and nothing brought
+    the avatar back for the rest of the visit.
+  */
+  const showFallbackImage = !hasPlayedVideo || hasError;
 
   // Video is visible when ready, playing, paused, or ended
   // Include READY state to handle cases where onPlay event doesn't fire

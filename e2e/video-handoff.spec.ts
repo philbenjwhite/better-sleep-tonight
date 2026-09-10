@@ -213,3 +213,47 @@ test("opens the incoming segment on its first cue, not the outgoing one's last",
   expect(lines[0]).toContain("Did you know that many sleep problems");
   expect(ctaWhileSpeaking).toBe(false);
 });
+
+/**
+ * A failed segment leaves something on screen.
+ *
+ * Reported from a branch preview as "no video, no audio, I can only see the
+ * speech bubbles". One console error, and the avatar was gone for the rest of
+ * the visit.
+ *
+ * Two things combined. A failed segment sets the video to opacity 0, and the
+ * still behind it was gated on no segment having played yet, which stops being
+ * true after the intro. So the error hid the video and nothing took its place:
+ * an empty frame with the bubble still talking beside it.
+ *
+ * Neither half is visible from the DOM on its own, and the opacity is inline
+ * rather than a class, so this asserts the state the player reports and the
+ * still that has to be showing underneath it.
+ */
+test("keeps the avatar on screen when a segment fails to load", async ({
+  page,
+}) => {
+  // Fail the summary segment only, so the intro plays first and hasPlayedVideo
+  // is true by the time the error lands. That ordering is the bug.
+  await page.route("**/videos/ashley/ashley-2.mp4", (route) => route.abort());
+
+  await walkToSummaryVideo(page);
+
+  const player = page.locator("[data-video-state]").first();
+  await expect(player).toHaveAttribute("data-video-state", "ERROR", {
+    timeout: 45_000,
+  });
+
+  const still = page.getByRole("img", {
+    name: /Ashley, your virtual sleep guide/i,
+  });
+  await expect(still.first()).toBeVisible({ timeout: 15_000 });
+
+  // The video itself is the thing that got hidden, so prove it is hidden and
+  // that the still is not simply stacked behind a visible black frame.
+  const opacity = await page
+    .locator("video")
+    .first()
+    .evaluate((el) => (el as HTMLVideoElement).style.opacity);
+  expect(opacity).toBe("0");
+});
