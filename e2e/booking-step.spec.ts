@@ -237,3 +237,27 @@ test.describe("on a phone", () => {
     ).toBeVisible();
   });
 });
+
+/**
+ * The closing step offers no navigation.
+ *
+ * Everywhere else in the funnel Back has a forward control opposite it, so the
+ * row never looks half-rendered. This step is the exception: the address is in,
+ * the record is written and the follow-up is sent, so there is nothing ahead to
+ * advance to. A disabled Next implied a step that does not exist, and Back
+ * invited people to walk back out of something they had already finished.
+ */
+test("offers no forward or back control once the funnel is finished", async ({
+  page,
+}) => {
+  await walkToRecommendations(page);
+  await walkToBookingStep(page);
+
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
+
+  await expect(page.getByRole("button", { name: "Back", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Skip", exact: true })).toHaveCount(0);
+});

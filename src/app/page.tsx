@@ -1405,10 +1405,16 @@ function HomeContent() {
   /**
    * The footer's navigation row.
    *
-   * Back is always there once the funnel has started, and so is a forward
-   * control opposite it. Back on its own drew the eye to the one direction the
-   * funnel does not want, and left the row looking like something had failed to
-   * render.
+   * Back is there through the funnel, and so is a forward control opposite it.
+   * Back on its own drew the eye to the one direction the funnel does not want,
+   * and left the row looking like something had failed to render.
+   *
+   * Both go on the closing step. That step is a confirmation: the email is in,
+   * the record is written and the follow-up is sent, so there is nothing ahead
+   * to advance to and nothing behind worth undoing. An inert Next implied a
+   * step that does not exist, and Back invited people to walk back out of a
+   * thing they had already completed. The row is simply absent, the way it is
+   * on the intro.
    *
    * The forward control says which of its jobs it is doing. It skips a segment
    * that is still playing, or it carries a question that already has an answer
@@ -1422,7 +1428,8 @@ function HomeContent() {
    * change of state that means nothing. Ours stays as it is through the pause
    * and leaves with the step.
    */
-  const showFunnelNav = currentView === "question" && !isTransitioning;
+  const showFunnelNav =
+    currentView === "question" && !isTransitioning && !isBookingCtaStep;
   const canKeepAnswer =
     isQuestionStep && selectedAnswer !== null && !isSelectionLocked;
   const funnelNav = (
