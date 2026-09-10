@@ -98,6 +98,65 @@
   cursor: not-allowed;
 }
 
+/*
+  The slot the parent fills when a step asks for something before it advances,
+  rather than just advancing. It left-aligns under the bubble and fades in on
+  the same curve as the button it stands in for, so an ask and a plain advance
+  arrive looking alike.
+*/
+.ctaSlot {
+  align-self: flex-start;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 12px;
+  opacity: 0;
+  animation: ctaFadeIn 0.4s ease-out 0.2s forwards;
+}
+
+/*
+  Styled here rather than passed in, so the slot's submit control matches the
+  CTA it replaces without the parent needing to reach into this module. The
+  fade is left to .ctaSlot above; doubling it on the child compounds the curve.
+*/
+.ctaSlot button[type='submit'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 8px;
+  padding: 16px 24px;
+  background-color: #f68b29;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--sds-typography-body-font-family, "Open Sans", sans-serif);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(246, 139, 41, 0.2);
+}
+
+.ctaSlot button[type='submit']:hover:not(:disabled) {
+  background-color: #ffa54d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(246, 139, 41, 0.3);
+}
+
+.ctaSlot button[type='submit']:focus {
+  outline: 2px solid #f68b29;
+  outline-offset: 2px;
+}
+
+.ctaSlot button[type='submit']:disabled {
+  background-color: #d9d9d9;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 @keyframes ctaFadeIn {
   from {
     opacity: 0;

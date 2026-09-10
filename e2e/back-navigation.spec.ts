@@ -329,32 +329,27 @@ test("returns to the intro screen from the first step", async ({ page }) => {
   await expect(backButton(page)).toBeHidden();
 });
 
-test("backs out of the booking step and clears the recommendation it recorded", async ({
-  page,
-}) => {
+test("gives the closing step no way back out of itself", async ({ page }) => {
   await walkToRecommendations(page);
   await walkToBookingStep(page);
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 30_000,
-  });
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
 
-  const bookedAnswers = await savedAnswerIds(page);
-  expect(bookedAnswers).toContain("product-recommendations-step");
+  /*
+    This used to back out of the closing step, which dropped the recorded
+    recommendation so that booking again appended rather than duplicated. The
+    step is a confirmation now: the address is in, the record is written and the
+    follow-up is sent, so there is nothing worth walking back into. The whole
+    nav row is absent rather than Back alone, since an inert Next opposite it
+    implied a step that does not exist.
 
-  // Booking step → recommendation cards, with the recorded pick dropped so
-  // booking again appends rather than duplicates.
-  await backButton(page).click();
-  await expect(bookRestTestButton(page).first()).toBeVisible({
-    timeout: 30_000,
-  });
-  expect(await savedAnswerIds(page)).not.toContain(
-    "product-recommendations-step",
-  );
+    handleBack keeps its prune either way. It still runs on every other step.
+  */
+  await expect(backButton(page)).toHaveCount(0);
+  await expect(nextButton(page)).toHaveCount(0);
+  await expect(skipButton(page)).toHaveCount(0);
 
-  // And the funnel still runs forward from here
-  await walkToBookingStep(page);
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 45_000,
-  });
+  // The pick it recorded on the way in is still on the record.
   expect(await savedAnswerIds(page)).toContain("product-recommendations-step");
 });

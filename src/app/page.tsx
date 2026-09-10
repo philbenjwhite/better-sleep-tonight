@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Button } from "@/components/Button";
+import { EmailCaptureForm } from "@/components/EmailCaptureForm";
 import {
   AnimatedQuestionBlock,
   CMSAnswerOption,
@@ -47,6 +48,57 @@ import {
   trackFormSubmissionConversion,
 } from "@/lib/analytics/conversionTracking";
 import { createSessionId } from "@/lib/analytics/sessionId";
+
+/**
+ * The step the email is asked for on, and the id its answer is stored under.
+ *
+ * The ask lives inside the summary video step rather than being a step of its
+ * own. A new step would shift every index after it, which breaks resumable
+ * sessions inside the 7-day window, ?step=N links, the analytics step numbers
+ * and the back button's answer pruning, all at once.
+ */
+const EMAIL_CAPTURE_ON_STEP = "video-step-1";
+const EMAIL_CAPTURE_STEP_ID = "email-capture";
+
+/**
+ * Answers that are not addressable by step index.
+ *
+ * handleBack prunes answers by slicing the steps array, so an answer whose id
+ * is not a step id is dropped on any move backwards. The captured email has
+ * already been given and already sent, so re-asking for it would be both rude
+ * and double-counted.
+ */
+const NON_STEP_ANSWER_IDS = new Set([EMAIL_CAPTURE_STEP_ID]);
+
+/**
+ * The mattresses this person is about to be shown.
+ *
+ * Two answers away from being derivable at any point after q6: which options
+ * the results step carries, and whether they sleep alone. The results step
+ * itself works this out when its CTA is clicked, but the CRM record is now
+ * written a step earlier, before that click has happened. Without this the
+ * Product_Recommendations field goes empty for everyone, since nothing writes
+ * to Epsilon after the email.
+ */
+function deriveShownProducts(
+  steps: FlowStep[],
+  answers: StoredAnswer[],
+): { ids: string; names: string } {
+  const resultsStep = steps.find(
+    (step) => step._template === "productRecommendationsStep",
+  );
+  const options =
+    resultsStep?.productRecommendationsContent?.mattressOptions ||
+    DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
+  const sleepAlone =
+    answers.find((a) => a.stepId === "q6-sleep-alone-or-partner")?.value ===
+    "alone";
+  const shown = sleepAlone ? options.slice(0, 2) : options;
+  return {
+    ids: shown.map((p) => p.id).join(","),
+    names: shown.map((p) => p.productName).join(", "),
+  };
+}
 
 // Lazy-load late-stage step components (not needed until user progresses)
 const RecoveryModal = dynamic(() =>
@@ -338,6 +390,25 @@ function HomeContent() {
   // Steps that push the avatar offstage to give their content the full page.
   const avatarHidden = isProductRecommendationsStep;
 
+  /*
+    Derived from the answers rather than held separately, so it survives a
+    refresh and a resumed session for free: answers are already persisted.
+  */
+  const capturedEmail =
+    storedAnswers.find((answer) => answer.stepId === EMAIL_CAPTURE_STEP_ID)
+      ?.value ?? null;
+
+  /*
+    The step asks whether or not the address is already in, because Ashley's
+    script asks either way. Gating the field on "not yet captured" meant that
+    stepping back onto this step replayed her asking for an address with no
+    field to put it in, and a live See My Results, Skip and Next beside her.
+    Nothing escaped, since the results are unreachable without giving it once,
+    but a step that asks and then offers three ways past itself reads exactly
+    like a hole. capturedEmail now seeds the field instead of removing it.
+  */
+  const isEmailAskStep = currentStep?.stepId === EMAIL_CAPTURE_ON_STEP;
+
   /**
    * Whether there is a segment left to skip past.
    *
@@ -359,6 +430,16 @@ function HomeContent() {
     // and was hidden by that same class; this one lives in the footer, so it has
     // to opt out itself rather than inherit the frame's visibility.
     !avatarHidden &&
+    /*
+      Never on the step that asks for an email. Skip does not seek to the end
+      here, it advances past the manual CTA outright, so it would carry the
+      user to the results having given nothing. The video pauses on its closing
+      cue, which is exactly when the field appears, so without this the button
+      sits live beside the one thing being asked for. Withheld on the step
+      rather than on whether the address is in yet, so a replay of the step
+      does not put it back.
+    */
+    !isEmailAskStep &&
     (videoState === VideoState.LOADING ||
       videoState === VideoState.READY ||
       videoState === VideoState.PLAYING ||
@@ -551,8 +632,10 @@ function HomeContent() {
         .slice(0, targetIndex)
         .map((step, index) => step.stepId || `step-${index}`),
     );
-    const updatedAnswers = storedAnswers.filter((answer) =>
-      retainedStepIds.has(answer.stepId),
+    const updatedAnswers = storedAnswers.filter(
+      (answer) =>
+        retainedStepIds.has(answer.stepId) ||
+        NON_STEP_ANSWER_IDS.has(answer.stepId),
     );
 
     // Re-select whatever the user picked on the step being returned to, so it
@@ -1021,19 +1104,19 @@ function HomeContent() {
 
   // Handle "Book a Rest Test" button - advances directly to the next step
   const handleBookRestTest = useCallback(() => {
-    // Determine which product IDs were shown based on sleep-alone answer
+    // Which products were shown, by the same rule the CRM payload uses a step
+    // earlier. Names, not ids, are what Product_Recommendations carries.
+    const { ids: productIds, names: productNames } = deriveShownProducts(
+      flowSteps,
+      storedAnswers,
+    );
+    const options =
+      currentStep?.productRecommendationsContent?.mattressOptions ||
+      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
     const sleepAlone =
       storedAnswers.find((a) => a.stepId === "q6-sleep-alone-or-partner")
         ?.value === "alone";
-    const recommendations =
-      currentStep?.productRecommendationsContent?.mattressOptions ||
-      DEFAULT_PRODUCT_RECOMMENDATIONS.mattressOptions;
-    const shownProducts = sleepAlone
-      ? recommendations.slice(0, 2)
-      : recommendations;
-    const productIds = shownProducts.map((p) => p.id).join(",");
-    // Product names for Epsilon Product_Recommendations field (mattresses only, no CTA text)
-    const productNames = shownProducts.map((p) => p.productName).join(", ");
+    const shownProducts = sleepAlone ? options.slice(0, 2) : options;
 
     // GA4: track booking intent — fire once per click with all shown products
     trackBookRestTestIntent(
@@ -1081,6 +1164,7 @@ function HomeContent() {
     storedAnswers,
     saveProgress,
     flowParam,
+    flowSteps,
     questionSteps.length,
     logFlowData,
     trackStepGA4,
@@ -1166,12 +1250,28 @@ function HomeContent() {
     }
   }, [currentStepIndex, questionSteps.length, currentStep, trackStepGA4]);
 
-  // Handle email submission on the booking CTA step (gates the Register Email button)
-  const handleBookingEmailSubmit = useCallback(
+  /**
+   * The funnel's conversion point, moved here from the booking step.
+   *
+   * The recommendations are what the person came for, so the address is asked
+   * for while they still want something, rather than after they have already
+   * been handed it.
+   */
+  const handleEmailCaptureSubmit = useCallback(
     async (email: string) => {
+      /*
+        Already sent, and unchanged. Advance without writing a second record:
+        the step is being seen again, not answered again. A corrected address
+        falls through and is sent, which is the one case worth another write.
+      */
+      if (capturedEmail !== null && email === capturedEmail) {
+        handleSeeOptionsClick();
+        return;
+      }
+
       const newAnswer: StoredAnswer = {
-        stepId: "booking-cta-step",
-        questionText: "Booking Email",
+        stepId: EMAIL_CAPTURE_STEP_ID,
+        questionText: "Email Capture",
         value: email,
         label: email,
         timestamp: new Date(),
@@ -1180,32 +1280,72 @@ function HomeContent() {
       setStoredAnswers(updatedAnswers);
       trackStepGA4(newAnswer);
       trackFormSubmissionConversion();
-      logFlowData(updatedAnswers, `Booking Email: ${email}`);
+      logFlowData(updatedAnswers, `Email Capture: ${email}`);
 
-      // Push full contact record to Epsilon CRM via API route (fire-and-forget)
-      // keepalive: true ensures the request survives the page navigation to /thank-you
+      saveProgress({
+        flowId: flowParam,
+        currentStepIndex,
+        answers: updatedAnswers,
+      });
+
+      /*
+        No keepalive, unlike the booking submit this replaces. Nothing is
+        navigating: the step advances in place, so the request completes
+        normally.
+      */
+      /*
+        The recommendations ride along on the payload without joining
+        storedAnswers. This is the only write to the CRM, and it happens a step
+        before the results are shown, so Product_Recommendations has to be
+        derived here or it is never written at all. Kept out of storedAnswers
+        because the results step pushes its own answer under the same id when
+        its CTA is clicked, which would double the GA4 step event.
+      */
+      const shown = deriveShownProducts(flowSteps, updatedAnswers);
+      const crmAnswers = [
+        ...updatedAnswers.map((a) => ({
+          stepId: a.stepId,
+          questionText: a.questionText,
+          value: a.value,
+          label: a.label,
+        })),
+        {
+          stepId: "product-recommendations-step",
+          questionText: "Product Recommendation",
+          value: shown.ids,
+          label: shown.names,
+        },
+      ];
+
       fetch("/api/epsilon/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        keepalive: true,
         body: JSON.stringify({
           sessionId,
           email,
           flowId: flowParam,
-          answers: updatedAnswers.map((a) => ({
-            stepId: a.stepId,
-            questionText: a.questionText,
-            value: a.value,
-            label: a.label,
-          })),
+          answers: crmAnswers,
         }),
       }).catch((err) => console.error("[Epsilon] Submit failed:", err));
 
-      // Redirect to thank-you page
-      window.location.href = "/thank-you";
+      // Advance through the existing handler rather than repeating it. It
+      // clears the speech, response flags and backdrop in a specific order.
+      handleSeeOptionsClick();
     },
-    [storedAnswers, logFlowData, trackStepGA4, sessionId, flowParam],
+    [
+      storedAnswers,
+      trackStepGA4,
+      logFlowData,
+      saveProgress,
+      flowParam,
+      flowSteps,
+      currentStepIndex,
+      sessionId,
+      handleSeeOptionsClick,
+      capturedEmail,
+    ],
   );
+
 
   // Show next question after avatar response finishes
   // (Skip if in video step or booking CTA step - those have their own handlers)
@@ -1265,10 +1405,16 @@ function HomeContent() {
   /**
    * The footer's navigation row.
    *
-   * Back is always there once the funnel has started, and so is a forward
-   * control opposite it. Back on its own drew the eye to the one direction the
-   * funnel does not want, and left the row looking like something had failed to
-   * render.
+   * Back is there through the funnel, and so is a forward control opposite it.
+   * Back on its own drew the eye to the one direction the funnel does not want,
+   * and left the row looking like something had failed to render.
+   *
+   * Both go on the closing step. That step is a confirmation: the email is in,
+   * the record is written and the follow-up is sent, so there is nothing ahead
+   * to advance to and nothing behind worth undoing. An inert Next implied a
+   * step that does not exist, and Back invited people to walk back out of a
+   * thing they had already completed. The row is simply absent, the way it is
+   * on the intro.
    *
    * The forward control says which of its jobs it is doing. It skips a segment
    * that is still playing, or it carries a question that already has an answer
@@ -1282,7 +1428,8 @@ function HomeContent() {
    * change of state that means nothing. Ours stays as it is through the pause
    * and leaves with the step.
    */
-  const showFunnelNav = currentView === "question" && !isTransitioning;
+  const showFunnelNav =
+    currentView === "question" && !isTransitioning && !isBookingCtaStep;
   const canKeepAnswer =
     isQuestionStep && selectedAnswer !== null && !isSelectionLocked;
   const funnelNav = (
@@ -1498,6 +1645,23 @@ function HomeContent() {
                         ? handleSeeOptionsClick
                         : undefined
                     }
+                    /*
+                      The ask replaces the plain advance button in the same
+                      slot, on the same trigger, so it appears only once Ashley
+                      has finished asking for it rather than over the top of
+                      her while she is still speaking.
+                    */
+                    ctaSlot={
+                      isEmailAskStep ? (
+                        <EmailCaptureForm
+                          onSubmit={handleEmailCaptureSubmit}
+                          buttonText={
+                            MANUAL_CTA_LABELS[currentStep?.stepId ?? ""]
+                          }
+                          initialValue={capturedEmail ?? undefined}
+                        />
+                      ) : undefined
+                    }
                   />
                 )}
 
@@ -1637,7 +1801,13 @@ function HomeContent() {
                     postalCode=""
                     hideMap
                     stackCtas
-                    onEmailSubmit={handleBookingEmailSubmit}
+                    /*
+                      The address was given a step earlier, so the rest-test
+                      card has nothing left to ask for: its own copy promises
+                      the email that is already on its way. Contact Us is the
+                      only thing the closing step still offers.
+                    */
+                    hideBookCta
                   />
                 </div>
               )}

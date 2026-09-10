@@ -5,6 +5,7 @@ import {
   stubExternalServices,
   walkToBookingStep,
   walkToRecommendations,
+  WALKTHROUGH_EMAIL,
 } from "./helpers";
 
 /**
@@ -116,17 +117,10 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
     });
   });
 
+  // The submit fires from the summary step now, not the booking step, so the
+  // walk to the recommendations is what triggers it: answering the email ask
+  // is what buys the results.
   await walkToRecommendations(page);
-  await walkToBookingStep(page);
-
-  // The booking CTA is gated behind the email field.
-  const emailInput = page.locator('input[type="email"]').first();
-  await emailInput.waitFor({ timeout: 45_000 });
-  await emailInput.fill("e2e-test@visualboston.com");
-  await page
-    .getByRole("button", { name: /Register Email/i })
-    .first()
-    .click();
 
   await expect.poll(() => submitBody, { timeout: 30_000 }).not.toBeNull();
 
@@ -136,7 +130,7 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
   };
   const answeredStepIds = body.answers.map((a) => a.stepId);
 
-  expect(body.email).toBe("e2e-test@visualboston.com");
+  expect(body.email).toBe(WALKTHROUGH_EMAIL);
   for (const stepId of [
     "q1-trouble-falling-asleep",
     "q2-sleep-position",
@@ -190,16 +184,9 @@ test("files the submit under a well-formed session key without crypto.randomUUID
     });
   });
 
+  // The submit fires from the summary step, which the walk answers on its way
+  // through, so reaching the recommendations is enough to trigger it.
   await walkToRecommendations(page);
-  await walkToBookingStep(page);
-
-  const emailInput = page.locator('input[type="email"]').first();
-  await emailInput.waitFor({ timeout: 45_000 });
-  await emailInput.fill("e2e-test@visualboston.com");
-  await page
-    .getByRole("button", { name: /Register Email/i })
-    .first()
-    .click();
 
   await expect.poll(() => submitBody, { timeout: 30_000 }).not.toBeNull();
 
