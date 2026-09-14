@@ -57,7 +57,9 @@ test("reaches the closing step with Contact Us and no second ask", async ({
 });
 
 /**
- * The closing line has to survive the hand-off to the idle loop.
+ * The closing line has to survive the hand-off to the idle loop. Since the
+ * September re-record it is the promise of the follow-up email, which is the
+ * one line on the step that tells the person what happens next.
  *
  * It did not. Paragraphs are the cue texts while a segment plays and the split
  * script once it stops, and the parent withdraws the cue track when the avatar
@@ -72,7 +74,12 @@ test("keeps the closing line up after the avatar goes idle", async ({
   await walkToRecommendations(page);
   await walkToBookingStep(page);
 
-  const closing = page.getByText(/Thanks for visiting Better Sleep Tonight/i);
+  // The bubble specifically. The footer's phone-only avatar text carries the
+  // same words and is display:none at this width, so a bare text match finds
+  // two and fails strict mode.
+  const closing = page
+    .locator('p[class*="SpeechBubbleSequence_text"]')
+    .filter({ hasText: /book a rest test at your nearest Ashley store/i });
   await expect(closing).toBeVisible({ timeout: 45_000 });
 
   // Past the end of the segment, which is when the idle clip takes over.
@@ -90,7 +97,9 @@ test("closes on the promise of the follow-up email", async ({ page }) => {
   await walkToBookingStep(page);
 
   await expect(
-    page.getByText(/Thanks for visiting Better Sleep Tonight/i),
+    page
+      .locator('p[class*="SpeechBubbleSequence_text"]')
+      .filter({ hasText: /book a rest test at your nearest Ashley store/i }),
   ).toBeVisible({ timeout: 45_000 });
 
   // Nothing offers to book on the spot, and the card that used to ask for an

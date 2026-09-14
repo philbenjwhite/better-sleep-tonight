@@ -32,9 +32,11 @@ Summary video. The production script keeps all four of its lines and gains a fif
 
 Final step, replacing the current script:
 
-> I'll send you an email in the next 5 minutes so you can book a rest test at your nearest Ashley store.
+> You're all set.
 >
-> Thanks for visiting Better Sleep Tonight.
+> I'll send you an email in the next five minutes so you can book a rest test at your nearest Ashley store.
+
+The 14 September re-record of this segment ends there. It carries no "Thanks for visiting Better Sleep Tonight", and the spoken "Thanks" that opened it is cut, since the headline above the bubble already says it.
 
 ## Where the input renders
 
@@ -135,7 +137,7 @@ The email field appears when the video pauses on the last cue's end. Nothing in 
 
 Source footage is HEVC at 9.3 Mbit/s. It ships as H.264 High at CRF 25, which matches the rest of the library and lands at 6.56MB, the same weight as the segment it replaces, so the preload budget is unchanged. CRF 23 measured 0.0017 better on SSIM for 2MB more, which is not a trade worth making on a flat-matte talking head.
 
-The booking segment now opens by speaking the words that are also becoming the on-screen headline: "Thanks, you're all set." Captions must match the audio, so the phrase is in `ashley-5.vtt` and in the step's script, which means the speech bubble renders it alongside the headline. **Decide at build time whether the headline or the bubble carries it.** Showing both is the default if nobody chooses.
+The booking segment as first delivered opened by speaking the words that are also the on-screen headline: "Thanks, you're all set." Captions must match the audio, so both carried it. **Decided 14 September: the headline carries "Thanks", the bubble does not.** The re-recorded segment is cut at 0.42s, inside the pause after the word, so the audio and bubble open on "You're all set." The first frame is held for 0.3s in front of that so speech starts 0.42s into the file, which is the headroom this segment needed after "Thanks" was clipping on cold starts.
 
 ## Needed from Ashley's team
 
