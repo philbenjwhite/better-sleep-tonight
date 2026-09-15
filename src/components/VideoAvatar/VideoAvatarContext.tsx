@@ -17,6 +17,19 @@ export const VIDEO_REGISTRY: Record<string, string> = {
   'avatar-intro': '/videos/ashley/ashley-1.mp4',
 };
 
+/**
+ * Codes off MediaError, which is the only thing the error event carries.
+ * Worth spelling out: the difference between a network drop and a codec the
+ * browser will never play is the difference between "retry" and "re-encode",
+ * and the bare log this replaced said neither.
+ */
+const MEDIA_ERROR_NAMES: Record<number, string> = {
+  1: 'ABORTED (fetch cancelled, usually a src swap mid-load)',
+  2: 'NETWORK (transport failed after the media started loading)',
+  3: 'DECODE (the bytes arrived but the decoder rejected them)',
+  4: 'SRC_NOT_SUPPORTED (wrong container, codec, or a 404 served as HTML)',
+};
+
 export type VideoId = keyof typeof VIDEO_REGISTRY;
 
 export enum VideoState {
@@ -528,7 +541,16 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
   }, [onVideoEnd]);
 
   const onVideoError = useCallback(() => {
-    console.error('[VideoAvatar] Video error');
+    const element = videoRef.current;
+    const mediaError = element?.error;
+    console.error('[VideoAvatar] Video error', {
+      src: element?.currentSrc || element?.src || '(none)',
+      code: mediaError?.code,
+      reason: mediaError ? MEDIA_ERROR_NAMES[mediaError.code] ?? 'unknown' : 'no MediaError',
+      detail: mediaError?.message || '(empty)',
+      networkState: element?.networkState,
+      readyState: element?.readyState,
+    });
     setVideoState(VideoState.ERROR);
     // Nothing is coming to replace the held frame, and the steps that survive a
     // failed segment do it by showing their own content, not the player.

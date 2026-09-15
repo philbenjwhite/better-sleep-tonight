@@ -1,7 +1,7 @@
 # Better Sleep Tonight: Tracking Changelog
 
 **For:** the marketing and analytics team
-**Last updated:** 12 August 2026
+**Last updated:** 9 September 2026
 
 This is the single reference for what the quiz tracks today and what has changed since launch. Events have been added, renamed and retired along the way, and reports built on the older list will silently return nothing. If you are about to build a report, check the "Retired" and "Never fired" sections first.
 
@@ -31,7 +31,7 @@ This document supersedes the earlier GA4 tracking and Epsilon overview docs, bot
 | 2 to 7 | Six sleep questions | `quiz_step`, step IDs `q1` through `q6` |
 | 8 | Summary video | `quiz_step`, step ID `video-step-1` |
 | 9 | Mattress recommendation cards | `quiz_step`, step ID `product-recommendations-step` |
-| 10 | Booking screen with email gate | `quiz_step`, step ID `booking-cta-step`, plus `quiz_complete` |
+| 10 | Booking confirmation | `quiz_step`, step ID `booking-cta-step`, plus `quiz_complete` |
 
 ### Live GA4 events
 
@@ -44,11 +44,11 @@ Everything flows through Google Tag Manager (GTM-NFXLP675) into GA4 (G-MQ5XK3D94
 | `quiz_step_back` | The user taps the back control | `quiz_step` (where they landed), `from_step`, `step_id`, `flow_id` |
 | `quiz_complete` | The user reaches the final booking screen | `quiz_step`, `flow_id` |
 | `book_rest_test_intent` | The user taps "Book A Rest Test" on the cards | `item_count`, `items` (ID, name and price per mattress), `event_label` |
-| `conversion` | The user submits their email on the booking screen | Google Ads conversion, TSI Rest Test |
+| `conversion` | The user submits their email on the summary video step | Google Ads conversion, TSI Rest Test |
 
 ### Things worth knowing about these events
 
-**`quiz_complete` means "reached the final screen", not "submitted".** It fires on arrival at the booking screen, before the email gate. The event that means a real lead is `conversion`, or a `quiz_step` carrying the `booking-cta-step` ID. Expect `quiz_complete` to be meaningfully higher than submissions, and do not read the gap as a bug.
+**`quiz_complete` means "reached the final screen", not "submitted".** It fires on arrival at the booking screen. From September 2026 the email is asked for two steps earlier, so the order reverses: `conversion` now fires before `quiz_complete`, and everyone who reaches the final screen has already submitted. Expect the two to sit much closer together than they used to, and expect `conversion` to be the higher of the pair, since some people give an email and then leave. The event that means a real lead is `conversion`.
 
 **`quiz_step` also fires on the two video steps.** Video steps report an answer value of "Y" when the segment finishes, and carry two extra parameters: `skipped` tells you whether the user used the skip control, and `video_error` tells you the segment failed to load and the funnel advanced them anyway. `skipped` is how you measure appetite for the skip control that was added in July.
 
@@ -76,6 +76,18 @@ Fields populated today:
 | `Product_Recommendations` | The mattresses that were shown to this person |
 
 **`Product_Recommendations` records what was recommended, not what was chosen.** The quiz recommends two mattresses to people sleeping alone and three to people sleeping with a partner, and the field lists whichever set appeared. There is no "mattress selected" data, because the funnel does not ask anyone to pick one. Older documentation describes this field as capturing a selected product with a size and a price. That is not correct and has not been for some time.
+
+### Coming in September 2026: the email is asked for earlier
+
+**Nothing changes on Epsilon's side.** Same list, same record key, same fields, same follow up email, same credentials. There is nothing for the PeopleCloud team to configure, and no reason to expect the integration to stop working. The list below is what changes in the data, not in the setup.
+
+Ashley now asks for the email as she finishes the summary video, two steps before the end, instead of on the final booking screen. Records are still written once per person and the follow up email is still sent once.
+
+**What a record means changes, and this is the one that matters.** Until now a record could only exist if someone reached the booking screen, so the count of records was the count of bookings. From this release a record exists for everyone who gives an email, whether or not they carry on. Any report or segment that treats "has a record" as "booked a rest test" will start counting people who did not.
+
+There is no field on the list that distinguishes the two. **We are asking Ashley's team to add one:** a `Booked_Rest_Test` attribute, Y or N. Until it exists, bookings have to be counted in GA4 rather than in PeopleCloud. GA4 has the distinction already and is not affected by this change.
+
+Everything else holds. All six answers and `Product_Recommendations` are still on the record, and `Product_Recommendations` still lists what the person was about to be shown, even though the email now arrives before the cards do.
 
 ---
 

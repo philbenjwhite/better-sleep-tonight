@@ -57,9 +57,10 @@ test.describe("no skipping", () => {
     await walkToRecommendations(page);
     await walkToBookingStep(page);
 
-    // The booking step gates its CTA behind an email field.
+    // The closing step confirms rather than asking again: Contact Us is the
+    // only thing it still offers.
     await expect(
-      page.getByRole("button", { name: /Register Email/i }).first(),
+      page.getByRole("link", { name: /Contact Us/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
   });
 });
@@ -114,7 +115,7 @@ test.describe("skipping", () => {
     });
 
     await expect(
-      page.getByRole("button", { name: /Register Email/i }).first(),
+      page.getByRole("link", { name: /Contact Us/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
 
     // Nothing advances past the booking step, so a skip has nowhere to go. The

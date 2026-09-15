@@ -34,6 +34,31 @@ export const answerOption = (page: Page) =>
 /** The manual CTA that some video steps pause on ("Let's Go", "See My Results"). */
 export const videoCta = (page: Page) => page.locator('[class*="ctaButton"]');
 
+/** The address the walk gives whenever the funnel asks for one. */
+export const WALKTHROUGH_EMAIL = "walkthrough@example.com";
+
+/** The summary step's email ask: a field, and the submit that advances. */
+export const emailAskField = (page: Page) =>
+  page.locator('input[type="email"]');
+export const emailAskSubmit = (page: Page) =>
+  page.locator('form button[type="submit"]').first();
+
+/**
+ * Answer the email ask if it is showing, and report whether it was.
+ *
+ * The ask replaced the plain advance button on the summary step, so a walk
+ * that only knows how to click a CTA stalls there: the submit stays disabled
+ * until the field has something in it. Fills and submits it the way a person
+ * would rather than reaching past it, so the specs downstream still arrive at
+ * the results through the real path.
+ */
+export async function answerEmailAskIfPresent(page: Page): Promise<boolean> {
+  if (!(await emailAskField(page).isVisible().catch(() => false))) return false;
+  await emailAskField(page).fill(WALKTHROUGH_EMAIL).catch(() => {});
+  await emailAskSubmit(page).click().catch(() => {});
+  return true;
+}
+
 /**
  * Force a playback rate on every avatar video.
  *
@@ -209,6 +234,11 @@ export async function answerAllQuestions(
       await skipButton(page)
         .waitFor({ state: "hidden", timeout: 15_000 })
         .catch(() => {});
+      continue;
+    }
+
+    if (await answerEmailAskIfPresent(page)) {
+      await page.waitForTimeout(400);
       continue;
     }
 

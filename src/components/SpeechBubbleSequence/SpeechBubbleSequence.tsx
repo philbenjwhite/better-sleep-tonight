@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import styles from './SpeechBubbleSequence.module.css';
 
 export interface SubtitleCue {
@@ -34,6 +34,16 @@ export interface SpeechBubbleSequenceProps {
   ctaButtonText?: string;
   /** Called when CTA button is clicked */
   onCtaClick?: () => void;
+  /**
+   * Rendered in place of the CTA button, on the same trigger. Use it where the
+   * step asks for something before it advances rather than just advancing.
+   *
+   * Timing is the reason this is a slot here rather than markup in the parent:
+   * whatever goes in it appears only once the closing paragraph has finished
+   * animating, so an ask arrives when the avatar finishes asking, not over the
+   * top of her while she is still speaking.
+   */
+  ctaSlot?: ReactNode;
   /** Hide the chat bubble tail pointer */
   hideTail?: boolean;
 }
@@ -51,6 +61,7 @@ export function SpeechBubbleSequence({
   videoCurrentTime,
   ctaButtonText,
   onCtaClick,
+  ctaSlot,
   hideTail = false,
 }: SpeechBubbleSequenceProps) {
   // Determine if we're in video-synced mode
@@ -66,9 +77,16 @@ export function SpeechBubbleSequence({
     while (i < text.length) {
       const char = text[i];
 
-      // Track quote state (handle double quotes " " " and single quotes ' ' ')
-      // Using Unicode: " = \u201C, " = \u201D, ' = \u2018, ' = \u2019
-      if (char === '"' || char === '\u201C' || char === '\u201D' || char === "'" || char === '\u2018' || char === '\u2019') {
+      /*
+        Track quote state, so a paragraph break inside quoted speech is kept
+        rather than treated as a break between paragraphs.
+
+        Double quotes only. An apostrophe is a contraction far more often than
+        a quote mark, and counting it as one left the state flipped on the
+        first "you're" or "I'll" in a paragraph, which then swallowed the
+        break after it and merged that paragraph into the next.
+      */
+      if (char === '"' || char === '\u201C' || char === '\u201D') {
         inQuote = !inQuote;
         current += char;
         i++;
@@ -162,7 +180,14 @@ export function SpeechBubbleSequence({
     }
   }, [isVideoSyncMode, videoCueIndex, lastShownCueIndex, subtitleCues, videoCurrentTime, onComplete]);
 
-  const currentParagraph = paragraphs[currentParagraphIndex] || '';
+  /*
+    Clamped, because the list can shrink under a live index. Paragraphs are the
+    cue texts while a segment is playing and the split message once it is not,
+    and the parent withdraws the cue track when the avatar hands off to its
+    idle loop. An index left past the end rendered a bubble with nothing in it.
+  */
+  const currentParagraph =
+    paragraphs[Math.min(currentParagraphIndex, paragraphs.length - 1)] || '';
   const words = currentParagraph.split(' ').filter(w => w);
 
   // In video-sync mode, calculate dynamic word delay based on cue duration
@@ -318,8 +343,14 @@ export function SpeechBubbleSequence({
         )}
       </div>
 
+      {/* Slot and CTA share the one trigger, so an ask lands exactly where the
+          plain advance button would have. */}
+      {ctaSlot && showCtaButton && (
+        <div className={styles.ctaSlot}>{ctaSlot}</div>
+      )}
+
       {/* CTA Button - shown beneath speech bubble after text animation on last paragraph */}
-      {ctaButtonText && showCtaButton && (
+      {!ctaSlot && ctaButtonText && showCtaButton && (
         <button
           type="button"
           className={styles.ctaButton}

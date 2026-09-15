@@ -56,9 +56,9 @@ test("stops a segment short of the black frames it ends on", async ({
   await walkToBookingStep(page, {
     beforeBookRestTest: () => setVideoRateNow(page, 1),
   });
-  await expect(page.locator('input[type="email"]')).toBeVisible({
-    timeout: 30_000,
-  });
+  await expect(
+    page.getByRole("link", { name: /Contact Us/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
 
   const stopped = await page.waitForFunction(
     () => (window as unknown as Record<string, unknown>).__stoppedAt,
@@ -125,9 +125,11 @@ test("holds the outgoing frame while the next segment loads", async ({
  * cue is the closing one. The context only learns a position from timeupdate,
  * so between the src assignment and the new segment's first event there is a
  * window where the value on offer belongs to the segment that just finished.
- * The intro runs 22.6s and the summary's last cue opens at 12.7s, so that stale
- * value sits past every cue in the file: the summary opened on its closing line
- * and offered "See My Results" while Ashley was still on her first sentence.
+ * The intro runs 22.6s and the summary now runs 12.35s in total, so that stale
+ * value sits past the end of the incoming file rather than merely past its last
+ * cue: the summary opened on its closing line and offered "See My Results"
+ * while Ashley was still on her first sentence. The shorter segment the email
+ * capture move brought in widens that window, it does not close it.
  *
  * Chromium hides it by resetting the position as the src is assigned and firing
  * an immediate timeupdate, so this reproduces only on a phone unless that first
@@ -201,13 +203,57 @@ test("opens the incoming segment on its first cue, not the outgoing one's last",
 
     if (frame.segment === "ashley-2.mp4") {
       if (frame.line) lines.push(frame.line);
-      // The closing cue opens at 12.7s; a CTA before it is one the stale clock
+      // The closing cue opens at 15.77s; a CTA before it is one the stale clock
       // brought forward.
-      if (frame.cta && (frame.time ?? Infinity) < 12) ctaWhileSpeaking = true;
+      if (frame.cta && (frame.time ?? Infinity) < 15.76) ctaWhileSpeaking = true;
     }
     await page.waitForTimeout(100);
   }
 
-  expect(lines[0]).toContain("Did you know");
+  expect(lines[0]).toContain("Did you know that many sleep problems");
   expect(ctaWhileSpeaking).toBe(false);
+});
+
+/**
+ * A failed segment leaves something on screen.
+ *
+ * Reported from a branch preview as "no video, no audio, I can only see the
+ * speech bubbles". One console error, and the avatar was gone for the rest of
+ * the visit.
+ *
+ * Two things combined. A failed segment sets the video to opacity 0, and the
+ * still behind it was gated on no segment having played yet, which stops being
+ * true after the intro. So the error hid the video and nothing took its place:
+ * an empty frame with the bubble still talking beside it.
+ *
+ * Neither half is visible from the DOM on its own, and the opacity is inline
+ * rather than a class, so this asserts the state the player reports and the
+ * still that has to be showing underneath it.
+ */
+test("keeps the avatar on screen when a segment fails to load", async ({
+  page,
+}) => {
+  // Fail the summary segment only, so the intro plays first and hasPlayedVideo
+  // is true by the time the error lands. That ordering is the bug.
+  await page.route("**/videos/ashley/ashley-2.mp4", (route) => route.abort());
+
+  await walkToSummaryVideo(page);
+
+  const player = page.locator("[data-video-state]").first();
+  await expect(player).toHaveAttribute("data-video-state", "ERROR", {
+    timeout: 45_000,
+  });
+
+  const still = page.getByRole("img", {
+    name: /Ashley, your virtual sleep guide/i,
+  });
+  await expect(still.first()).toBeVisible({ timeout: 15_000 });
+
+  // The video itself is the thing that got hidden, so prove it is hidden and
+  // that the still is not simply stacked behind a visible black frame.
+  const opacity = await page
+    .locator("video")
+    .first()
+    .evaluate((el) => (el as HTMLVideoElement).style.opacity);
+  expect(opacity).toBe("0");
 });

@@ -37,6 +37,12 @@ export const STEP_TO_EPSILON_FIELD: Record<string, string> = {
   // video, postal code capture and store locations) were removed in August 2026
   // to shorten the path to booking. Nothing writes to them now.
   "product-recommendations-step": "Product_Recommendations",
+  // Note: the email is captured on the summary step since September 2026 and
+  // arrives under `email-capture`, which is deliberately absent from this map.
+  // EmailAddress and CustomerKey are set from the payload's own `email` field
+  // in buildRecordPayload, not from an answer, so the record carries the
+  // address either way. `booking-cta-step` stays mapped for the historic
+  // submissions that still carry it.
   "booking-cta-step": "EmailAddress",
 };
 

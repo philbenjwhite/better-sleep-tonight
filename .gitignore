@@ -61,3 +61,4 @@ storybook-static
 # live under public/ where Next.js would serve them. The web encodes committed
 # beside them (ashley-*.mp4) are what the app actually loads.
 public/videos/ashley/Ash-Video-*.mp4
+public/videos/ashley/latest/
