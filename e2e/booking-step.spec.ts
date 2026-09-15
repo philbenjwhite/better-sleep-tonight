@@ -57,9 +57,7 @@ test("reaches the closing step with Contact Us and no second ask", async ({
 });
 
 /**
- * The closing line has to survive the hand-off to the idle loop. Since the
- * September re-record it is the promise of the follow-up email, which is the
- * one line on the step that tells the person what happens next.
+ * The closing line has to survive the hand-off to the idle loop.
  *
  * It did not. Paragraphs are the cue texts while a segment plays and the split
  * script once it stops, and the parent withdraws the cue track when the avatar
@@ -79,7 +77,7 @@ test("keeps the closing line up after the avatar goes idle", async ({
   // two and fails strict mode.
   const closing = page
     .locator('p[class*="SpeechBubbleSequence_text"]')
-    .filter({ hasText: /book a rest test at your nearest Ashley store/i });
+    .filter({ hasText: /Thanks for visiting Better Sleep Tonight/i });
   await expect(closing).toBeVisible({ timeout: 45_000 });
 
   // Past the end of the segment, which is when the idle clip takes over.
@@ -99,7 +97,7 @@ test("closes on the promise of the follow-up email", async ({ page }) => {
   await expect(
     page
       .locator('p[class*="SpeechBubbleSequence_text"]')
-      .filter({ hasText: /book a rest test at your nearest Ashley store/i }),
+      .filter({ hasText: /Thanks for visiting Better Sleep Tonight/i }),
   ).toBeVisible({ timeout: 45_000 });
 
   // Nothing offers to book on the spot, and the card that used to ask for an
