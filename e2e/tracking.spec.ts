@@ -1,10 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
-  bookRestTestButton,
+  bookRestTestLink,
   speedUpVideos,
   stubExternalServices,
   walkToBookingStep,
-  walkToRecommendations,
   WALKTHROUGH_EMAIL,
 } from "./helpers";
 
@@ -59,7 +58,7 @@ test.beforeEach(async ({ page }) => {
 test("fires the expected GA4 events across the funnel", async ({ page }) => {
   const events = captureGa4Events(page);
 
-  await walkToRecommendations(page);
+  await walkToBookingStep(page);
 
   expect(namesOf(events)).toContain("quiz_start");
 
@@ -87,11 +86,26 @@ test("fires the expected GA4 events across the funnel", async ({ page }) => {
   expect(videoStepEvent?.payload).toHaveProperty("skipped");
 });
 
-test("fires book_rest_test_intent and never buy_now_click", async ({ page }) => {
+/**
+ * The intent now fires from the closing step's link out to the booking engine
+ * rather than from a recommendation card. The link opens a new tab on Ashley's
+ * site, which the test swallows: only the event fired on the way out matters.
+ */
+test("fires book_rest_test_intent and never buy_now_click", async ({
+  page,
+  context,
+}) => {
   const events = captureGa4Events(page);
+  await context.route("https://ashleyhomestore.ca/**", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "" }),
+  );
 
-  await walkToRecommendations(page);
-  await bookRestTestButton(page).first().click();
+  await walkToBookingStep(page);
+  const popup = context.waitForEvent("page");
+  await bookRestTestLink(page).first().click();
+  const booking = await popup;
+  expect(booking.url()).toContain("ashleyhomestore.ca/pages/book-appointment");
+  await booking.close();
 
   await expect
     .poll(() => namesOf(events))
@@ -117,10 +131,9 @@ test("Epsilon submit carries the six questions and no purchase intent", async ({
     });
   });
 
-  // The submit fires from the summary step now, not the booking step, so the
-  // walk to the recommendations is what triggers it: answering the email ask
-  // is what buys the results.
-  await walkToRecommendations(page);
+  // The submit fires from the summary step, not the booking step: answering
+  // the email ask is what lands on the closing step.
+  await walkToBookingStep(page);
 
   await expect.poll(() => submitBody, { timeout: 30_000 }).not.toBeNull();
 
@@ -185,8 +198,8 @@ test("files the submit under a well-formed session key without crypto.randomUUID
   });
 
   // The submit fires from the summary step, which the walk answers on its way
-  // through, so reaching the recommendations is enough to trigger it.
-  await walkToRecommendations(page);
+  // through, so reaching the closing step is enough to trigger it.
+  await walkToBookingStep(page);
 
   await expect.poll(() => submitBody, { timeout: 30_000 }).not.toBeNull();
 

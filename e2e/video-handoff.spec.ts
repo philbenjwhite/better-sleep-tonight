@@ -1,11 +1,9 @@
 import { test, expect } from "@playwright/test";
 import {
-  bookRestTestButton,
   setVideoRateNow,
   speedUpVideos,
   stubExternalServices,
   walkToBookingStep,
-  walkToRecommendations,
   walkToSummaryVideo,
 } from "./helpers";
 
@@ -32,29 +30,30 @@ test.beforeEach(async ({ page }) => {
 test("stops a segment short of the black frames it ends on", async ({
   page,
 }) => {
-  await walkToRecommendations(page);
-
-  // Record where the closing segment actually stops. The state it leaves behind
-  // is gone within a frame or two of the swap, so catch it as it happens rather
-  // than polling for it afterwards.
-  await page.evaluate(() => {
-    const video = document.querySelector("video");
-    if (!video) return;
-    video.addEventListener("pause", () => {
-      (window as unknown as Record<string, unknown>).__stoppedAt = {
-        time: video.currentTime,
-        duration: video.duration,
-      };
-    });
-  });
-
   // Real time for the segment under test. The margin is measured in the media's
   // own clock, and the walk's 16x fast-forward covers four seconds of it between
   // timeupdates — enough to step over the margin, the black tail and the end of
   // the video in a single tick, which is a fact about the harness rather than
   // about the funnel.
   await walkToBookingStep(page, {
-    beforeBookRestTest: () => setVideoRateNow(page, 1),
+    beforeEmailSubmit: async () => {
+      // Record where the closing segment actually stops. The state it leaves
+      // behind is gone within a frame or two of the swap, so catch it as it
+      // happens rather than polling for it afterwards. Scoped to the closing
+      // segment, because the summary is paused on its ask when this is set up.
+      await page.evaluate(() => {
+        const video = document.querySelector("video");
+        if (!video) return;
+        video.addEventListener("pause", () => {
+          if (!/ashley-5\.mp4/.test(video.currentSrc)) return;
+          (window as unknown as Record<string, unknown>).__stoppedAt = {
+            time: video.currentTime,
+            duration: video.duration,
+          };
+        });
+      });
+      await setVideoRateNow(page, 1);
+    },
   });
   await expect(
     page.getByRole("link", { name: /Contact Us/i }).first(),
@@ -86,11 +85,7 @@ test("holds the outgoing frame while the next segment loads", async ({
     await route.continue();
   });
 
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
-  await expect(bookRestTestButton(page).first()).toBeHidden({
-    timeout: 30_000,
-  });
 
   const heldFrame = page.locator("canvas[data-held-frame]");
   await expect(heldFrame).toHaveAttribute("data-held-frame", "visible", {
@@ -127,7 +122,7 @@ test("holds the outgoing frame while the next segment loads", async ({
  * window where the value on offer belongs to the segment that just finished.
  * The intro runs 22.6s and the summary now runs 12.35s in total, so that stale
  * value sits past the end of the incoming file rather than merely past its last
- * cue: the summary opened on its closing line and offered "See My Results"
+ * cue: the summary opened on its closing line and offered its CTA
  * while Ashley was still on her first sentence. The shorter segment the email
  * capture move brought in widens that window, it does not close it.
  *
@@ -203,9 +198,9 @@ test("opens the incoming segment on its first cue, not the outgoing one's last",
 
     if (frame.segment === "ashley-2.mp4") {
       if (frame.line) lines.push(frame.line);
-      // The closing cue opens at 15.77s; a CTA before it is one the stale clock
+      // The closing cue opens at 11.80s; a CTA before it is one the stale clock
       // brought forward.
-      if (frame.cta && (frame.time ?? Infinity) < 15.76) ctaWhileSpeaking = true;
+      if (frame.cta && (frame.time ?? Infinity) < 11.79) ctaWhileSpeaking = true;
     }
     await page.waitForTimeout(100);
   }

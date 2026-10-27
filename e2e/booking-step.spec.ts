@@ -3,7 +3,6 @@ import {
   speedUpVideos,
   stubExternalServices,
   walkToBookingStep,
-  walkToRecommendations,
 } from "./helpers";
 
 /**
@@ -34,9 +33,12 @@ test.beforeEach(async ({ page }) => {
 
 /**
  * What makes the closing step actionable, now that the address is taken a step
- * earlier and this one only confirms.
+ * earlier and this one confirms it and sends people on to book.
  */
 async function expectBookingStepUsable(page: import("@playwright/test").Page) {
+  await expect(
+    page.getByRole("link", { name: /Book a Rest Test/i }).first(),
+  ).toBeVisible({ timeout: 30_000 });
   await expect(
     page.getByRole("link", { name: /Contact Us/i }).first(),
   ).toBeVisible({ timeout: 30_000 });
@@ -48,10 +50,9 @@ async function expectBookingStepUsable(page: import("@playwright/test").Page) {
   ).toHaveCount(0);
 }
 
-test("reaches the closing step with Contact Us and no second ask", async ({
+test("reaches the closing step with both CTAs and no second ask", async ({
   page,
 }) => {
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
   await expectBookingStepUsable(page);
 });
@@ -69,7 +70,6 @@ test("reaches the closing step with Contact Us and no second ask", async ({
 test("keeps the closing line up after the avatar goes idle", async ({
   page,
 }) => {
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
 
   // The bubble specifically. The footer's phone-only avatar text carries the
@@ -77,7 +77,7 @@ test("keeps the closing line up after the avatar goes idle", async ({
   // two and fails strict mode.
   const closing = page
     .locator('p[class*="SpeechBubbleSequence_text"]')
-    .filter({ hasText: /Thanks for visiting Better Sleep Tonight/i });
+    .filter({ hasText: /book a rest test at your nearest Ashley store/i });
   await expect(closing).toBeVisible({ timeout: 45_000 });
 
   // Past the end of the segment, which is when the idle clip takes over.
@@ -86,22 +86,20 @@ test("keeps the closing line up after the avatar goes idle", async ({
 });
 
 /**
- * The promise of the follow-up email moved off a card and into what Ashley
- * says, so the flow script and the caption file carry it now. Both are edited
- * by hand, which is why it is worth pinning.
+ * The promise of the sleep report lives in what Ashley says, so the flow
+ * script and the caption file carry it. Both are edited by hand, which is why
+ * it is worth pinning.
  */
-test("closes on the promise of the follow-up email", async ({ page }) => {
-  await walkToRecommendations(page);
+test("closes on the promise of the sleep report", async ({ page }) => {
   await walkToBookingStep(page);
 
   await expect(
     page
       .locator('p[class*="SpeechBubbleSequence_text"]')
-      .filter({ hasText: /Thanks for visiting Better Sleep Tonight/i }),
+      .filter({ hasText: /Look out for that sleep report/i }),
   ).toBeVisible({ timeout: 45_000 });
 
-  // Nothing offers to book on the spot, and the card that used to ask for an
-  // address a second time is gone with it.
+  // The card that used to ask for an address a second time is gone.
   await expect(page.getByText(/before you buy/i)).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: /Schedule Appointment/i }),
@@ -126,7 +124,6 @@ test("still shows the booking CTA when the final video fails to load", async ({
       : route.continue(),
   );
 
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
 
   // The regression: this state used to hide the entire step behind the render
@@ -154,7 +151,6 @@ test("treats a refused final segment as blocked, not as a broken video", async (
     };
   });
 
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
 
   // The step stays fully actionable.
@@ -189,7 +185,6 @@ test.describe("on a phone", () => {
   test("keeps the card clear of the header and scrollable at keyboard height", async ({
     page,
   }) => {
-    await walkToRecommendations(page);
     await walkToBookingStep(page);
     await page
       .getByRole("link", { name: /Contact Us/i })
@@ -257,7 +252,6 @@ test.describe("on a phone", () => {
 test("offers no forward or back control once the funnel is finished", async ({
   page,
 }) => {
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
 
   await expect(
