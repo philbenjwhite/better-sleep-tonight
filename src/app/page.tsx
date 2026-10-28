@@ -61,6 +61,14 @@ const EMAIL_CAPTURE_ON_STEP = "video-step-1";
 const EMAIL_CAPTURE_STEP_ID = "email-capture";
 
 /**
+ * What Ashley does once the closing segment ends: a 7.6s loop in which she
+ * waves, touches her glasses and settles back into her idle pose. The cut
+ * point is the frame where her pose meets the loop's first, so it repeats
+ * without a jump. The thank-you page keeps the plain idle loop.
+ */
+const CLOSING_LOOP_SRC = "/videos/ashley/ashley-closing-loop.mp4";
+
+/**
  * Answers that are not addressable by step index.
  *
  * handleBack prunes answers by slicing the steps array, so an answer whose id
@@ -516,9 +524,9 @@ function HomeContent() {
       if (step._template === "videoStep" && step.video) {
         upcomingVideos.push(step.video);
       }
-      // Also preload idle loop when approaching booking CTA
+      // Also preload the closing loop when approaching booking CTA
       if (step._template === "bookingCtaStep") {
-        upcomingVideos.push("/videos/ashley/ashley-idle-crf28.mp4");
+        upcomingVideos.push(CLOSING_LOOP_SRC);
       }
       // Stop collecting once we have enough candidates — preloadMultiple
       // will limit based on connection quality
@@ -934,14 +942,14 @@ function HomeContent() {
     play,
   ]);
 
-  // When booking CTA video ends, switch to looping idle video
+  // When booking CTA video ends, switch to the closing loop
   useEffect(() => {
     if (
       isBookingCtaStep &&
       videoState === VideoState.ENDED &&
       currentVideoId === currentStep?.video
     ) {
-      play("/videos/ashley/ashley-idle-crf28.mp4", { loop: true });
+      play(CLOSING_LOOP_SRC, { loop: true });
     }
   }, [isBookingCtaStep, videoState, currentVideoId, currentStep?.video, play]);
 

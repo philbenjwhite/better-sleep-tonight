@@ -11,7 +11,7 @@ import styles from "./page.module.css";
 
 const VIDEO_SRC = "/videos/ashley/ashley-thank-you.mp4";
 const VTT_SRC = "/videos/ashley/ashley-thank-you.vtt";
-// The same loop the booking step hands off to when its segment ends.
+// The plain idle loop. The booking step now hands off to its own closing loop.
 const IDLE_SRC = "/videos/ashley/ashley-idle-crf28.mp4";
 
 export default function ThankYouPage() {

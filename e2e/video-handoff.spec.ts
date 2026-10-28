@@ -78,9 +78,9 @@ test("stops a segment short of the black frames it ends on", async ({
 test("holds the outgoing frame while the next segment loads", async ({
   page,
 }) => {
-  // Stall the idle clip so the gap the still covers is long enough to assert
+  // Stall the closing loop so the gap the still covers is long enough to assert
   // on. It is milliseconds on a warm cache and a good deal longer on a phone.
-  await page.route("**/ashley-idle-crf28.mp4", async (route) => {
+  await page.route("**/ashley-closing-loop.mp4", async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 2_000));
     await route.continue();
   });
