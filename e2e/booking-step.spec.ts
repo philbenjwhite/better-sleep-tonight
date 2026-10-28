@@ -77,7 +77,7 @@ test("keeps the closing line up after the avatar goes idle", async ({
   // two and fails strict mode.
   const closing = page
     .locator('p[class*="SpeechBubbleSequence_text"]')
-    .filter({ hasText: /book a rest test at your nearest Ashley store/i });
+    .filter({ hasText: /Thanks for visiting Better Sleep Tonight/i });
   await expect(closing).toBeVisible({ timeout: 45_000 });
 
   // Past the end of the segment, which is when the idle clip takes over.
@@ -89,15 +89,18 @@ test("keeps the closing line up after the avatar goes idle", async ({
  * The promise of the sleep report lives in what Ashley says, so the flow
  * script and the caption file carry it. Both are edited by hand, which is why
  * it is worth pinning.
+ *
+ * Read from the caption file rather than the bubble. It is the middle line now
+ * the sign-off is back, and the bubble shows one line at a time, so at the
+ * walk's playback speed it has come and gone before an assertion can see it.
  */
 test("closes on the promise of the sleep report", async ({ page }) => {
   await walkToBookingStep(page);
 
-  await expect(
-    page
-      .locator('p[class*="SpeechBubbleSequence_text"]')
-      .filter({ hasText: /Look out for that sleep report/i }),
-  ).toBeVisible({ timeout: 45_000 });
+  const captions = await (
+    await page.request.get("/videos/ashley/ashley-5.vtt")
+  ).text();
+  expect(captions).toMatch(/Look out for that sleep report/i);
 
   // The card that used to ask for an address a second time is gone.
   await expect(page.getByText(/before you buy/i)).toHaveCount(0);

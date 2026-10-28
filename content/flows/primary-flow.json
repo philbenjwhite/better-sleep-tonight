@@ -269,7 +269,7 @@
       "stepId": "booking-cta-step",
       "internalName": "Booking CTAs",
       "video": "/videos/ashley/ashley-5.mp4",
-      "script": "You're all set!\n\nLook out for that sleep report, and go right ahead if you'd like to book a rest test at your nearest Ashley store.",
+      "script": "You're all set!\n\nLook out for that sleep report, and go right ahead if you'd like to book a rest test at your nearest Ashley store.\n\nThanks for visiting Better Sleep Tonight.",
       "ctaBookTitle": "Book a Rest Test",
       "ctaBookDescription": "Try your matches in person at your nearest Ashley store.",
       "ctaBookButtonText": "Book a Rest Test",
