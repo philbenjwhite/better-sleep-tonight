@@ -81,8 +81,9 @@ test("puts the cursor in the field on arrival", async ({ page }) => {
 test("refuses an address that is not one, and stays put", async ({ page }) => {
   await walkToEmailAsk(page);
 
-  await emailAskField(page).fill("not-an-address");
-  await emailAskSubmit(page).click();
+  await emailAskField(page).fill("alec");
+  await expect(emailAskSubmit(page)).toBeDisabled();
+  await emailAskField(page).blur();
 
   await expect(page.getByText(/valid email/i)).toBeVisible();
   await expect(bookRestTestLink(page)).toHaveCount(0);
