@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { StoredAnswer } from '@/components/DevPanel';
 
+// v3: the product recommendations step was removed, shifting the booking step
+// from 9 to 8; a v2 save on 9 would resume past the end of the flow.
 // v2: the purchase-intent question was removed, shifting every later step index
 // by one. Bumping the key retires saved progress written against the old flow so
 // returning users inside the 7-day window do not resume on the wrong step.
-export const STORAGE_KEY = 'bettersleep_progress_v2';
+export const STORAGE_KEY = 'bettersleep_progress_v3';
 const EXPIRATION_DAYS = 7;
 
 export interface SavedProgress {
