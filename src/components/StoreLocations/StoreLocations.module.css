@@ -380,6 +380,11 @@ button.actionLink {
   .section {
     padding: var(--sds-size-space-600, 24px) 0;
   }
+
+  /* The CTA cards keep their white fill, so they keep their side padding. */
+  .ctaRow > .section {
+    padding: var(--sds-size-space-600, 24px);
+  }
 }
 
 /* Tablet — collapse to 2-row layout per card */
@@ -438,6 +443,10 @@ button.actionLink {
 
   .section {
     padding: var(--sds-size-space-400, 16px) 0;
+  }
+
+  .ctaRow > .section {
+    padding: var(--sds-size-space-400, 16px);
   }
 
   .mapContainer {
