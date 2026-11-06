@@ -61,6 +61,14 @@ const EMAIL_CAPTURE_ON_STEP = "video-step-1";
 const EMAIL_CAPTURE_STEP_ID = "email-capture";
 
 /**
+ * What Ashley does once the closing segment ends: a 7.6s loop in which she
+ * waves, touches her glasses and settles back into her idle pose. The cut
+ * point is the frame where her pose meets the loop's first, so it repeats
+ * without a jump. The thank-you page keeps the plain idle loop.
+ */
+const CLOSING_LOOP_SRC = "/videos/ashley/ashley-closing-loop.mp4";
+
+/**
  * Answers that are not addressable by step index.
  *
  * handleBack prunes answers by slicing the steps array, so an answer whose id
@@ -80,10 +88,7 @@ const NON_STEP_ANSWER_IDS = new Set([EMAIL_CAPTURE_STEP_ID]);
  * Product_Recommendations field goes empty for everyone, since nothing writes
  * to Epsilon after the email.
  */
-function deriveShownProducts(
-  steps: FlowStep[],
-  answers: StoredAnswer[],
-): { ids: string; names: string } {
+function shownProductOptions(steps: FlowStep[], answers: StoredAnswer[]) {
   const resultsStep = steps.find(
     (step) => step._template === "productRecommendationsStep",
   );
@@ -93,7 +98,14 @@ function deriveShownProducts(
   const sleepAlone =
     answers.find((a) => a.stepId === "q6-sleep-alone-or-partner")?.value ===
     "alone";
-  const shown = sleepAlone ? options.slice(0, 2) : options;
+  return sleepAlone ? options.slice(0, 2) : options;
+}
+
+function deriveShownProducts(
+  steps: FlowStep[],
+  answers: StoredAnswer[],
+): { ids: string; names: string } {
+  const shown = shownProductOptions(steps, answers);
   return {
     ids: shown.map((p) => p.id).join(","),
     names: shown.map((p) => p.productName).join(", "),
@@ -230,6 +242,7 @@ function HomeContent() {
     play,
     pause,
     skip,
+    seek,
     preloadMultiple,
     currentTime,
     currentVideoId,
@@ -408,6 +421,16 @@ function HomeContent() {
     like a hole. capturedEmail now seeds the field instead of removing it.
   */
   const isEmailAskStep = currentStep?.stepId === EMAIL_CAPTURE_ON_STEP;
+  const emailAskCue = isEmailAskStep
+    ? videoSubtitleCues[videoSubtitleCues.length - 1]
+    : undefined;
+  const isBeforeEmailAsk =
+    emailAskCue !== undefined && currentTime < emailAskCue.startTime;
+
+  // Skip on the summary jumps to Ashley asking for the email, not past it.
+  const handleSkipToEmailAsk = useCallback(() => {
+    if (emailAskCue) seek(emailAskCue.startTime);
+  }, [emailAskCue, seek]);
 
   /**
    * Whether there is a segment left to skip past.
@@ -431,15 +454,13 @@ function HomeContent() {
     // to opt out itself rather than inherit the frame's visibility.
     !avatarHidden &&
     /*
-      Never on the step that asks for an email. Skip does not seek to the end
-      here, it advances past the manual CTA outright, so it would carry the
-      user to the results having given nothing. The video pauses on its closing
-      cue, which is exactly when the field appears, so without this the button
-      sits live beside the one thing being asked for. Withheld on the step
-      rather than on whether the address is in yet, so a replay of the step
-      does not put it back.
+      On the step that asks for an email, only until the ask itself. Skip
+      there fast-forwards to the closing cue (see handleSkipToEmailAsk) rather
+      than advancing, since advancing would carry the user past the one thing
+      the step is for. Once she is asking, there is nothing left to skip to.
+      Without cues there is no ask to seek to, so the old rule holds: no Skip.
     */
-    !isEmailAskStep &&
+    (!isEmailAskStep || isBeforeEmailAsk) &&
     (videoState === VideoState.LOADING ||
       videoState === VideoState.READY ||
       videoState === VideoState.PLAYING ||
@@ -503,9 +524,9 @@ function HomeContent() {
       if (step._template === "videoStep" && step.video) {
         upcomingVideos.push(step.video);
       }
-      // Also preload idle loop when approaching booking CTA
+      // Also preload the closing loop when approaching booking CTA
       if (step._template === "bookingCtaStep") {
-        upcomingVideos.push("/videos/ashley/ashley-idle-crf28.mp4");
+        upcomingVideos.push(CLOSING_LOOP_SRC);
       }
       // Stop collecting once we have enough candidates — preloadMultiple
       // will limit based on connection quality
@@ -921,14 +942,14 @@ function HomeContent() {
     play,
   ]);
 
-  // When booking CTA video ends, switch to looping idle video
+  // When booking CTA video ends, switch to the closing loop
   useEffect(() => {
     if (
       isBookingCtaStep &&
       videoState === VideoState.ENDED &&
       currentVideoId === currentStep?.video
     ) {
-      play("/videos/ashley/ashley-idle-crf28.mp4", { loop: true });
+      play(CLOSING_LOOP_SRC, { loop: true });
     }
   }, [isBookingCtaStep, videoState, currentVideoId, currentStep?.video, play]);
 
@@ -1169,6 +1190,22 @@ function HomeContent() {
     logFlowData,
     trackStepGA4,
   ]);
+
+  /*
+    The closing step's Book a Rest Test is a plain link to Ashley's booking
+    engine in a new tab, so all there is to do here is record the intent. With
+    the results page gone, the products are the shortlist the sleep report
+    carries, by the same rule the CRM payload uses.
+  */
+  const handleClosingBookRestTest = useCallback(() => {
+    trackBookRestTestIntent(
+      shownProductOptions(flowSteps, storedAnswers).map((p) => ({
+        id: p.id,
+        productName: p.productName,
+        price: p.basePrice,
+      })),
+    );
+  }, [flowSteps, storedAnswers]);
 
   const handleTextSubmit = useCallback(
     (value: string) => {
@@ -1438,7 +1475,10 @@ function HomeContent() {
       {canKeepAnswer ? (
         <NextButton variant="primary" onClick={handleKeepAnswer} />
       ) : canAdvanceVideo ? (
-        <NextButton label="Skip" onClick={handleSkipVideo} />
+        <NextButton
+          label="Skip"
+          onClick={isEmailAskStep ? handleSkipToEmailAsk : handleSkipVideo}
+        />
       ) : (
         <NextButton disabled />
       )}
@@ -1498,6 +1538,8 @@ function HomeContent() {
         brandName={activeFlow.globalVariables.brandName}
         isMuted={isMuted}
         onVolumeClick={handleVolumeToggle}
+        // Nothing on the landing screen has sound, so the toggle waits for Ashley.
+        showVolumeButton={currentView !== "intro"}
         centerContent={
           <StepIndicator
             steps={getProgressSteps(currentView, currentStep?._template)}
@@ -1802,12 +1844,11 @@ function HomeContent() {
                     hideMap
                     stackCtas
                     /*
-                      The address was given a step earlier, so the rest-test
-                      card has nothing left to ask for: its own copy promises
-                      the email that is already on its way. Contact Us is the
-                      only thing the closing step still offers.
+                      No onEmailSubmit: the address was given on the summary,
+                      so the rest-test card is a straight link to the booking
+                      engine rather than an email gate.
                     */
-                    hideBookCta
+                    onBookRestTest={handleClosingBookRestTest}
                   />
                 </div>
               )}

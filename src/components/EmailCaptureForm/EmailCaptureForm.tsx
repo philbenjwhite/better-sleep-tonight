@@ -79,14 +79,14 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!EMAIL_PATTERN.test(email)) {
+      if (!EMAIL_PATTERN.test(email.trim())) {
         setIsValid(false);
         return;
       }
       setIsValid(true);
       setIsSubmitting(true);
       try {
-        await onSubmit(email);
+        await onSubmit(email.trim());
         setHasSubmitted(true);
       } finally {
         setIsSubmitting(false);
@@ -103,6 +103,13 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
   */
   const isLocked = isSubmitting || hasSubmitted;
 
+  /*
+    The button stays off until the field holds something shaped like an
+    address, so "alec" never looks submittable. Leaving the field with a
+    partial address says why, since a disabled button explains nothing.
+  */
+  const looksLikeEmail = EMAIL_PATTERN.test(email.trim());
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -117,6 +124,9 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
           onChange={(e) => {
             setEmail(e.target.value);
             if (!isValid) setIsValid(true);
+          }}
+          onBlur={() => {
+            if (email.trim() && !looksLikeEmail) setIsValid(false);
           }}
           placeholder={placeholder}
           className={`${styles.input} ${!isValid ? styles.inputInvalid : ''}`}
@@ -133,7 +143,7 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
       <button
         type="submit"
         className={buttonClassName}
-        disabled={isLocked || !email.trim()}
+        disabled={isLocked || !looksLikeEmail}
       >
         {isLocked ? submittingText : buttonText}
       </button>

@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import {
   answerAllQuestions,
   answerOption,
-  bookRestTestButton,
+  bookRestTestLink,
+  emailAskField,
   keepVideosSlow,
   setVideoRateNow,
   skipButton,
@@ -10,7 +11,7 @@ import {
   startFunnel,
   stubExternalServices,
   walkToBookingStep,
-  walkToRecommendations,
+  walkToSummaryVideo,
 } from "./helpers";
 
 /**
@@ -21,9 +22,11 @@ import {
  * All avatar video runs through one playback system (VideoAvatarContext), so
  * the control is built once and rendered for every video. Skipping produces the
  * same ENDED transition a finished video produces, which is what makes the
- * downstream advance handlers work unchanged. Two video steps (intro-video and
- * video-step-1) normally pause and wait for a manual CTA — a skip must advance
- * straight past them rather than reveal that button.
+ * downstream advance handlers work unchanged. The intro normally pauses and
+ * waits for a manual CTA, and a skip must advance straight past it rather than
+ * reveal that button. The summary is the exception: its skip fast-forwards to
+ * the email ask instead of advancing, since advancing would carry the user past
+ * the one thing the step is for.
  */
 
 const QUESTION_COUNT = 6; // q1..q6 — the purchase-intent question was removed
@@ -46,19 +49,25 @@ test.describe("no skipping", () => {
 
     const answered = await answerAllQuestions(page);
 
-    // The purchase-intent question is gone: six questions, then the cards.
+    // The purchase-intent question is gone: six questions, then the email ask
+    // and the closing step.
     expect(answered).toHaveLength(QUESTION_COUNT);
     // No question should repeat — a duplicate would mean the walk double-answered.
     expect(new Set(answered).size).toBe(QUESTION_COUNT);
-    await expect(bookRestTestButton(page).first()).toBeVisible();
+    await expect(bookRestTestLink(page).first()).toBeVisible();
   });
 
-  test("reaches the booking step from the recommendations", async ({ page }) => {
-    await walkToRecommendations(page);
+  test("lands on the booking step straight from the email ask", async ({
+    page,
+  }) => {
     await walkToBookingStep(page);
 
-    // The closing step confirms rather than asking again: Contact Us is the
-    // only thing it still offers.
+    // No recommendations page in between: the closing step sends people on to
+    // book, with Contact Us beside it.
+    await expect(bookRestTestLink(page).first()).toHaveAttribute(
+      "href",
+      "https://ashleyhomestore.ca/pages/book-appointment",
+    );
     await expect(
       page.getByRole("link", { name: /Contact Us/i }).first(),
     ).toBeVisible({ timeout: 45_000 });
@@ -87,31 +96,64 @@ test.describe("skipping", () => {
     await expect(page.getByRole("button", { name: /Let.s Go/i })).toHaveCount(0);
   });
 
-  test("skipping every video still reaches the recommendations", async ({
+  test("skipping every video still reaches the booking step", async ({
     page,
   }) => {
     await startFunnel(page);
 
-    // Skip every video, answer every question. The recommendations step must
-    // still be reached: skipping video-step-1 must not carry the user past the
-    // cards into the booking step.
+    // Skip every video, answer every question. The summary's skip lands on the
+    // ask rather than past it, so the walk still has to give an address to get
+    // to the end.
     const answered = await answerAllQuestions(page, { skipVideos: true });
 
     expect(answered).toHaveLength(QUESTION_COUNT);
-    await expect(bookRestTestButton(page).first()).toBeVisible({
+    await expect(bookRestTestLink(page).first()).toBeVisible({
       timeout: 45_000,
     });
   });
 
+  /**
+   * Skip on the summary jumps to the ask, it does not advance.
+   *
+   * The segment runs about twenty seconds, most of it the lead-in to the ask,
+   * so the skip is worth having there. But the step exists to take an address,
+   * so the skip seeks to the closing cue and lets Ashley ask, and withdraws
+   * itself once she does.
+   */
+  test("skip on the summary fast-forwards to the email ask", async ({
+    page,
+  }) => {
+    await walkToSummaryVideo(page);
+
+    await expect(skipButton(page)).toBeVisible({ timeout: 30_000 });
+    await skipButton(page).click();
+
+    // Still on the summary, now on the ask: the closing cue opens at 11.80s.
+    const time = await page
+      .locator("video")
+      .first()
+      .evaluate((v) => (v as HTMLVideoElement).currentTime);
+    expect(time).toBeGreaterThanOrEqual(11.7);
+    await expect(
+      page
+        .locator('p[class*="SpeechBubbleSequence_text"]')
+        .filter({ hasText: /Leave me your email address/i }),
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(skipButton(page)).toBeHidden({ timeout: 10_000 });
+
+    // The ask arrives once she has finished it, and nothing went past it.
+    await expect(emailAskField(page)).toBeVisible({ timeout: 30_000 });
+    await expect(bookRestTestLink(page)).toHaveCount(0);
+  });
+
   test("the booking step offers no skip control", async ({ page }) => {
     await speedUpVideos(page);
-    await walkToRecommendations(page);
     // Slow the closing video right before landing on it. At the walk's
     // fast-forward it ends and hands off to the idle loop before the assertion
     // runs, and the idle loop suppresses the control on its own — so the
     // interesting window, the video actually playing, would go unchecked.
     await walkToBookingStep(page, {
-      beforeBookRestTest: () => setVideoRateNow(page, 0.25),
+      beforeEmailSubmit: () => setVideoRateNow(page, 0.25),
     });
 
     await expect(

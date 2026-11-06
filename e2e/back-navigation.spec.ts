@@ -1,7 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
   answerOption,
-  bookRestTestButton,
   nextButton,
   questionHeading,
   skipButton,
@@ -10,7 +9,6 @@ import {
   stubExternalServices,
   videoCta,
   walkToBookingStep,
-  walkToRecommendations,
 } from "./helpers";
 
 /**
@@ -23,11 +21,15 @@ import {
  * user just backed out of.
  */
 
-const STORAGE_KEY = "bettersleep_progress_v2";
+const STORAGE_KEY = "bettersleep_progress_v3";
 
 // Exact, because one of the sleep-position answers is "On My Back".
 const backButton = (page: Page) =>
   page.getByRole("button", { name: "Back", exact: true });
+
+/** The header's mute/unmute control, labelled by what it would do. */
+const soundToggle = (page: Page) =>
+  page.getByRole("button", { name: /^(Unmute|Mute) audio$/ });
 
 /** Answers recorded in localStorage, which is what a reload would restore. */
 const savedAnswerIds = (page: Page) =>
@@ -296,24 +298,6 @@ test.describe("narrow viewport", () => {
       page.getByRole("button", { name: "Get Better Sleep" }),
     ).toBeVisible();
   });
-
-  test("offers no way forward from the results steps", async ({ page }) => {
-    await walkToRecommendations(page);
-
-    // Nothing is playing here, and the way on is a card's own CTA, so the
-    // forward control has nothing to do and says so.
-    await expect(skipButton(page)).toBeHidden();
-    await expect(nextButton(page)).toBeDisabled();
-
-    // Back stays in the same place it occupies everywhere else. The footer is
-    // fixed, so it holds over the scrolling cards rather than being scrolled
-    // past — which is why the results steps used to need their own exemption.
-    const backBox = await backButton(page).boundingBox();
-    expect(backBox!.y).toBeGreaterThan(844 - 200);
-
-    await backButton(page).click();
-    await expect(bookRestTestButton(page).first()).toBeHidden();
-  });
 });
 
 test("returns to the intro screen from the first step", async ({ page }) => {
@@ -327,10 +311,30 @@ test("returns to the intro screen from the first step", async ({ page }) => {
   ).toBeVisible();
   // Nothing to step back to from the intro screen.
   await expect(backButton(page)).toBeHidden();
+  // Nor anything to hear: the sound toggle waits for Ashley.
+  await expect(soundToggle(page)).toHaveCount(0);
+});
+
+/**
+ * The sound toggle appears with Ashley, not before.
+ *
+ * Nothing on the landing screen has sound, so a toggle there offered a choice
+ * that changed nothing and drew the eye away from the one button that matters.
+ */
+test("shows the sound toggle only once Ashley is on screen", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: "Get Better Sleep" }),
+  ).toBeVisible({ timeout: 30_000 });
+  await expect(soundToggle(page)).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Get Better Sleep" }).click();
+  await expect(soundToggle(page).first()).toBeVisible({ timeout: 30_000 });
 });
 
 test("gives the closing step no way back out of itself", async ({ page }) => {
-  await walkToRecommendations(page);
   await walkToBookingStep(page);
   await expect(
     page.getByRole("link", { name: /Contact Us/i }).first(),
@@ -350,6 +354,6 @@ test("gives the closing step no way back out of itself", async ({ page }) => {
   await expect(nextButton(page)).toHaveCount(0);
   await expect(skipButton(page)).toHaveCount(0);
 
-  // The pick it recorded on the way in is still on the record.
-  expect(await savedAnswerIds(page)).toContain("product-recommendations-step");
+  // The address it was given on the way in is still on the record.
+  expect(await savedAnswerIds(page)).toContain("email-capture");
 });

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import {
-  bookRestTestButton,
+  bookRestTestLink,
   emailAskField,
   emailAskSubmit,
   nextButton,
@@ -8,14 +8,14 @@ import {
   skipButton,
   speedUpVideos,
   stubExternalServices,
-  walkToRecommendations,
+  walkToBookingStep,
   walkToSummaryVideo,
   WALKTHROUGH_EMAIL,
 } from "./helpers";
 
 /**
- * The email is asked for as Ashley finishes the summary, and the results are
- * what it buys.
+ * The email is asked for as Ashley finishes the summary, and the sleep report
+ * is what it buys. Giving it lands on the closing step.
  *
  * It is captured inside the summary video step rather than in a step of its
  * own. A step would have shifted every index after it, which breaks resumable
@@ -41,19 +41,18 @@ test("asks for the email as the summary finishes", async ({ page }) => {
   await walkToEmailAsk(page);
 
   await expect(emailAskField(page)).toBeVisible();
-  await expect(emailAskSubmit(page)).toHaveText(/See My Results/i);
+  await expect(emailAskSubmit(page)).toHaveText(/Get My Sleep Report/i);
 
   // Nothing is given away yet.
-  await expect(bookRestTestButton(page)).toHaveCount(0);
+  await expect(bookRestTestLink(page)).toHaveCount(0);
 });
 
 /**
  * The one that matters.
  *
- * Skip does not seek to the end on a manual-CTA step, it advances past the CTA
- * outright. The video pauses on its closing cue, which is exactly when the ask
- * appears, so an unguarded Skip would sit live beside the ask and carry the
- * user to the results having given nothing.
+ * Skip on the summary only fast-forwards to the ask, and once she is asking
+ * there is nothing left to skip to. Anything live beside the field at that
+ * point would carry the user to the closing step having given nothing.
  */
 test("offers no way past the ask", async ({ page }) => {
   await walkToEmailAsk(page);
@@ -82,21 +81,22 @@ test("puts the cursor in the field on arrival", async ({ page }) => {
 test("refuses an address that is not one, and stays put", async ({ page }) => {
   await walkToEmailAsk(page);
 
-  await emailAskField(page).fill("not-an-address");
-  await emailAskSubmit(page).click();
+  await emailAskField(page).fill("alec");
+  await expect(emailAskSubmit(page)).toBeDisabled();
+  await emailAskField(page).blur();
 
   await expect(page.getByText(/valid email/i)).toBeVisible();
-  await expect(bookRestTestButton(page)).toHaveCount(0);
+  await expect(bookRestTestLink(page)).toHaveCount(0);
   await expect(emailAskField(page)).toBeVisible();
 });
 
-test("shows the results once an address is given", async ({ page }) => {
+test("lands on the closing step once an address is given", async ({ page }) => {
   await walkToEmailAsk(page);
 
   await emailAskField(page).fill(WALKTHROUGH_EMAIL);
   await emailAskSubmit(page).click();
 
-  await expect(bookRestTestButton(page).first()).toBeVisible({
+  await expect(bookRestTestLink(page).first()).toBeVisible({
     timeout: 45_000,
   });
   await expect(emailAskField(page)).toHaveCount(0);
@@ -121,7 +121,7 @@ test("sends the address on to the CRM", async ({ page }) => {
   await walkToEmailAsk(page);
   await emailAskField(page).fill(WALKTHROUGH_EMAIL);
   await emailAskSubmit(page).click();
-  await expect(bookRestTestButton(page).first()).toBeVisible({
+  await expect(bookRestTestLink(page).first()).toBeVisible({
     timeout: 45_000,
   });
 
@@ -141,10 +141,10 @@ test("sends the address on to the CRM", async ({ page }) => {
   expect(answers.length).toBeGreaterThan(1);
 
   /*
-    The recommendations are on the payload even though the results step has not
-    been reached yet. This is the only write, and it happens a step before the
-    cards are shown, so the CRM's Product_Recommendations field depends on them
-    being derived at capture time rather than collected from the step.
+    The recommendations are on the payload even though there is no results
+    step any more. This is the only write, and the sleep report's shortlist is
+    built from it, so the CRM's Product_Recommendations field depends on them
+    being derived at capture time.
   */
   const recommended = answers.find(
     (a) => a.stepId === "product-recommendations-step",
@@ -157,9 +157,9 @@ test("sends the address on to the CRM", async ({ page }) => {
  * Stepping back onto the step that asks.
  *
  * The field used to be gated on the address not being in yet, so a step back
- * replayed Ashley asking for one with nothing to put it in, and See My
- * Results, Skip and Next all live beside her. Nothing escaped, because the
- * results cannot be reached without giving it once, but a step that asks and
+ * replayed Ashley asking for one with nothing to put it in, and its CTA, Skip
+ * and Next all live beside her. Nothing escaped, because the closing step
+ * cannot be reached without giving it once, but a step that asks and
  * then offers three ways past itself reads exactly like a hole, and that is
  * what it was reported as.
  *
@@ -179,12 +179,18 @@ test("asks again on the way back, with the address already in the field", async 
     });
   });
 
-  // answerAllQuestions answers the ask on the way through, which is the one
-  // record the CRM should ever see for this person.
-  await walkToRecommendations(page);
+  // The walk answers the ask on the way through, which is the one record the
+  // CRM should ever see for this person.
+  await walkToBookingStep(page);
   expect(submits.length).toBe(1);
 
-  await page.getByRole("button", { name: /Back/i }).first().click();
+  /*
+    The closing step has no Back of its own, so return to the summary the way
+    a person would: a reload, which resumes on the step saved last. The email
+    submit saves the summary's own index, not the one after it.
+  */
+  await page.reload();
+  await page.getByRole("button", { name: /Continue/i }).first().click();
   // The segment replays, and the pause that reveals the ask is measured in the
   // media clock, so it needs real time rather than the walk's fast-forward.
   await setVideoRateNow(page, 1);
@@ -201,7 +207,7 @@ test("asks again on the way back, with the address already in the field", async 
   // Answering the same address again is the step being seen twice, not
   // answered twice: it advances, and the CRM gets nothing further.
   await emailAskSubmit(page).click();
-  await expect(bookRestTestButton(page).first()).toBeVisible({
+  await expect(bookRestTestLink(page).first()).toBeVisible({
     timeout: 45_000,
   });
   expect(submits.length).toBe(1);

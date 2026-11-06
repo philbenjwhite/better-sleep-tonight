@@ -4,9 +4,14 @@ import { expect, type Page } from "@playwright/test";
  * Shared helpers for the funnel end-to-end specs.
  */
 
-/** Matches the CTA on the product recommendations cards. */
-export const bookRestTestButton = (page: Page) =>
-  page.getByRole("button", { name: /Book a Rest Test/i });
+/**
+ * The closing step's Book a Rest Test, a link out to Ashley's booking engine.
+ *
+ * It used to be a button on each recommendation card. The cards are gone, so
+ * this is now the mark that the walk has reached the end of the funnel.
+ */
+export const bookRestTestLink = (page: Page) =>
+  page.getByRole("link", { name: /Book a Rest Test/i });
 
 /**
  * The forward control while a segment is playing.
@@ -31,7 +36,7 @@ export const questionHeading = (page: Page) =>
 export const answerOption = (page: Page) =>
   page.locator('button[class*="answerOption"]');
 
-/** The manual CTA that some video steps pause on ("Let's Go", "See My Results"). */
+/** The manual CTA that some video steps pause on ("Let's Go", "Get My Sleep Report"). */
 export const videoCta = (page: Page) => page.locator('[class*="ctaButton"]');
 
 /** The address the walk gives whenever the funnel asks for one. */
@@ -173,7 +178,7 @@ export async function startFunnel(page: Page) {
 }
 
 /**
- * Answer every question, one option each, until the recommendation cards appear.
+ * Answer every question, one option each, until the closing step appears.
  * Returns the distinct question headings that were answered.
  *
  * Counts by heading, and waits for the heading to change after each answer,
@@ -184,7 +189,8 @@ export async function startFunnel(page: Page) {
  * (recommendations never shown) but is purely the walk's fault.
  *
  * With `skipVideos`, dismiss every avatar video via its skip control instead of
- * waiting it out or clicking its manual CTA.
+ * waiting it out or clicking its manual CTA. On the summary that skip only
+ * fast-forwards to the email ask, which the walk then answers.
  */
 export async function answerAllQuestions(
   page: Page,
@@ -193,7 +199,7 @@ export async function answerAllQuestions(
   const seen: string[] = [];
 
   for (let i = 0; i < 80; i++) {
-    if (await bookRestTestButton(page).first().isVisible().catch(() => false)) {
+    if (await bookRestTestLink(page).first().isVisible().catch(() => false)) {
       break;
     }
 
@@ -254,7 +260,7 @@ export async function answerAllQuestions(
 /**
  * Drive the funnel to the moment the summary video takes over, and no further.
  *
- * answerAllQuestions walks straight past that segment to the recommendations,
+ * answerAllQuestions walks straight past that segment to the closing step,
  * so anything asserted about the summary itself needs a walk that stops on it.
  * Waits for the heading to change after each answer rather than polling: the
  * options stay mounted through the 1000ms pause before the advance, and a blind
@@ -286,31 +292,29 @@ export async function walkToSummaryVideo(page: Page) {
 }
 
 /**
- * Drive the funnel from the intro screen to the product recommendations step.
- */
-export async function walkToRecommendations(page: Page) {
-  await startFunnel(page);
-  await answerAllQuestions(page);
-  await expect(bookRestTestButton(page).first()).toBeVisible({
-    timeout: 45_000,
-  });
-}
-
-/**
- * Continue past the recommendations cards to the final booking step. Book A
- * Rest Test now lands there directly — the post-selection video, postal code
- * capture and store list that used to sit in between were removed.
+ * Drive the funnel from the intro screen to the closing booking step.
+ *
+ * The email submit on the summary is what lands there now that the
+ * recommendations page is gone, so the walk stops on the summary, waits for
+ * the ask and gives the address itself rather than leaving it to
+ * answerAllQuestions. That is what makes the hook below possible.
  */
 export async function walkToBookingStep(
   page: Page,
   options: {
     /**
-     * Runs immediately before the click that lands on the booking step, which
+     * Runs immediately before the submit that lands on the booking step, which
      * is the last moment to set up for its closing video.
      */
-    beforeBookRestTest?: () => Promise<void>;
+    beforeEmailSubmit?: () => Promise<void>;
   } = {},
 ) {
-  await options.beforeBookRestTest?.();
-  await bookRestTestButton(page).first().click();
+  await walkToSummaryVideo(page);
+  await emailAskField(page).waitFor({ state: "visible", timeout: 60_000 });
+  await emailAskField(page).fill(WALKTHROUGH_EMAIL);
+  await options.beforeEmailSubmit?.();
+  await emailAskSubmit(page).click();
+  await expect(bookRestTestLink(page).first()).toBeVisible({
+    timeout: 45_000,
+  });
 }

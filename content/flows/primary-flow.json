@@ -262,22 +262,17 @@
       "stepId": "video-step-1",
       "internalName": "Summary Video",
       "video": "/videos/ashley/ashley-2.mp4",
-      "script": "Did you know that many sleep problems start with an ageing or unsupportive mattress?\n\nOur bodies change over the years, but our mattress usually doesn't.\n\nIf it's been 7 to 10 years since you changed your mattress, maybe it's time to swap it out.\n\nI found some mattress options that are perfect for you based on your responses.\n\nLeave me your email address so I can show them to you and I'll also send over your personalized sleep report!",
+      "script": "Did you know that many sleep problems start with an ageing or unsupportive mattress?\n\nOur bodies change over the years, but our mattress usually doesn't.\n\nIf it's been 7 to 10 years since you changed your mattress, maybe it's time to swap it out.\n\nLeave me your email address, and I'll send over a personalized sleep report with a shortlist of mattresses that match your profile.",
       "_template": "videoStep"
-    },
-    {
-      "stepId": "product-recommendations-step",
-      "internalName": "Product Recommendations",
-      "_template": "productRecommendationsStep"
     },
     {
       "stepId": "booking-cta-step",
       "internalName": "Booking CTAs",
       "video": "/videos/ashley/ashley-5.mp4",
-      "script": "You're all set.\n\nI'll send you an email in the next five minutes so you can book a rest test at your nearest Ashley store.\n\nThanks for visiting Better Sleep Tonight.",
+      "script": "You're all set!\n\nLook out for that sleep report, and go right ahead if you'd like to book a rest test at your nearest Ashley store.\n\nThanks for visiting Better Sleep Tonight.",
       "ctaBookTitle": "Book a Rest Test",
-      "ctaBookDescription": "Leave your email and we'll send you a link to book a rest test at your nearest Ashley store.",
-      "ctaBookButtonText": "Register Email",
+      "ctaBookDescription": "Try your matches in person at your nearest Ashley store.",
+      "ctaBookButtonText": "Book a Rest Test",
       "ctaContactTitle": "Questions? We're here to help",
       "ctaContactDescription": "Chat with our sleep experts about your specific needs and get personalized recommendations.",
       "ctaContactButtonText": "Contact Us",

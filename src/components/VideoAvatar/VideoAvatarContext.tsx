@@ -106,6 +106,8 @@ interface VideoAvatarContextType {
   play: (videoId: string, options?: { loop?: boolean }) => Promise<void>;
   pause: () => void;
   skip: () => void;
+  /** Jump the current segment to a time in seconds, without changing its state. */
+  seek: (time: number) => void;
   preload: (videoIdOrPath: string) => void;
   preloadMultiple: (videoIds: string[]) => void;
   stop: () => void;
@@ -399,6 +401,12 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
     }
   }, []);
 
+  const seek = useCallback((time: number) => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = time;
+    setCurrentTime(time);
+  }, []);
+
   // Skip the rest of the current video. Produces exactly the same ENDED
   // transition a video reaching its natural end produces (see the tail of
   // onVideoTimeUpdate), so every downstream advance handler works unchanged.
@@ -641,6 +649,7 @@ export const VideoAvatarProvider: React.FC<VideoAvatarProviderProps> = ({
         play,
         pause,
         skip,
+        seek,
         preload,
         preloadMultiple,
         stop,

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Better Sleep Tonight is a Tempur-Pedic interactive sleep quiz built with Next.js 15, React 19, and TypeScript. Users watch video avatar segments, answer sleep-related questions, receive mattress recommendations, and give their email to book an in-store rest test. All funnel data is tracked in Epsilon PeopleCloud.
+Better Sleep Tonight is a Tempur-Pedic interactive sleep quiz built with Next.js 15, React 19, and TypeScript. Users watch video avatar segments, answer sleep-related questions, and give their email for a personalized sleep report that shortlists mattresses, then are sent to Ashley's booking engine to book an in-store rest test. All funnel data is tracked in Epsilon PeopleCloud.
 
 ## Key Commands
 
@@ -97,6 +97,10 @@ GA4 events are fired programmatically via `gtag()` in `src/lib/analytics/convers
 | `useAdaptiveVideo` | `src/hooks/` | Video preload strategy based on network |
 | `useSubtitleSync` | `src/hooks/` | Sync VTT captions to video playback |
 | `useVideoAvatar` | `src/components/VideoAvatar/` | Context consumer for video state |
+
+### Product Recommendations (dormant)
+
+The product recommendations step was removed from the funnel in October 2026 for the first rest-test experiment: the email submit on the summary now lands straight on the closing step, whose Book a Rest Test card links to Ashley's booking engine. The shortlist still reaches Epsilon, because `Product_Recommendations` is derived at the email submit, not on the results page. `ProductRecommendations` and its render branch in `page.tsx` are intact; restoring the step means adding it back to `content/flows/primary-flow.json` and bumping the progress storage key.
 
 ### Store Locator (dormant)
 
